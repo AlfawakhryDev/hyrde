@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { ALL_SKILL_SLUGS, ALL_CITY_SLUGS } from "@/lib/data";
 import { COMPETITOR_SLUGS } from "@/lib/compare";
+import { GUIDE_SLUGS } from "@/lib/guides";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://hyrde.net";
@@ -20,7 +21,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/about`,           lastModified: now, priority: 0.7 },
     { url: `${base}/jobs`,            lastModified: now, priority: 0.7 },
     { url: `${base}/freelancer/join`, lastModified: now, priority: 0.9 },
+    { url: `${base}/guides`,          lastModified: now, priority: 0.8 },
   ];
+
+  // Authority hub: editorial guides (client + freelancer clusters)
+  const guide_pages = GUIDE_SLUGS.map(slug => ({
+    url: `${base}/guides/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
   // Switcher / comparison pages — "[competitor] alternative" (high client intent)
   const comparison_pages = COMPETITOR_SLUGS.map(slug => ({
@@ -48,5 +58,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   );
 
-  return [...static_pages, ...comparison_pages, ...skill_pages, ...skill_city_pages];
+  return [...static_pages, ...comparison_pages, ...guide_pages, ...skill_pages, ...skill_city_pages];
 }

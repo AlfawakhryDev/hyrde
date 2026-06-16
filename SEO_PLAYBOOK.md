@@ -7,13 +7,13 @@
 
 ---
 
-## 📊 OVERALL PROGRESS: ~40%
+## 📊 OVERALL PROGRESS: ~54%
 
 ```
 Phase 0  Foundation (technical SEO)   [█████████░]  90%   weight 10%
 Phase 1  Switcher / comparison pages  [████████░░]  80%   weight 20%
 Phase 2  Programmatic skill×city      [███████░░░]  75%   weight 20%
-Phase 3  Content / authority hub      [░░░░░░░░░░]   0%   weight 25%
+Phase 3  Content / authority hub      [█████░░░░░]  55%   weight 25%
 Phase 4  Linkable assets + links      [░░░░░░░░░░]   0%   weight 15%
 Phase 5  Convert + measure to 10      [░░░░░░░░░░]   0%   weight 10%
 ```
@@ -61,11 +61,15 @@ Risk: post-2024 Google penalizes thin pSEO. Each page needs UNIQUE value.
 - [ ] Live talent counts / real sample matches (currently mock data) — revisit when real talent exists
 - [ ] `noindex` genuinely empty combos (N/A for now — all 300 combos carry rate + FAQ value)
 
-## PHASE 3 — Content / authority hub (blog/guides)  · 0%
-- [ ] Stand up `/blog` (or `/guides`) route + index
-- [ ] Client cluster: "how to hire a [skill]", "freelance [skill] cost", "contract vs full-time", "how to avoid freelancer scams" (ties to switcher angle)
-- [ ] Freelancer cluster: "freelance [skill] rates 2026", "how to become a freelance [skill]", "remote [skill] jobs" → feeds `/join`
-- [ ] 2 cornerstone pieces/week; internal-link to money pages
+## PHASE 3 — Content / authority hub (blog/guides)  · 55%
+- [x] Stand up `/guides` route + index (client + freelancer clusters), `lib/guides.ts` content model
+- [x] Article + FAQPage + BreadcrumbList JSON-LD on every guide; canonical + OG per page
+- [x] Wired into sitemap + Footer nav (internal link equity)
+- [x] Client cluster (3): how-to-avoid-freelancer-scams (ties to switcher), cost-to-hire-freelance-developer, upwork-vs-fiverr-vs-toptal
+- [x] Freelancer cluster (2): freelance-rates-2026, how-to-find-clients-without-upwork → feed `/join`
+- [x] Every guide internal-links to money pages (/get-started, /join, /rates, /upwork-alternative)
+- [ ] Keep cadence: ~2 cornerstone pieces/week; expand skill-specific "how to hire a [skill]" pieces
+- [ ] Add author/E-E-A-T signals (named author, bio) once there's a byline to use
 
 ## PHASE 4 — Linkable assets + link building  · 0%
 - [ ] Turn `/rates` into a citable **"Hyrde Freelance Rate Index"** report (original data = link magnet)
