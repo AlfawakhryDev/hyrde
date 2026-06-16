@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import Turnstile from "@/components/Turnstile";
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -51,6 +52,7 @@ export default function JoinPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
+        track("freelancer_signup");
         router.push("/join/thanks");
       } else {
         setError(data.error ?? "Something went wrong. Please try again.");

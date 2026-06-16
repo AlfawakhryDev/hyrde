@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/jobs`,            lastModified: now, priority: 0.7 },
     { url: `${base}/freelancer/join`, lastModified: now, priority: 0.9 },
     { url: `${base}/guides`,          lastModified: now, priority: 0.8 },
+    { url: `${base}/compare`,         lastModified: now, priority: 0.8 },
   ];
 
   // Authority hub: editorial guides (client + freelancer clusters)

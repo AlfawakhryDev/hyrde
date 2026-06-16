@@ -7,16 +7,20 @@
 
 ---
 
-## 📊 OVERALL PROGRESS: ~54%
+## 📊 OVERALL PROGRESS: ~68%
 
 ```
-Phase 0  Foundation (technical SEO)   [█████████░]  90%   weight 10%
-Phase 1  Switcher / comparison pages  [████████░░]  80%   weight 20%
+Phase 0  Foundation (technical SEO)   [██████████] 100%   weight 10%
+Phase 1  Switcher / comparison pages  [█████████░]  90%   weight 20%
 Phase 2  Programmatic skill×city      [███████░░░]  75%   weight 20%
 Phase 3  Content / authority hub      [█████░░░░░]  55%   weight 25%
-Phase 4  Linkable assets + links      [░░░░░░░░░░]   0%   weight 15%
-Phase 5  Convert + measure to 10      [░░░░░░░░░░]   0%   weight 10%
+Phase 4  Linkable assets + links      [█████░░░░░]  50%   weight 15%
+Phase 5  Convert + measure to 10      [████░░░░░░]  40%   weight 10%
 ```
+
+**Remaining work is now mostly OFF-PAGE + TIME-GATED:** link-building outreach
+(human task), publishing cadence (~2 guides/week), and waiting for Google to
+crawl + rank so conversions can be measured. The on-page build is largely done.
 
 Update the bars + the OVERALL number at the end of every session.
 
@@ -36,7 +40,7 @@ Zapier never fought "automation." They built millions of templated pages for "co
 - [x] Add `metadataBase = https://hyrde.net` to root layout (fixes canonical/OG URLs)
 - [x] Verify domain in Google Search Console + submit sitemap (Domain property via DNS; submitted https://hyrde.net/sitemap.xml → Success)
 - [x] Per-page canonical tags (skill×city + comparison pages) + Breadcrumb/FAQ JSON-LD
-- [ ] Organization JSON-LD on root layout (logo, sameAs) — still pending
+- [x] Organization JSON-LD on root layout (name, url, logo, email)
 
 ## PHASE 1 — Switcher / comparison pages (highest client intent)  · 80%
 Targets the burned-client searches: "upwork alternative", "fiverr alternative", "toptal vs", "upwork scam protection".
@@ -47,8 +51,8 @@ Targets the burned-client searches: "upwork alternative", "fiverr alternative", 
 - [x] `/toptal-alternative` page
 - [x] Homepage "tired of Upwork?" section → routes to the alternative pages
 - [x] FAQ JSON-LD on each comparison page (rich-result eligibility)
-- [ ] `/compare` hub page indexing all comparisons
-- [ ] Add `freelancer.com`, `guru`, `fiverr-pro` competitors later
+- [x] `/compare` hub page indexing all comparisons (canonical, in sitemap)
+- [ ] Add `freelancer.com`, `guru`, `fiverr-pro` competitors later (data-only, fast to add)
 
 ## PHASE 2 — Programmatic skill×city (de-thin the 325 pages)  · 75%
 Risk: post-2024 Google penalizes thin pSEO. Each page needs UNIQUE value.
@@ -71,16 +75,17 @@ Risk: post-2024 Google penalizes thin pSEO. Each page needs UNIQUE value.
 - [ ] Keep cadence: ~2 cornerstone pieces/week; expand skill-specific "how to hire a [skill]" pieces
 - [ ] Add author/E-E-A-T signals (named author, bio) once there's a byline to use
 
-## PHASE 4 — Linkable assets + link building  · 0%
-- [ ] Turn `/rates` into a citable **"Hyrde Freelance Rate Index"** report (original data = link magnet)
-- [ ] Digital PR pitch of the Rate Index
-- [ ] 8–15 quality links (guest posts / niche edits / HARO-style)
-- [ ] Get listed in "Upwork alternatives" roundup articles
+## PHASE 4 — Linkable assets + link building  · 50%
+- [x] Turn `/rates` into a citable **"Hyrde Freelance Rate Index 2026"** — named report, edition/date, key-findings stat band, methodology, copy-paste citation block, `Dataset` JSON-LD, canonical/OG; CTAs fixed to /get-started + /join; cross-links to guides
+- [ ] Digital PR pitch of the Rate Index  ← **NEEDS USER** (outreach = human task)
+- [ ] 8–15 quality links (guest posts / niche edits / HARO-style)  ← **NEEDS USER**
+- [ ] Get listed in "Upwork alternatives" roundup articles  ← **NEEDS USER**
 
-## PHASE 5 — Convert + measure to 10 client signups  · 0%
-- [ ] Confirm Vercel Analytics + GSC tracking organic → `/get-started`
-- [ ] A/B the comparison-page CTA copy
-- [ ] Track: organic visits → get-started views → submissions (target 1–3% conv)
+## PHASE 5 — Convert + measure to 10 client signups  · 40%
+- [x] Vercel Analytics live (@vercel/analytics in layout)
+- [x] Custom conversion events: `client_signup` (/get-started) + `freelancer_signup` (/join) fire on success
+- [ ] Watch GSC + Analytics: organic visits → get-started views → submissions (target 1–3% conv)  ← time-gated (needs crawl + traffic)
+- [ ] A/B the comparison-page CTA copy once there's traffic to test
 - [ ] Hit 10 client signups 🎯
 
 ---

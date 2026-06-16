@@ -11,10 +11,22 @@ export const metadata: Metadata = {
   openGraph: { siteName: "Hyrde", type: "website" },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Hyrde",
+  url: "https://hyrde.net",
+  logo: "https://hyrde.net/hyrde-lockup-dark.svg",
+  description:
+    "AI-native freelance platform. Pre-vetted talent, AI-matched to your brief in 60 seconds, at a flat 8% fee.",
+  email: "abdelrahman@hyrde.net",
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

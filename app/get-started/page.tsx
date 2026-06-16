@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import Turnstile from "@/components/Turnstile";
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -52,6 +53,7 @@ export default function GetStartedPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
+        track("client_signup");
         router.push("/get-started/thanks");
       } else {
         setError(data.error ?? "Something went wrong. Please try again.");
