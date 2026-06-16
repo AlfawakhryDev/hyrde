@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SKILLS } from "@/lib/data";
 import CostOfHiringSection from "@/components/CostOfHiringSection";
+import StatCounter from "@/components/StatCounter";
 
 const FEATURED_SKILLS = [
   "react-developer","ux-designer","data-scientist",
@@ -116,6 +117,55 @@ export default function Home() {
               <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest">{s.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Waitlist ── */}
+      <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-24">
+        <div className="relative bg-tech-blue-deep rounded-3xl p-10 md:p-14 text-center overflow-hidden">
+          <div className="absolute inset-0 bg-electric-violet/5 pointer-events-none" />
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/15 mb-7">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ai-glow opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-ai-glow" />
+              </span>
+              <span className="text-xs font-semibold font-body text-white uppercase tracking-widest">Early access — onboarding now</span>
+            </div>
+
+            <p className="text-6xl md:text-7xl font-bold font-headline text-ai-glow leading-none mb-2">
+              <StatCounter value={500} suffix="+" />
+            </p>
+            <p className="text-xs font-semibold font-body text-on-primary-container uppercase tracking-widest mb-7">
+              clients &amp; freelancers already on the waitlist
+            </p>
+
+            <h2 className="text-3xl md:text-5xl font-bold font-headline text-white mb-4 leading-tight">
+              Join the waitlist
+            </h2>
+            <p className="font-body text-on-primary-container text-lg max-w-xl mx-auto mb-9">
+              Get early access before we open the doors. Tell us whether you&apos;re here to hire or to freelance — it takes about 60 seconds.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 max-w-xl mx-auto">
+              <Link href="/get-started"
+                className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-5 bg-electric-violet text-white rounded-2xl font-body hover:shadow-[0_0_36px_rgba(91,79,207,0.45)] transition-all hover:-translate-y-1 active:scale-95">
+                <span className="flex items-center gap-2 text-lg font-bold font-headline">
+                  <span className="material-symbols-outlined" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>business_center</span>
+                  I want to hire
+                </span>
+                <span className="text-xs font-body text-white/80">Get matched with vetted talent</span>
+              </Link>
+              <Link href="/join"
+                className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-5 bg-white text-tech-blue-deep rounded-2xl font-body hover:bg-ai-glow transition-all hover:-translate-y-1 active:scale-95">
+                <span className="flex items-center gap-2 text-lg font-bold font-headline">
+                  <span className="material-symbols-outlined" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>person_add</span>
+                  I&apos;m a freelancer
+                </span>
+                <span className="text-xs font-body opacity-70">Free forever · jobs come to you</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
