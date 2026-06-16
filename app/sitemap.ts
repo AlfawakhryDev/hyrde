@@ -1,21 +1,34 @@
 import { MetadataRoute } from "next";
 import { ALL_SKILL_SLUGS, ALL_CITY_SLUGS } from "@/lib/data";
+import { COMPETITOR_SLUGS } from "@/lib/compare";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://hyrde.ai";
+  const base = "https://hyrde.net";
   const now  = new Date();
 
   const static_pages = [
     { url: base,                      lastModified: now, priority: 1.0 },
+    { url: `${base}/get-started`,     lastModified: now, priority: 0.9 },
+    { url: `${base}/join`,            lastModified: now, priority: 0.9 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
     { url: `${base}/post-job`,        lastModified: now, priority: 0.9 },
     { url: `${base}/agent`,           lastModified: now, priority: 0.9 },
     { url: `${base}/pricing`,         lastModified: now, priority: 0.8 },
     { url: `${base}/enterprise`,      lastModified: now, priority: 0.8 },
+    { url: `${base}/rates`,           lastModified: now, priority: 0.8 },
+    { url: `${base}/talent`,          lastModified: now, priority: 0.7 },
     { url: `${base}/about`,           lastModified: now, priority: 0.7 },
     { url: `${base}/jobs`,            lastModified: now, priority: 0.7 },
     { url: `${base}/freelancer/join`, lastModified: now, priority: 0.9 },
   ];
+
+  // Switcher / comparison pages — "[competitor] alternative" (high client intent)
+  const comparison_pages = COMPETITOR_SLUGS.map(slug => ({
+    url: `${base}/${slug}-alternative`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.9,
+  }));
 
   // Tier 1: /hire/[skill] — 25 pages
   const skill_pages = ALL_SKILL_SLUGS.map(skill => ({
@@ -35,5 +48,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   );
 
-  return [...static_pages, ...skill_pages, ...skill_city_pages];
+  return [...static_pages, ...comparison_pages, ...skill_pages, ...skill_city_pages];
 }

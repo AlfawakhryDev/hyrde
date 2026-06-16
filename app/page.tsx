@@ -122,6 +122,36 @@ export default function Home() {
       {/* ── PART 3 — Hiring is broken: animated cost-of-hiring stats ── */}
       <CostOfHiringSection />
 
+      {/* ── Switcher: tired of Upwork / Fiverr / Toptal ── */}
+      <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-24">
+        <div className="text-center mb-8">
+          <p className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-3">Coming from another platform?</p>
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep">
+            Tired of disappearing contractors and fake 5-star badges?
+          </h2>
+          <p className="font-body text-on-surface-variant mt-3 max-w-xl mx-auto">
+            See exactly how Hyrde fixes what burns clients on the big marketplaces — vetted talent, no bidding, one flat 8% fee.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            { href: "/upwork-alternative", name: "Upwork", pain: "Ghosting contractors, gameable badges, 22–34% real fees" },
+            { href: "/fiverr-alternative", name: "Fiverr", pain: "Gig roulette, race-to-the-bottom quality, surprise extras" },
+            { href: "/toptal-alternative", name: "Toptal", pain: "Premium markups, upfront deposits, opaque pricing" },
+          ].map(x => (
+            <Link key={x.href} href={x.href}
+              className="group bg-white rounded-xl p-6 border border-border-crisp hover:border-electric-violet hover:shadow-[0_4px_20px_rgba(91,79,207,0.08)] transition-all">
+              <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-2">Hyrde vs</p>
+              <p className="text-lg font-bold font-headline text-tech-blue-deep mb-2 flex items-center justify-between">
+                {x.name}
+                <span className="material-symbols-outlined text-electric-violet group-hover:translate-x-1 transition-transform" style={{ fontSize: "18px" }}>arrow_forward</span>
+              </p>
+              <p className="text-sm font-body text-on-surface-variant leading-relaxed">{x.pain}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* ── How it works for clients ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-24">
         <div className="grid md:grid-cols-2 gap-12 items-center">

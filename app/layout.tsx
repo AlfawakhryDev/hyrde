@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hyrde.net"),
   title: { default: "Hyrde — AI-native freelance platform", template: "%s | Hyrde" },
   description: "The AI-native freelance platform. Clients describe what they need and get the top 5 matches in 60 seconds. Freelancers get AI agents that find work, write intros, and review contracts. Freelancers keep 100% — clients pay a flat 8% only when they hire.",
   openGraph: { siteName: "Hyrde", type: "website" },

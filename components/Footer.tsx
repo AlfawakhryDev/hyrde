@@ -16,8 +16,9 @@ export default function Footer() {
             { href: "/pricing",         label: "Pricing"       },
             { href: "/enterprise",      label: "Enterprise"    },
             { href: "/rates",           label: "Rate Index"    },
-            { href: "/freelancer/join", label: "Join Free"     },
+            { href: "/join",            label: "Join Free"     },
             { href: "/post-job",        label: "Post a Job"    },
+            { href: "/upwork-alternative", label: "Upwork Alternative" },
           ].map(({ href, label }) => (
             <Link
               key={href}
