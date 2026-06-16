@@ -71,14 +71,22 @@ export default function Home() {
           <strong className="text-tech-blue-deep font-semibold">8% only when you hire.</strong>
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <Link href="/freelancer/join"
-            className="w-full sm:w-auto px-10 py-4 bg-electric-violet text-white rounded-full text-sm font-semibold font-body hover:shadow-[0_0_28px_rgba(91,79,207,0.4)] transition-all hover:-translate-y-0.5 active:scale-95">
-            Join as a freelancer
+        <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 mb-6 max-w-2xl mx-auto">
+          <Link href="/get-started"
+            className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-6 bg-electric-violet text-white rounded-2xl font-body hover:shadow-[0_0_36px_rgba(91,79,207,0.45)] transition-all hover:-translate-y-1 active:scale-95">
+            <span className="flex items-center gap-2 text-lg font-bold font-headline">
+              <span className="material-symbols-outlined" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>business_center</span>
+              Hire a talent
+            </span>
+            <span className="text-xs font-body text-white/80">Vetted shortlist in 60 seconds · free to post</span>
           </Link>
-          <Link href="/post-job"
-            className="w-full sm:w-auto px-10 py-4 border-2 border-tech-blue-deep text-tech-blue-deep rounded-full text-sm font-semibold font-body hover:bg-tech-blue-deep hover:text-white transition-all hover:-translate-y-0.5 active:scale-95">
-            Hire in 60 seconds
+          <Link href="/join"
+            className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-6 bg-white border-2 border-tech-blue-deep text-tech-blue-deep rounded-2xl font-body hover:bg-tech-blue-deep hover:text-white transition-all hover:-translate-y-1 active:scale-95">
+            <span className="flex items-center gap-2 text-lg font-bold font-headline">
+              <span className="material-symbols-outlined" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>person_add</span>
+              Join as a freelancer
+            </span>
+            <span className="text-xs font-body opacity-80">Free forever · jobs come to you, no bidding</span>
           </Link>
         </div>
 

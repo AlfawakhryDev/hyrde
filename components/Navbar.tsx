@@ -72,7 +72,7 @@ export default function Navbar() {
             <span className="material-symbols-outlined" style={{ fontSize: "13px" }}>dashboard</span>
             Dashboard
           </Link>
-          <Link href="/freelancer/join" className="text-xs font-semibold font-body text-tech-blue-deep px-4 py-2 hover:opacity-70 transition-opacity">
+          <Link href="/join" className="text-xs font-semibold font-body text-tech-blue-deep px-4 py-2 hover:opacity-70 transition-opacity">
             Join free
           </Link>
           <Link href="/get-started" className="bg-electric-violet text-white text-xs font-semibold font-body px-5 py-2 rounded-full hover:opacity-90 transition-opacity">
