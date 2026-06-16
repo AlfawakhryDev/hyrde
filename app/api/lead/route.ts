@@ -66,6 +66,36 @@ async function forwardToGoogle(lead: Lead): Promise<boolean> {
   }
 }
 
+// ─── Cloudflare Turnstile (anti-spam) verification ──────────────────────────
+// When TURNSTILE_SECRET_KEY is set, submissions must carry a valid token. If the
+// secret isn't configured yet, we fail OPEN (allow) so the form keeps working;
+// once you add the key in Vercel, protection is enforced automatically.
+async function verifyTurnstile(token: string, ip: string | null): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) {
+    console.warn("TURNSTILE_SECRET_KEY not set — skipping captcha verification.");
+    return true;
+  }
+  if (!token) return false;
+  try {
+    const params = new URLSearchParams();
+    params.set("secret", secret);
+    params.set("response", token);
+    if (ip) params.set("remoteip", ip);
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+    const data = (await res.json()) as { success?: boolean };
+    return data.success === true;
+  } catch {
+    // Network error reaching Cloudflare — don't block a genuine lead.
+    console.warn("Turnstile verify request failed — allowing submission.");
+    return true;
+  }
+}
+
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;
   try {
@@ -90,6 +120,16 @@ export async function POST(req: NextRequest) {
   }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return NextResponse.json({ error: "Please enter a valid work email address." }, { status: 400 });
+  }
+
+  // Anti-spam: verify the Cloudflare Turnstile token before accepting the lead.
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? null;
+  const captchaOk = await verifyTurnstile(String(body.turnstileToken ?? ""), ip);
+  if (!captchaOk) {
+    return NextResponse.json(
+      { error: "Anti-spam check failed. Please reload the page and try again." },
+      { status: 400 },
+    );
   }
 
   const lead: Lead = {

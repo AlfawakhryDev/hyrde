@@ -2,6 +2,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Turnstile from "@/components/Turnstile";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const POSTINGS = ["1–2 roles", "3–5 roles", "6–10 roles", "10+ roles"];
 const START = ["Immediately", "Within 2 weeks", "This month", "Next quarter", "Just exploring"];
@@ -24,6 +27,7 @@ export default function GetStartedPage() {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const update = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
@@ -35,12 +39,16 @@ export default function GetStartedPage() {
       setError("Please complete all required fields.");
       return;
     }
+    if (TURNSTILE_SITE_KEY && !captchaToken) {
+      setError("Please complete the anti-spam check below.");
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, turnstileToken: captchaToken }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
@@ -166,6 +174,14 @@ export default function GetStartedPage() {
                 placeholder="e.g. Senior React engineer, product designer, growth marketer…"
               />
             </div>
+
+            {TURNSTILE_SITE_KEY && (
+              <Turnstile
+                siteKey={TURNSTILE_SITE_KEY}
+                onVerify={setCaptchaToken}
+                onExpire={() => setCaptchaToken("")}
+              />
+            )}
 
             {error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
