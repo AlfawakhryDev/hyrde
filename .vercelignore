@@ -1,0 +1,7 @@
+# Never upload local secrets or runtime data to Vercel.
+# Production reads ANTHROPIC_API_KEY etc. from Vercel Environment Variables.
+.env.local
+.env*.local
+/data/leads.json
+/data/bookings.json
+/data/freelancers.json
