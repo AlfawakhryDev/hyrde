@@ -1,0 +1,437 @@
+"use client";
+import { useState, Suspense, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import type { AIMatch } from "@/lib/types";
+import { SKILLS, CITIES } from "@/lib/data";
+import { blindLabel } from "@/lib/services";
+import Link from "next/link";
+
+interface ScopeResult {
+  improvedBrief: string;
+  skills: string[];
+  suggestedBudget: string;
+  suggestedTimeline: string;
+  questions: string[];
+}
+
+type Phase = "form" | "thinking" | "results";
+
+const THINKING_STEPS = [
+  "Parsing your brief...",
+  "Scanning verified freelancers...",
+  "Running AI match scoring...",
+  "Generating match rationale...",
+  "Ranking top candidates...",
+];
+
+function MatchCard({ m, highlight, blind, index }: { m: AIMatch; highlight: boolean; blind: boolean; index: number }) {
+  const skillLabel = SKILLS[m.skill]?.label ?? m.skill;
+  const cityLabel = CITIES[m.location]?.label ?? m.location;
+  const displayName = blind ? blindLabel(index) : m.name;
+  const avatar = blind
+    ? String.fromCharCode(65 + index)
+    : m.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+
+  const scoreColor =
+    m.score >= 90
+      ? "text-electric-violet bg-electric-violet/10"
+      : m.score >= 80
+      ? "text-tech-blue-muted bg-surface-container-high"
+      : "text-on-surface-variant bg-surface-container-high";
+
+  return (
+    <div className={`rounded-xl p-5 border bg-white transition-all ${
+      highlight
+        ? "border-l-4 border-l-electric-violet border-border-crisp shadow-sm"
+        : "border-border-crisp hover:border-electric-violet/30"
+    }`}>
+      {highlight && (
+        <div className="mb-3">
+          <span className="text-xs font-semibold font-body bg-electric-violet/10 text-electric-violet px-3 py-1 rounded-full">
+            Top match
+          </span>
+        </div>
+      )}
+
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold font-headline text-white text-sm shrink-0 ${blind ? "bg-tech-blue-muted" : "ai-match-gradient"}`}>
+            {blind
+              ? <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>visibility_off</span>
+              : avatar}
+          </div>
+          <div>
+            <p className="font-semibold font-body text-tech-blue-deep text-sm flex items-center gap-1.5">
+              {displayName}
+              {blind && <span className="text-[10px] font-body text-on-surface-variant uppercase tracking-widest">· blind</span>}
+            </p>
+            <p className="text-xs text-on-surface-variant font-body">{skillLabel}</p>
+          </div>
+        </div>
+        <span className={`text-xs font-semibold font-body px-2.5 py-1 rounded-full shrink-0 ${scoreColor}`}>
+          {m.score}%
+        </span>
+      </div>
+
+      {/* AI Rationale */}
+      {m.rationale && (
+        <div className="bg-electric-violet/5 rounded-lg px-3 py-2.5 mb-3 border border-electric-violet/15">
+          <p className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-1 flex items-center gap-1">
+            <span className="material-symbols-outlined" style={{ fontSize: "12px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+            AI analysis
+          </p>
+          <p className="text-xs font-body text-on-surface leading-relaxed">{m.rationale}</p>
+        </div>
+      )}
+
+      {/* Highlights */}
+      {m.highlights && m.highlights.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {m.highlights.map((h, i) => (
+            <span key={i} className="text-xs font-body bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">
+              {h}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Match bar */}
+      <div className="mb-3">
+        <div className="h-1 bg-surface-container-high rounded-full overflow-hidden">
+          <div className="h-full ai-match-gradient rounded-full transition-all" style={{ width: `${m.score}%` }} />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between pt-3 border-t border-border-crisp">
+        <span className="flex items-center gap-1 text-xs font-body text-on-surface-variant">
+          <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>{blind ? "lock" : "location_on"}</span>
+          {blind ? "Location hidden" : cityLabel}
+        </span>
+        <span className="text-sm font-bold font-headline text-tech-blue-deep">${m.rate}/hr</span>
+      </div>
+    </div>
+  );
+}
+
+function PostJobContent() {
+  const searchParams = useSearchParams();
+  const [brief, setBrief] = useState(searchParams.get("brief") ?? "");
+  const [budget, setBudget] = useState("");
+  const [phase, setPhase] = useState<Phase>("form");
+  const [thinkStep, setThinkStep] = useState(0);
+  const [matches, setMatches] = useState<AIMatch[]>([]);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [blind, setBlind] = useState(true);
+  const autoSubmitted = useRef(false);
+
+  // ── AI scoping assistant ──
+  const [scoping, setScoping] = useState(false);
+  const [scope, setScope] = useState<ScopeResult | null>(null);
+
+  const runScope = async () => {
+    if (brief.trim().length < 8) return;
+    setScoping(true);
+    setScope(null);
+    try {
+      const res = await fetch("/api/scope", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brief }),
+      });
+      const data = await res.json();
+      if (res.ok) setScope(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setScoping(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!brief.trim() || brief.length < 20) return;
+    setPhase("thinking");
+    setThinkStep(0);
+
+    // Animate thinking steps while API call runs in parallel
+    const stepInterval = setInterval(() => {
+      setThinkStep(s => Math.min(s + 1, THINKING_STEPS.length));
+    }, 800);
+
+    try {
+      const res = await fetch("/api/match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brief, budget }),
+      });
+
+      clearInterval(stepInterval);
+      setThinkStep(THINKING_STEPS.length);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.matches) setMatches(data.matches);
+        if (data.jobId) setJobId(data.jobId);
+      }
+    } catch (err) {
+      clearInterval(stepInterval);
+      console.error(err);
+    }
+
+    await new Promise(r => setTimeout(r, 400));
+    setPhase("results");
+  };
+
+  // Auto-trigger matching when brief arrives from homepage search bar
+  useEffect(() => {
+    if (!autoSubmitted.current && brief.length >= 20) {
+      autoSubmitted.current = true;
+      handleSubmit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-surface-gray">
+      <div className="max-w-2xl mx-auto px-6 py-12">
+
+        {/* ── Form ── */}
+        {phase === "form" && (
+          <div>
+            <div className="mb-8">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-border-crisp text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-4">
+                <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                AI matching — 60 seconds
+              </span>
+              <h1 className="text-4xl font-bold font-headline text-tech-blue-deep mb-2">
+                Describe what you need
+              </h1>
+              <p className="font-body text-on-surface-variant">
+                Write it like you&apos;d explain it to a colleague. Our AI does the rest.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl border border-border-crisp p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-2">
+                  Describe your project
+                </label>
+                <textarea
+                  rows={5}
+                  placeholder="e.g. I need a React developer to rebuild our analytics dashboard. TypeScript required. About 3 weeks of work."
+                  value={brief}
+                  onChange={e => setBrief(e.target.value)}
+                  className="w-full border border-border-crisp rounded-lg px-4 py-3 text-sm font-body text-on-surface focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/10 bg-surface-gray/50 resize-none"
+                />
+                <div className="flex items-center justify-between mt-1.5">
+                  <p className="text-xs font-body text-on-surface-variant h-4">
+                    {brief.length > 0 && brief.length < 50 && "Add more detail for better AI matches"}
+                    {brief.length >= 50 && `${brief.length} chars — good detail`}
+                  </p>
+                  <button onClick={runScope} disabled={brief.trim().length < 8 || scoping}
+                    className="text-xs font-semibold font-body text-electric-violet hover:underline disabled:opacity-40 disabled:no-underline flex items-center gap-1 shrink-0">
+                    {scoping
+                      ? <><span className="w-3 h-3 border-2 border-electric-violet border-t-transparent rounded-full animate-spin" /> Scoping…</>
+                      : <><span className="material-symbols-outlined" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>auto_fix_high</span> Scope it with AI</>}
+                  </button>
+                </div>
+              </div>
+
+              {/* AI scoping assistant result */}
+              {scope && (
+                <div className="bg-electric-violet/5 rounded-lg p-4 border border-electric-violet/20 space-y-3">
+                  <p className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest flex items-center gap-1.5">
+                    <span className="material-symbols-outlined" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>auto_fix_high</span>
+                    AI scoping assistant
+                  </p>
+                  <div>
+                    <p className="text-[11px] font-body text-on-surface-variant uppercase tracking-widest mb-1">Sharper brief</p>
+                    <p className="text-sm font-body text-on-surface leading-relaxed">{scope.improvedBrief}</p>
+                    <button onClick={() => setBrief(scope.improvedBrief)}
+                      className="text-xs font-semibold font-body text-electric-violet hover:underline mt-1.5 flex items-center gap-1">
+                      <span className="material-symbols-outlined" style={{ fontSize: "13px" }}>check</span> Use this brief
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {scope.suggestedBudget && scope.suggestedBudget !== "unspecified" && (
+                      <span className="text-xs font-body bg-white border border-border-crisp text-tech-blue-deep px-2.5 py-1 rounded-full">
+                        💰 {scope.suggestedBudget}
+                      </span>
+                    )}
+                    {scope.suggestedTimeline && scope.suggestedTimeline !== "flexible" && (
+                      <span className="text-xs font-body bg-white border border-border-crisp text-tech-blue-deep px-2.5 py-1 rounded-full">
+                        ⏱ {scope.suggestedTimeline}
+                      </span>
+                    )}
+                    {scope.skills.map(s => (
+                      <span key={s} className="text-xs font-body bg-white border border-border-crisp text-tech-blue-deep px-2.5 py-1 rounded-full">{s}</span>
+                    ))}
+                  </div>
+                  {scope.questions.length > 0 && (
+                    <div>
+                      <p className="text-[11px] font-body text-on-surface-variant uppercase tracking-widest mb-1">Worth clarifying</p>
+                      <ul className="text-xs font-body text-on-surface-variant space-y-0.5">
+                        {scope.questions.map(q => <li key={q}>· {q}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-2">
+                  Budget (optional)
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {["$500–$1k", "$1k–$3k", "$3k–$8k", "$8k+", "Hourly"].map(b => (
+                    <button key={b} onClick={() => setBudget(budget === b ? "" : b)}
+                      className={`text-xs font-semibold font-body px-4 py-2 rounded-full border transition-colors ${
+                        budget === b
+                          ? "border-electric-violet bg-electric-violet/10 text-electric-violet"
+                          : "border-border-crisp text-on-surface-variant hover:border-electric-violet/40"
+                      }`}>
+                      {b}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-electric-violet/5 rounded-lg p-4 border border-electric-violet/20 flex items-start gap-3">
+                <span className="material-symbols-outlined text-electric-violet mt-0.5" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                <p className="text-xs font-body text-on-surface-variant leading-relaxed">
+                  <strong className="text-tech-blue-deep">Free to post.</strong> You only pay 8% when you hire — not before. No spam proposals. Max 5 AI-curated candidates.
+                </p>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={brief.length < 20}
+                className="w-full bg-tech-blue-deep text-white font-semibold font-body py-4 rounded-full hover:scale-[0.99] transition-all text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                Find matching talent
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Thinking ── */}
+        {phase === "thinking" && (
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="w-14 h-14 border-2 border-electric-violet border-t-transparent rounded-full animate-spin mb-8" />
+            <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-8">
+              AI is finding your matches
+            </h2>
+            <div className="space-y-3 w-full max-w-xs">
+              {THINKING_STEPS.map((step, i) => (
+                <div key={step} className={`flex items-center gap-3 transition-opacity duration-300 ${i < thinkStep ? "opacity-100" : "opacity-25"}`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors ${i < thinkStep ? "bg-electric-violet" : "bg-border-crisp"}`}>
+                    {i < thinkStep
+                      ? <span className="material-symbols-outlined text-white" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>check</span>
+                      : <span className="text-xs font-semibold font-body text-on-surface-variant">{i + 1}</span>
+                    }
+                  </div>
+                  <span className="text-sm font-body text-on-surface-variant">{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Results ── */}
+        {phase === "results" && (
+          <div>
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-3xl font-bold font-headline text-tech-blue-deep">Your top matches</h2>
+                <span className="text-xs font-semibold font-body bg-electric-violet/10 text-electric-violet px-3 py-1 rounded-full">
+                  {matches.length} candidates
+                </span>
+              </div>
+              <p className="font-body text-on-surface-variant text-sm">
+                AI-scored and explained against your brief. No spam. No connects required.
+              </p>
+            </div>
+
+            {/* Brief recap */}
+            <div className="bg-electric-violet/5 rounded-xl p-4 border border-electric-violet/20 mb-6">
+              <p className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-1">Your brief</p>
+              <p className="text-sm font-body text-on-surface line-clamp-2">{brief}</p>
+              {budget && (
+                <span className="text-xs font-body text-electric-violet mt-1 inline-block">
+                  Budget: {budget}
+                </span>
+              )}
+            </div>
+
+            {/* Blind-first toggle */}
+            <div className="flex items-center justify-between bg-white rounded-xl border border-border-crisp p-4 mb-4">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "20px", fontVariationSettings: "'FILL' 1" }}>
+                  {blind ? "visibility_off" : "visibility"}
+                </span>
+                <div>
+                  <p className="text-sm font-semibold font-body text-tech-blue-deep">
+                    {blind ? "Blind-first mode on" : "Identities revealed"}
+                  </p>
+                  <p className="text-xs font-body text-on-surface-variant">
+                    {blind ? "Judging skill & fit before name, photo, or country." : "Names and locations are now shown."}
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setBlind(b => !b)}
+                className="text-xs font-semibold font-body text-electric-violet border border-electric-violet/30 px-4 py-2 rounded-full hover:bg-electric-violet/5 transition-colors shrink-0">
+                {blind ? "Reveal" : "Hide"}
+              </button>
+            </div>
+
+            {/* Matches */}
+            <div className="space-y-4 mb-6">
+              {matches.map((m, i) => (
+                <MatchCard key={m.id} m={m} highlight={i === 0} blind={blind} index={i} />
+              ))}
+            </div>
+
+            {/* Job saved notice */}
+            {jobId && (
+              <div className="bg-white rounded-xl border border-border-crisp p-4 mb-4 flex items-center gap-3">
+                <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "20px", fontVariationSettings: "'FILL' 1" }}>task_alt</span>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold font-body text-tech-blue-deep">Project posted to job board</p>
+                  <p className="text-xs font-body text-on-surface-variant">Freelancers can now find and pitch your project.</p>
+                </div>
+                <Link href="/jobs" className="text-xs font-semibold font-body text-electric-violet hover:underline shrink-0">
+                  View board →
+                </Link>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="bg-white rounded-xl border border-border-crisp p-6 text-center">
+              <p className="font-bold font-body text-tech-blue-deep mb-1">Ready to hire?</p>
+              <p className="text-xs font-body text-on-surface-variant mb-4">
+                Platform fee is only 8% when the project is complete — not upfront.
+              </p>
+              <div className="flex gap-3 justify-center flex-wrap">
+                <button onClick={() => { setPhase("form"); setMatches([]); setJobId(null); }}
+                  className="text-sm font-semibold font-body text-on-surface-variant border border-border-crisp px-5 py-2.5 rounded-full hover:border-tech-blue-deep transition-colors">
+                  Refine brief
+                </button>
+                <Link href="/hire"
+                  className="text-sm font-semibold font-body bg-electric-violet text-white px-6 py-2.5 rounded-full hover:scale-[1.02] transition-transform">
+                  Browse all talent
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+export default function PostJobPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface-gray" />}>
+      <PostJobContent />
+    </Suspense>
+  );
+}

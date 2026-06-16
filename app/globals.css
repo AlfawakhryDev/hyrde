@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+@theme {
+  --font-headline: 'DM Sans', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* Hyrde brand */
+  --color-tech-blue-deep: #0A0A0F;
+  --color-tech-blue-muted: #1a1a2e;
+  --color-electric-violet: #5B4FCF;
+  --color-ai-glow: #A99EE8;
+  --color-surface-gray: #F5F4F0;
+  --color-border-crisp: #E4E2DC;
+
+  /* Surface scale */
+  --color-surface: #F5F4F0;
+  --color-surface-dim: #dcdad5;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #F5F4F0;
+  --color-surface-container: #eeece7;
+  --color-surface-container-high: #e6e4de;
+  --color-surface-container-highest: #dedad3;
+
+  /* On-surface */
+  --color-on-surface: #0A0A0F;
+  --color-on-surface-variant: #5a5a6a;
+  --color-inverse-surface: #1a1a2e;
+  --color-inverse-on-surface: #F5F4F0;
+
+  /* Primary */
+  --color-on-primary: #ffffff;
+  --color-primary-container: #0A0A0F;
+  --color-on-primary-container: #9990d8;
+  --color-primary-fixed: #ded9ff;
+  --color-primary-fixed-dim: #c0b8f5;
+
+  /* Secondary */
+  --color-secondary: #5B4FCF;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #7066e0;
+  --color-on-secondary-container: #fffbff;
+
+  /* Misc */
+  --color-outline: #78787a;
+  --color-outline-variant: #c8c6ce;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+}
+
+/* Material Symbols */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(228, 226, 220, 0.8);
+}
+
+/* Hyrde AI gradient */
+.ai-match-gradient {
+  background: linear-gradient(135deg, #5B4FCF 0%, #0A0A0F 100%);
+}
+
+/* Ambient glow blob */
+.glow-accent {
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: #F5F4F0;
+  color: #0A0A0F;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Motion: AI-native micro-animations ──────────────────────────────── */
+@keyframes fadeIn   { from { opacity: 0 } to { opacity: 1 } }
+@keyframes fadeUp   { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
+@keyframes floatY   { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+@keyframes shimmer  { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+@keyframes gradientPan { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }
+@keyframes pulseRing { 0% { transform: scale(.7); opacity: .55 } 70%,100% { transform: scale(2.4); opacity: 0 } }
+@keyframes blink    { 0%,100% { opacity: 1 } 50% { opacity: 0 } }
+@keyframes scanline { 0% { transform: translateY(-120%) } 100% { transform: translateY(420%) } }
+@keyframes spinSlow { to { transform: rotate(360deg) } }
+@keyframes dotFlash { 0%,80%,100% { opacity: .25 } 40% { opacity: 1 } }
+@keyframes slideInRight { from { transform: translateX(100%) } to { transform: translateX(0) } }
+
+.animate-fadeup     { animation: fadeUp .55s cubic-bezier(.2,.7,.2,1) both }
+.animate-floaty     { animation: floatY 5s ease-in-out infinite }
+.animate-spin-slow  { animation: spinSlow 14s linear infinite }
+
+/* Animated AI gradient text */
+.text-gradient-ai {
+  background: linear-gradient(90deg,#5B4FCF,#A99EE8,#7066e0,#5B4FCF);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientPan 6s ease infinite;
+}
+
+/* Shimmering AI pill — animated gradient border on a white fill */
+.ai-shimmer-pill {
+  position: relative;
+  background:
+    linear-gradient(#ffffff,#ffffff) padding-box,
+    linear-gradient(90deg,#5B4FCF,#A99EE8,#5B4FCF) border-box;
+  background-size: 100% 100%, 200% 100%;
+  border: 1px solid transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Live "thinking" pulse ring behind a status dot */
+.ai-pulse-ring { position: relative }
+.ai-pulse-ring::before {
+  content: ""; position: absolute; inset: 0; border-radius: 9999px;
+  background: #5B4FCF; animation: pulseRing 2s ease-out infinite;
+}
+
+/* Blinking caret for agent "typing" */
+.caret::after { content: "▋"; margin-left: 1px; color: #5B4FCF; animation: blink 1s step-end infinite }
+
+/* Three-dot agent thinking indicator */
+.think-dot { animation: dotFlash 1.4s infinite both }
+.think-dot:nth-child(2) { animation-delay: .2s }
+.think-dot:nth-child(3) { animation-delay: .4s }
+
+/* Agent console scanline sheen */
+.agent-scan { position: relative; overflow: hidden }
+.agent-scan::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 36%;
+  background: linear-gradient(180deg, transparent, rgba(91,79,207,.07), transparent);
+  animation: scanline 3.6s linear infinite; pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important }
+}
