@@ -7,12 +7,12 @@
 
 ---
 
-## 📊 OVERALL PROGRESS: ~20%
+## 📊 OVERALL PROGRESS: ~40%
 
 ```
-Phase 0  Foundation (technical SEO)   [███████░░░]  70%   weight 10%
-Phase 1  Switcher / comparison pages  [███████░░░]  70%   weight 20%
-Phase 2  Programmatic skill×city      [░░░░░░░░░░]   0%   weight 20%
+Phase 0  Foundation (technical SEO)   [█████████░]  90%   weight 10%
+Phase 1  Switcher / comparison pages  [████████░░]  80%   weight 20%
+Phase 2  Programmatic skill×city      [███████░░░]  75%   weight 20%
 Phase 3  Content / authority hub      [░░░░░░░░░░]   0%   weight 25%
 Phase 4  Linkable assets + links      [░░░░░░░░░░]   0%   weight 15%
 Phase 5  Convert + measure to 10      [░░░░░░░░░░]   0%   weight 10%
@@ -29,15 +29,16 @@ Zapier never fought "automation." They built millions of templated pages for "co
 
 ---
 
-## PHASE 0 — Foundation (technical SEO)  · 70%
+## PHASE 0 — Foundation (technical SEO)  · 90%
 - [x] Fix sitemap base URL `hyrde.ai` → `hyrde.net` (was pointing Google at a dead domain)
 - [x] Add `/join`, `/get-started`, `/rates`, `/talent`, comparison pages to sitemap
 - [x] Add `app/robots.ts` (allow all + sitemap pointer)
 - [x] Add `metadataBase = https://hyrde.net` to root layout (fixes canonical/OG URLs)
-- [ ] Verify domain in Google Search Console + submit sitemap  ← **NEEDS USER** (DNS TXT or HTML file)
-- [ ] Per-page canonical tags + JSON-LD structured data (Organization, FAQ, Breadcrumb)
+- [x] Verify domain in Google Search Console + submit sitemap (Domain property via DNS; submitted https://hyrde.net/sitemap.xml → Success)
+- [x] Per-page canonical tags (skill×city + comparison pages) + Breadcrumb/FAQ JSON-LD
+- [ ] Organization JSON-LD on root layout (logo, sameAs) — still pending
 
-## PHASE 1 — Switcher / comparison pages (highest client intent)  · 70%
+## PHASE 1 — Switcher / comparison pages (highest client intent)  · 80%
 Targets the burned-client searches: "upwork alternative", "fiverr alternative", "toptal vs", "upwork scam protection".
 - [x] `lib/compare.ts` — competitor data + real client pain points (sourced from Reddit + 2026 fee data)
 - [x] `components/ComparisonPage.tsx` — shared, reusable comparison layout
@@ -45,16 +46,20 @@ Targets the burned-client searches: "upwork alternative", "fiverr alternative", 
 - [x] `/fiverr-alternative` page
 - [x] `/toptal-alternative` page
 - [x] Homepage "tired of Upwork?" section → routes to the alternative pages
+- [x] FAQ JSON-LD on each comparison page (rich-result eligibility)
 - [ ] `/compare` hub page indexing all comparisons
-- [ ] FAQ JSON-LD on each comparison page (rich-result eligibility)
 - [ ] Add `freelancer.com`, `guru`, `fiverr-pro` competitors later
 
-## PHASE 2 — Programmatic skill×city (de-thin the 325 pages)  · 0%
+## PHASE 2 — Programmatic skill×city (de-thin the 325 pages)  · 75%
 Risk: post-2024 Google penalizes thin pSEO. Each page needs UNIQUE value.
-- [ ] Inject per-page: live talent count, local rate band (from `/rates` data), 2–3 sample matches, city-specific copy
-- [ ] Add "[skill] hourly rate in [city]" + FAQ blocks
-- [ ] Internal-link mesh between skill, city, and comparison pages
-- [ ] `noindex` any genuinely empty combos
+- [x] Unique deterministic intro copy (3 varied templates, hashed by skill+city)
+- [x] Rate context: $/hr vs global baseline, junior/mid/senior bands
+- [x] Per-page FAQ blocks ("cost to hire", "how fast", "in demand?", "pay if I don't hire?") tied to Upwork pain points
+- [x] FAQPage + BreadcrumbList JSON-LD on every skill×city page
+- [x] Internal-link mesh: "[skill] rates by city" grid + link to /upwork-alternative + /get-started
+- [x] Unique per-page canonical + title/description (incl. $rate/hr)
+- [ ] Live talent counts / real sample matches (currently mock data) — revisit when real talent exists
+- [ ] `noindex` genuinely empty combos (N/A for now — all 300 combos carry rate + FAQ value)
 
 ## PHASE 3 — Content / authority hub (blog/guides)  · 0%
 - [ ] Stand up `/blog` (or `/guides`) route + index

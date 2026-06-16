@@ -60,6 +60,95 @@ export function getRate(skillSlug: string, citySlug: string): number {
 export const ALL_SKILL_SLUGS = Object.keys(SKILLS);
 export const ALL_CITY_SLUGS  = Object.keys(CITIES);
 
+// ─── pSEO content helpers (unique value per skill×city page) ─────────
+// Deterministic so the same combo always renders the same copy, but
+// varied across the grid so Google doesn't see 325 boilerplate clones.
+function hashIndex(seed: string, mod: number): number {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  return mod > 0 ? h % mod : 0;
+}
+
+export interface RateContext {
+  rate: number; baseline: number;
+  junior: number; mid: number; senior: number;
+  diffPct: number; direction: "above" | "below" | "in line with";
+}
+
+export function getRateContext(skillSlug: string, citySlug: string): RateContext | null {
+  const skill = SKILLS[skillSlug];
+  const city  = CITIES[citySlug];
+  if (!skill || !city) return null;
+  const rate = getRate(skillSlug, citySlug);
+  const diff = Math.round((city.multiplier - 1) * 100);
+  return {
+    rate,
+    baseline: skill.avgRate,
+    junior: Math.round(rate * 0.6),
+    mid: rate,
+    senior: Math.round(rate * 1.5),
+    diffPct: Math.abs(diff),
+    direction: diff > 0 ? "above" : diff < 0 ? "below" : "in line with",
+  };
+}
+
+// Other cities for the same skill, ranked by rate — powers the
+// internal-link mesh + "how rates compare" block.
+export function getCityRateComparisons(skillSlug: string, citySlug: string, n = 5) {
+  if (!SKILLS[skillSlug]) return [];
+  return ALL_CITY_SLUGS
+    .filter(c => c !== citySlug && CITIES[c].label !== "Remote")
+    .map(c => ({ slug: c, label: CITIES[c].label, rate: getRate(skillSlug, c) }))
+    .sort((a, b) => b.rate - a.rate)
+    .slice(0, n);
+}
+
+export function getSkillCityIntro(skillSlug: string, citySlug: string): string {
+  const s = SKILLS[skillSlug]; const c = CITIES[citySlug];
+  const ctx = getRateContext(skillSlug, citySlug);
+  if (!s || !c || !ctx) return "";
+  const locShort = c.label === "Remote" ? "remotely" : `in ${c.label}`;
+  const vsBaseline = ctx.direction === "in line with"
+    ? "right in line with"
+    : `${ctx.diffPct}% ${ctx.direction}`;
+  const variants = [
+    `Looking to hire a ${s.label} ${locShort}? Hyrde matches you with pre-vetted ${s.category.toLowerCase()} talent at around $${ctx.rate}/hr — ${vsBaseline} the $${ctx.baseline}/hr global baseline. Every candidate is screened before you ever see them, so you skip the fake portfolios and inflated "Top Rated" badges that plague the big marketplaces.`,
+    `Hiring a ${s.label} ${locShort} typically runs about $${ctx.rate}/hr. Hyrde's AI reads your brief and surfaces a ranked shortlist of vetted ${s.label}s ${c.label === "Remote" ? "from around the world" : `across ${c.region}`} in seconds — no Connects to buy, no bidding wars, and a flat 8% fee instead of the 20%+ you'd lose elsewhere.`,
+    `Need a ${s.label} ${locShort}? With ${s.demand} demand for ${s.category.toLowerCase()} skills, finding reliable talent fast matters. Hyrde pre-vets every ${s.label}, AI-matches them to your brief in about 60 seconds, and charges just 8% on hire — a fraction of the effective 22–34% take rate burned clients report on legacy platforms.`,
+  ];
+  return variants[hashIndex(skillSlug + citySlug, variants.length)];
+}
+
+export function getSkillCityFaqs(skillSlug: string, citySlug: string): { q: string; a: string }[] {
+  const s = SKILLS[skillSlug]; const c = CITIES[citySlug];
+  const ctx = getRateContext(skillSlug, citySlug);
+  if (!s || !c || !ctx) return [];
+  const locShort = c.label === "Remote" ? "remotely" : `in ${c.label}`;
+  const loc = c.label === "Remote" ? "for remote work" : `in ${c.label}`;
+  const demandWord = s.demand === "high" ? "high" : s.demand === "medium" ? "steady" : "moderate";
+  const vsBaseline = ctx.direction === "in line with"
+    ? "in line with"
+    : `${ctx.diffPct}% ${ctx.direction}`;
+  return [
+    {
+      q: `How much does it cost to hire a ${s.label} ${locShort}?`,
+      a: `The going market rate for a ${s.label} ${loc} is around $${ctx.rate}/hr. Junior talent starts near $${ctx.junior}/hr, while senior specialists run to about $${ctx.senior}/hr. On Hyrde you pay a flat 8% fee when you hire — not the 20–34% effective take rate clients report on Upwork and Fiverr.`,
+    },
+    {
+      q: `How fast can I find a ${s.label} ${locShort}?`,
+      a: `Post a short brief and Hyrde's AI returns a shortlist of pre-vetted ${s.label}s ${loc} in about 60 seconds. Most clients are reviewing real candidates within minutes — no Connects, no bidding wars, and no inbox spam.`,
+    },
+    {
+      q: `Are ${s.label}s ${loc} in demand?`,
+      a: `Yes — ${s.label} is a ${demandWord}-demand ${s.category.toLowerCase()} skill. Rates ${locShort} sit ${vsBaseline} the global baseline of $${ctx.baseline}/hr, reflecting local market conditions and cost of living.`,
+    },
+    {
+      q: `Do I pay anything if I don't hire?`,
+      a: `No. Posting a brief, getting matched, and reviewing ${s.label} candidates ${loc} is completely free. You only pay Hyrde's flat 8% fee once you actually hire — and every match is pre-vetted, so you're not gambling on fake reviews or padded badges.`,
+    },
+  ];
+}
+
 // ─── Mock freelancer data ────────────────────────────────────────────
 export const MOCK_FREELANCERS = [
   { id: "1", name: "Sara R.",    skill: "react-developer",   rate: 90,  score: 96, bio: "6 yrs React, ex-Stripe. Shipped 3 SaaS products from 0→1.",         location: "remote"     },
