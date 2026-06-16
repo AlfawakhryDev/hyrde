@@ -455,8 +455,8 @@ const PRICING_TIERS: PricingTier[] = [
     id: "business",
     name: "Business",
     audience: "Volume hirers",
-    price: "$199",
-    priceNote: "/mo — placeholder, billed annually",
+    price: "Custom",
+    priceNote: "tailored to your hiring volume",
     badge: "For scale",
     features: [
       "Everything in Companies",
@@ -503,8 +503,8 @@ export const PRICING = {
       a: "AI does the matching and screening that armies of recruiters used to. Lower overhead means we pass the savings on.",
     },
     {
-      q: "Is the $199 Business price final?",
-      a: "It's a placeholder while we pilot volume plans. Talk to us and we'll tailor pricing to your hiring volume.",
+      q: "How does Business pricing work?",
+      a: "Business plans are tailored to your hiring volume. Talk to us and we'll put together pricing that fits how often your team hires.",
     },
   ],
 };
@@ -709,8 +709,8 @@ export const SOLUTIONS: SolutionPackage[] = [
     id: "ai-recruiter",
     name: "AI Recruiter",
     tagline: "Replace your staffing agency",
-    price: "$2,500",
-    priceNote: "/month",
+    price: "Custom",
+    priceNote: "monthly — tailored to your roles",
     features: [
       "Unlimited AI-scoped job briefs",
       "Dedicated talent pool (50+ vetted freelancers)",
@@ -725,8 +725,8 @@ export const SOLUTIONS: SolutionPackage[] = [
     id: "launch-pod",
     name: "Launch Pod",
     tagline: "A fully AI-curated team for your sprint",
-    price: "$12,000",
-    priceNote: "/quarter",
+    price: "Custom",
+    priceNote: "per sprint — scoped to your project",
     highlight: true,
     badge: "Most requested",
     features: [
@@ -743,8 +743,8 @@ export const SOLUTIONS: SolutionPackage[] = [
     id: "talent-cloud",
     name: "Talent Cloud",
     tagline: "Your private on-demand workforce",
-    price: "From $30,000",
-    priceNote: "/year",
+    price: "Custom",
+    priceNote: "annual — scoped to your workforce",
     features: [
       "Private vetted talent cloud (100+ freelancers)",
       "Unlimited hires — flat annual fee, no per-hire fee",
