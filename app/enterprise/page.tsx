@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ENTERPRISE, SOLUTIONS } from "@/content/marketing";
 import CostOfHiringSection from "@/components/CostOfHiringSection";
-import BookDemoForm from "@/components/BookDemoForm";
 
 export const metadata: Metadata = {
   title: ENTERPRISE.meta.title,
@@ -175,7 +174,37 @@ export default function EnterprisePage() {
             {ENTERPRISE.demo.sub}
           </p>
         </div>
-        <BookDemoForm />
+
+        <div className="bg-white rounded-2xl border border-border-crisp shadow-sm p-8 md:p-10 text-center max-w-2xl mx-auto">
+          <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-electric-violet/10 mb-5">
+            <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "30px", fontVariationSettings: "'FILL' 1" }}>
+              calendar_month
+            </span>
+          </span>
+          <h3 className="text-xl md:text-2xl font-bold font-headline text-tech-blue-deep mb-2">
+            Request access &amp; we&apos;ll set up your demo
+          </h3>
+          <p className="text-sm font-body text-on-surface-variant leading-relaxed mb-7 max-w-md mx-auto">
+            Tell us how your team hires in 90 seconds. A founding-team member will reach out within one business day to walk you through Hyrde tailored to your needs.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/get-started"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-electric-violet text-white font-semibold font-body text-sm px-8 py-3.5 rounded-full hover:opacity-90 transition-opacity"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              {ENTERPRISE.demo.cta.label}
+            </Link>
+            <a
+              href="mailto:abdelrahman@hyrde.net"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-border-crisp text-tech-blue-deep font-semibold font-body text-sm px-8 py-3.5 rounded-full hover:border-electric-violet transition-colors"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>mail</span>
+              Email sales
+            </a>
+          </div>
+          <p className="text-xs font-body text-on-surface-variant/70 mt-5">{ENTERPRISE.demo.fields.note}</p>
+        </div>
       </section>
     </div>
   );

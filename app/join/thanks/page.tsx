@@ -57,7 +57,7 @@ export default function FreelancerThanksPage() {
         </div>
 
         <p className="text-xs font-body text-on-surface-variant mt-6">
-          Questions? Email <span className="font-semibold text-tech-blue-deep">hello@hyrde.com</span>
+          Questions? Email <a href="mailto:abdelrahman@hyrde.net" className="font-semibold text-tech-blue-deep hover:text-electric-violet transition-colors">abdelrahman@hyrde.net</a>
         </p>
       </div>
     </div>

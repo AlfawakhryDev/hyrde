@@ -22,8 +22,8 @@ export const CTA = {
   postJob:      { label: "Post a job",     href: "/get-started" },
   browseTalent: { label: "Browse talent",  href: "/talent" },
   seePricing:   { label: "See pricing",    href: "/pricing" },
-  bookDemo:     { label: "Book a demo",    href: "/enterprise#demo" },
-  contactSales: { label: "Contact sales",  href: "/enterprise#demo" },
+  bookDemo:     { label: "Book a demo",    href: "/get-started" },
+  contactSales: { label: "Contact sales",  href: "/get-started" },
   about:        { label: "Why Hyrde",      href: "/about" },
 };
 
@@ -555,9 +555,9 @@ export const ENTERPRISE = {
     sub: "Tell us how your team hires and we'll show you Hyrde tailored to it. We'll follow up within one business day.",
     fields: {
       success: "Thanks — our team will reach out within one business day.",
-      note: "This is a demo form. No data leaves your browser in this build.",
+      note: "Prefer email? Reach us directly at abdelrahman@hyrde.net.",
     },
-    cta: { label: "Request demo", href: "#" },
+    cta: { label: "Request access to hire", href: "/get-started" },
   },
 };
 
@@ -719,7 +719,7 @@ export const SOLUTIONS: SolutionPackage[] = [
       "ATS integration (Greenhouse, Lever, Ashby)",
       "Reduced success fee: 5% vs 8% standard",
     ],
-    cta: { label: "Start 30-day pilot", href: "/enterprise#demo" },
+    cta: { label: "Start 30-day pilot", href: "/get-started" },
   },
   {
     id: "launch-pod",
@@ -737,7 +737,7 @@ export const SOLUTIONS: SolutionPackage[] = [
       "IP & compliance documentation included",
       "30-day talent replacement guarantee",
     ],
-    cta: { label: "Build my pod", href: "/enterprise#demo" },
+    cta: { label: "Build my pod", href: "/get-started" },
   },
   {
     id: "talent-cloud",
@@ -753,6 +753,6 @@ export const SOLUTIONS: SolutionPackage[] = [
       "API + ATS/VMS integrations",
       "SLA: shortlist in 24h, fill in 7 days or free",
     ],
-    cta: { label: "Talk to enterprise sales", href: "/enterprise#demo" },
+    cta: { label: "Talk to enterprise sales", href: "/get-started" },
   },
 ];

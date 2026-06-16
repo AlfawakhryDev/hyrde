@@ -31,6 +31,14 @@ export default function Footer() {
 
         <div className="h-px w-full max-w-4xl bg-white/10" />
 
+        <a
+          href="mailto:abdelrahman@hyrde.net"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold font-body text-on-primary-container/60 hover:text-ai-glow transition-colors"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>mail</span>
+          abdelrahman@hyrde.net
+        </a>
+
         <p className="text-xs font-body text-on-primary-container/40">
           © 2025 Hyrde. AI-native freelancing.
         </p>
