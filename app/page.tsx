@@ -11,7 +11,7 @@ const FEATURED_SKILLS = [
 
 const STATS = [
   { value: "$0",  label: "Cost to freelancers" },
-  { value: "8%",  label: "Fee — hire only" },
+  { value: "8%",  label: "Fee — only on success" },
   { value: "5",   label: "AI-matched max"  },
   { value: "60s", label: "To your matches" },
 ];
@@ -30,7 +30,7 @@ const PRICING = [
     icon: "business_center",
     who: "For clients",
     price: "Free to post",
-    detail: "Pay 8% only when you hire — not before. No listing fees, no subscriptions required.",
+    detail: "Flat 8% — charged only after the task is successfully completed. No listing fees, no subscriptions required.",
   },
   {
     icon: "person",
@@ -69,7 +69,7 @@ export default function Home() {
         <p className="text-xl font-body text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
           Describe your project in plain language — our AI scores every freelancer against your brief
           and returns the top 5 with explanations. Free to post.{" "}
-          <strong className="text-tech-blue-deep font-semibold">8% only when you hire.</strong>
+          <strong className="text-tech-blue-deep font-semibold">Flat 8% — only after the task is done.</strong>
         </p>
 
         <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 mb-6 max-w-2xl mx-auto">
@@ -218,7 +218,7 @@ export default function Home() {
                 "Free to post — no upfront cost",
                 "AI reads your brief and scores every freelancer",
                 "See exactly why each person was matched",
-                "8% fee only when the project is complete",
+                "Flat 8% — charged only after the task is successfully completed",
               ].map(item => (
                 <div key={item} className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-electric-violet/10 flex items-center justify-center shrink-0">
