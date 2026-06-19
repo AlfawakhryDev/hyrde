@@ -57,8 +57,8 @@ export default function Home() {
       {/* ── Hero ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 pt-20 pb-20 text-center relative">
         <div className="mb-7 select-none">
-          <span className="inline-block text-7xl md:text-[112px] font-bold font-headline tracking-tight leading-none ai-match-gradient bg-clip-text text-transparent">
-            Hyrde
+          <span className="inline-block text-7xl md:text-[112px] font-bold font-headline tracking-tight leading-none text-tech-blue-deep">
+            hyrde.net
           </span>
         </div>
 
