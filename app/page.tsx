@@ -55,7 +55,13 @@ export default function Home() {
       <div className="absolute top-[55%] left-0 w-[400px] h-[400px] bg-ai-glow rounded-full glow-accent -ml-32 pointer-events-none" />
 
       {/* ── Hero ── */}
-      <section className="max-w-[1280px] mx-auto px-6 md:px-12 pt-24 pb-20 text-center relative">
+      <section className="max-w-[1280px] mx-auto px-6 md:px-12 pt-20 pb-20 text-center relative">
+        <div className="mb-7 select-none">
+          <span className="inline-block text-7xl md:text-[112px] font-bold font-headline tracking-tight leading-none ai-match-gradient bg-clip-text text-transparent">
+            Hyrde
+          </span>
+        </div>
+
         <div className="ai-shimmer-pill inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 shadow-[0_2px_12px_rgba(91,79,207,0.10)]">
           <span className="material-symbols-outlined text-electric-violet animate-floaty" style={{ fontSize: "15px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
           <span className="text-xs font-semibold font-body text-tech-blue-deep uppercase tracking-widest">No bidding, ever — AI-matched in 60 seconds</span>
