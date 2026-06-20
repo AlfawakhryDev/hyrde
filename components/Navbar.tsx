@@ -39,27 +39,7 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface-gray/90 backdrop-blur-md border-b border-border-crisp">
-
-      {/* ── Top utility strip: contact email + theme toggle ── */}
-      <div className="h-9 border-b border-border-crisp/70 bg-surface-container/40">
-        <div className="flex items-center justify-between h-full px-6 md:px-12">
-          <a href={`mailto:${CONTACT_EMAIL}`}
-            className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold font-body text-on-surface-variant hover:text-electric-violet transition-colors"
-            aria-label={`Email ${CONTACT_EMAIL}`}>
-            <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>mail</span>
-            <span className="truncate">{CONTACT_EMAIL}</span>
-          </a>
-          <button onClick={toggleTheme}
-            className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold font-body text-on-surface-variant hover:text-electric-violet transition-colors"
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title="Toggle theme">
-            <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
-            <span className="hidden sm:inline">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── Main nav row ── */}
-      <div className="flex justify-between items-center px-6 md:px-12 h-16">
+      <div className="flex justify-between items-center gap-4 px-6 md:px-12 h-16">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setOpen(false)} aria-label="Hyrde home">
@@ -77,7 +57,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex gap-5 items-center">
+        <nav className="hidden lg:flex gap-5 items-center">
           {NAV_LINKS.map(link => (
             <Link
               key={link.href}
@@ -103,13 +83,21 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop CTAs */}
-        <div className="hidden md:flex items-center gap-2">
-          <Link href="/dashboard" className="text-xs font-semibold font-body text-on-surface-variant px-3 py-2 hover:text-electric-violet transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined" style={{ fontSize: "13px" }}>dashboard</span>
-            Dashboard
-          </Link>
-          <Link href="/join" className="text-xs font-semibold font-body text-on-surface px-4 py-2 hover:opacity-70 transition-opacity">
+        {/* Desktop right cluster: email · theme toggle · CTAs */}
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
+          <a href={`mailto:${CONTACT_EMAIL}`}
+            className="flex items-center gap-1.5 text-xs font-semibold font-body text-on-surface-variant hover:text-electric-violet transition-colors"
+            aria-label={`Email ${CONTACT_EMAIL}`} title={CONTACT_EMAIL}>
+            <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>mail</span>
+            <span className="hidden xl:inline">{CONTACT_EMAIL}</span>
+          </a>
+          <button onClick={toggleTheme}
+            className="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-electric-violet hover:bg-surface-container-high transition-colors"
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title="Toggle theme">
+            <span className="material-symbols-outlined" style={{ fontSize: "19px" }}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+          </button>
+          <span className="w-px h-5 bg-border-crisp mx-0.5" aria-hidden="true" />
+          <Link href="/join" className="text-xs font-semibold font-body text-on-surface px-3 py-2 hover:opacity-70 transition-opacity">
             Join free
           </Link>
           <Link href="/get-started" className="bg-electric-violet text-white text-xs font-semibold font-body px-5 py-2 rounded-full hover:opacity-90 transition-opacity">
@@ -117,17 +105,29 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile toggle */}
-        <button onClick={() => setOpen(o => !o)}
-          className="md:hidden w-10 h-10 flex items-center justify-center text-on-surface -mr-2"
-          aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open}>
-          <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>{open ? "close" : "menu"}</span>
-        </button>
+        {/* Mobile actions */}
+        <div className="lg:hidden flex items-center gap-1 shrink-0">
+          <a href={`mailto:${CONTACT_EMAIL}`}
+            className="w-10 h-10 flex items-center justify-center text-on-surface-variant"
+            aria-label={`Email ${CONTACT_EMAIL}`}>
+            <span className="material-symbols-outlined" style={{ fontSize: "21px" }}>mail</span>
+          </a>
+          <button onClick={toggleTheme}
+            className="w-10 h-10 flex items-center justify-center text-on-surface-variant"
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
+            <span className="material-symbols-outlined" style={{ fontSize: "22px" }}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+          </button>
+          <button onClick={() => setOpen(o => !o)}
+            className="w-10 h-10 flex items-center justify-center text-on-surface -mr-2"
+            aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open}>
+            <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>{open ? "close" : "menu"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile dropdown */}
       {open && (
-        <nav className="md:hidden border-t border-border-crisp bg-surface-gray/98 backdrop-blur-md px-6 py-4 flex flex-col gap-1">
+        <nav className="lg:hidden border-t border-border-crisp bg-surface-gray/98 backdrop-blur-md px-6 py-4 flex flex-col gap-1">
           {NAV_LINKS.map(link => (
             <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
               className={`py-2.5 text-sm font-semibold font-body uppercase tracking-widest flex items-center gap-1.5 ${
@@ -143,10 +143,9 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="flex gap-3 pt-3 mt-2 border-t border-border-crisp">
-            <Link href="/dashboard" onClick={() => setOpen(false)}
-              className="flex-1 text-center text-xs font-semibold font-body text-on-surface border border-border-crisp px-4 py-2.5 rounded-full flex items-center justify-center gap-1">
-              <span className="material-symbols-outlined" style={{ fontSize: "12px" }}>dashboard</span>
-              Dashboard
+            <Link href="/join" onClick={() => setOpen(false)}
+              className="flex-1 text-center text-xs font-semibold font-body text-on-surface border border-border-crisp px-4 py-2.5 rounded-full">
+              Join free
             </Link>
             <Link href="/get-started" onClick={() => setOpen(false)}
               className="flex-1 text-center bg-electric-violet text-white text-xs font-semibold font-body px-5 py-2.5 rounded-full">
