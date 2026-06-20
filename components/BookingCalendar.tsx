@@ -43,7 +43,7 @@ export default function BookingCalendar({ slots, brief = "", onBooked, compact =
         <div className="w-14 h-14 ai-match-gradient rounded-2xl flex items-center justify-center mx-auto mb-3">
           <span className="material-symbols-outlined text-white" style={{ fontSize: "26px", fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
         </div>
-        <p className="font-bold font-headline text-tech-blue-deep text-lg mb-1">Call booked!</p>
+        <p className="font-bold font-headline text-on-surface text-lg mb-1">Call booked!</p>
         <p className="text-sm text-on-surface-variant font-body mb-0.5">{selected?.label}</p>
         <p className="text-xs text-on-surface-variant font-body">Confirmation sent to <strong>{email}</strong></p>
       </div>

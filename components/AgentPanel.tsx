@@ -270,7 +270,7 @@ export default function AgentPanel({ open, onClose, initialBrief = "" }: Props) 
                         <div className="flex items-center justify-between mb-1">
                           <div>
                             <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-bold font-headline text-tech-blue-deep">
+                              <span className="text-xs font-bold font-headline text-on-surface">
                                 {i === 0 ? m.name : `Candidate ${String.fromCharCode(65 + i)}`}
                               </span>
                               {i === 0 && <span className="text-[8px] font-bold bg-electric-violet text-white px-1.5 py-0.5 rounded-full">Top</span>}
@@ -278,7 +278,7 @@ export default function AgentPanel({ open, onClose, initialBrief = "" }: Props) 
                             <p className="text-[10px] font-body text-on-surface-variant">{m.skill} · ${m.rate}/hr · {m.location}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-bold font-headline text-tech-blue-deep leading-none">{m.score}</p>
+                            <p className="text-lg font-bold font-headline text-on-surface leading-none">{m.score}</p>
                             <p className="text-[9px] font-body text-on-surface-variant">%</p>
                           </div>
                         </div>
@@ -314,7 +314,7 @@ export default function AgentPanel({ open, onClose, initialBrief = "" }: Props) 
               {done && (
                 <div className="bg-electric-violet/5 border border-electric-violet/20 rounded-xl p-4 text-center animate-fadeup">
                   <span className="material-symbols-outlined text-electric-violet mb-1 block" style={{ fontSize: "20px", fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                  <p className="text-sm font-bold font-headline text-tech-blue-deep">Agent complete</p>
+                  <p className="text-sm font-bold font-headline text-on-surface">Agent complete</p>
                   <p className="text-[10px] font-body text-on-surface-variant mt-0.5">Matched · Outreach drafted · Interview ready</p>
                 </div>
               )}
@@ -325,7 +325,7 @@ export default function AgentPanel({ open, onClose, initialBrief = "" }: Props) 
           {!running && !done && (
             <div className="flex flex-col items-center justify-center h-52 px-8 text-center">
               <span className="material-symbols-outlined text-electric-violet/20 mb-3" style={{ fontSize: "44px" }}>auto_awesome</span>
-              <p className="text-sm font-semibold font-headline text-tech-blue-deep mb-1">Ready to hire</p>
+              <p className="text-sm font-semibold font-headline text-on-surface mb-1">Ready to hire</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">
                 Describe a role above and the agent will scope it, find vetted matches, draft outreach, and book an interview.
               </p>

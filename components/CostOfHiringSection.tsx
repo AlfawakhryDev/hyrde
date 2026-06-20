@@ -23,7 +23,7 @@ export default function CostOfHiringSection({ compact = false, className = "" }:
           <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">
             {eyebrow}
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep mt-3 mb-4 leading-tight">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface mt-3 mb-4 leading-tight">
             {heading}
           </h2>
           <p className="font-body text-on-surface-variant leading-relaxed">{subheading}</p>
@@ -44,7 +44,7 @@ export default function CostOfHiringSection({ compact = false, className = "" }:
                   </span>
                 </span>
                 <div>
-                  <h3 className="text-lg font-bold font-headline text-tech-blue-deep leading-tight">
+                  <h3 className="text-lg font-bold font-headline text-on-surface leading-tight">
                     {group.theme}
                   </h3>
                   <p className="text-xs font-body text-on-surface-variant">{group.blurb}</p>
@@ -64,7 +64,7 @@ export default function CostOfHiringSection({ compact = false, className = "" }:
                       suffix={stat.suffix}
                       display={stat.display}
                       comma={stat.comma}
-                      className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep tracking-tight"
+                      className="text-3xl md:text-4xl font-bold font-headline text-on-surface tracking-tight"
                     />
                     <p className="text-sm font-semibold font-body text-on-surface mt-2 leading-snug">
                       {stat.label}

@@ -14,7 +14,7 @@ export default function FreelancerThanksPage() {
               <circle cx="256" cy="256" r="32" fill="#fff" />
             </svg>
           </span>
-          <span className="text-2xl font-bold font-headline tracking-tight text-tech-blue-deep leading-none">Hyrde</span>
+          <span className="text-2xl font-bold font-headline tracking-tight text-on-surface leading-none">Hyrde</span>
         </Link>
 
         <div className="bg-white rounded-2xl border border-border-crisp shadow-sm p-8 md:p-10">
@@ -24,11 +24,11 @@ export default function FreelancerThanksPage() {
             </span>
           </span>
 
-          <h1 className="text-2xl md:text-3xl font-bold font-headline text-tech-blue-deep mb-3">
+          <h1 className="text-2xl md:text-3xl font-bold font-headline text-on-surface mb-3">
             You&apos;re on the list!
           </h1>
           <p className="font-body text-on-surface-variant text-base leading-relaxed mb-6 max-w-md mx-auto">
-            We&apos;ve got your details. Your AI agent is being set up to <strong className="text-tech-blue-deep">match you to the right jobs</strong> — no bidding, no proposals, ever.
+            We&apos;ve got your details. Your AI agent is being set up to <strong className="text-on-surface">match you to the right jobs</strong> — no bidding, no proposals, ever.
           </p>
 
           <div className="bg-surface-gray rounded-xl border border-border-crisp p-4 mb-7 text-left">
@@ -57,7 +57,7 @@ export default function FreelancerThanksPage() {
         </div>
 
         <p className="text-xs font-body text-on-surface-variant mt-6">
-          Questions? Email <a href="mailto:abdelrahman@hyrde.net" className="font-semibold text-tech-blue-deep hover:text-electric-violet transition-colors">abdelrahman@hyrde.net</a>
+          Questions? Email <a href="mailto:abdelrahman@hyrde.net" className="font-semibold text-on-surface hover:text-electric-violet transition-colors">abdelrahman@hyrde.net</a>
         </p>
       </div>
     </div>

@@ -77,7 +77,7 @@ export default async function TalentPage({
               </span>
               {filteredTalent.length} freelancers{activeCategory !== "All" ? ` in ${activeCategory}` : ""}
             </span>
-            <h1 className="text-4xl font-bold font-headline text-tech-blue-deep">
+            <h1 className="text-4xl font-bold font-headline text-on-surface">
               Verified talent
             </h1>
             <p className="font-body text-on-surface-variant mt-1">
@@ -133,7 +133,7 @@ export default async function TalentPage({
                       {initials}
                     </div>
                     <div>
-                      <p className="font-semibold font-body text-tech-blue-deep text-sm">
+                      <p className="font-semibold font-body text-on-surface text-sm">
                         {f.name}
                       </p>
                       <p className="text-xs text-on-surface-variant font-body">
@@ -183,7 +183,7 @@ export default async function TalentPage({
                       </span>
                     )}
                   </div>
-                  <span className="text-sm font-bold font-headline text-tech-blue-deep">
+                  <span className="text-sm font-bold font-headline text-on-surface">
                     {f.rate > 0 ? `$${f.rate}/hr` : "Rate TBD"}
                   </span>
                 </div>
@@ -200,7 +200,7 @@ export default async function TalentPage({
             >
               people_outline
             </span>
-            <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-2">
+            <h2 className="text-2xl font-bold font-headline text-on-surface mb-2">
               No talent listed yet
             </h2>
             <p className="font-body text-on-surface-variant mb-6">

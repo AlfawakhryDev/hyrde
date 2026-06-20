@@ -79,11 +79,11 @@ export default function RatesPage() {
           <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "16px", fontVariationSettings: "'FILL' 1" }}>trending_up</span>
           <span className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest">{EDITION} Edition · Updated {UPDATED_LABEL}</span>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold font-headline text-tech-blue-deep mb-4 leading-tight">
+        <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface mb-4 leading-tight">
           The Hyrde Freelance Rate Index
         </h1>
         <p className="text-lg font-body text-on-surface-variant max-w-2xl">
-          Real market hourly rates across <strong className="text-tech-blue-deep">24 skills</strong> and <strong className="text-tech-blue-deep">12 cities</strong>, with junior, mid, and senior ranges. Whether you&apos;re hiring or freelancing, know what the work is actually worth. Free to cite — see <a href="#methodology" className="text-electric-violet underline underline-offset-2">methodology</a>.
+          Real market hourly rates across <strong className="text-on-surface">24 skills</strong> and <strong className="text-on-surface">12 cities</strong>, with junior, mid, and senior ranges. Whether you&apos;re hiring or freelancing, know what the work is actually worth. Free to cite — see <a href="#methodology" className="text-electric-violet underline underline-offset-2">methodology</a>.
         </p>
       </section>
 
@@ -106,7 +106,7 @@ export default function RatesPage() {
         if (!skills?.length) return null;
         return (
           <section key={cat} className="max-w-[1280px] mx-auto px-6 md:px-12 mb-12">
-            <h2 className="text-xl font-bold font-headline text-tech-blue-deep mb-4 flex items-center gap-3">
+            <h2 className="text-xl font-bold font-headline text-on-surface mb-4 flex items-center gap-3">
               {cat}
               <span className="text-xs font-semibold font-body text-on-surface-variant bg-surface-container-high px-2.5 py-0.5 rounded-full normal-case">
                 {skills.length} skills
@@ -118,7 +118,7 @@ export default function RatesPage() {
                   className="bg-white rounded-xl p-5 border border-border-crisp hover:border-electric-violet hover:shadow-[0_4px_16px_rgba(124,58,237,0.07)] transition-all group">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="font-bold font-body text-tech-blue-deep text-sm group-hover:text-electric-violet transition-colors mb-1.5">
+                      <p className="font-bold font-body text-on-surface text-sm group-hover:text-electric-violet transition-colors mb-1.5">
                         {skill.label}
                       </p>
                       <span className={`text-xs font-semibold font-body px-2.5 py-0.5 rounded-full ${
@@ -130,7 +130,7 @@ export default function RatesPage() {
                       </span>
                     </div>
                     <div className="text-right shrink-0 ml-4">
-                      <p className="text-2xl font-bold font-headline text-tech-blue-deep">${skill.avgRate}</p>
+                      <p className="text-2xl font-bold font-headline text-on-surface">${skill.avgRate}</p>
                       <p className="text-xs font-body text-on-surface-variant">/hr avg</p>
                     </div>
                   </div>
@@ -150,7 +150,7 @@ export default function RatesPage() {
                             style={{ width: `${(tier.rate / (skill.avgRate * 1.6)) * 100}%` }}
                           />
                         </div>
-                        <span className="text-xs font-semibold font-body text-tech-blue-deep w-14 text-right shrink-0">
+                        <span className="text-xs font-semibold font-body text-on-surface w-14 text-right shrink-0">
                           ${tier.rate}/hr
                         </span>
                       </div>
@@ -167,7 +167,7 @@ export default function RatesPage() {
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-16">
         <div className="mb-6">
           <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-2">Rate by location</p>
-          <h2 className="text-2xl font-bold font-headline text-tech-blue-deep">How location affects rates</h2>
+          <h2 className="text-2xl font-bold font-headline text-on-surface">How location affects rates</h2>
           <p className="font-body text-on-surface-variant mt-1 text-sm">Rates are multiplied by local market demand and cost of living.</p>
         </div>
 
@@ -190,7 +190,7 @@ export default function RatesPage() {
                 {topSkills.map(([slug, skill], i) => (
                   <tr key={slug} className={`border-b border-border-crisp last:border-0 ${i % 2 === 1 ? "bg-surface-gray/40" : ""}`}>
                     <td className="p-4">
-                      <Link href={`/hire/${slug}`} className="font-semibold font-body text-sm text-tech-blue-deep hover:text-electric-violet transition-colors">
+                      <Link href={`/hire/${slug}`} className="font-semibold font-body text-sm text-on-surface hover:text-electric-violet transition-colors">
                         {skill.label}
                       </Link>
                     </td>
@@ -199,7 +199,7 @@ export default function RatesPage() {
                       const isHighest = rate === Math.max(...CITY_COLS.map(c => getRate(slug, c)));
                       return (
                         <td key={citySlug} className="text-center p-4">
-                          <span className={`text-sm font-semibold font-body ${isHighest ? "text-electric-violet" : "text-tech-blue-deep"}`}>
+                          <span className={`text-sm font-semibold font-body ${isHighest ? "text-electric-violet" : "text-on-surface"}`}>
                             ${rate}
                           </span>
                         </td>
@@ -221,7 +221,7 @@ export default function RatesPage() {
 
       {/* Methodology */}
       <section id="methodology" className="max-w-[800px] mx-auto px-6 md:px-12 mb-12 scroll-mt-20">
-        <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-4">Methodology</h2>
+        <h2 className="text-2xl font-bold font-headline text-on-surface mb-4">Methodology</h2>
         <div className="space-y-4 font-body text-on-surface-variant text-sm leading-relaxed">
           <p>
             The Hyrde Freelance Rate Index tracks indicative hourly rates for 24 in-demand freelance skills across 12 global markets. Mid-level rates are the baseline; junior figures are estimated at ~60% and senior at ~150% of the mid rate, consistent with observed spreads across the contract market.
@@ -238,7 +238,7 @@ export default function RatesPage() {
       {/* Cite this index */}
       <section className="max-w-[800px] mx-auto px-6 md:px-12 mb-16">
         <div className="bg-white rounded-2xl border border-border-crisp p-6">
-          <h2 className="text-lg font-bold font-headline text-tech-blue-deep mb-2 flex items-center gap-2">
+          <h2 className="text-lg font-bold font-headline text-on-surface mb-2 flex items-center gap-2">
             <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "20px" }}>format_quote</span>
             Cite this Index
           </h2>

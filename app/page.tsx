@@ -72,17 +72,17 @@ export default function Home() {
       {/* ── Hero ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 pt-20 pb-20 text-center relative">
         <div className="mb-7 select-none">
-          <span className="inline-block text-7xl md:text-[112px] font-bold font-headline tracking-tight leading-none text-tech-blue-deep">
+          <span className="inline-block text-7xl md:text-[112px] font-bold font-headline tracking-tight leading-none text-on-surface">
             hyrde.net
           </span>
         </div>
 
         <div className="ai-shimmer-pill inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 shadow-[0_2px_12px_rgba(91,79,207,0.10)]">
           <span className="material-symbols-outlined text-electric-violet animate-floaty" style={{ fontSize: "15px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-          <span className="text-xs font-semibold font-body text-tech-blue-deep uppercase tracking-widest">No bidding, ever — AI-matched in 60 seconds</span>
+          <span className="text-xs font-semibold font-body text-on-surface uppercase tracking-widest">No bidding, ever — AI-matched in 60 seconds</span>
         </div>
 
-        <h1 className="text-5xl md:text-[64px] font-bold font-headline text-tech-blue-deep mb-6 max-w-4xl mx-auto leading-[1.08] tracking-tight">
+        <h1 className="text-5xl md:text-[64px] font-bold font-headline text-on-surface mb-6 max-w-4xl mx-auto leading-[1.08] tracking-tight">
           Hire pre-vetted freelancers{" "}
           <span className="text-electric-violet">in 60 seconds.</span>
         </h1>
@@ -90,7 +90,7 @@ export default function Home() {
         <p className="text-xl font-body text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
           Describe your project in plain language — our AI scores every freelancer against your brief
           and returns the top 5 with explanations. Free to post.{" "}
-          <strong className="text-tech-blue-deep font-semibold">Flat 8% — only after the task is done.</strong>
+          <strong className="text-on-surface font-semibold">Flat 8% — only after the task is done.</strong>
         </p>
 
         <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 mb-6 max-w-2xl mx-auto">
@@ -103,7 +103,7 @@ export default function Home() {
             <span className="text-xs font-body text-white/80">Vetted shortlist in 60 seconds · free to post</span>
           </Link>
           <Link href="/join"
-            className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-6 bg-white border-2 border-tech-blue-deep text-tech-blue-deep rounded-2xl font-body hover:bg-tech-blue-deep hover:text-white transition-all hover:-translate-y-1 active:scale-95">
+            className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-6 bg-white border-2 border-tech-blue-deep text-on-surface rounded-2xl font-body hover:bg-tech-blue-deep hover:text-white transition-all hover:-translate-y-1 active:scale-95">
             <span className="flex items-center gap-2 text-lg font-bold font-headline">
               <span className="material-symbols-outlined" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>person_add</span>
               Join as a freelancer
@@ -178,7 +178,7 @@ export default function Home() {
                 <span className="text-xs font-body text-white/80">Get matched with vetted talent</span>
               </Link>
               <Link href="/join"
-                className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-5 bg-white text-tech-blue-deep rounded-2xl font-body hover:bg-ai-glow transition-all hover:-translate-y-1 active:scale-95">
+                className="group flex-1 flex flex-col items-center justify-center gap-1 px-8 py-5 bg-white text-on-surface rounded-2xl font-body hover:bg-ai-glow transition-all hover:-translate-y-1 active:scale-95">
                 <span className="flex items-center gap-2 text-lg font-bold font-headline">
                   <span className="material-symbols-outlined" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>person_add</span>
                   I&apos;m a freelancer
@@ -197,7 +197,7 @@ export default function Home() {
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-24">
         <div className="text-center mb-8">
           <p className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-3">Coming from another platform?</p>
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface">
             Tired of disappearing contractors and fake 5-star badges?
           </h2>
           <p className="font-body text-on-surface-variant mt-3 max-w-xl mx-auto">
@@ -213,7 +213,7 @@ export default function Home() {
             <Link key={x.href} href={x.href}
               className="group bg-white rounded-xl p-6 border border-border-crisp hover:border-electric-violet hover:shadow-[0_4px_20px_rgba(91,79,207,0.08)] transition-all">
               <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-2">Hyrde vs</p>
-              <p className="text-lg font-bold font-headline text-tech-blue-deep mb-2 flex items-center justify-between">
+              <p className="text-lg font-bold font-headline text-on-surface mb-2 flex items-center justify-between">
                 {x.name}
                 <span className="material-symbols-outlined text-electric-violet group-hover:translate-x-1 transition-transform" style={{ fontSize: "18px" }}>arrow_forward</span>
               </p>
@@ -228,7 +228,7 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-3">For clients</p>
-            <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep mb-5 leading-tight">
+            <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface mb-5 leading-tight">
               Describe it in plain language.<br />Get 5 real matches in 60 seconds.
             </h2>
             <p className="font-body text-on-surface-variant leading-relaxed mb-6">
@@ -267,7 +267,7 @@ export default function Home() {
                 <div key={f.name} className={`flex items-center gap-3 py-3 ${i < 2 ? "border-b border-border-crisp" : ""}`}>
                   <div className="w-9 h-9 rounded-full ai-match-gradient flex items-center justify-center font-bold text-white text-xs shrink-0">{initials}</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold font-body text-tech-blue-deep">{f.name} <span className="font-normal text-on-surface-variant">· {f.role}</span></p>
+                    <p className="text-sm font-semibold font-body text-on-surface">{f.name} <span className="font-normal text-on-surface-variant">· {f.role}</span></p>
                     <p className="text-xs font-body text-on-surface-variant truncate">{f.note}</p>
                   </div>
                   <div className="text-right shrink-0">
@@ -286,7 +286,7 @@ export default function Home() {
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-24">
         <div className="text-center mb-10">
           <p className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-3">For freelancers</p>
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface">
             AI agents built into the platform
           </h2>
           <p className="font-body text-on-surface-variant mt-3 max-w-xl mx-auto">
@@ -299,7 +299,7 @@ export default function Home() {
               <div className="w-11 h-11 rounded-xl bg-electric-violet/8 border border-electric-violet/20 flex items-center justify-center mb-4">
                 <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "22px" }}>{a.icon}</span>
               </div>
-              <p className="font-semibold font-body text-tech-blue-deep text-sm mb-1.5">{a.name}</p>
+              <p className="font-semibold font-body text-on-surface text-sm mb-1.5">{a.name}</p>
               <p className="text-sm font-body text-on-surface-variant leading-relaxed">{a.desc}</p>
             </div>
           ))}
@@ -352,7 +352,7 @@ export default function Home() {
         <div className="flex items-end justify-between mb-8">
           <div>
             <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-2">Browse talent</p>
-            <h2 className="text-3xl font-bold font-headline text-tech-blue-deep">Find by skill</h2>
+            <h2 className="text-3xl font-bold font-headline text-on-surface">Find by skill</h2>
           </div>
           <Link href="/hire" className="text-sm font-semibold font-body text-electric-violet hover:underline underline-offset-2">
             View all skills →
@@ -365,7 +365,7 @@ export default function Home() {
             return (
               <Link key={slug} href={`/hire/${slug}`}
                 className="bg-white rounded-xl p-5 border border-border-crisp hover:border-electric-violet hover:shadow-[0_4px_16px_rgba(91,79,207,0.08)] transition-all group">
-                <p className="font-semibold font-body text-tech-blue-deep text-sm group-hover:text-electric-violet transition-colors mb-1">
+                <p className="font-semibold font-body text-on-surface text-sm group-hover:text-electric-violet transition-colors mb-1">
                   {skill.label}
                 </p>
                 <p className="text-xs font-body text-on-surface-variant">${skill.avgRate}/hr avg</p>
@@ -388,7 +388,7 @@ export default function Home() {
       {/* ── Final CTA ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 pb-16">
         <div className="bg-white border border-border-crisp rounded-3xl p-12 md:p-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface mb-4">
             The fastest way to get hired.
           </h2>
           <p className="font-body text-on-surface-variant mb-10 max-w-xl mx-auto text-lg">
@@ -400,7 +400,7 @@ export default function Home() {
               Create your profile
             </Link>
             <Link href="/post-job"
-              className="w-full sm:w-auto px-12 py-4 bg-surface-gray border border-border-crisp text-tech-blue-deep rounded-full text-sm font-semibold font-body hover:bg-white transition-colors">
+              className="w-full sm:w-auto px-12 py-4 bg-surface-gray border border-border-crisp text-on-surface rounded-full text-sm font-semibold font-body hover:bg-white transition-colors">
               Post a job
             </Link>
           </div>

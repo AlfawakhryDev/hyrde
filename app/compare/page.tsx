@@ -41,7 +41,7 @@ export default function CompareHubPage() {
               <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-3">
                 Hyrde vs {c.name}
               </span>
-              <h2 className="text-lg font-bold font-headline text-tech-blue-deep leading-snug mb-2 group-hover:text-electric-violet transition-colors">
+              <h2 className="text-lg font-bold font-headline text-on-surface leading-snug mb-2 group-hover:text-electric-violet transition-colors">
                 The {c.name} alternative
               </h2>
               <p className="font-body text-on-surface-variant text-sm leading-relaxed mb-4 flex-1">
@@ -63,7 +63,7 @@ export default function CompareHubPage() {
             Skip the comparison paralysis. Post a brief and see why clients switch to Hyrde.
           </p>
           <Link href="/get-started"
-            className="inline-block bg-white text-tech-blue-deep font-semibold font-body px-7 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
+            className="inline-block bg-white text-on-surface font-semibold font-body px-7 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
             Start hiring on Hyrde
           </Link>
         </div>

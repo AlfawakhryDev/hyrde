@@ -51,7 +51,7 @@ export default async function HireSkillPage({ params }: Props) {
             <span className="inline-block text-xs font-semibold font-body bg-electric-violet/10 text-electric-violet px-3 py-1 rounded-full mb-4">
               {skillData.category}
             </span>
-            <h1 className="text-4xl md:text-5xl font-bold font-headline text-tech-blue-deep leading-tight mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-4">
               Hire a {skillData.label}
             </h1>
             <p className="font-body text-on-surface-variant text-base leading-relaxed mb-6 max-w-md">
@@ -65,7 +65,7 @@ export default async function HireSkillPage({ params }: Props) {
                 { val: "60s",                    lbl: "to match" },
               ].map(({ val, lbl }) => (
                 <div key={lbl} className="bg-white rounded-xl p-4 border border-border-crisp text-center">
-                  <p className="text-xl font-bold font-headline text-tech-blue-deep capitalize">{val}</p>
+                  <p className="text-xl font-bold font-headline text-on-surface capitalize">{val}</p>
                   <p className="text-xs font-body text-on-surface-variant">{lbl}</p>
                 </div>
               ))}
@@ -96,7 +96,7 @@ export default async function HireSkillPage({ params }: Props) {
       {/* Browse by city */}
       <section className="bg-white border-t border-border-crisp py-12">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-6">
+          <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">
             Hire a {skillData.label} by location
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -107,7 +107,7 @@ export default async function HireSkillPage({ params }: Props) {
               return (
                 <Link key={citySlug} href={`/hire/${skill}/${citySlug}`}
                   className="bg-surface-gray rounded-xl p-4 border border-border-crisp hover:border-electric-violet transition-colors group">
-                  <p className="font-bold font-body text-sm text-tech-blue-deep group-hover:text-electric-violet transition-colors">
+                  <p className="font-bold font-body text-sm text-on-surface group-hover:text-electric-violet transition-colors">
                     {skillData.label} in {city.label}
                   </p>
                   <p className="text-xs font-body text-on-surface-variant mt-1">~${rate}/hr · {city.region}</p>
@@ -120,7 +120,7 @@ export default async function HireSkillPage({ params }: Props) {
 
       {/* FAQ */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
-        <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-6">
+        <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">
           Frequently asked about hiring {skillData.label}s
         </h2>
         <div className="grid md:grid-cols-2 gap-5">
@@ -131,7 +131,7 @@ export default async function HireSkillPage({ params }: Props) {
             { q: `Are ${skillData.label}s verified?`,          a: `Yes. Every freelancer completes an AI-administered skills assessment before appearing in results. You see a verified competency score.` },
           ].map(({ q, a }) => (
             <div key={q} className="bg-white rounded-xl p-5 border border-border-crisp">
-              <p className="font-bold font-body text-sm text-tech-blue-deep mb-2">{q}</p>
+              <p className="font-bold font-body text-sm text-on-surface mb-2">{q}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{a}</p>
             </div>
           ))}

@@ -78,7 +78,7 @@ export default async function GuidePage({ params }: Props) {
         <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">
           {g.clusterLabel}
         </span>
-        <h1 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep leading-tight mt-3 mb-4">
+        <h1 className="text-3xl md:text-4xl font-bold font-headline text-on-surface leading-tight mt-3 mb-4">
           {g.title}
         </h1>
         <p className="text-xs font-body text-on-surface-variant inline-flex items-center gap-4 mb-8">
@@ -100,7 +100,7 @@ export default async function GuidePage({ params }: Props) {
 
         {g.sections.map((sec, i) => (
           <section key={i} className="mb-10">
-            <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-4">{sec.h2}</h2>
+            <h2 className="text-2xl font-bold font-headline text-on-surface mb-4">{sec.h2}</h2>
             <div className="space-y-4">
               {sec.body.map((p, j) => (
                 <p key={j} className="font-body text-on-surface-variant text-base leading-relaxed">{p}</p>
@@ -124,18 +124,18 @@ export default async function GuidePage({ params }: Props) {
           <h2 className="text-xl md:text-2xl font-bold font-headline text-white mb-2">{g.cta.heading}</h2>
           <p className="font-body text-white/75 text-sm max-w-lg mx-auto mb-6">{g.cta.body}</p>
           <Link href={g.cta.href}
-            className="inline-block bg-white text-tech-blue-deep font-semibold font-body px-7 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
+            className="inline-block bg-white text-on-surface font-semibold font-body px-7 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
             {g.cta.label}
           </Link>
         </div>
 
         {/* FAQ */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-5">Frequently asked</h2>
+          <h2 className="text-2xl font-bold font-headline text-on-surface mb-5">Frequently asked</h2>
           <div className="space-y-3">
             {g.faqs.map((f, i) => (
               <details key={i} className="bg-white rounded-xl border border-border-crisp p-5 group">
-                <summary className="font-semibold font-body text-tech-blue-deep cursor-pointer list-none flex items-center justify-between">
+                <summary className="font-semibold font-body text-on-surface cursor-pointer list-none flex items-center justify-between">
                   {f.q}
                   <span className="material-symbols-outlined text-on-surface-variant group-open:rotate-180 transition-transform" style={{ fontSize: "20px" }}>expand_more</span>
                 </summary>
@@ -148,13 +148,13 @@ export default async function GuidePage({ params }: Props) {
         {/* Related */}
         {related.length > 0 && (
           <section className="border-t border-border-crisp pt-8">
-            <h2 className="text-lg font-bold font-headline text-tech-blue-deep mb-4">Keep reading</h2>
+            <h2 className="text-lg font-bold font-headline text-on-surface mb-4">Keep reading</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {related.map(r => (
                 <Link key={r.slug} href={`/guides/${r.slug}`}
                   className="group bg-white rounded-xl border border-border-crisp p-5 hover:border-electric-violet/50 transition-colors">
                   <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">{r.clusterLabel}</span>
-                  <h3 className="font-bold font-headline text-tech-blue-deep text-base leading-snug mt-2 group-hover:text-electric-violet transition-colors">{r.title}</h3>
+                  <h3 className="font-bold font-headline text-on-surface text-base leading-snug mt-2 group-hover:text-electric-violet transition-colors">{r.title}</h3>
                 </Link>
               ))}
             </div>

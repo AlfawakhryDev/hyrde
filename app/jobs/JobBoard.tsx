@@ -105,7 +105,7 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
         <span className="material-symbols-outlined text-electric-violet mb-4" style={{ fontSize: "48px" }}>
           work_outline
         </span>
-        <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-2">No jobs posted yet</h2>
+        <h2 className="text-2xl font-bold font-headline text-on-surface mb-2">No jobs posted yet</h2>
         <p className="font-body text-on-surface-variant mb-6">Be the first client to post a project.</p>
         <Link href="/post-job"
           className="bg-electric-violet text-white font-semibold font-body px-7 py-3 rounded-full hover:scale-[1.02] transition-transform text-sm">
@@ -127,7 +127,7 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
               </span>
               {jobs.filter(j => j.status === "open").length} live projects
             </span>
-            <h1 className="text-4xl font-bold font-headline text-tech-blue-deep">Open projects</h1>
+            <h1 className="text-4xl font-bold font-headline text-on-surface">Open projects</h1>
             <p className="font-body text-on-surface-variant mt-1">Write an AI proposal in seconds. No connects, no fees to apply.</p>
           </div>
           <Link href="/post-job"
@@ -270,7 +270,7 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
                                   {p.copied ? "Copied!" : "Copy proposal"}
                                 </button>
                                 <Link href="/freelancer/join"
-                                  className="flex items-center gap-1.5 text-xs font-semibold font-body text-tech-blue-deep hover:underline">
+                                  className="flex items-center gap-1.5 text-xs font-semibold font-body text-on-surface hover:underline">
                                   <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>person_add</span>
                                   Create your profile to apply
                                 </Link>

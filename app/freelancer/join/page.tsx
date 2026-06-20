@@ -19,8 +19,8 @@ const STEPS = [
 
 function bandColor(score: number) {
   if (score >= 90) return "text-electric-violet bg-electric-violet/10 border-electric-violet/20";
-  if (score >= 75) return "text-tech-blue-deep bg-surface-container-high border-border-crisp";
-  if (score >= 60) return "text-tech-blue-deep bg-surface-container-high border-border-crisp";
+  if (score >= 75) return "text-on-surface bg-surface-container-high border-border-crisp";
+  if (score >= 60) return "text-on-surface bg-surface-container-high border-border-crisp";
   return "text-on-surface-variant bg-surface-container-high border-border-crisp";
 }
 
@@ -123,7 +123,7 @@ export default function FreelancerJoin() {
                 <circle cx="256" cy="256" r="32" fill="#fff" />
               </svg>
             </span>
-            <span className="text-[22px] font-bold font-headline tracking-tight text-tech-blue-deep leading-none">
+            <span className="text-[22px] font-bold font-headline tracking-tight text-on-surface leading-none">
               Hyrde
             </span>
           </Link>
@@ -145,7 +145,7 @@ export default function FreelancerJoin() {
                 }
               </div>
               <span className={`text-xs font-body hidden sm:block transition-colors ${
-                step === s.num ? "text-tech-blue-deep font-semibold" : "text-on-surface-variant"
+                step === s.num ? "text-on-surface font-semibold" : "text-on-surface-variant"
               }`}>{s.label}</span>
               {i < STEPS.length - 1 && (
                 <div className={`flex-1 h-px transition-colors ${step > s.num ? "bg-electric-violet" : "bg-border-crisp"}`} />
@@ -160,7 +160,7 @@ export default function FreelancerJoin() {
           {/* Step 1 — Basics */}
           {step === 1 && (
             <div>
-              <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-1">Let&apos;s start with the basics</h2>
+              <h2 className="text-2xl font-bold font-headline text-on-surface mb-1">Let&apos;s start with the basics</h2>
               <p className="font-body text-sm text-on-surface-variant mb-5">Takes 2 minutes. No reviews, no credit card.</p>
               <CvUpload onParsed={handleCvParsed} className="mb-4" />
               <div className="flex items-center gap-3 mb-5">
@@ -192,7 +192,7 @@ export default function FreelancerJoin() {
           {/* Step 2 — Skill */}
           {step === 2 && (
             <div>
-              <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-1">What&apos;s your main skill?</h2>
+              <h2 className="text-2xl font-bold font-headline text-on-surface mb-1">What&apos;s your main skill?</h2>
               <p className="font-body text-sm text-on-surface-variant mb-5">We&apos;ll tailor your work sample and match you to the right jobs.</p>
               <div className="grid grid-cols-2 gap-2 mb-5">
                 {Object.entries(SKILLS).slice(0, 12).map(([slug, s]) => (
@@ -226,7 +226,7 @@ export default function FreelancerJoin() {
                 <span className="material-symbols-outlined" style={{ fontSize: "13px", fontVariationSettings: "'FILL' 1" }}>verified</span>
                 {SKILL_ASSESSMENT.intro.eyebrow}
               </span>
-              <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-1">{challenge.title}</h2>
+              <h2 className="text-2xl font-bold font-headline text-on-surface mb-1">{challenge.title}</h2>
               <p className="font-body text-sm text-on-surface-variant mb-4">
                 A short work sample for {SKILLS[form.skill]?.label ?? "your skill"}. There&apos;s no pass or fail — a lower score still gets you in.
               </p>
@@ -272,10 +272,10 @@ export default function FreelancerJoin() {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "20px", fontVariationSettings: "'FILL' 1" }}>verified</span>
-                        <span className="text-sm font-bold font-headline text-tech-blue-deep">Verified profile</span>
+                        <span className="text-sm font-bold font-headline text-on-surface">Verified profile</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-3xl font-bold font-headline text-tech-blue-deep leading-none">{assessment.score}</span>
+                        <span className="text-3xl font-bold font-headline text-on-surface leading-none">{assessment.score}</span>
                         <span className="text-xs font-body text-on-surface-variant">/100</span>
                       </div>
                     </div>
@@ -288,7 +288,7 @@ export default function FreelancerJoin() {
                     {assessment.verifiedSkills.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mb-3">
                         {assessment.verifiedSkills.map(s => (
-                          <span key={s} className="text-[11px] font-body bg-white/70 text-tech-blue-deep px-2 py-0.5 rounded-full">{s}</span>
+                          <span key={s} className="text-[11px] font-body bg-white/70 text-on-surface px-2 py-0.5 rounded-full">{s}</span>
                         ))}
                       </div>
                     )}
@@ -296,7 +296,7 @@ export default function FreelancerJoin() {
                     <div className="grid sm:grid-cols-2 gap-3 text-xs font-body">
                       {assessment.strengths.length > 0 && (
                         <div>
-                          <p className="font-semibold text-tech-blue-deep mb-1">Strengths</p>
+                          <p className="font-semibold text-on-surface mb-1">Strengths</p>
                           <ul className="space-y-0.5 text-on-surface-variant">
                             {assessment.strengths.map(s => <li key={s}>· {s}</li>)}
                           </ul>
@@ -304,7 +304,7 @@ export default function FreelancerJoin() {
                       )}
                       {assessment.growthAreas.length > 0 && (
                         <div>
-                          <p className="font-semibold text-tech-blue-deep mb-1">Grow next</p>
+                          <p className="font-semibold text-on-surface mb-1">Grow next</p>
                           <ul className="space-y-0.5 text-on-surface-variant">
                             {assessment.growthAreas.map(s => <li key={s}>· {s}</li>)}
                           </ul>
@@ -324,7 +324,7 @@ export default function FreelancerJoin() {
           {/* Step 4 — Rate */}
           {step === 4 && (
             <div>
-              <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-1">Set your rate</h2>
+              <h2 className="text-2xl font-bold font-headline text-on-surface mb-1">Set your rate</h2>
               <p className="font-body text-sm text-on-surface-variant mb-5">
                 {form.skill && SKILLS[form.skill]
                   ? `Market average for ${SKILLS[form.skill].label}: $${SKILLS[form.skill].avgRate}/hr · protected floor $${floor}/hr`
@@ -403,7 +403,7 @@ export default function FreelancerJoin() {
                 <div className="w-16 h-16 ai-match-gradient rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="material-symbols-outlined text-white" style={{ fontSize: "32px", fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 </div>
-                <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-2">You&apos;re in.</h2>
+                <h2 className="text-2xl font-bold font-headline text-on-surface mb-2">You&apos;re in.</h2>
                 <p className="font-body text-sm text-on-surface-variant mb-5 max-w-xs mx-auto">
                   {form.name ? `Welcome, ${form.name.split(" ")[0]}. ` : ""}
                   Your AI agent is already scanning open briefs and will pitch you automatically — no bidding, ever.
@@ -418,7 +418,7 @@ export default function FreelancerJoin() {
                       <span className="material-symbols-outlined" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>verified</span>
                       Verified · {assessment.band}
                     </span>
-                    <span className="text-sm font-bold font-headline text-tech-blue-deep">{assessment.score}/100</span>
+                    <span className="text-sm font-bold font-headline text-on-surface">{assessment.score}/100</span>
                   </div>
                 </div>
               )}
@@ -428,13 +428,13 @@ export default function FreelancerJoin() {
                 {form.skill && SKILLS[form.skill] && (
                   <div className="flex justify-between text-xs font-body py-1.5 border-b border-border-crisp">
                     <span className="text-on-surface-variant">Skill</span>
-                    <span className="font-semibold text-tech-blue-deep">{SKILLS[form.skill].label}</span>
+                    <span className="font-semibold text-on-surface">{SKILLS[form.skill].label}</span>
                   </div>
                 )}
                 {form.rate && (
                   <div className="flex justify-between text-xs font-body py-1.5 border-b border-border-crisp">
                     <span className="text-on-surface-variant">Rate</span>
-                    <span className="font-semibold text-tech-blue-deep">${form.rate}/hr</span>
+                    <span className="font-semibold text-on-surface">${form.rate}/hr</span>
                   </div>
                 )}
                 <div className="flex justify-between text-xs font-body py-1.5">
@@ -452,7 +452,7 @@ export default function FreelancerJoin() {
                   {risingTalentTasks(form.skill).slice(0, 2).map(task => (
                     <div key={task.id} className="flex items-center justify-between bg-white rounded-lg border border-border-crisp p-3">
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold font-body text-tech-blue-deep truncate">{task.title}</p>
+                        <p className="text-sm font-semibold font-body text-on-surface truncate">{task.title}</p>
                         <p className="text-[11px] font-body text-on-surface-variant truncate">{task.blurb}</p>
                       </div>
                       <div className="text-right shrink-0 pl-3">
@@ -470,7 +470,7 @@ export default function FreelancerJoin() {
                   Browse open jobs
                 </Link>
                 <Link href="/"
-                  className="flex-1 text-center bg-white border border-border-crisp text-tech-blue-deep font-semibold font-body px-6 py-3 rounded-full text-sm hover:border-electric-violet transition-colors">
+                  className="flex-1 text-center bg-white border border-border-crisp text-on-surface font-semibold font-body px-6 py-3 rounded-full text-sm hover:border-electric-violet transition-colors">
                   Back to Hyrde
                 </Link>
               </div>

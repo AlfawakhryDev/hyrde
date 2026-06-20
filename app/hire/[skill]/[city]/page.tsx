@@ -100,7 +100,7 @@ export default async function HireSkillCityPage({ params }: Props) {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold font-headline text-tech-blue-deep leading-tight mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-4">
               Hire a {skillData.label}{" "}
               <span className="text-electric-violet">{loc}</span>
             </h1>
@@ -126,7 +126,7 @@ export default async function HireSkillCityPage({ params }: Props) {
                       <div className="h-full rounded-full ai-match-gradient"
                         style={{ width: `${(tier.rate / (rate * 1.8)) * 100}%` }} />
                     </div>
-                    <span className="text-xs font-semibold font-body text-tech-blue-deep w-16 text-right shrink-0">
+                    <span className="text-xs font-semibold font-body text-on-surface w-16 text-right shrink-0">
                       ${tier.rate}/hr
                     </span>
                   </div>
@@ -163,12 +163,12 @@ export default async function HireSkillCityPage({ params }: Props) {
       {cityRates.length > 0 && (
         <section className="bg-white border-t border-border-crisp py-10">
           <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-            <h2 className="text-xl font-bold font-headline text-tech-blue-deep mb-2">
+            <h2 className="text-xl font-bold font-headline text-on-surface mb-2">
               {skillData.label} rates by city
             </h2>
             <p className="font-body text-on-surface-variant text-sm mb-5 max-w-2xl">
               A {skillData.label} {loc} averages{" "}
-              <strong className="text-tech-blue-deep">${ctx.rate}/hr</strong> —{" "}
+              <strong className="text-on-surface">${ctx.rate}/hr</strong> —{" "}
               {ctx.direction === "in line with"
                 ? "right in line with"
                 : `${ctx.diffPct}% ${ctx.direction}`}{" "}
@@ -181,7 +181,7 @@ export default async function HireSkillCityPage({ params }: Props) {
                   <span className="text-sm font-body text-on-surface group-hover:text-electric-violet">
                     {skillData.label} in {cr.label}
                   </span>
-                  <span className="text-sm font-semibold font-body text-tech-blue-deep shrink-0">
+                  <span className="text-sm font-semibold font-body text-on-surface shrink-0">
                     ${cr.rate}/hr
                   </span>
                 </Link>
@@ -195,13 +195,13 @@ export default async function HireSkillCityPage({ params }: Props) {
       {faqs.length > 0 && (
         <section className="bg-surface-gray border-t border-border-crisp py-12">
           <div className="max-w-[800px] mx-auto px-6 md:px-12">
-            <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-6">
+            <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">
               Hiring a {skillData.label} {loc}: FAQ
             </h2>
             <div className="space-y-3">
               {faqs.map((f, i) => (
                 <details key={i} className="bg-white rounded-xl border border-border-crisp p-5 group">
-                  <summary className="font-semibold font-body text-tech-blue-deep cursor-pointer list-none flex items-center justify-between">
+                  <summary className="font-semibold font-body text-on-surface cursor-pointer list-none flex items-center justify-between">
                     {f.q}
                     <span className="material-symbols-outlined text-on-surface-variant group-open:rotate-180 transition-transform" style={{ fontSize: "20px" }}>expand_more</span>
                   </summary>
@@ -220,7 +220,7 @@ export default async function HireSkillCityPage({ params }: Props) {
                 </Link>.
               </p>
               <Link href="/get-started"
-                className="inline-block bg-white text-tech-blue-deep font-semibold font-body px-6 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
+                className="inline-block bg-white text-on-surface font-semibold font-body px-6 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
                 Hire a {skillData.label} {loc}
               </Link>
             </div>
@@ -231,7 +231,7 @@ export default async function HireSkillCityPage({ params }: Props) {
       {/* Related skills in this city */}
       <section className="bg-white border-t border-border-crisp py-10">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <h2 className="text-xl font-bold font-headline text-tech-blue-deep mb-4">
+          <h2 className="text-xl font-bold font-headline text-on-surface mb-4">
             Other talent {cityData.label === "Remote" ? "available remotely" : `available in ${cityData.label}`}
           </h2>
           <div className="flex flex-wrap gap-2">

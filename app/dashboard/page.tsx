@@ -91,7 +91,7 @@ function DashTopBar({ role, onSwitch }: { role: "employer" | "freelancer"; onSwi
               <circle cx="256" cy="256" r="32" fill="#fff" />
             </svg>
           </span>
-          <span className="text-sm font-bold font-headline text-tech-blue-deep">Hyrde</span>
+          <span className="text-sm font-bold font-headline text-on-surface">Hyrde</span>
         </Link>
 
         <div className="flex items-center gap-1.5 bg-electric-violet/8 border border-electric-violet/20 px-2.5 py-1 rounded-full ml-1">
@@ -106,13 +106,13 @@ function DashTopBar({ role, onSwitch }: { role: "employer" | "freelancer"; onSwi
         <div className="flex items-center gap-1 bg-surface-gray rounded-full p-0.5">
           <button
             onClick={() => role === "freelancer" && onSwitch()}
-            className={`text-[11px] font-semibold font-body px-3 py-1.5 rounded-full transition-all ${role === "employer" ? "bg-white text-tech-blue-deep shadow-sm" : "text-on-surface-variant hover:text-tech-blue-deep"}`}
+            className={`text-[11px] font-semibold font-body px-3 py-1.5 rounded-full transition-all ${role === "employer" ? "bg-white text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}
           >
             Employer
           </button>
           <button
             onClick={() => role === "employer" && onSwitch()}
-            className={`text-[11px] font-semibold font-body px-3 py-1.5 rounded-full transition-all ${role === "freelancer" ? "bg-white text-tech-blue-deep shadow-sm" : "text-on-surface-variant hover:text-tech-blue-deep"}`}
+            className={`text-[11px] font-semibold font-body px-3 py-1.5 rounded-full transition-all ${role === "freelancer" ? "bg-white text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}
           >
             Freelancer
           </button>
@@ -141,7 +141,7 @@ function EmployerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; on
         {/* Welcome */}
         <div className="flex items-start justify-between flex-wrap gap-3 mb-7">
           <div>
-            <h1 className="text-2xl font-bold font-headline text-tech-blue-deep mb-0.5">
+            <h1 className="text-2xl font-bold font-headline text-on-surface mb-0.5">
               Welcome back, {d.name}
             </h1>
             <p className="text-sm font-body text-on-surface-variant">
@@ -162,7 +162,7 @@ function EmployerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; on
                 <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
               </div>
               <div>
-                <p className="text-xl font-bold font-headline text-tech-blue-deep leading-none">{s.value}</p>
+                <p className="text-xl font-bold font-headline text-on-surface leading-none">{s.value}</p>
                 <p className="text-[11px] font-body text-on-surface-variant mt-0.5">{s.label}</p>
               </div>
             </div>
@@ -187,7 +187,7 @@ function EmployerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; on
                   <div key={job.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-gray hover:bg-electric-violet/5 transition-colors cursor-pointer">
                     <div className={`w-2 h-2 rounded-full shrink-0 ${job.status === "active" ? "bg-green-500" : "bg-electric-violet"}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold font-body text-tech-blue-deep line-clamp-1">{job.title}</p>
+                      <p className="text-sm font-semibold font-body text-on-surface line-clamp-1">{job.title}</p>
                       <p className="text-xs font-body text-on-surface-variant">{job.budget} · {job.posted}</p>
                     </div>
                     <span className="text-[11px] font-semibold font-body bg-electric-violet/10 text-electric-violet px-2 py-0.5 rounded-full shrink-0">
@@ -217,13 +217,13 @@ function EmployerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; on
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <p className="text-sm font-semibold font-body text-tech-blue-deep">{m.name}</p>
+                        <p className="text-sm font-semibold font-body text-on-surface">{m.name}</p>
                         {m.top && <span className="text-[9px] font-semibold bg-electric-violet text-white px-1.5 py-0.5 rounded-full">Top match</span>}
                       </div>
                       <p className="text-xs font-body text-on-surface-variant">{m.skill} · ${m.rate}/hr · {m.location}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-xl font-bold font-headline text-tech-blue-deep leading-none">{m.score}</p>
+                      <p className="text-xl font-bold font-headline text-on-surface leading-none">{m.score}</p>
                       <p className="text-[10px] font-body text-on-surface-variant">score</p>
                     </div>
                   </div>
@@ -293,7 +293,7 @@ function EmployerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; on
               <div className="space-y-2">
                 {d.calls.map((c, i) => (
                   <div key={i} className="p-3 rounded-xl bg-surface-gray">
-                    <p className="text-xs font-semibold font-body text-tech-blue-deep mb-0.5">{c.date}</p>
+                    <p className="text-xs font-semibold font-body text-on-surface mb-0.5">{c.date}</p>
                     <p className="text-xs font-body text-on-surface-variant">{c.who} · {c.topic}</p>
                   </div>
                 ))}
@@ -341,7 +341,7 @@ function FreelancerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; 
         {/* Welcome + verified */}
         <div className="flex items-start justify-between flex-wrap gap-3 mb-7">
           <div>
-            <h1 className="text-2xl font-bold font-headline text-tech-blue-deep mb-0.5">
+            <h1 className="text-2xl font-bold font-headline text-on-surface mb-0.5">
               Welcome back, {d.name}
             </h1>
             <p className="text-sm font-body text-on-surface-variant">
@@ -364,7 +364,7 @@ function FreelancerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; 
                 <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
               </div>
               <div>
-                <p className="text-xl font-bold font-headline text-tech-blue-deep leading-none">{s.value}</p>
+                <p className="text-xl font-bold font-headline text-on-surface leading-none">{s.value}</p>
                 <p className="text-[11px] font-body text-on-surface-variant mt-0.5">{s.label}</p>
               </div>
             </div>
@@ -395,7 +395,7 @@ function FreelancerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; 
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className="text-sm font-bold font-headline text-tech-blue-deep">{m.title}</p>
+                          <p className="text-sm font-bold font-headline text-on-surface">{m.title}</p>
                           {m.hot && <span className="text-[9px] font-semibold bg-electric-violet text-white px-1.5 py-0.5 rounded-full">Hot</span>}
                         </div>
                         <p className="text-xs font-body text-on-surface-variant">{m.company} · {m.budget}</p>
@@ -481,7 +481,7 @@ function FreelancerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; 
               <div className="space-y-2">
                 {d.sparks.map((s, i) => (
                   <div key={i} className="p-3 rounded-xl bg-surface-gray">
-                    <p className="text-xs font-semibold font-body text-tech-blue-deep mb-1.5">{s.title}</p>
+                    <p className="text-xs font-semibold font-body text-on-surface mb-1.5">{s.title}</p>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[10px] font-semibold font-body bg-green-50 text-green-700 px-2 py-0.5 rounded-full">{s.budget}</span>
                       <span className="text-[10px] font-semibold font-body bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{s.timeline}</span>
@@ -499,7 +499,7 @@ function FreelancerDashboard({ onSwitch, onOpenAgent }: { onSwitch: () => void; 
               </div>
               {d.calls.map((c, i) => (
                 <div key={i} className="p-3 rounded-xl bg-surface-gray">
-                  <p className="text-xs font-semibold font-body text-tech-blue-deep mb-0.5">{c.date}</p>
+                  <p className="text-xs font-semibold font-body text-on-surface mb-0.5">{c.date}</p>
                   <p className="text-xs font-body text-on-surface-variant">{c.company} · {c.topic}</p>
                 </div>
               ))}
@@ -604,7 +604,7 @@ function PaymentPortal({ role }: { role: "employer" | "freelancer" }) {
           {/* Add method picker */}
           {addOpen && (
             <div className="rounded-xl border border-dashed border-electric-violet/40 bg-electric-violet/5 p-4 animate-fadeup">
-              <p className="text-xs font-semibold font-body text-tech-blue-deep mb-3">Choose a method</p>
+              <p className="text-xs font-semibold font-body text-on-surface mb-3">Choose a method</p>
               <div className="space-y-2">
                 {[
                   { icon: "credit_card", label: "Stripe",        sub: "Credit / debit card", color: "#635BFF" },
@@ -618,7 +618,7 @@ function PaymentPortal({ role }: { role: "employer" | "freelancer" }) {
                       <span className="material-symbols-outlined" style={{ fontSize: "16px", color: m.color, fontVariationSettings: "'FILL' 1" }}>{m.icon}</span>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold font-body text-tech-blue-deep">{m.label}</p>
+                      <p className="text-xs font-semibold font-body text-on-surface">{m.label}</p>
                       <p className="text-[10px] font-body text-on-surface-variant">{m.sub}</p>
                     </div>
                     <span className="material-symbols-outlined text-on-surface-variant/30 ml-auto" style={{ fontSize: "14px" }}>chevron_right</span>
@@ -648,7 +648,7 @@ function PaymentPortal({ role }: { role: "employer" | "freelancer" }) {
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold font-body text-tech-blue-deep line-clamp-1">{tx.desc}</p>
+                  <p className="text-xs font-semibold font-body text-on-surface line-clamp-1">{tx.desc}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <p className="text-[10px] font-body text-on-surface-variant">{tx.date}</p>
                     {("via" in tx) && (() => {
@@ -666,7 +666,7 @@ function PaymentPortal({ role }: { role: "employer" | "freelancer" }) {
                 </div>
                 <div className="shrink-0 text-right">
                   <p className={`text-sm font-bold font-headline leading-none ${
-                    role === "freelancer" && tx.status === "paid" ? "text-green-600" : "text-tech-blue-deep"
+                    role === "freelancer" && tx.status === "paid" ? "text-green-600" : "text-on-surface"
                   }`}>
                     {tx.amount}
                   </p>
@@ -701,7 +701,7 @@ function DemoLogin({ onSelect }: { onSelect: (r: "employer" | "freelancer") => v
                 <circle cx="256" cy="256" r="32" fill="#fff" />
               </svg>
             </span>
-            <span className="text-2xl font-bold font-headline tracking-tight text-tech-blue-deep leading-none">
+            <span className="text-2xl font-bold font-headline tracking-tight text-on-surface leading-none">
               Hyrde
             </span>
           </Link>
@@ -709,7 +709,7 @@ function DemoLogin({ onSelect }: { onSelect: (r: "employer" | "freelancer") => v
             <span className="w-1.5 h-1.5 rounded-full bg-electric-violet animate-pulse" />
             <span className="text-[11px] font-semibold font-body text-electric-violet uppercase tracking-widest">Demo — no sign-in needed</span>
           </div>
-          <h1 className="text-3xl font-bold font-headline text-tech-blue-deep mb-2">Choose your view</h1>
+          <h1 className="text-3xl font-bold font-headline text-on-surface mb-2">Choose your view</h1>
           <p className="font-body text-on-surface-variant text-sm">
             Explore the Hyrde dashboard as an employer or a freelancer.
           </p>
@@ -738,7 +738,7 @@ function DemoLogin({ onSelect }: { onSelect: (r: "employer" | "freelancer") => v
               <div className="w-12 h-12 rounded-xl bg-electric-violet/8 flex items-center justify-center mb-4 group-hover:bg-electric-violet/15 transition-colors">
                 <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "26px", fontVariationSettings: "'FILL' 1" }}>{opt.icon}</span>
               </div>
-              <h2 className="text-base font-bold font-headline text-tech-blue-deep mb-1.5">{opt.title}</h2>
+              <h2 className="text-base font-bold font-headline text-on-surface mb-1.5">{opt.title}</h2>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{opt.desc}</p>
               <div className="mt-4 flex items-center gap-1 text-electric-violet">
                 <span className="text-xs font-semibold font-body">Enter dashboard</span>

@@ -32,7 +32,7 @@ function SparkCard({ spark }: { spark: Spark }) {
             {spark.featured && (
               <span className="text-[9px] font-semibold bg-electric-violet text-white px-1.5 py-0.5 rounded-full shrink-0">Featured</span>
             )}
-            <h3 className="text-sm font-bold font-headline text-tech-blue-deep leading-snug">{spark.title}</h3>
+            <h3 className="text-sm font-bold font-headline text-on-surface leading-snug">{spark.title}</h3>
           </div>
           <p className="text-xs font-body text-on-surface-variant leading-relaxed line-clamp-2">{spark.description}</p>
         </div>

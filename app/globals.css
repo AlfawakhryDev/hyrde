@@ -50,6 +50,53 @@
   --color-on-error-container: #93000a;
 }
 
+/* ── Dark theme (site default) ──────────────────────────────────────────
+   Class-based: <html class="dark">. Overrides the semantic color tokens so
+   every utility built on them (bg-surface-*, text-on-surface, border-crisp …)
+   flips automatically. Literal utilities that can't reference a token
+   (bg-white, bg-tech-blue-deep) are remapped explicitly below. */
+.dark {
+  color-scheme: dark;
+
+  --color-tech-blue-deep: #0A0A0F;      /* kept dark: now only dark panels/borders */
+  --color-tech-blue-muted: #16161f;
+  --color-surface-gray: #0b0b10;
+  --color-border-crisp: #26262f;
+
+  --color-surface: #0b0b10;
+  --color-surface-dim: #070709;
+  --color-surface-bright: #20202a;
+  --color-surface-container-lowest: #141419;
+  --color-surface-container-low: #16161d;
+  --color-surface-container: #1a1a22;
+  --color-surface-container-high: #20202a;
+  --color-surface-container-highest: #26262f;
+
+  --color-on-surface: #ECECF1;
+  --color-on-surface-variant: #A2A2B4;
+  --color-inverse-surface: #ECECF1;
+  --color-inverse-on-surface: #0b0b10;
+
+  --color-outline: #6a6a78;
+  --color-outline-variant: #3a3a47;
+}
+
+/* Literal utilities that have no token to flip */
+.dark body { background: #0b0b10; color: #ECECF1; }
+.dark .bg-white { background-color: #15151c; }
+.dark .bg-tech-blue-deep { background-color: #17171f; }   /* elevated dark panel */
+.dark .border-tech-blue-deep { border-color: #2f2f3a; }
+.dark .glass-card {
+  background: rgba(21, 21, 28, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.dark .ai-shimmer-pill {
+  background:
+    linear-gradient(#15151c, #15151c) padding-box,
+    linear-gradient(90deg, #5B4FCF, #A99EE8, #5B4FCF) border-box;
+}
+.dark .glow-accent { opacity: 0.22; }
+
 /* Material Symbols */
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';

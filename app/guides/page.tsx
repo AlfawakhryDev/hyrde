@@ -27,7 +27,7 @@ export default function GuidesIndexPage() {
       <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest mb-3">
         {clusterLabel}
       </span>
-      <h3 className="text-lg font-bold font-headline text-tech-blue-deep leading-snug mb-2 group-hover:text-electric-violet transition-colors">
+      <h3 className="text-lg font-bold font-headline text-on-surface leading-snug mb-2 group-hover:text-electric-violet transition-colors">
         {title}
       </h3>
       <p className="font-body text-on-surface-variant text-sm leading-relaxed mb-4 flex-1">
@@ -58,7 +58,7 @@ export default function GuidesIndexPage() {
 
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-16">
         <div className="mb-14">
-          <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-1">For clients hiring talent</h2>
+          <h2 className="text-2xl font-bold font-headline text-on-surface mb-1">For clients hiring talent</h2>
           <p className="font-body text-on-surface-variant text-sm mb-6">Hire smarter, avoid the traps, and stop overpaying in fees.</p>
           <div className="grid md:grid-cols-3 gap-5">
             {clientGuides.map(g => <Card key={g.slug} {...g} />)}
@@ -66,7 +66,7 @@ export default function GuidesIndexPage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-1">For freelancers</h2>
+          <h2 className="text-2xl font-bold font-headline text-on-surface mb-1">For freelancers</h2>
           <p className="font-body text-on-surface-variant text-sm mb-6">Charge what you're worth and find clients without the bidding wars.</p>
           <div className="grid md:grid-cols-3 gap-5">
             {freelancerGuides.map(g => <Card key={g.slug} {...g} />)}

@@ -63,7 +63,7 @@ export default function EnterprisePage() {
       {/* ── Features ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-20">
         <div className="max-w-2xl mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep mb-4 leading-tight">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface mb-4 leading-tight">
             Everything a large team needs to hire with confidence
           </h2>
           <p className="font-body text-on-surface-variant leading-relaxed">
@@ -85,7 +85,7 @@ export default function EnterprisePage() {
                   {feature.icon}
                 </span>
               </span>
-              <h3 className="font-bold font-headline text-tech-blue-deep mb-2">{feature.title}</h3>
+              <h3 className="font-bold font-headline text-on-surface mb-2">{feature.title}</h3>
               <p className="text-sm font-body text-on-surface-variant leading-relaxed">{feature.body}</p>
             </div>
           ))}
@@ -96,7 +96,7 @@ export default function EnterprisePage() {
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-20 border-t border-border-crisp">
         <div className="max-w-2xl mb-12">
           <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">Custom solutions</span>
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep mt-3 mb-4 leading-tight">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface mt-3 mb-4 leading-tight">
             Packages built around how you hire at scale
           </h2>
           <p className="font-body text-on-surface-variant leading-relaxed">
@@ -123,10 +123,10 @@ export default function EnterprisePage() {
               <p className={`text-xs font-semibold font-body uppercase tracking-widest mb-2 ${pkg.highlight ? "text-white/70" : "text-electric-violet"}`}>
                 {pkg.tagline}
               </p>
-              <h3 className={`text-2xl font-bold font-headline mb-0.5 ${pkg.highlight ? "text-white" : "text-tech-blue-deep"}`}>
+              <h3 className={`text-2xl font-bold font-headline mb-0.5 ${pkg.highlight ? "text-white" : "text-on-surface"}`}>
                 {pkg.name}
               </h3>
-              <p className={`text-3xl font-bold font-headline leading-none mb-1 ${pkg.highlight ? "text-white" : "text-tech-blue-deep"}`}>
+              <p className={`text-3xl font-bold font-headline leading-none mb-1 ${pkg.highlight ? "text-white" : "text-on-surface"}`}>
                 {pkg.price}
               </p>
               <p className={`text-xs font-body mb-6 ${pkg.highlight ? "text-white/55" : "text-on-surface-variant"}`}>
@@ -167,7 +167,7 @@ export default function EnterprisePage() {
           <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">
             {ENTERPRISE.demo.eyebrow}
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface mt-3 mb-4">
             {ENTERPRISE.demo.heading}
           </h2>
           <p className="font-body text-on-surface-variant leading-relaxed max-w-xl mx-auto">
@@ -181,7 +181,7 @@ export default function EnterprisePage() {
               calendar_month
             </span>
           </span>
-          <h3 className="text-xl md:text-2xl font-bold font-headline text-tech-blue-deep mb-2">
+          <h3 className="text-xl md:text-2xl font-bold font-headline text-on-surface mb-2">
             Request access &amp; we&apos;ll set up your demo
           </h3>
           <p className="text-sm font-body text-on-surface-variant leading-relaxed mb-7 max-w-md mx-auto">
@@ -197,7 +197,7 @@ export default function EnterprisePage() {
             </Link>
             <a
               href="mailto:abdelrahman@hyrde.net"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-border-crisp text-tech-blue-deep font-semibold font-body text-sm px-8 py-3.5 rounded-full hover:border-electric-violet transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-border-crisp text-on-surface font-semibold font-body text-sm px-8 py-3.5 rounded-full hover:border-electric-violet transition-colors"
             >
               <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>mail</span>
               Email sales

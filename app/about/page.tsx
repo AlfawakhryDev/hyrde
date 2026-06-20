@@ -18,7 +18,7 @@ export default function AboutPage() {
           <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">
             {ABOUT.hero.eyebrow}
           </span>
-          <h1 className="text-4xl md:text-6xl font-bold font-headline text-tech-blue-deep mt-4 mb-5 leading-[1.05] max-w-3xl">
+          <h1 className="text-4xl md:text-6xl font-bold font-headline text-on-surface mt-4 mb-5 leading-[1.05] max-w-3xl">
             {ABOUT.hero.heading}
           </h1>
           <p className="font-body text-on-surface-variant text-lg leading-relaxed max-w-2xl mb-8">
@@ -33,7 +33,7 @@ export default function AboutPage() {
             </Link>
             <Link
               href={ABOUT.closing.ctaSecondary.href}
-              className="bg-white border border-border-crisp text-tech-blue-deep font-semibold font-body px-6 py-3 rounded-full hover:border-electric-violet transition-colors text-sm"
+              className="bg-white border border-border-crisp text-on-surface font-semibold font-body px-6 py-3 rounded-full hover:border-electric-violet transition-colors text-sm"
             >
               {ABOUT.closing.ctaSecondary.label}
             </Link>
@@ -44,7 +44,7 @@ export default function AboutPage() {
       {/* ── Mission ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-16">
         <div className="grid md:grid-cols-[0.8fr_1.2fr] gap-10 items-start">
-          <h2 className="text-2xl md:text-3xl font-bold font-headline text-tech-blue-deep leading-tight">
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface leading-tight">
             {ABOUT.mission.heading}
           </h2>
           <div className="space-y-5">
@@ -60,7 +60,7 @@ export default function AboutPage() {
       {/* ── The problem ── */}
       <section className="bg-white border-y border-border-crisp py-16">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <h2 className="text-2xl md:text-3xl font-bold font-headline text-tech-blue-deep mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface mb-8">
             {ABOUT.problem.heading}
           </h2>
           <div className="grid md:grid-cols-3 gap-5">
@@ -74,7 +74,7 @@ export default function AboutPage() {
                     {point.icon}
                   </span>
                 </span>
-                <h3 className="font-bold font-headline text-tech-blue-deep mb-2">{point.title}</h3>
+                <h3 className="font-bold font-headline text-on-surface mb-2">{point.title}</h3>
                 <p className="text-sm font-body text-on-surface-variant leading-relaxed">{point.body}</p>
               </div>
             ))}
@@ -85,7 +85,7 @@ export default function AboutPage() {
       {/* ── How Hyrde works ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-16">
         <div className="mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold font-headline text-tech-blue-deep">
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface">
             {ABOUT.how.heading}
           </h2>
           <p className="font-body text-electric-violet font-semibold mt-1">{ABOUT.how.tagline}</p>
@@ -100,7 +100,7 @@ export default function AboutPage() {
                 {step.n}
               </span>
               <div>
-                <h3 className="font-bold font-headline text-tech-blue-deep mb-2">{step.title}</h3>
+                <h3 className="font-bold font-headline text-on-surface mb-2">{step.title}</h3>
                 <p className="text-sm font-body text-on-surface-variant leading-relaxed">{step.body}</p>
               </div>
             </div>
@@ -114,7 +114,7 @@ export default function AboutPage() {
       {/* ── Who it's for ── */}
       <section className="bg-white border-y border-border-crisp py-16">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <h2 className="text-2xl md:text-3xl font-bold font-headline text-tech-blue-deep mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface mb-8">
             {ABOUT.audience.heading}
           </h2>
           <div className="grid md:grid-cols-2 gap-5">
@@ -128,7 +128,7 @@ export default function AboutPage() {
                     {col.icon}
                   </span>
                 </span>
-                <h3 className="text-xl font-bold font-headline text-tech-blue-deep mb-2">{col.title}</h3>
+                <h3 className="text-xl font-bold font-headline text-on-surface mb-2">{col.title}</h3>
                 <p className="text-sm font-body text-on-surface-variant leading-relaxed mb-6 flex-1">{col.body}</p>
                 <Link
                   href={col.cta.href}
@@ -148,7 +148,7 @@ export default function AboutPage() {
       {/* ── The vision ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-16">
         <div className="grid md:grid-cols-[0.8fr_1.2fr] gap-10 items-start">
-          <h2 className="text-2xl md:text-3xl font-bold font-headline text-tech-blue-deep leading-tight">
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface leading-tight">
             {ABOUT.vision.heading}
           </h2>
           <div className="space-y-5">

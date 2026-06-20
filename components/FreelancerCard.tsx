@@ -41,7 +41,7 @@ export default function FreelancerCard({ freelancer, highlight }: Props) {
             {initials}
           </div>
           <div>
-            <p className="font-semibold font-body text-tech-blue-deep text-sm">{freelancer.name}</p>
+            <p className="font-semibold font-body text-on-surface text-sm">{freelancer.name}</p>
             <p className="text-xs text-on-surface-variant font-body">{skillData?.label}</p>
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function FreelancerCard({ freelancer, highlight }: Props) {
           <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>location_on</span>
           {cityData?.label ?? freelancer.location}
         </span>
-        <span className="text-sm font-bold font-headline text-tech-blue-deep">${freelancer.rate}/hr</span>
+        <span className="text-sm font-bold font-headline text-on-surface">${freelancer.rate}/hr</span>
       </div>
     </div>
   );

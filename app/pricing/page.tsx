@@ -17,7 +17,7 @@ export default function PricingPage() {
           <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">
             {PRICING.eyebrow}
           </span>
-          <h1 className="text-4xl md:text-6xl font-bold font-headline text-tech-blue-deep mt-4 mb-5 leading-[1.05]">
+          <h1 className="text-4xl md:text-6xl font-bold font-headline text-on-surface mt-4 mb-5 leading-[1.05]">
             {PRICING.heading}
           </h1>
           <p className="font-body text-on-surface-variant text-lg leading-relaxed max-w-2xl mx-auto">
@@ -63,7 +63,7 @@ export default function PricingPage() {
               </p>
               <h2
                 className={`text-2xl font-bold font-headline mt-1 mb-4 ${
-                  tier.loud ? "text-white" : "text-tech-blue-deep"
+                  tier.loud ? "text-white" : "text-on-surface"
                 }`}
               >
                 {tier.name}
@@ -72,7 +72,7 @@ export default function PricingPage() {
               <div className="mb-5">
                 <span
                   className={`text-5xl font-bold font-headline tracking-tight ${
-                    tier.loud ? "text-white" : "text-tech-blue-deep"
+                    tier.loud ? "text-white" : "text-on-surface"
                   }`}
                 >
                   {tier.price}
@@ -110,7 +110,7 @@ export default function PricingPage() {
                 href={tier.cta.href}
                 className={`text-center font-semibold font-body px-6 py-3 rounded-full transition-all text-sm ${
                   tier.loud
-                    ? "bg-white text-tech-blue-deep hover:scale-[0.98]"
+                    ? "bg-white text-on-surface hover:scale-[0.98]"
                     : tier.highlight
                     ? "bg-electric-violet text-white hover:scale-[0.98]"
                     : "bg-tech-blue-deep text-white hover:scale-[0.98]"
@@ -154,7 +154,7 @@ export default function PricingPage() {
 
       {/* ── FAQs ── */}
       <section className="max-w-[800px] mx-auto px-6 md:px-12 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold font-headline text-tech-blue-deep mb-8 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface mb-8 text-center">
           Questions, answered
         </h2>
         <div className="space-y-3">
@@ -163,7 +163,7 @@ export default function PricingPage() {
               key={faq.q}
               className="group bg-white rounded-xl border border-border-crisp p-5 [&_summary]:cursor-pointer"
             >
-              <summary className="flex items-center justify-between font-semibold font-body text-tech-blue-deep text-sm list-none">
+              <summary className="flex items-center justify-between font-semibold font-body text-on-surface text-sm list-none">
                 {faq.q}
                 <span
                   className="material-symbols-outlined text-on-surface-variant transition-transform group-open:rotate-45"

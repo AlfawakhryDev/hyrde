@@ -66,7 +66,7 @@ export default function CvUpload({ onParsed, className = "" }: Props) {
             parsed.rate ? `$${parsed.rate}/hr` : null,
             parsed.yearsExperience ? `${parsed.yearsExperience} yrs exp` : null,
           ] as (string | null)[]).filter(Boolean).map((item, i) => (
-            <span key={i} className="text-xs bg-white border border-electric-violet/20 text-tech-blue-deep px-2.5 py-1 rounded-full font-body">
+            <span key={i} className="text-xs bg-white border border-electric-violet/20 text-on-surface px-2.5 py-1 rounded-full font-body">
               {item}
             </span>
           ))}
@@ -108,7 +108,7 @@ export default function CvUpload({ onParsed, className = "" }: Props) {
         ) : (
           <>
             <span className="material-symbols-outlined text-electric-violet mb-2 block animate-floaty" style={{ fontSize: "28px" }}>upload_file</span>
-            <p className="text-sm font-semibold font-body text-tech-blue-deep mb-0.5">Drop your CV here, or click to upload</p>
+            <p className="text-sm font-semibold font-body text-on-surface mb-0.5">Drop your CV here, or click to upload</p>
             <p className="text-xs text-on-surface-variant font-body">PDF, TXT, or Markdown — AI fills your profile instantly</p>
           </>
         )}

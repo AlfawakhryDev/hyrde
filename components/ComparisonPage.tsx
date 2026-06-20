@@ -55,7 +55,7 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
       <section className="max-w-[920px] mx-auto px-6 md:px-12 py-16">
         <div className="max-w-2xl mb-10">
           <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">Why people switch</span>
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep mt-3 leading-tight">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface mt-3 leading-tight">
             What hurts on {c.name} — and how Hyrde fixes it
           </h2>
         </div>
@@ -67,7 +67,7 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
                 <span className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-red-500" style={{ fontSize: "20px" }}>{p.icon}</span>
                 </span>
-                <h3 className="font-bold font-headline text-tech-blue-deep text-base">{p.title}</h3>
+                <h3 className="font-bold font-headline text-on-surface text-base">{p.title}</h3>
               </div>
               <div className="grid sm:grid-cols-2 gap-px bg-border-crisp">
                 <div className="bg-white px-6 py-4">
@@ -94,7 +94,7 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
       <section className="max-w-[920px] mx-auto px-6 md:px-12 pb-16">
         <div className="bg-white rounded-2xl border border-border-crisp overflow-hidden">
           <div className="px-6 md:px-8 py-5 border-b border-border-crisp">
-            <h2 className="text-xl font-bold font-headline text-tech-blue-deep">The real cost, side by side</h2>
+            <h2 className="text-xl font-bold font-headline text-on-surface">The real cost, side by side</h2>
           </div>
           <table className="w-full text-sm font-body">
             <thead>
@@ -107,9 +107,9 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
             <tbody>
               {c.fees.map((f, i) => (
                 <tr key={f.label} className={i < c.fees.length - 1 ? "border-b border-border-crisp" : ""}>
-                  <td className="px-6 md:px-8 py-3.5 font-semibold text-tech-blue-deep">{f.label}</td>
+                  <td className="px-6 md:px-8 py-3.5 font-semibold text-on-surface">{f.label}</td>
                   <td className="px-4 py-3.5 text-on-surface-variant">{f.them}</td>
-                  <td className="px-4 py-3.5 text-tech-blue-deep font-semibold">{f.hyrde}</td>
+                  <td className="px-4 py-3.5 text-on-surface font-semibold">{f.hyrde}</td>
                 </tr>
               ))}
             </tbody>
@@ -119,11 +119,11 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
 
       {/* ── Feature checklist ── */}
       <section className="max-w-[920px] mx-auto px-6 md:px-12 pb-16">
-        <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-6">Feature by feature</h2>
+        <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">Feature by feature</h2>
         <div className="grid sm:grid-cols-2 gap-3">
           {c.features.map(f => (
             <div key={f.feature} className="bg-white rounded-xl border border-border-crisp p-4">
-              <p className="text-sm font-semibold font-body text-tech-blue-deep mb-2">{f.feature}</p>
+              <p className="text-sm font-semibold font-body text-on-surface mb-2">{f.feature}</p>
               <div className="flex items-center justify-between text-xs font-body">
                 <span className="flex items-center gap-1.5 text-on-surface-variant">
                   <span className="material-symbols-outlined text-red-400" style={{ fontSize: "15px" }}>
@@ -143,12 +143,12 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
 
       {/* ── FAQ ── */}
       <section className="max-w-[920px] mx-auto px-6 md:px-12 pb-16">
-        <h2 className="text-2xl font-bold font-headline text-tech-blue-deep mb-6">Questions clients ask</h2>
+        <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">Questions clients ask</h2>
         <div className="space-y-3">
           {c.faqs.map(f => (
             <details key={f.q} className="group bg-white rounded-xl border border-border-crisp px-5 py-4">
               <summary className="flex items-center justify-between cursor-pointer list-none">
-                <span className="text-sm font-semibold font-body text-tech-blue-deep pr-4">{f.q}</span>
+                <span className="text-sm font-semibold font-body text-on-surface pr-4">{f.q}</span>
                 <span className="material-symbols-outlined text-electric-violet group-open:rotate-180 transition-transform shrink-0" style={{ fontSize: "20px" }}>expand_more</span>
               </summary>
               <p className="text-sm font-body text-on-surface-variant leading-relaxed mt-3">{f.a}</p>

@@ -16,8 +16,8 @@ const VALUE_POINTS = [
 ];
 
 const FIELD_CLASS =
-  "w-full rounded-xl border border-border-crisp bg-white px-4 py-2.5 text-sm font-body text-tech-blue-deep placeholder-on-surface-variant/40 focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/15 transition";
-const LABEL_CLASS = "block text-xs font-semibold font-body text-tech-blue-deep mb-1.5";
+  "w-full rounded-xl border border-border-crisp bg-white px-4 py-2.5 text-sm font-body text-on-surface placeholder-on-surface-variant/40 focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/15 transition";
+const LABEL_CLASS = "block text-xs font-semibold font-body text-on-surface mb-1.5";
 
 export default function JoinPage() {
   const router = useRouter();
@@ -79,7 +79,7 @@ export default function JoinPage() {
                 <circle cx="256" cy="256" r="32" fill="#fff" />
               </svg>
             </span>
-            <span className="text-[22px] font-bold font-headline tracking-tight text-tech-blue-deep leading-none">Hyrde</span>
+            <span className="text-[22px] font-bold font-headline tracking-tight text-on-surface leading-none">Hyrde</span>
           </Link>
 
           <div className="inline-flex items-center gap-2 bg-electric-violet/10 border border-electric-violet/20 px-3 py-1 rounded-full mb-5">
@@ -87,7 +87,7 @@ export default function JoinPage() {
             <span className="text-[11px] font-semibold font-body text-electric-violet uppercase tracking-widest">Free to join — onboarding now</span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold font-headline text-tech-blue-deep leading-tight mb-3">
+          <h1 className="text-3xl md:text-4xl font-bold font-headline text-on-surface leading-tight mb-3">
             Get hired by AI,<br />not by bidding.
           </h1>
           <p className="font-body text-on-surface-variant text-base leading-relaxed mb-8 max-w-md">
@@ -101,7 +101,7 @@ export default function JoinPage() {
                   <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>{p.icon}</span>
                 </span>
                 <div>
-                  <p className="text-sm font-bold font-headline text-tech-blue-deep">{p.title}</p>
+                  <p className="text-sm font-bold font-headline text-on-surface">{p.title}</p>
                   <p className="text-xs font-body text-on-surface-variant leading-relaxed">{p.body}</p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function JoinPage() {
 
         {/* ── Right: form card ── */}
         <div className="bg-white rounded-2xl border border-border-crisp shadow-sm p-6 md:p-8">
-          <h2 className="text-xl font-bold font-headline text-tech-blue-deep mb-1">Join as a freelancer</h2>
+          <h2 className="text-xl font-bold font-headline text-on-surface mb-1">Join as a freelancer</h2>
           <p className="text-sm font-body text-on-surface-variant mb-6">Takes 60 seconds. Free forever. No credit card.</p>
 
           <div className="space-y-4">

@@ -1,7 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+const CONTACT_EMAIL = "abdelrahman@hyrde.net";
 
 interface NavLink { href: string; label: string; special?: boolean; badge?: string }
 
@@ -17,11 +19,46 @@ const NAV_LINKS: NavLink[] = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
+  // Sync the toggle icon with the theme the no-flash script already applied.
+  useEffect(() => {
+    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === "dark" ? "light" : "dark";
+      document.documentElement.classList.toggle("dark", next === "dark");
+      try { localStorage.setItem("theme", next); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface-gray/90 backdrop-blur-md border-b border-border-crisp">
+
+      {/* ── Top utility strip: contact email + theme toggle ── */}
+      <div className="h-9 border-b border-border-crisp/70 bg-surface-container/40">
+        <div className="flex items-center justify-between h-full px-6 md:px-12">
+          <a href={`mailto:${CONTACT_EMAIL}`}
+            className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold font-body text-on-surface-variant hover:text-electric-violet transition-colors"
+            aria-label={`Email ${CONTACT_EMAIL}`}>
+            <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>mail</span>
+            <span className="truncate">{CONTACT_EMAIL}</span>
+          </a>
+          <button onClick={toggleTheme}
+            className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold font-body text-on-surface-variant hover:text-electric-violet transition-colors"
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title="Toggle theme">
+            <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+            <span className="hidden sm:inline">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── Main nav row ── */}
       <div className="flex justify-between items-center px-6 md:px-12 h-16">
 
         {/* Logo */}
@@ -34,7 +71,7 @@ export default function Navbar() {
               <circle cx="256" cy="256" r="32" fill="#fff" />
             </svg>
           </span>
-          <span className="text-[22px] font-bold font-headline tracking-tight text-tech-blue-deep leading-none">
+          <span className="text-[22px] font-bold font-headline tracking-tight text-on-surface leading-none">
             Hyrde
           </span>
         </Link>
@@ -72,7 +109,7 @@ export default function Navbar() {
             <span className="material-symbols-outlined" style={{ fontSize: "13px" }}>dashboard</span>
             Dashboard
           </Link>
-          <Link href="/join" className="text-xs font-semibold font-body text-tech-blue-deep px-4 py-2 hover:opacity-70 transition-opacity">
+          <Link href="/join" className="text-xs font-semibold font-body text-on-surface px-4 py-2 hover:opacity-70 transition-opacity">
             Join free
           </Link>
           <Link href="/get-started" className="bg-electric-violet text-white text-xs font-semibold font-body px-5 py-2 rounded-full hover:opacity-90 transition-opacity">
@@ -82,7 +119,7 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button onClick={() => setOpen(o => !o)}
-          className="md:hidden w-10 h-10 flex items-center justify-center text-tech-blue-deep -mr-2"
+          className="md:hidden w-10 h-10 flex items-center justify-center text-on-surface -mr-2"
           aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open}>
           <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>{open ? "close" : "menu"}</span>
         </button>
@@ -107,7 +144,7 @@ export default function Navbar() {
           ))}
           <div className="flex gap-3 pt-3 mt-2 border-t border-border-crisp">
             <Link href="/dashboard" onClick={() => setOpen(false)}
-              className="flex-1 text-center text-xs font-semibold font-body text-tech-blue-deep border border-border-crisp px-4 py-2.5 rounded-full flex items-center justify-center gap-1">
+              className="flex-1 text-center text-xs font-semibold font-body text-on-surface border border-border-crisp px-4 py-2.5 rounded-full flex items-center justify-center gap-1">
               <span className="material-symbols-outlined" style={{ fontSize: "12px" }}>dashboard</span>
               Dashboard
             </Link>

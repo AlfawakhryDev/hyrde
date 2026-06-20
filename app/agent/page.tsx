@@ -381,7 +381,7 @@ export default function AgentPage() {
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div>
                           <div className="flex items-center gap-2 mb-0.5">
-                            <p className="text-sm font-bold font-headline text-tech-blue-deep">
+                            <p className="text-sm font-bold font-headline text-on-surface">
                               {i === 0 ? m.name : `Candidate ${String.fromCharCode(65 + i)}`}
                             </p>
                             {i === 0 && (
@@ -391,7 +391,7 @@ export default function AgentPage() {
                           <p className="text-xs font-body text-on-surface-variant">{m.skill} · ${m.rate}/hr · {m.location}</p>
                         </div>
                         <div className="shrink-0 text-right">
-                          <p className="text-2xl font-bold font-headline text-tech-blue-deep leading-none">{m.score}</p>
+                          <p className="text-2xl font-bold font-headline text-on-surface leading-none">{m.score}</p>
                           <p className="text-[10px] font-body text-on-surface-variant">match %</p>
                         </div>
                       </div>
@@ -437,7 +437,7 @@ export default function AgentPage() {
             {done && (
               <div className="bg-electric-violet/5 border border-electric-violet/20 rounded-xl p-4 text-center animate-fadeup">
                 <span className="material-symbols-outlined text-electric-violet mb-1 block" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                <p className="text-sm font-bold font-headline text-tech-blue-deep">Agent complete — your hire is set up</p>
+                <p className="text-sm font-bold font-headline text-on-surface">Agent complete — your hire is set up</p>
                 <p className="text-xs font-body text-on-surface-variant mt-1">Top match identified · outreach drafted · interview slot ready to book</p>
               </div>
             )}
