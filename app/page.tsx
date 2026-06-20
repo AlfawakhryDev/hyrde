@@ -127,6 +127,14 @@ export default function Home() {
             Match now
           </button>
         </form>
+
+        <p className="text-sm font-body text-on-surface-variant mt-5">
+          New to this?{" "}
+          <Link href="/hire-freelancers-with-ai" className="text-electric-violet font-semibold underline underline-offset-2 hover:opacity-80">
+            See how to hire freelancers with AI
+          </Link>{" "}
+          — matched in 60 seconds.
+        </p>
       </section>
 
       {/* ── Stats ── */}

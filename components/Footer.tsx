@@ -10,6 +10,7 @@ export default function Footer() {
         <nav className="flex flex-wrap justify-center gap-x-10 gap-y-3">
           {[
             { href: "/about",           label: "Why Hyrde"     },
+            { href: "/hire-freelancers-with-ai", label: "Hire with AI" },
             { href: "/hire",            label: "Hire Talent"   },
             { href: "/jobs",            label: "Browse Jobs"   },
             { href: "/talent",          label: "Browse Talent" },
@@ -42,7 +43,7 @@ export default function Footer() {
         </a>
 
         <p className="text-xs font-body text-on-primary-container/40">
-          © 2025 Hyrde. AI-native freelancing.
+          © 2026 Hyrde. AI-native freelancing.
         </p>
       </div>
     </footer>
