@@ -7,7 +7,7 @@ import StatCounter from "@/components/StatCounter";
 export const metadata: Metadata = {
   title: { absolute: "Hire Pre-Vetted Freelancers, AI-Matched in 60 Seconds | Hyrde" },
   description:
-    "Hyrde matches you with the top 5 pre-vetted freelancers in 60 seconds — no bidding, no proposal spam. Describe your project, get ranked matches, pay a flat 8% only on success. The smarter Upwork alternative.",
+    "Describe your project and get the top 5 pre-vetted freelancers in 60 seconds. No bidding, no proposal spam. Flat 8% — only on success.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Hire Pre-Vetted Freelancers, AI-Matched in 60 Seconds | Hyrde",
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
 
         <h1 className="text-5xl md:text-[64px] font-bold font-headline text-tech-blue-deep mb-6 max-w-4xl mx-auto leading-[1.08] tracking-tight">
-          Hire the right freelancer{" "}
+          Hire pre-vetted freelancers{" "}
           <span className="text-electric-violet">in 60 seconds.</span>
         </h1>
 
