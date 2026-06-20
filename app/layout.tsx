@@ -7,8 +7,26 @@ import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://hyrde.net"),
   title: { default: "Hyrde — AI-native freelance platform", template: "%s | Hyrde" },
-  description: "The AI-native freelance platform. Clients describe what they need and get the top 5 matches in 60 seconds. Freelancers get AI agents that find work, write intros, and review contracts. Freelancers keep 100% — clients pay a flat 8% only when they hire.",
-  openGraph: { siteName: "Hyrde", type: "website" },
+  description: "The AI-native freelance platform. Clients describe what they need and get the top 5 matches in 60 seconds. Freelancers get AI agents that find work, write intros, and review contracts. Freelancers keep 100% — clients pay a flat 8% only on success.",
+  keywords: [
+    "hire freelancers", "AI freelance platform", "Upwork alternative",
+    "Fiverr alternative", "vetted freelancers", "hire developers",
+    "hire designers", "freelance marketplace", "AI talent matching",
+  ],
+  openGraph: {
+    siteName: "Hyrde",
+    type: "website",
+    url: "https://hyrde.net",
+    title: "Hyrde — Hire pre-vetted freelancers, AI-matched in 60 seconds",
+    description: "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Flat 8% — only on success.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hyrde — AI-native freelance platform" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hyrde — Hire pre-vetted freelancers, AI-matched in 60 seconds",
+    description: "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Flat 8% — only on success.",
+    images: ["/og.png"],
+  },
 };
 
 const organizationJsonLd = {
@@ -17,9 +35,22 @@ const organizationJsonLd = {
   name: "Hyrde",
   url: "https://hyrde.net",
   logo: "https://hyrde.net/hyrde-lockup-dark.svg",
+  image: "https://hyrde.net/og.png",
   description:
     "AI-native freelance platform. Pre-vetted talent, AI-matched to your brief in 60 seconds, at a flat 8% fee.",
   email: "abdelrahman@hyrde.net",
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Hyrde",
+  url: "https://hyrde.net",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: "https://hyrde.net/hire?q={search_term_string}" },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -27,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

@@ -1,7 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SKILLS } from "@/lib/data";
 import CostOfHiringSection from "@/components/CostOfHiringSection";
 import StatCounter from "@/components/StatCounter";
+
+export const metadata: Metadata = {
+  title: { absolute: "Hire Pre-Vetted Freelancers, AI-Matched in 60 Seconds | Hyrde" },
+  description:
+    "Hyrde matches you with the top 5 pre-vetted freelancers in 60 seconds — no bidding, no proposal spam. Describe your project, get ranked matches, pay a flat 8% only on success. The smarter Upwork alternative.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Hire Pre-Vetted Freelancers, AI-Matched in 60 Seconds | Hyrde",
+    description:
+      "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Flat 8% — only on success.",
+    url: "https://hyrde.net",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hyrde — AI-native freelance platform" }],
+  },
+};
 
 const FEATURED_SKILLS = [
   "react-developer","ux-designer","data-scientist",

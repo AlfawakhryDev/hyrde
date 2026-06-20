@@ -12,7 +12,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/get-started`,     lastModified: now, priority: 0.9 },
     { url: `${base}/join`,            lastModified: now, priority: 0.9 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
-    { url: `${base}/post-job`,        lastModified: now, priority: 0.9 },
     { url: `${base}/agent`,           lastModified: now, priority: 0.9 },
     { url: `${base}/pricing`,         lastModified: now, priority: 0.8 },
     { url: `${base}/enterprise`,      lastModified: now, priority: 0.8 },
