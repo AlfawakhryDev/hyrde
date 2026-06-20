@@ -10,7 +10,7 @@ const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 const EXPERIENCE = ["Less than 1 year", "1–3 years", "3–5 years", "5+ years"];
 
 const VALUE_POINTS = [
-  { icon: "payments",  title: "Free forever — keep 100%",        body: "No connects, no proposals, no pay-to-apply. Clients pay the 8% fee, never you." },
+  { icon: "payments",  title: "Free forever — keep 100%",        body: "No connects, no proposals, no pay-to-apply. Hiring is free during early access — and you never pay a fee either." },
   { icon: "bolt",      title: "Jobs come to you",                 body: "Your AI agent scans new briefs and pitches you automatically. No bidding, ever." },
   { icon: "verified",  title: "Get matched on proven skill",      body: "Stand out with an AI-verified profile instead of fighting 250 other applicants." },
 ];

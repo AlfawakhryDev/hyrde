@@ -13,7 +13,7 @@ const START = ["Immediately", "Within 2 weeks", "This month", "Next quarter", "J
 const VALUE_POINTS = [
   { icon: "bolt",          title: "A vetted shortlist in 60 seconds", body: "Describe the role — our AI returns ~5 ranked, pre-vetted candidates. No sifting 250 applications." },
   { icon: "verified",      title: "Skill proven, not claimed",        body: "Every candidate passes an AI work-sample assessment before they ever reach your shortlist." },
-  { icon: "payments",      title: "Pay only when you hire",           body: "Posting, matching and shortlisting are free. A flat 8% success fee — only on a real hire." },
+  { icon: "payments",      title: "Free to hire — early access",       body: "Posting, matching, shortlisting and hiring are all free during early access. No platform fee right now; paid plans come later." },
 ];
 
 const FIELD_CLASS =

@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const rate = getRate(skill, city);
   const loc = c.label === "Remote" ? "remotely" : `in ${c.label}`;
   const title = `Hire a ${s.label} ${loc} — $${rate}/hr avg | Hyrde`;
-  const description = `Find pre-vetted ${s.label}s ${loc}. Local average rate $${rate}/hr. AI-matched in 60 seconds, flat 8% fee only on hire — no Connects, no fake reviews.`;
+  const description = `Find pre-vetted ${s.label}s ${loc}. Local average rate $${rate}/hr. AI-matched in 60 seconds, free to hire during early access — no Connects, no fake reviews.`;
   const canonical = `/hire/${skill}/${city}`;
   return {
     title,
@@ -134,7 +134,7 @@ export default async function HireSkillCityPage({ params }: Props) {
               </div>
               <p className="text-xs font-body text-on-surface-variant mt-3 pt-3 border-t border-border-crisp">
                 Platform fee:{" "}
-                <span className="text-electric-violet font-semibold">8%</span>{" "}
+                <span className="text-electric-violet font-semibold">$0 — free in early access</span>{" "}
                 vs the industry standard{" "}
                 <span className="text-red-400 font-semibold line-through">20%</span>
               </p>

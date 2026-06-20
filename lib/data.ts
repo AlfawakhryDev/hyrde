@@ -113,8 +113,8 @@ export function getSkillCityIntro(skillSlug: string, citySlug: string): string {
     : `${ctx.diffPct}% ${ctx.direction}`;
   const variants = [
     `Looking to hire a ${s.label} ${locShort}? Hyrde matches you with pre-vetted ${s.category.toLowerCase()} talent at around $${ctx.rate}/hr — ${vsBaseline} the $${ctx.baseline}/hr global baseline. Every candidate is screened before you ever see them, so you skip the fake portfolios and inflated "Top Rated" badges that plague the big marketplaces.`,
-    `Hiring a ${s.label} ${locShort} typically runs about $${ctx.rate}/hr. Hyrde's AI reads your brief and surfaces a ranked shortlist of vetted ${s.label}s ${c.label === "Remote" ? "from around the world" : `across ${c.region}`} in seconds — no Connects to buy, no bidding wars, and a flat 8% fee instead of the 20%+ you'd lose elsewhere.`,
-    `Need a ${s.label} ${locShort}? With ${s.demand} demand for ${s.category.toLowerCase()} skills, finding reliable talent fast matters. Hyrde pre-vets every ${s.label}, AI-matches them to your brief in about 60 seconds, and charges just 8% on hire — a fraction of the effective 22–34% take rate burned clients report on legacy platforms.`,
+    `Hiring a ${s.label} ${locShort} typically runs about $${ctx.rate}/hr. Hyrde's AI reads your brief and surfaces a ranked shortlist of vetted ${s.label}s ${c.label === "Remote" ? "from around the world" : `across ${c.region}`} in seconds — no Connects to buy, no bidding wars, and it's free to hire during early access instead of the 20%+ you'd lose elsewhere.`,
+    `Need a ${s.label} ${locShort}? With ${s.demand} demand for ${s.category.toLowerCase()} skills, finding reliable talent fast matters. Hyrde pre-vets every ${s.label}, AI-matches them to your brief in about 60 seconds, and is free to hire during early access — versus the effective 22–34% take rate burned clients report on legacy platforms.`,
   ];
   return variants[hashIndex(skillSlug + citySlug, variants.length)];
 }
@@ -132,7 +132,7 @@ export function getSkillCityFaqs(skillSlug: string, citySlug: string): { q: stri
   return [
     {
       q: `How much does it cost to hire a ${s.label} ${locShort}?`,
-      a: `The going market rate for a ${s.label} ${loc} is around $${ctx.rate}/hr. Junior talent starts near $${ctx.junior}/hr, while senior specialists run to about $${ctx.senior}/hr. On Hyrde you pay a flat 8% fee when you hire — not the 20–34% effective take rate clients report on Upwork and Fiverr.`,
+      a: `The going market rate for a ${s.label} ${loc} is around $${ctx.rate}/hr. Junior talent starts near $${ctx.junior}/hr, while senior specialists run to about $${ctx.senior}/hr. On Hyrde, hiring is free during early access — not the 20–34% effective take rate clients report on Upwork and Fiverr.`,
     },
     {
       q: `How fast can I find a ${s.label} ${locShort}?`,
@@ -144,7 +144,7 @@ export function getSkillCityFaqs(skillSlug: string, citySlug: string): { q: stri
     },
     {
       q: `Do I pay anything if I don't hire?`,
-      a: `No. Posting a brief, getting matched, and reviewing ${s.label} candidates ${loc} is completely free. You only pay Hyrde's flat 8% fee once you actually hire — and every match is pre-vetted, so you're not gambling on fake reviews or padded badges.`,
+      a: `No. Posting a brief, getting matched, and reviewing ${s.label} candidates ${loc} is completely free. Hiring is free during early access too — and every match is pre-vetted, so you're not gambling on fake reviews or padded badges.`,
     },
   ];
 }

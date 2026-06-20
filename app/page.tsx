@@ -7,12 +7,12 @@ import StatCounter from "@/components/StatCounter";
 export const metadata: Metadata = {
   title: { absolute: "Hire Pre-Vetted Freelancers, AI-Matched in 60 Seconds | Hyrde" },
   description:
-    "Describe your project and get the top 5 pre-vetted freelancers in 60 seconds. No bidding, no proposal spam. Flat 8% — only on success.",
+    "Describe your project and get the top 5 pre-vetted freelancers in 60 seconds. No bidding, no proposal spam. Free to hire during early access.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Hire Pre-Vetted Freelancers, AI-Matched in 60 Seconds | Hyrde",
     description:
-      "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Flat 8% — only on success.",
+      "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Free to hire — early access.",
     url: "https://hyrde.net",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hyrde — AI-native freelance platform" }],
   },
@@ -26,7 +26,7 @@ const FEATURED_SKILLS = [
 
 const STATS = [
   { value: "$0",  label: "Cost to freelancers" },
-  { value: "8%",  label: "Fee — only on success" },
+  { value: "$0",  label: "To hire — early access" },
   { value: "5",   label: "AI-matched max"  },
   { value: "60s", label: "To your matches" },
 ];
@@ -45,7 +45,7 @@ const PRICING = [
     icon: "business_center",
     who: "For clients",
     price: "Free to post",
-    detail: "Flat 8% — charged only after the task is successfully completed. No listing fees, no subscriptions required.",
+    detail: "Free to hire during early access — no platform fee, no listing fees, no subscriptions. Paid plans come later; early users get locked-in perks.",
   },
   {
     icon: "person",
@@ -90,7 +90,7 @@ export default function Home() {
         <p className="text-xl font-body text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
           Describe your project in plain language — our AI scores every freelancer against your brief
           and returns the top 5 with explanations. Free to post.{" "}
-          <strong className="text-on-surface font-semibold">Flat 8% — only after the task is done.</strong>
+          <strong className="text-on-surface font-semibold">Free to hire while we're in early access.</strong>
         </p>
 
         <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 mb-6 max-w-2xl mx-auto">
@@ -209,7 +209,7 @@ export default function Home() {
             Tired of disappearing contractors and fake 5-star badges?
           </h2>
           <p className="font-body text-on-surface-variant mt-3 max-w-xl mx-auto">
-            See exactly how Hyrde fixes what burns clients on the big marketplaces — vetted talent, no bidding, one flat 8% fee.
+            See exactly how Hyrde fixes what burns clients on the big marketplaces — vetted talent, no bidding, and free to hire during early access.
           </p>
         </div>
         <div className="grid sm:grid-cols-3 gap-4">
@@ -247,7 +247,7 @@ export default function Home() {
                 "Free to post — no upfront cost",
                 "AI reads your brief and scores every freelancer",
                 "See exactly why each person was matched",
-                "Flat 8% — charged only after the task is successfully completed",
+                "Free to hire — no platform fee during early access",
               ].map(item => (
                 <div key={item} className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-electric-violet/10 flex items-center justify-center shrink-0">

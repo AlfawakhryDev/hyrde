@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return {};
   return {
     title: `Hire a ${data.label}`,
-    description: `Find pre-vetted ${data.label}s on Hyrde. Average rate $${data.avgRate}/hr. AI-matched in 60 seconds. 8% fee only on hire.`,
+    description: `Find pre-vetted ${data.label}s on Hyrde. Average rate $${data.avgRate}/hr. AI-matched in 60 seconds. Free to hire during early access.`,
   };
 }
 
@@ -55,7 +55,7 @@ export default async function HireSkillPage({ params }: Props) {
               Hire a {skillData.label}
             </h1>
             <p className="font-body text-on-surface-variant text-base leading-relaxed mb-6 max-w-md">
-              Get matched with pre-vetted {skillData.label}s in under 60 seconds. AI-scored candidates only. 8% fee — charged only on hire.
+              Get matched with pre-vetted {skillData.label}s in under 60 seconds. AI-scored candidates only. Free to hire during early access.
             </p>
 
             <div className="grid grid-cols-3 gap-3 mb-6">
@@ -127,7 +127,7 @@ export default async function HireSkillPage({ params }: Props) {
           {[
             { q: `How much does a ${skillData.label} cost?`,   a: `The average ${skillData.label} on Hyrde charges $${skillData.avgRate}/hr. Rates range from $${Math.round(skillData.avgRate * 0.6)}/hr (junior) to $${Math.round(skillData.avgRate * 1.6)}/hr (senior).` },
             { q: `How fast can I hire a ${skillData.label}?`,  a: `Hyrde's AI presents the top 5 AI-scored candidates within 60 seconds of you posting. Most clients confirm a hire within 24–48 hours.` },
-            { q: `What makes Hyrde different?`,             a: `5 AI-curated matches instead of dozens of spam proposals. 8% fee, only when you hire. Zero cost to post. AI explains exactly why each person was matched.` },
+            { q: `What makes Hyrde different?`,             a: `5 AI-curated matches instead of dozens of spam proposals. Free to hire during early access — zero cost to post. AI explains exactly why each person was matched.` },
             { q: `Are ${skillData.label}s verified?`,          a: `Yes. Every freelancer completes an AI-administered skills assessment before appearing in results. You see a verified competency score.` },
           ].map(({ q, a }) => (
             <div key={q} className="bg-white rounded-xl p-5 border border-border-crisp">

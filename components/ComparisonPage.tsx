@@ -166,7 +166,7 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
               Done gambling on {c.name}?
             </h2>
             <p className="font-body text-white/70 mb-8 max-w-lg mx-auto">
-              Describe the role once. Get ~5 AI-vetted candidates in 60 seconds. Pay a flat 8% only when you hire.
+              Describe the role once. Get ~5 AI-vetted candidates in 60 seconds. Free to hire during early access.
             </p>
             <Link href="/get-started"
               className="inline-flex items-center gap-2 bg-electric-violet text-white font-semibold font-body px-8 py-4 rounded-full hover:scale-[1.03] transition-transform text-sm">

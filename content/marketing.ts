@@ -175,7 +175,7 @@ const CONTRAST_STATS: ContrastStat[] = [
   { id: "h-matches",   value: 5,  suffix: "",  label: "Curated matches — not 500 applications" },
   { id: "h-speed",     value: 60, suffix: "s", label: "To a ranked, AI-vetted shortlist" },
   { id: "h-proposals", value: 0,  suffix: "",  label: "Proposals a freelancer ever pays for" },
-  { id: "h-fee",       value: 8,  suffix: "%", label: "Success fee — only when you hire" },
+  { id: "h-fee",       value: 0,  suffix: "",  label: "Platform fee — free in early access" },
 ];
 
 export const COST_OF_HIRING = {
@@ -318,7 +318,7 @@ export const ABOUT = {
       },
       fix: {
         headline: "A vetted shortlist of ~5 in under 60 seconds",
-        detail: "Describe the work in plain language. Hyrde's AI scopes the role, scans the talent pool, and returns a ranked, blind-first shortlist of ~5 vetted candidates in under 60 seconds. Pay 8% only when you hire.",
+        detail: "Describe the work in plain language. Hyrde's AI scopes the role, scans the talent pool, and returns a ranked, blind-first shortlist of ~5 vetted candidates in under 60 seconds. Free to hire during early access.",
         stat: "60s",
         statLabel: "to a ranked, AI-vetted shortlist",
       },
@@ -363,7 +363,7 @@ export const ABOUT = {
       {
         n: "04",
         title: "Get matched, get paid",
-        body: "Browsing and shortlisting are free. We charge a flat 8% success fee only when you actually hire — paid through escrow and milestones. Freelancers keep the rest.",
+        body: "Browsing and shortlisting are free. During early access, hiring is completely free — no platform fee right now. Paid plans come later (early users get locked-in perks). Freelancers always keep 100%.",
       },
     ],
   },
@@ -379,7 +379,7 @@ export const ABOUT = {
       {
         icon: "rocket_launch",
         title: "For companies",
-        body: "Founders and teams who need the right person fast — without sifting 500 proposals. Describe the work, get a vetted shortlist, pay only when you hire.",
+        body: "Founders and teams who need the right person fast — without sifting 500 proposals. Describe the work, get a vetted shortlist — free to hire during early access.",
         cta: CTA.findTalent,
       },
     ],
@@ -437,8 +437,8 @@ const PRICING_TIERS: PricingTier[] = [
     id: "companies",
     name: "Companies",
     audience: "Startups & teams hiring",
-    price: "8%",
-    priceNote: "success fee — only when you hire",
+    price: "Free",
+    priceNote: "to hire during early access",
     highlight: true,
     badge: "Most popular",
     features: [
@@ -447,7 +447,7 @@ const PRICING_TIERS: PricingTier[] = [
       "~5 ranked, AI-vetted candidates per role",
       "Blind-first matching — skill before name",
       "Escrow + milestone payments built in",
-      "Flat 8% vs the industry-standard 20%",
+      "$0 platform fee during early access (vs ~20% elsewhere)",
     ],
     cta: CTA.findTalent,
   },
@@ -462,7 +462,7 @@ const PRICING_TIERS: PricingTier[] = [
       "Everything in Companies",
       "Team workspace with seats & roles",
       "Saved talent pools & pipelines",
-      "Reduced success fee at volume",
+      "Locked-in early-access pricing",
       "Priority AI matching & support",
       "Consolidated monthly billing",
     ],
@@ -474,12 +474,12 @@ export const PRICING = {
   meta: {
     title: "Pricing",
     description:
-      "Freelancers are free forever. Companies pay a flat 8% success fee — only when they hire. Volume hirers and enterprises get dedicated plans.",
+      "Freelancers are free forever. Hiring is free during early access — no platform fee right now. Volume hirers and enterprises get dedicated plans.",
   },
   eyebrow: "Pricing",
   heading: "Fair by design. No surprises, ever.",
   subheading:
-    "Freelancers never pay. Companies pay only when a hire actually happens. That's the whole model.",
+    "Freelancers never pay. And during early access, hiring is free too — no platform fee. Paid plans come later; early users get locked-in perks.",
   tiers: PRICING_TIERS,
 
   enterpriseCallout: {
@@ -495,12 +495,12 @@ export const PRICING = {
       a: "Nothing. No subscription, no connects, no proposal credits, no fee on what they earn. We monetize the company side only.",
     },
     {
-      q: "When do companies pay the 8%?",
-      a: "Only when you hire and work is delivered through Hyrde. Posting, AI matching, browsing, and shortlisting are always free.",
+      q: "Is hiring really free right now?",
+      a: "Yes. During early access, posting, AI matching, browsing, shortlisting, and hiring are all free — there is no platform fee. We plan to introduce paid plans later, and early users will get locked-in perks.",
     },
     {
-      q: "How is 8% sustainable when others charge 20%?",
-      a: "AI does the matching and screening that armies of recruiters used to. Lower overhead means we pass the savings on.",
+      q: "Will Hyrde stay free?",
+      a: "Hiring is free during early access while we build the marketplace. We will introduce paid plans and fees later — but early users get locked-in perks, and because our AI does the matching and screening that armies of recruiters used to, any future pricing stays far below the 20–34% legacy platforms charge.",
     },
     {
       q: "How does Business pricing work?",
@@ -546,7 +546,7 @@ export const ENTERPRISE = {
     { icon: "monitoring",    title: "Analytics dashboards", body: "Track time-to-hire, spend, match quality, and pipeline health across the whole organization." },
     { icon: "verified_user", title: "Compliance, classification & EOR", body: "Worker classification, contracts, and Employer-of-Record coverage to hire globally without the legal risk." },
     { icon: "hub",           title: "API + ATS / VMS integrations", body: "Pipe Hyrde matches straight into your ATS or VMS, or build on our API to fit your own workflow." },
-    { icon: "handshake",     title: "SLAs & volume pricing", body: "Guaranteed response and match SLAs, plus reduced success fees that scale with your hiring volume." },
+    { icon: "handshake",     title: "SLAs & volume pricing", body: "Guaranteed response and match SLAs, plus locked-in early-access pricing as you scale." },
     { icon: "engineering",   title: "Optional managed talent", body: "Need a whole pod or staff augmentation? We'll assemble, vet, and manage the team for you." },
   ] satisfies EnterpriseFeature[],
   demo: {
@@ -678,12 +678,12 @@ export const HOME = {
     heading: "Get matched. Get paid.",
     headingAccent: "No bidding, ever.",
     sub:
-      "Open at the door, curated at the match. Anyone with real skill joins free and gets matched by AI. Companies get a vetted shortlist in 60 seconds — and pay only 8%, only on hire.",
+      "Open at the door, curated at the match. Anyone with real skill joins free and gets matched by AI. Companies get a vetted shortlist in 60 seconds — and during early access, hiring is free.",
   },
   // Top-line proof stats for the hero band.
   proof: [
     { value: "$0",  label: "Cost to freelancers" },
-    { value: "8%",  label: "Fee — only on hire" },
+    { value: "$0",  label: "To hire — early access" },
     { value: "~5",  label: "Vetted matches per role" },
     { value: "60s", label: "To your shortlist" },
   ],
@@ -717,7 +717,7 @@ export const SOLUTIONS: SolutionPackage[] = [
       "Weekly AI shortlist reports",
       "1 named account manager",
       "ATS integration (Greenhouse, Lever, Ashby)",
-      "Reduced success fee: 5% vs 8% standard",
+      "Locked-in early-access pricing — no platform fee now",
     ],
     cta: { label: "Start 30-day pilot", href: "/get-started" },
   },

@@ -50,7 +50,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     name: "Upwork",
     metaTitle: "The Upwork Alternative for Clients Who Are Tired of Getting Burned",
     metaDescription:
-      "Disappearing contractors, fake 'Top Rated' badges, removed reviews, 22–34% real fees. Hyrde is the Upwork alternative that vets talent with AI and only charges 8% when you actually hire.",
+      "Disappearing contractors, fake 'Top Rated' badges, removed reviews, 22–34% real fees. Hyrde is the Upwork alternative that vets talent with AI and is free to hire during early access.",
     eyebrow: "Upwork alternative",
     h1: "The Upwork alternative for clients who got burned",
     intro:
@@ -90,14 +90,14 @@ export const COMPETITORS: Record<string, Competitor> = {
         icon: "payments",
         title: "The real fees are 22–34% — and unpredictable",
         them: "Upwork's 2025 shift to variable 0–15% freelancer fees killed predictability. Add Connects burn (~6% reply rate), withdrawal fees, and client-side contract-initiation fees of $0.99–$14.99 and the true take is 22–34% of the contract.",
-        hyrde: "One number: a flat 8% success fee, paid only when you actually hire. Posting, matching, and shortlisting are free.",
+        hyrde: "Free to hire during early access — posting, matching, shortlisting, and the hire itself cost nothing right now.",
       },
     ],
     fees: [
       { label: "Cost to post / get matches", them: "Free, but Connects are burned on proposals", hyrde: "Free" },
       { label: "Client marketplace fee", them: "3–7.99% on payments", hyrde: "$0" },
       { label: "Contract initiation fee", them: "$0.99–$14.99 per contract", hyrde: "$0" },
-      { label: "Real all-in 'agency tax'", them: "≈ 22–34% of contract", hyrde: "Flat 8%, only on a hire" },
+      { label: "Real all-in 'agency tax'", them: "≈ 22–34% of contract", hyrde: "$0 — free during early access" },
     ],
     features: [
       { feature: "Talent vetted before you see them", them: false, hyrde: "AI work-sample on every profile" },
@@ -105,16 +105,16 @@ export const COMPETITORS: Record<string, Competitor> = {
       { feature: "Shortlist speed", them: "Days of sifting 50+ proposals", hyrde: "~5 ranked matches in 60s" },
       { feature: "Quality guarantee / replacement", them: false, hyrde: "Vetted matches + managed workflow" },
       { feature: "Tamper-proof quality signal", them: false, hyrde: "Skill score, not gameable badges" },
-      { feature: "Predictable pricing", them: false, hyrde: "Flat 8% on hire" },
+      { feature: "Predictable pricing", them: false, hyrde: "Free during early access" },
     ],
     faqs: [
       {
         q: "What is the best Upwork alternative for clients in 2026?",
-        a: "If your problem with Upwork is talent quality and unpredictable fees, Hyrde is built for exactly that: every freelancer passes an AI work-sample assessment before you see them, there's no bidding, and you pay a flat 8% only when you hire — no Connects, no contract-initiation fees, no 22–34% all-in tax.",
+        a: "If your problem with Upwork is talent quality and unpredictable fees, Hyrde is built for exactly that: every freelancer passes an AI work-sample assessment before you see them, there's no bidding, and it's free to hire during early access — no Connects, no contract-initiation fees, no 22–34% all-in tax.",
       },
       {
         q: "Is Hyrde cheaper than Upwork?",
-        a: "For most contracts, yes. Upwork's real all-in cost lands around 22–34% once you count the marketplace fee, contract-initiation fees, and wasted Connects. Hyrde is a single flat 8% success fee, charged only when you actually hire.",
+        a: "For most contracts, yes. Upwork's real all-in cost lands around 22–34% once you count the marketplace fee, contract-initiation fees, and wasted Connects. Hyrde is free to hire during early access.",
       },
       {
         q: "How does Hyrde stop the 'disappearing contractor' problem?",
@@ -132,7 +132,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     name: "Fiverr",
     metaTitle: "The Fiverr Alternative for Serious Client Work",
     metaDescription:
-      "Tired of gig roulette, race-to-the-bottom quality, surprise revisions and buyer fees on Fiverr? Hyrde matches you to AI-vetted talent in 60 seconds and charges a flat 8% only when you hire.",
+      "Tired of gig roulette, race-to-the-bottom quality, surprise revisions and buyer fees on Fiverr? Hyrde matches you to AI-vetted talent in 60 seconds and is free to hire during early access.",
     eyebrow: "Fiverr alternative",
     h1: "The Fiverr alternative for real, professional work",
     intro:
@@ -154,7 +154,7 @@ export const COMPETITORS: Record<string, Competitor> = {
         icon: "receipt_long",
         title: "Surprise 'extras' and buyer fees",
         them: "The headline gig price isn't the real price — revisions, 'fast delivery,' and source files are paid add-ons, plus a buyer service fee on top.",
-        hyrde: "Transparent rates up front and a single flat 8% fee, only when you hire. No nickel-and-diming.",
+        hyrde: "Transparent rates up front and free to hire during early access. No nickel-and-diming.",
       },
       {
         icon: "reviews",
@@ -173,7 +173,7 @@ export const COMPETITORS: Record<string, Competitor> = {
       { label: "Cost to browse / get matches", them: "Free", hyrde: "Free" },
       { label: "Buyer service fee", them: "~5.5% + small order fee", hyrde: "$0" },
       { label: "Paid 'extras' to get usable work", them: "Revisions, source files, speed add-ons", hyrde: "None — scoped up front" },
-      { label: "What you pay overall", them: "Gig price + fees + extras", hyrde: "Flat 8% on hire" },
+      { label: "What you pay overall", them: "Gig price + fees + extras", hyrde: "Market rate — free to hire (early access)" },
     ],
     features: [
       { feature: "Talent vetted before you see them", them: false, hyrde: "AI work-sample on every profile" },
@@ -185,7 +185,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     faqs: [
       {
         q: "What's a better alternative to Fiverr for professional work?",
-        a: "Hyrde. Instead of buying a fixed gig and hoping, you describe the role and get ~5 AI-vetted professionals ranked for your brief, with transparent rates and a flat 8% fee charged only when you hire.",
+        a: "Hyrde. Instead of buying a fixed gig and hoping, you describe the role and get ~5 AI-vetted professionals ranked for your brief, with transparent rates and free to hire during early access.",
       },
       {
         q: "Why is Fiverr work so inconsistent?",
@@ -193,7 +193,7 @@ export const COMPETITORS: Record<string, Competitor> = {
       },
       {
         q: "Does Hyrde charge buyer fees like Fiverr?",
-        a: "No. There's no buyer service fee and no paid 'extras' to get usable deliverables. You pay a single flat 8% success fee only when you actually hire someone.",
+        a: "No. There's no buyer service fee and no paid 'extras' to get usable deliverables. Hiring is free during early access.",
       },
     ],
   },
@@ -203,7 +203,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     name: "Toptal",
     metaTitle: "The Toptal Alternative — Elite Vetting Without the Elite Price",
     metaDescription:
-      "Love Toptal's vetting, hate the markups, opaque pricing and slow onboarding? Hyrde gives you AI-vetted talent in 60 seconds, transparent rates, and a flat 8% fee — no premium gatekeeping.",
+      "Love Toptal's vetting, hate the markups, opaque pricing and slow onboarding? Hyrde gives you AI-vetted talent in 60 seconds, transparent rates, and free to hire during early access — no premium gatekeeping.",
     eyebrow: "Toptal alternative",
     h1: "The Toptal alternative: elite vetting without the elite price",
     intro:
@@ -213,13 +213,13 @@ export const COMPETITORS: Record<string, Competitor> = {
         icon: "attach_money",
         title: "Premium pricing and hidden markups",
         them: "Toptal's markup is baked into rates you can't see, pushing effective costs well above market — fine for enterprises, brutal for startups.",
-        hyrde: "Transparent rates set by the freelancer, plus a flat, visible 8% fee. No opaque agency markup.",
+        hyrde: "Transparent rates set by the freelancer, and free to hire during early access. No opaque agency markup.",
       },
       {
         icon: "account_balance_wallet",
         title: "Deposit just to start talking",
         them: "Toptal typically asks for an upfront deposit before you can engage talent — a real barrier when you're still scoping.",
-        hyrde: "Free to post, match, and shortlist. You only pay the 8% when you actually hire.",
+        hyrde: "Free to post, match, shortlist, and hire during early access.",
       },
       {
         icon: "schedule",
@@ -236,9 +236,9 @@ export const COMPETITORS: Record<string, Competitor> = {
     ],
     fees: [
       { label: "Cost to start", them: "Upfront deposit (often ~$500)", hyrde: "Free" },
-      { label: "Pricing transparency", them: "Opaque markup baked into rate", hyrde: "Freelancer's rate + visible 8%" },
+      { label: "Pricing transparency", them: "Opaque markup baked into rate", hyrde: "Freelancer's rate + $0 fee (early access)" },
       { label: "Time to shortlist", them: "Days, via account manager", hyrde: "~60 seconds" },
-      { label: "What you pay overall", them: "Premium rate + hidden markup", hyrde: "Market rate + flat 8% on hire" },
+      { label: "What you pay overall", them: "Premium rate + hidden markup", hyrde: "Market rate + $0 fee (early access)" },
     ],
     features: [
       { feature: "Talent vetted on a real work sample", them: "Yes (manual screening)", hyrde: "AI work-sample on every profile" },
@@ -250,11 +250,11 @@ export const COMPETITORS: Record<string, Competitor> = {
     faqs: [
       {
         q: "Is there a cheaper alternative to Toptal that still vets talent?",
-        a: "Yes — Hyrde. Every freelancer passes an AI work-sample assessment, but there's no opaque markup or upfront deposit. You see the freelancer's real rate plus a flat 8% fee, charged only when you hire.",
+        a: "Yes — Hyrde. Every freelancer passes an AI work-sample assessment, but there's no opaque markup or upfront deposit. You see the freelancer's real rate, and hiring is free during early access.",
       },
       {
         q: "Do I need to pay a deposit like Toptal?",
-        a: "No. Posting, matching, and getting your shortlist are free on Hyrde. You only pay the flat 8% success fee when you actually hire someone.",
+        a: "No. Posting, matching, getting your shortlist, and hiring are all free on Hyrde during early access.",
       },
       {
         q: "How is Hyrde's vetting different from Toptal's?",

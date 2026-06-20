@@ -391,7 +391,7 @@ export default function FreelancerJoin() {
                   <span className="text-on-surface">You keep</span>
                   <span className="text-electric-violet">$5,000 — all of it</span>
                 </div>
-                <p className="mt-2 text-[11px] font-body text-on-surface-variant leading-relaxed">The flat 8% success fee is paid by the client, on top — never deducted from you.</p>
+                <p className="mt-2 text-[11px] font-body text-on-surface-variant leading-relaxed">Hiring is free for clients during early access, and freelancers never pay a fee — you keep 100%.</p>
               </div>
             </div>
           )}
@@ -439,7 +439,7 @@ export default function FreelancerJoin() {
                 )}
                 <div className="flex justify-between text-xs font-body py-1.5">
                   <span className="text-on-surface-variant">Your platform fee</span>
-                  <span className="font-semibold text-electric-violet">$0 — clients pay 8%</span>
+                  <span className="font-semibold text-electric-violet">$0 — you always keep 100%</span>
                 </div>
               </div>
 

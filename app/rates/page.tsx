@@ -48,7 +48,7 @@ export default function RatesPage() {
     { stat: `$${entrySkill[1].avgRate}/hr`, label: `Most accessible: ${entrySkill[1].label}` },
     { stat: `+${priciestPct}%`, label: `${priciestCity[1].label} commands the biggest premium` },
     { stat: `−${valuePct}%`, label: `${valueCity[1].label} offers the best value for clients` },
-    { stat: `8% vs 22–34%`, label: `Hyrde fee vs legacy-platform effective take rate` },
+    { stat: `$0 vs 22–34%`, label: `Hyrde (early access) vs legacy-platform effective take rate` },
   ];
 
   // ── Dataset structured data (schema.org/Dataset) ───────────────────
@@ -230,7 +230,7 @@ export default function RatesPage() {
             City figures apply a local multiplier to each baseline, reflecting prevailing cost of living and demand — from a premium in {priciestCity[1].label} (+{priciestPct}%) to strong value in {valueCity[1].label} (−{valuePct}%). &quot;Remote&quot; reflects the global blended rate.
           </p>
           <p>
-            Rates are indicative benchmarks for budgeting and pricing decisions, not quotes. Fee comparisons reference publicly reported 2026 effective take rates on major marketplaces (service fees, contract-initiation charges, and payment markups combined), versus Hyrde&apos;s flat 8% fee on hire. The Index is refreshed periodically; this is the {UPDATED_LABEL} edition.
+            Rates are indicative benchmarks for budgeting and pricing decisions, not quotes. Fee comparisons reference publicly reported 2026 effective take rates on major marketplaces (service fees, contract-initiation charges, and payment markups combined), versus Hyrde, which is free to hire during early access (paid plans planned for later). The Index is refreshed periodically; this is the {UPDATED_LABEL} edition.
           </p>
         </div>
       </section>
@@ -265,7 +265,7 @@ export default function RatesPage() {
           <div>
             <h2 className="text-2xl font-bold font-headline mb-2">Ready to get matched?</h2>
             <p className="font-body text-on-primary-container text-sm max-w-md">
-              Post a job brief and our AI finds the top 5 candidates at the right rate in 60 seconds — flat 8% fee, only when you hire.
+              Post a job brief and our AI finds the top 5 candidates at the right rate in 60 seconds — free to hire during early access.
             </p>
           </div>
           <div className="flex gap-3 shrink-0">

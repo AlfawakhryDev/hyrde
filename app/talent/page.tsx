@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Browse Talent",
-  description: "Verified freelancers on Hyrde. AI-scored profiles. 8% fee only on hire.",
+  description: "Verified freelancers on Hyrde. AI-scored profiles. Free to hire during early access.",
 };
 
 const CATEGORIES = ["All", "Engineering", "Design", "Data", "Writing", "Marketing", "Creative"];
@@ -81,7 +81,7 @@ export default async function TalentPage({
               Verified talent
             </h1>
             <p className="font-body text-on-surface-variant mt-1">
-              AI-scored profiles. 8% platform fee — only when you hire.
+              AI-scored profiles. Free to hire during early access.
             </p>
           </div>
           <Link

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Hire Freelancers",
-  description: "Browse 25+ skill categories. AI-matched talent in 60 seconds. 8% fee only on hire.",
+  description: "Browse 25+ skill categories. AI-matched talent in 60 seconds. Free to hire during early access.",
 };
 
 const CATEGORIES = ["Engineering","Design","Data","Writing","Marketing","Creative"];
@@ -21,7 +21,7 @@ export default function HirePage() {
 
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface mb-2">Find talent by skill</h1>
-          <p className="font-body text-on-surface-variant text-lg">AI-matched. Verified. 8% fee only when you hire.</p>
+          <p className="font-body text-on-surface-variant text-lg">AI-matched. Verified. Free to hire during early access.</p>
         </div>
 
         {CATEGORIES.map(cat => {
