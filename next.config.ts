@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         has: [{ type: "host", value: "www.hyrde.net" }],
         destination: "https://hyrde.net/:path*",
-        permanent: true,
+        statusCode: 301,
       },
     ];
   },
