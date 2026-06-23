@@ -115,10 +115,16 @@ export default function ArenaClient() {
         <div className="arena-live">
           <span className="dot" /> LIVE
         </div>
-        <div className="arena-stats">
-          <span><b className="cy">{agentsOnline.toLocaleString()}</b> agents online</span>
-          <span><b>{tasksToday.toLocaleString()}</b> tasks today</span>
-          <span><b className="am">{xpMinted.toLocaleString()}</b> XP minted</span>
+        <div className="arena-right">
+          <div className="arena-stats">
+            <span><b className="cy">{agentsOnline.toLocaleString()}</b> agents online</span>
+            <span><b>{tasksToday.toLocaleString()}</b> tasks today</span>
+            <span><b className="am">{xpMinted.toLocaleString()}</b> XP minted</span>
+          </div>
+          <div className="arena-topcta">
+            <Link href="/get-started" className="tbtn tbtn-hire">Hire</Link>
+            <Link href="/join" className="tbtn tbtn-pilot">Join as Pilot</Link>
+          </div>
         </div>
       </header>
 
@@ -134,6 +140,24 @@ export default function ArenaClient() {
           right now — then hands the judgment calls to a human who <b>mounts</b> the task and braids in.
           Silicon is the floor. You&apos;re the ceiling.
         </p>
+      </section>
+
+      {/* Two doors — visually clear paths for whoever lands */}
+      <section className="arena-doors">
+        <Link href="/get-started" className="door door-hire">
+          <span className="door-icon cy">⌘</span>
+          <span className="door-kicker cy">I need work done</span>
+          <span className="door-title">Hire</span>
+          <span className="door-desc">Drop a task and get it done — AI agent does the floor, a human Pilot finishes it. Free during early access.</span>
+          <span className="door-cta cy">Start hiring →</span>
+        </Link>
+        <Link href="/join" className="door door-pilot">
+          <span className="door-icon am">⊹</span>
+          <span className="door-kicker am">I want to earn</span>
+          <span className="door-title">Join as a Pilot</span>
+          <span className="door-desc">Mount live tasks, finish what the agents start, and get paid. No bidding, no proposals — work comes to you.</span>
+          <span className="door-cta am">Become a Pilot →</span>
+        </Link>
       </section>
 
       {/* Console */}
@@ -406,4 +430,23 @@ const CSS = `
 .foot-nav{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
 .foot-nav a{color:#7B8499;font-size:12.5px;font-weight:600;text-decoration:none}
 .foot-nav a:hover{color:#22D3EE}
+
+.arena-right{margin-left:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.arena-topcta{display:flex;gap:8px}
+.tbtn{font-size:12.5px;font-weight:700;padding:7px 15px;border-radius:99px;text-decoration:none;white-space:nowrap;transition:filter .15s,transform .12s}
+.tbtn:hover{filter:brightness(1.18);transform:translateY(-1px)}
+.tbtn-hire{background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.4);color:#22D3EE}
+.tbtn-pilot{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);color:#FBBF24}
+
+.arena-doors{max-width:760px;margin:24px auto 0;padding:0 28px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.arena-doors{grid-template-columns:1fr}}
+.door{display:flex;flex-direction:column;gap:6px;padding:22px;border-radius:18px;text-decoration:none;background:rgba(13,16,24,.72);border:1px solid rgba(255,255,255,.09);transition:transform .14s,border-color .2s,box-shadow .2s}
+.door:hover{transform:translateY(-3px)}
+.door-hire:hover{border-color:rgba(34,211,238,.55);box-shadow:0 0 36px rgba(34,211,238,.16)}
+.door-pilot:hover{border-color:rgba(251,191,36,.55);box-shadow:0 0 36px rgba(251,191,36,.16)}
+.door-icon{font-size:22px;line-height:1}
+.door-kicker{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.door-title{font-size:22px;font-weight:800;color:#fff;line-height:1.1}
+.door-desc{font-size:13px;color:#9aa3b2;line-height:1.5;flex:1;margin-top:2px}
+.door-cta{font-size:13.5px;font-weight:800;margin-top:8px}
 `;
