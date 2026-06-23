@@ -34,7 +34,19 @@ function tooMany(retryAfter: number, msg: string): Response {
  *   const blocked = guardAi(req); if (blocked) return blocked;
  * Returns a Response to send back when the request should be rejected, else null.
  */
+// MANUAL SUSPEND — paid Anthropic endpoints are paused to control cost.
+// Flip to false (and redeploy) to bring the live agent + AI features back.
+const AI_SUSPENDED = true;
+
 export function guardAi(req: Request): Response | null {
+  // (0) Hard suspend — overrides everything while we're pausing API spend.
+  if (AI_SUSPENDED) {
+    return new Response(
+      JSON.stringify({ error: "The live agent is paused right now while we tune things. Check back soon — or join the waitlist." }),
+      { status: 503, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
   // (1) Kill switch — set AI_ENABLED=false on the deployment to disable instantly.
   if (process.env.AI_ENABLED === "false") {
     return new Response(
