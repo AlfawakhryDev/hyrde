@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 // Immersive routes render full-bleed with no marketing navbar/footer.
-const IMMERSIVE = ["/arena"];
+const IMMERSIVE = ["/", "/arena"];
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

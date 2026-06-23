@@ -279,7 +279,15 @@ export default function ArenaClient() {
 
       {/* Footer */}
       <footer className="arena-foot">
-        <p>Built on the <Link href="/">Hyrde</Link> thesis: match work to the right doer — silicon or carbon.</p>
+        <p>
+          Built on the Hyrde thesis: match work to the right doer — silicon or carbon.
+          <span className="foot-nav">
+            <Link href="/welcome">Overview</Link>
+            <Link href="/hire-freelancers-with-ai">Hire with AI</Link>
+            <Link href="/pricing">Pricing</Link>
+            <Link href="/join">Join free</Link>
+          </span>
+        </p>
         <a href="#console" className="foot-cta">⚡ Drop your task</a>
       </footer>
     </div>
@@ -394,5 +402,8 @@ const CSS = `
 .arena-foot{max-width:860px;margin:54px auto 0;padding:26px 28px 0;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 .arena-foot p{font-size:13px;color:#7B8499;margin:0}
 .arena-foot a{color:#22D3EE;text-decoration:none}
-.foot-cta{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);color:#22D3EE!important;font-weight:700;font-size:13px;padding:9px 18px;border-radius:99px}
+.foot-cta{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);color:#22D3EE!important;font-weight:700;font-size:13px;padding:9px 18px;border-radius:99px;white-space:nowrap}
+.foot-nav{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+.foot-nav a{color:#7B8499;font-size:12.5px;font-weight:600;text-decoration:none}
+.foot-nav a:hover{color:#22D3EE}
 `;

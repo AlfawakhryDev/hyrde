@@ -9,6 +9,7 @@ export default function Footer() {
 
         <nav className="flex flex-wrap justify-center gap-x-10 gap-y-3">
           {[
+            { href: "/welcome",         label: "Overview"      },
             { href: "/about",           label: "Why Hyrde"     },
             { href: "/hire-freelancers-with-ai", label: "Hire with AI" },
             { href: "/hire",            label: "Hire Talent"   },

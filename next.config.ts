@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
         destination: "https://hyrde.net/:path*",
         statusCode: 301,
       },
+      // Arena is now the homepage; keep the old /arena link working.
+      {
+        source: "/arena",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
 };

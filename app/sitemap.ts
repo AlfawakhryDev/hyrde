@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const static_pages = [
     { url: base,                          lastModified: now, priority: 1.0 },
+    { url: `${base}/welcome`,             lastModified: now, priority: 0.9 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/get-started`,     lastModified: now, priority: 0.9 },
     { url: `${base}/join`,            lastModified: now, priority: 0.9 },
