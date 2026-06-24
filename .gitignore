@@ -42,6 +42,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# iOS app — keep project secrets and Xcode cruft out of git
+ios/**/Secrets.swift
+ios/**/xcuserdata/
+ios/**/*.xcuserstate
+ios/**/.build/
+ios/**/DerivedData/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
