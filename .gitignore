@@ -52,3 +52,6 @@ ios/**/DerivedData/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# graphify knowledge graph (each dev builds locally; hooks keep it fresh)
+/graphify-out/

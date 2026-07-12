@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readStore, writeStore } from "@/lib/store";
+import { supabaseAnon } from "@/lib/supabase/anon";
 
 export const dynamic = "force-dynamic";
 
@@ -142,10 +143,33 @@ export async function POST(req: NextRequest) {
     forwardedToGoogle: false,
   };
 
+  // Primary durable sink: Supabase `clients` table (anon INSERT allowed by RLS).
+  let storedInDb = false;
+  try {
+    const { error } = await supabaseAnon().from("clients").insert({
+      name: lead.name,
+      email: lead.email,
+      company: lead.company,
+      brief: [
+        lead.rolesNeeded && `Roles: ${lead.rolesNeeded}`,
+        lead.postingsPerMonth && `Postings/mo: ${lead.postingsPerMonth}`,
+        lead.startTiming && `Start: ${lead.startTiming}`,
+        lead.phone && `Phone: ${lead.phone}`,
+        lead.website && `Website: ${lead.website}`,
+        lead.country && `Country: ${lead.country}`,
+      ].filter(Boolean).join(" · "),
+      source: "web",
+    });
+    storedInDb = !error;
+    if (error) console.warn("Supabase client-lead insert failed:", error.message);
+  } catch (err) {
+    console.warn("Supabase client-lead insert threw:", err);
+  }
+
   // Best-effort forward to Google Form (auto-works once the form restriction is lifted)
   lead.forwardedToGoogle = await forwardToGoogle(lead);
 
-  // Durable local store — the source of truth for inbound client leads
+  // Legacy best-effort local store (ephemeral on Vercel).
   let stored = false;
   try {
     const leads = readStore<Lead[]>("leads", []);
@@ -156,8 +180,8 @@ export async function POST(req: NextRequest) {
     stored = false;
   }
 
-  // Only fail if BOTH sinks failed (e.g. read-only FS + restricted form)
-  if (!stored && !lead.forwardedToGoogle) {
+  // Only fail if ALL sinks failed
+  if (!storedInDb && !stored && !lead.forwardedToGoogle) {
     return NextResponse.json({ error: "We couldn't save your details. Please try again." }, { status: 500 });
   }
 

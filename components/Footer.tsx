@@ -1,51 +1,77 @@
 import Link from "next/link";
-import Image from "next/image";
+import Logo from "./Logo";
+
+const COLUMNS: { heading: string; links: { href: string; label: string }[] }[] = [
+  {
+    heading: "Product",
+    links: [
+      { href: "/agent",   label: "AI Agent" },
+      { href: "/hire",    label: "Hire talent" },
+      { href: "/jobs",    label: "Browse jobs" },
+      { href: "/pricing", label: "Pricing" },
+    ],
+  },
+  {
+    heading: "For freelancers",
+    links: [
+      { href: "/join",    label: "Join free" },
+      { href: "/vetting", label: "Find work" },
+      { href: "/talent",  label: "Browse talent" },
+      { href: "/rates",   label: "Rate index" },
+      { href: "/guides",  label: "Guides" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { href: "/about",      label: "Why Hyrde" },
+      { href: "/enterprise", label: "Enterprise" },
+      { href: "/upwork-alternative", label: "Compare platforms" },
+    ],
+  },
+];
 
 export default function Footer() {
   return (
-    <footer className="w-full py-12 px-6 md:px-12 bg-tech-blue-deep border-t border-white/5">
-      <div className="max-w-[1280px] mx-auto flex flex-col items-center text-center gap-8">
-        <Image src="/hyrde-lockup-dark.svg" alt="Hyrde" width={108} height={30} />
-
-        <nav className="flex flex-wrap justify-center gap-x-10 gap-y-3">
-          {[
-            { href: "/welcome",         label: "Overview"      },
-            { href: "/about",           label: "Why Hyrde"     },
-            { href: "/hire-freelancers-with-ai", label: "Hire with AI" },
-            { href: "/hire",            label: "Hire Talent"   },
-            { href: "/jobs",            label: "Browse Jobs"   },
-            { href: "/talent",          label: "Browse Talent" },
-            { href: "/pricing",         label: "Pricing"       },
-            { href: "/enterprise",      label: "Enterprise"    },
-            { href: "/rates",           label: "Rate Index"    },
-            { href: "/guides",          label: "Guides"        },
-            { href: "/join",            label: "Join Free"     },
-            { href: "/post-job",        label: "Post a Job"    },
-            { href: "/upwork-alternative", label: "Upwork Alternative" },
-          ].map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-xs font-semibold font-body text-on-primary-container/60 hover:text-ai-glow transition-colors uppercase tracking-widest"
+    <footer className="border-t border-border-crisp bg-surface-gray">
+      <div className="mx-auto max-w-[1120px] px-5 md:px-6 py-14">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <Logo />
+            <p className="mt-4 text-[13px] leading-relaxed text-on-surface-variant max-w-[240px]">
+              The AI-vetted freelance platform. Prove skill once — hire without the pile.
+            </p>
+            <a
+              href="mailto:abdelrahman@hyrde.net"
+              className="mt-4 inline-block text-[13px] text-on-surface-variant hover:text-on-surface transition-colors"
             >
-              {label}
-            </Link>
+              abdelrahman@hyrde.net
+            </a>
+          </div>
+
+          {COLUMNS.map(col => (
+            <nav key={col.heading} aria-label={col.heading}>
+              <h3 className="text-[13px] font-medium text-on-surface mb-3">{col.heading}</h3>
+              <ul className="space-y-2">
+                {col.links.map(l => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           ))}
-        </nav>
+        </div>
 
-        <div className="h-px w-full max-w-4xl bg-white/10" />
-
-        <a
-          href="mailto:abdelrahman@hyrde.net"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold font-body text-on-primary-container/60 hover:text-ai-glow transition-colors"
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>mail</span>
-          abdelrahman@hyrde.net
-        </a>
-
-        <p className="text-xs font-body text-on-primary-container/40">
-          © 2026 Hyrde. AI-native freelancing.
-        </p>
+        <div className="mt-12 pt-6 border-t border-border-crisp flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[13px] text-on-surface-variant">© 2026 Hyrde</p>
+          <p className="text-[13px] text-on-surface-variant">Made in Cairo</p>
+        </div>
       </div>
     </footer>
   );

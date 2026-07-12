@@ -1,30 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --font-headline: 'DM Sans', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-headline: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 
   /* Hyrde brand */
   --color-tech-blue-deep: #0A0A0F;
   --color-tech-blue-muted: #1a1a2e;
   --color-electric-violet: #5B4FCF;
   --color-ai-glow: #A99EE8;
-  --color-surface-gray: #F5F4F0;
-  --color-border-crisp: #E4E2DC;
+  --color-surface-gray: #FAFAFA;
+  --color-border-crisp: #E7E7E9;
 
   /* Surface scale */
-  --color-surface: #F5F4F0;
-  --color-surface-dim: #dcdad5;
+  --color-surface: #FAFAFA;
+  --color-surface-dim: #EBEBED;
   --color-surface-bright: #ffffff;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #F5F4F0;
-  --color-surface-container: #eeece7;
-  --color-surface-container-high: #e6e4de;
-  --color-surface-container-highest: #dedad3;
+  --color-surface-container-low: #F7F7F8;
+  --color-surface-container: #F1F1F3;
+  --color-surface-container-high: #E9E9EC;
+  --color-surface-container-highest: #E1E1E5;
 
   /* On-surface */
-  --color-on-surface: #0A0A0F;
-  --color-on-surface-variant: #5a5a6a;
+  --color-on-surface: #111113;
+  --color-on-surface-variant: #64646E;
   --color-inverse-surface: #1a1a2e;
   --color-inverse-on-surface: #F5F4F0;
 
@@ -59,33 +59,33 @@
   color-scheme: dark;
 
   --color-tech-blue-deep: #0A0A0F;      /* kept dark: now only dark panels/borders */
-  --color-tech-blue-muted: #16161f;
-  --color-surface-gray: #0b0b10;
-  --color-border-crisp: #26262f;
+  --color-tech-blue-muted: #161618;
+  --color-surface-gray: #0A0A0B;
+  --color-border-crisp: #232326;
 
-  --color-surface: #0b0b10;
-  --color-surface-dim: #070709;
-  --color-surface-bright: #20202a;
-  --color-surface-container-lowest: #141419;
-  --color-surface-container-low: #16161d;
-  --color-surface-container: #1a1a22;
-  --color-surface-container-high: #20202a;
-  --color-surface-container-highest: #26262f;
+  --color-surface: #0A0A0B;
+  --color-surface-dim: #060607;
+  --color-surface-bright: #1C1C1F;
+  --color-surface-container-lowest: #111113;
+  --color-surface-container-low: #141416;
+  --color-surface-container: #18181B;
+  --color-surface-container-high: #1E1E21;
+  --color-surface-container-highest: #242428;
 
-  --color-on-surface: #ECECF1;
-  --color-on-surface-variant: #A2A2B4;
-  --color-inverse-surface: #ECECF1;
-  --color-inverse-on-surface: #0b0b10;
+  --color-on-surface: #EDEDEF;
+  --color-on-surface-variant: #9A9AA3;
+  --color-inverse-surface: #EDEDEF;
+  --color-inverse-on-surface: #0A0A0B;
 
   --color-outline: #6a6a78;
-  --color-outline-variant: #3a3a47;
+  --color-outline-variant: #333338;
 }
 
 /* Literal utilities that have no token to flip */
-.dark body { background: #0b0b10; color: #ECECF1; }
-.dark .bg-white { background-color: #15151c; }
-.dark .bg-tech-blue-deep { background-color: #17171f; }   /* elevated dark panel */
-.dark .border-tech-blue-deep { border-color: #2f2f3a; }
+.dark body { background: #0A0A0B; color: #EDEDEF; }
+.dark .bg-white { background-color: #131315; }
+.dark .bg-tech-blue-deep { background-color: #131315; }   /* elevated dark panel */
+.dark .border-tech-blue-deep { border-color: #2A2A2F; }
 .dark .glass-card {
   background: rgba(21, 21, 28, 0.72);
   border-color: rgba(255, 255, 255, 0.08);
@@ -134,10 +134,12 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: #F5F4F0;
-  color: #0A0A0F;
-  font-family: 'DM Sans', sans-serif;
+  background: #FAFAFA;
+  color: #111113;
+  font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  text-rendering: optimizeLegibility;
 }
 
 /* ── Motion: AI-native micro-animations ──────────────────────────────── */
@@ -152,6 +154,8 @@ body {
 @keyframes spinSlow { to { transform: rotate(360deg) } }
 @keyframes dotFlash { 0%,80%,100% { opacity: .25 } 40% { opacity: 1 } }
 @keyframes slideInRight { from { transform: translateX(100%) } to { transform: translateX(0) } }
+@keyframes hyrde-breathe { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
+@keyframes hyrde-sweep { 0% { left: -35% } 100% { left: 100% } }
 
 .animate-fadeup     { animation: fadeUp .55s cubic-bezier(.2,.7,.2,1) both }
 .animate-floaty     { animation: floatY 5s ease-in-out infinite }

@@ -1,158 +1,166 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
+import { supabaseBrowser } from "@/lib/supabase/client";
+import { HyrdeMark } from "./Logo";
 
-const CONTACT_EMAIL = "abdelrahman@hyrde.net";
-
-interface NavLink { href: string; label: string; special?: boolean; badge?: string }
-
-const NAV_LINKS: NavLink[] = [
-  { href: "/agent",      label: "AI Agent", special: true              },
-  { href: "/sparks",     label: "Sparks",   badge: "New"               },
-  { href: "/hire",       label: "Talent"                               },
-  { href: "/jobs",       label: "Jobs"                                 },
-  { href: "/pricing",    label: "Pricing"                              },
-  { href: "/enterprise", label: "Enterprise"                           },
-  { href: "/about",      label: "Why Hyrde"                           },
+const NAV_LINKS = [
+  { href: "/vetting", label: "Find work" },
+  { href: "/hire",    label: "Talent"  },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/about",   label: "Company" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
-  // Sync the toggle icon with the theme the no-flash script already applied.
   useEffect(() => {
-    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+    const supabase = supabaseBrowser();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
   }, []);
 
-  const toggleTheme = () => {
-    setTheme(prev => {
-      const next = prev === "dark" ? "light" : "dark";
-      document.documentElement.classList.toggle("dark", next === "dark");
-      try { localStorage.setItem("theme", next); } catch { /* ignore */ }
-      return next;
-    });
+  const signOut = async () => {
+    await supabaseBrowser().auth.signOut();
+    setOpen(false);
+    router.push("/");
+    router.refresh();
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-surface-gray/90 backdrop-blur-md border-b border-border-crisp">
-      <div className="flex justify-between items-center gap-4 px-6 md:px-12 h-16">
+    <header className="fixed top-0 left-0 right-0 z-50">
+      {/* Announcement bar */}
+      <Link
+        href="/signup"
+        className="flex items-center justify-center gap-2 h-8 bg-[#0A0A0B] text-white/90 text-[12px] font-medium hover:text-white transition-colors"
+      >
+        Early access is live — free to hire during launch
+        <span aria-hidden="true">→</span>
+      </Link>
 
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setOpen(false)} aria-label="Hyrde home">
-          <span className="relative inline-flex items-center justify-center w-9 h-9 rounded-[11px] ai-match-gradient shadow-[0_4px_14px_rgba(91,79,207,0.35)] group-hover:shadow-[0_6px_20px_rgba(91,79,207,0.5)] transition-shadow">
-            <svg width="20" height="20" viewBox="0 0 512 512" aria-hidden="true">
-              <g stroke="#fff" strokeWidth="44" strokeLinecap="round" fill="none">
-                <path d="M180 150 L180 362" /><path d="M332 150 L332 362" />
-              </g>
-              <circle cx="256" cy="256" r="32" fill="#fff" />
-            </svg>
-          </span>
-          <span className="text-[22px] font-bold font-headline tracking-tight text-on-surface leading-none">
-            Hyrde
-          </span>
-        </Link>
+      {/* Floating pill nav */}
+      <div className="flex justify-center px-4 pt-3">
+        <nav className="flex items-center gap-1 h-12 pl-4 pr-2 rounded-full bg-surface-bright/85 backdrop-blur-xl border border-border-crisp shadow-[0_4px_24px_rgba(10,10,15,0.08)]">
+          <Link href="/" onClick={() => setOpen(false)} aria-label="Hyrde home"
+            className="flex items-center gap-1.5 text-on-surface pr-2">
+            <HyrdeMark size={15} />
+            <span className="text-[16px] font-semibold tracking-[-0.02em] leading-none select-none">hyrde</span>
+          </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden lg:flex gap-5 items-center">
-          {NAV_LINKS.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`relative text-xs font-semibold font-body uppercase tracking-widest transition-colors flex items-center gap-1 ${
-                isActive(link.href)
-                  ? "text-electric-violet"
-                  : link.special
-                  ? "text-electric-violet/70 hover:text-electric-violet"
-                  : "text-on-surface-variant hover:text-electric-violet"
-              }`}
-            >
-              {link.special && (
-                <span className="material-symbols-outlined" style={{ fontSize: "12px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-              )}
-              {link.label}
-              {link.badge && (
-                <span className="absolute -top-2 -right-5 text-[8px] font-bold bg-electric-violet text-white px-1.5 py-0.5 rounded-full leading-none">
-                  {link.badge}
-                </span>
-              )}
-            </Link>
-          ))}
+          <div className="hidden md:flex items-center">
+            {NAV_LINKS.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
+                  isActive(link.href)
+                    ? "text-on-surface bg-surface-container"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <span className="hidden md:block w-px h-4 bg-border-crisp mx-1.5" aria-hidden="true" />
+
+          {user ? (
+            <div className="hidden md:flex items-center gap-1.5">
+              <Link href="/dashboard"
+                className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity">
+                Dashboard
+              </Link>
+              <Link href="/profile" title="Profile" aria-label="Profile"
+                className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                  isActive("/profile") ? "text-on-surface bg-surface-container" : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container"
+                }`}>
+                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>person</span>
+              </Link>
+              <button onClick={signOut} title="Sign out" aria-label="Sign out"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>logout</span>
+              </button>
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-1.5">
+              <Link href="/login"
+                className="px-3 py-1.5 rounded-full text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+                Log in
+              </Link>
+              <Link href="/signup"
+                className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity">
+                Sign up
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setOpen(o => !o)}
+            className="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-on-surface"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
+              {open ? "close" : "menu"}
+            </span>
+          </button>
         </nav>
-
-        {/* Desktop right cluster: email · theme toggle · CTAs */}
-        <div className="hidden lg:flex items-center gap-2 shrink-0">
-          <a href={`mailto:${CONTACT_EMAIL}`}
-            className="flex items-center gap-1.5 text-xs font-semibold font-body text-on-surface-variant hover:text-electric-violet transition-colors"
-            aria-label={`Email ${CONTACT_EMAIL}`} title={CONTACT_EMAIL}>
-            <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>mail</span>
-            <span className="hidden xl:inline">{CONTACT_EMAIL}</span>
-          </a>
-          <button onClick={toggleTheme}
-            className="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-electric-violet hover:bg-surface-container-high transition-colors"
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title="Toggle theme">
-            <span className="material-symbols-outlined" style={{ fontSize: "19px" }}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
-          </button>
-          <span className="w-px h-5 bg-border-crisp mx-0.5" aria-hidden="true" />
-          <Link href="/join" className="text-xs font-semibold font-body text-on-surface px-3 py-2 hover:opacity-70 transition-opacity">
-            Join free
-          </Link>
-          <Link href="/get-started" className="bg-electric-violet text-white text-xs font-semibold font-body px-5 py-2 rounded-full hover:opacity-90 transition-opacity">
-            Hire talent
-          </Link>
-        </div>
-
-        {/* Mobile actions */}
-        <div className="lg:hidden flex items-center gap-1 shrink-0">
-          <a href={`mailto:${CONTACT_EMAIL}`}
-            className="w-10 h-10 flex items-center justify-center text-on-surface-variant"
-            aria-label={`Email ${CONTACT_EMAIL}`}>
-            <span className="material-symbols-outlined" style={{ fontSize: "21px" }}>mail</span>
-          </a>
-          <button onClick={toggleTheme}
-            className="w-10 h-10 flex items-center justify-center text-on-surface-variant"
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
-            <span className="material-symbols-outlined" style={{ fontSize: "22px" }}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
-          </button>
-          <button onClick={() => setOpen(o => !o)}
-            className="w-10 h-10 flex items-center justify-center text-on-surface -mr-2"
-            aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open}>
-            <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>{open ? "close" : "menu"}</span>
-          </button>
-        </div>
       </div>
 
       {/* Mobile dropdown */}
       {open && (
-        <nav className="lg:hidden border-t border-border-crisp bg-surface-gray/98 backdrop-blur-md px-6 py-4 flex flex-col gap-1">
-          {NAV_LINKS.map(link => (
-            <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
-              className={`py-2.5 text-sm font-semibold font-body uppercase tracking-widest flex items-center gap-1.5 ${
-                isActive(link.href) ? "text-electric-violet" : link.special ? "text-electric-violet/70" : "text-on-surface-variant"
-              }`}>
-              {link.special && <span className="material-symbols-outlined" style={{ fontSize: "13px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>}
-              {link.label}
-              {link.badge && (
-                <span className="text-[8px] font-bold bg-electric-violet text-white px-1.5 py-0.5 rounded-full leading-none ml-1">
-                  {link.badge}
-                </span>
+        <div className="md:hidden flex justify-center px-4 pt-2">
+          <div className="w-full max-w-sm rounded-2xl bg-surface-bright/95 backdrop-blur-xl border border-border-crisp shadow-[0_8px_32px_rgba(10,10,15,0.12)] p-3">
+            {NAV_LINKS.map(link => (
+              <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
+                className={`block px-3 py-2.5 rounded-lg text-[15px] font-medium ${
+                  isActive(link.href) ? "text-on-surface bg-surface-container" : "text-on-surface-variant"
+                }`}>
+                {link.label}
+              </Link>
+            ))}
+            <div className="flex gap-2 pt-2 mt-1 border-t border-border-crisp">
+              {user ? (
+                <>
+                  <Link href="/dashboard" onClick={() => setOpen(false)}
+                    className="flex-1 h-10 flex items-center justify-center rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium">
+                    Dashboard
+                  </Link>
+                  <Link href="/profile" onClick={() => setOpen(false)}
+                    className="flex-1 h-10 flex items-center justify-center rounded-full border border-border-crisp text-sm font-medium text-on-surface">
+                    Profile
+                  </Link>
+                  <button onClick={signOut}
+                    className="flex-1 h-10 flex items-center justify-center rounded-full border border-border-crisp text-sm font-medium text-on-surface">
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setOpen(false)}
+                    className="flex-1 h-10 flex items-center justify-center rounded-full border border-border-crisp text-sm font-medium text-on-surface">
+                    Log in
+                  </Link>
+                  <Link href="/signup" onClick={() => setOpen(false)}
+                    className="flex-1 h-10 flex items-center justify-center rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium">
+                    Sign up
+                  </Link>
+                </>
               )}
-            </Link>
-          ))}
-          <div className="flex gap-3 pt-3 mt-2 border-t border-border-crisp">
-            <Link href="/join" onClick={() => setOpen(false)}
-              className="flex-1 text-center text-xs font-semibold font-body text-on-surface border border-border-crisp px-4 py-2.5 rounded-full">
-              Join free
-            </Link>
-            <Link href="/get-started" onClick={() => setOpen(false)}
-              className="flex-1 text-center bg-electric-violet text-white text-xs font-semibold font-body px-5 py-2.5 rounded-full">
-              Hire talent
-            </Link>
+            </div>
           </div>
-        </nav>
+        </div>
       )}
     </header>
   );

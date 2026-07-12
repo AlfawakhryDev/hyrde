@@ -86,7 +86,7 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
       }
     } catch {
       setPitch(job.id, {
-        text: "Couldn't generate proposal. Check that ANTHROPIC_API_KEY is set in .env.local.",
+        text: "Couldn't generate the proposal right now — try again in a moment.",
         loading: false,
       });
     }

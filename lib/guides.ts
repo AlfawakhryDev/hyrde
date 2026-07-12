@@ -455,6 +455,164 @@ export const GUIDES: Record<string, Guide> = {
     },
     related: ["freelance-rates-2026"],
   },
+
+  "ai-proposal-spam-when-hiring-freelancers": {
+    slug: "ai-proposal-spam-when-hiring-freelancers",
+    cluster: "client",
+    clusterLabel: "Hiring guide",
+    title: "AI Proposal Spam: Why You Get 50 ChatGPT Proposals in 30 Minutes — and How to Hire Anyway",
+    metaTitle: "AI Proposal Spam on Upwork: How Clients Filter It (2026) | Hyrde",
+    metaDescription:
+      "80–90% of freelance proposals are now AI-generated. Why your job post gets 50+ ChatGPT replies in 30 minutes, why the 'banana test' exists, and how to hire without reading any of them.",
+    excerpt:
+      "Clients now run 'banana tests' just to catch bots. Here's why proposal spam broke marketplace hiring — and the hiring flow that skips proposals entirely.",
+    readMins: 8,
+    updated: "2026-07-01",
+    intro: [
+      "Post a detailed brief on a big freelance marketplace in 2026 and watch what happens: 50 or more proposals arrive within the first half hour. Industry analyses now estimate that 80–90% of them are AI-generated — a browser extension or auto-bidder reads your job post, feeds it to a language model, and pastes back a 'tailored' cover letter in under five seconds.",
+      "Clients have adapted in the saddest way possible: burying instructions like 'start your reply with the word banana' in the middle of the brief, just to detect who actually read it. When the standard advice for hiring is 'set a bot trap,' the model is broken. This guide covers how the spam wave happened, the filters that still work, and the newer hiring flow that skips proposals entirely.",
+    ],
+    sections: [
+      {
+        h2: "How proposal spam became the default",
+        body: [
+          "Auto-bidding tools industrialized applying. A freelancer — or an agency running dozens of accounts — can now apply to every job in a category within seconds of posting, each with a plausible-sounding, personalized-looking letter. Reply-rate studies show the spam is even self-defeating: proposals with three or more recognizable AI clichés see reply rates collapse toward zero. But the flood keeps coming, because sending costs nothing.",
+          "The result for you as a client: the signal-to-noise ratio of an open job post has collapsed. Reading proposals is now the least reliable, most time-expensive way to evaluate freelancers.",
+        ],
+        bullets: [
+          "50+ applications in 30 minutes is now normal for a well-written brief.",
+          "Most template proposals never address your actual requirements.",
+          "Time cost: clients report spending 3–10 hours per role just triaging.",
+        ],
+      },
+      {
+        h2: "Filters that still work (if you stay on a bidding marketplace)",
+        body: [
+          "If you're committed to an open marketplace, you can claw back some signal. None of these are perfect, but combined they cut the noise dramatically.",
+        ],
+        bullets: [
+          "Bot trap: ask applicants to open with a specific word or answer a one-line question buried mid-brief. Instantly filters non-readers.",
+          "Ask for one relevant link, not a portfolio dump — bots attach everything, humans choose.",
+          "Require a one-sentence answer to a project-specific question ('Which of our two options would you pick and why?').",
+          "Ignore response speed. Sub-minute proposals are almost always automated.",
+          "Weight a short paid trial task over any cover letter or badge.",
+        ],
+      },
+      {
+        h2: "The structural fix: don't collect proposals at all",
+        body: [
+          "The deeper problem isn't bad proposals — it's that open bidding invites unlimited, zero-cost applications. The structural fix is matching: instead of you triaging whoever shows up, the platform scores a pre-vetted pool against your brief and shows you a shortlist.",
+          "That's how Hyrde works. You describe the project in plain language; the AI scores every vetted freelancer against your brief and returns the top five with written reasons. There is no apply button, so there is nothing to spam. Claims are category-matched: the only people who can take your task proved that exact skill in a graded interview.",
+        ],
+        bullets: [
+          "No open applications — spam is structurally impossible, not just filtered.",
+          "Five matches with explanations beats fifty letters with none.",
+          "Free to post and free to hire during early access.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How much of freelance proposal volume is AI-generated now?",
+        a: "Industry reply-rate studies in 2025–2026 estimate 80–90% of proposals on large marketplaces are AI-generated or heavily AI-templated, often submitted by auto-bidding tools within seconds of a job going live.",
+      },
+      {
+        q: "What is the 'banana test' in freelance hiring?",
+        a: "It's a bot trap: the client hides an instruction like 'start your reply with the word banana' inside the job brief. Proposals that don't comply were written by tools that never read the post, so the client can discard them instantly.",
+      },
+      {
+        q: "Do AI-written proposals actually perform worse?",
+        a: "Yes. Reply-rate data shows hand-written outreach outperforms GPT-templated letters, and proposals containing several recognizable AI clichés see reply rates fall to nearly zero. Clients have learned the patterns.",
+      },
+      {
+        q: "How do I hire a freelancer without reading proposals at all?",
+        a: "Use a matching platform instead of an open marketplace. On Hyrde you describe the project once and get the top five pre-vetted matches scored against your brief, with reasons — no applications, no triage, with vetting scores you can read.",
+      },
+    ],
+    cta: {
+      heading: "Skip the proposal pile entirely",
+      body: "Describe your project once. Get the top five vetted matches with reasons in about 60 seconds — no bidding, no spam, free during early access.",
+      label: "Get matched now",
+      href: "/get-started",
+    },
+    related: ["how-to-avoid-freelancer-scams", "upwork-fees-for-clients-explained"],
+  },
+
+  "upwork-fees-for-clients-explained": {
+    slug: "upwork-fees-for-clients-explained",
+    cluster: "client",
+    clusterLabel: "Hiring guide",
+    title: "Upwork Fees for Clients, Explained: What Hiring Actually Costs in 2026",
+    metaTitle: "Upwork Fees for Clients (2026): Marketplace Fee + Initiation Fee | Hyrde",
+    metaDescription:
+      "Upwork charges clients a 5% marketplace fee plus a contract initiation fee on every new contract — and the freelancer's cut inflates quotes further. The real math, explained.",
+    excerpt:
+      "A 5% marketplace fee, a per-contract initiation fee, and quotes inflated to cover the freelancer's side. What hiring on Upwork really costs a client in 2026.",
+    readMins: 7,
+    updated: "2026-07-01",
+    intro: [
+      "Upwork's pricing page reads simply enough, but clients keep being surprised by the line items: a 5% marketplace fee on everything you pay, plus a contract initiation fee of up to $4.95 for every new contract you start. Post a handful of small tasks and the initiation fees alone add up faster than you'd expect.",
+      "And that's only the visible half. Freelancers price their own platform costs into quotes — analyses of the full chain (service fees, Connects spending to apply, withdrawal fees) put the total intermediary take at 22–34% of contract value. That spread comes out of somebody, and in practice it's shared between you and the person doing the work. Here's the full math, and what the alternatives look like.",
+    ],
+    sections: [
+      {
+        h2: "The client-side line items",
+        body: [
+          "As of 2026, a client on Upwork's standard Marketplace plan pays two fees on top of what the freelancer quotes: a 5% marketplace fee on every payment, and a one-time contract initiation fee (up to $4.95) each time you start a new contract with anyone.",
+          "On a $10,000 project that's roughly $500 extra; across ten small contracts it's another ~$50 in initiation fees before any work happens. Enterprise plans price differently, but for typical businesses these are the numbers.",
+        ],
+        bullets: [
+          "5% marketplace fee on all client payments.",
+          "Up to $4.95 contract initiation fee per new contract.",
+          "Fees apply per contract — many small hires means many fees.",
+        ],
+      },
+      {
+        h2: "The invisible half: what the freelancer's side does to your quote",
+        body: [
+          "Freelancers pay a service fee on earnings, buy 'Connects' just to apply to your job, and pay withdrawal fees to move money home. Rational freelancers price all of that into their rate — which means your quotes are inflated to cover platform costs you never see itemized.",
+          "Full-chain analyses estimate the true intermediary take at 22–34% of gross contract value once proposal labor and Connects burn are included. You experience it as quotes that are 15–25% above what the same person would charge directly.",
+        ],
+      },
+      {
+        h2: "What the math looks like elsewhere",
+        body: [
+          "Curated networks (Toptal, Lemon.io, Arc) hide fees inside a marked-up hourly rate — simpler, but premium-priced. Zero-commission platforms exist but usually charge subscriptions or paywall features.",
+          "Hyrde's early-access model is the simplest to audit: $0 to post, $0 platform fee to hire, and freelancers keep 100% of what you pay them — so quotes aren't inflated to claw back platform costs. You settle directly with the freelancer on rails you both already use, and AI matching plus graded skill-vetting are included.",
+        ],
+        bullets: [
+          "Upwork client cost: 5% + initiation fees + inflated quotes.",
+          "Premium networks: no visible fee, 30–80% marked-up rates.",
+          "Hyrde early access: $0 platform fees on both sides.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What fees does Upwork charge clients in 2026?",
+        a: "Clients on the standard Marketplace plan pay a 5% marketplace fee on all payments plus a one-time contract initiation fee of up to $4.95 per new contract. Enterprise plans have custom pricing.",
+      },
+      {
+        q: "What is Upwork's contract initiation fee?",
+        a: "A per-contract charge (up to $4.95) billed to the client each time a new contract begins. It applies per contract, not per invoice — so frequent small hires accumulate it quickly.",
+      },
+      {
+        q: "Why are Upwork quotes higher than direct rates?",
+        a: "Freelancers price their own platform costs — service fees on earnings, Connects purchased to apply to jobs, and withdrawal fees — into their quotes. Full-chain analyses put the total intermediary take at 22–34% of contract value.",
+      },
+      {
+        q: "Is there a way to hire vetted freelancers without platform fees?",
+        a: "Hyrde is free for clients during early access: $0 to post, $0 marketplace fee, and freelancers keep 100% of what you pay, so quotes aren't padded. Tasks are claimable only by freelancers vetted in that category.",
+      },
+    ],
+    cta: {
+      heading: "Hire without the fee stack",
+      body: "$0 to post, $0 platform fee, quotes that aren't padded. Describe your project and meet your top five matches in about 60 seconds.",
+      label: "Start hiring free",
+      href: "/get-started",
+    },
+    related: ["ai-proposal-spam-when-hiring-freelancers", "cost-to-hire-freelance-developer"],
+  },
 };
 
 export const GUIDE_SLUGS = Object.keys(GUIDES);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readStore, writeStore } from "@/lib/store";
+import { supabaseAnon } from "@/lib/supabase/anon";
 
 export const dynamic = "force-dynamic";
 
@@ -142,6 +143,24 @@ export async function POST(req: NextRequest) {
     forwardedToGoogle: false,
   };
 
+  // Primary durable sink: Supabase `pilots` table (anon INSERT allowed by RLS).
+  let storedInDb = false;
+  try {
+    const { error } = await supabaseAnon().from("pilots").insert({
+      name: lead.name,
+      email: lead.email,
+      primary_skill: lead.skill,
+      experience_level: lead.experience,
+      location: lead.location,
+      portfolio_url: lead.portfolio,
+      referral: lead.knowsClients,
+    });
+    storedInDb = !error;
+    if (error) console.warn("Supabase pilot-lead insert failed:", error.message);
+  } catch (err) {
+    console.warn("Supabase pilot-lead insert threw:", err);
+  }
+
   // Best-effort forward to the freelancer Google Form / Sheet.
   lead.forwardedToGoogle = await forwardToGoogle(lead);
 
@@ -156,8 +175,8 @@ export async function POST(req: NextRequest) {
     stored = false;
   }
 
-  // Only fail if BOTH sinks failed.
-  if (!stored && !lead.forwardedToGoogle) {
+  // Only fail if ALL sinks failed.
+  if (!storedInDb && !stored && !lead.forwardedToGoogle) {
     return NextResponse.json({ error: "We couldn't save your details. Please try again." }, { status: 500 });
   }
 

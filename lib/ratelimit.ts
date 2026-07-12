@@ -36,7 +36,7 @@ function tooMany(retryAfter: number, msg: string): Response {
  */
 // MANUAL SUSPEND — paid Anthropic endpoints are paused to control cost.
 // Flip to false (and redeploy) to bring the live agent + AI features back.
-const AI_SUSPENDED = true;
+const AI_SUSPENDED = false;
 
 export function guardAi(req: Request): Response | null {
   // (0) Hard suspend — overrides everything while we're pausing API spend.

@@ -9,11 +9,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const static_pages = [
     { url: base,                          lastModified: now, priority: 1.0 },
-    { url: `${base}/welcome`,             lastModified: now, priority: 0.9 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
-    { url: `${base}/get-started`,     lastModified: now, priority: 0.9 },
-    { url: `${base}/join`,            lastModified: now, priority: 0.9 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
+    { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
+    { url: `${base}/vetting`,         lastModified: now, priority: 0.85 },
     { url: `${base}/agent`,           lastModified: now, priority: 0.9 },
     { url: `${base}/pricing`,         lastModified: now, priority: 0.8 },
     { url: `${base}/enterprise`,      lastModified: now, priority: 0.8 },
@@ -21,7 +20,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/talent`,          lastModified: now, priority: 0.7 },
     { url: `${base}/about`,           lastModified: now, priority: 0.7 },
     { url: `${base}/jobs`,            lastModified: now, priority: 0.7 },
-    { url: `${base}/freelancer/join`, lastModified: now, priority: 0.9 },
     { url: `${base}/guides`,          lastModified: now, priority: 0.8 },
     { url: `${base}/compare`,         lastModified: now, priority: 0.8 },
   ];
