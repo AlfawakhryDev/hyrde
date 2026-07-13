@@ -8,7 +8,10 @@ import {
 } from "@/lib/arena";
 import Link from "next/link";
 import Tour, { type TourStep } from "@/components/Tour";
-import { parseTaskLimitError } from "@/lib/billing";
+import {
+  parseTaskLimitError, activeSub, pendingSub, FREE_TASKS_PER_MONTH,
+  type Subscription,
+} from "@/lib/billing";
 
 export default function DashboardClient({
   userId,
@@ -25,6 +28,7 @@ export default function DashboardClient({
   const [profile, setProfile] = useState<Profile>(initialProfile);
   const [tasks, setTasks] = useState<ArenaTask[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [subs, setSubs] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const incomingBrief = params.get("brief") ?? "";
@@ -36,12 +40,14 @@ export default function DashboardClient({
   // ── Data ──────────────────────────────────────────────────────────────────
   const refetch = useCallback(async () => {
     const supabase = supabaseBrowser();
-    const [{ data }, { data: pays }] = await Promise.all([
+    const [{ data }, { data: pays }, { data: subRows }] = await Promise.all([
       supabase.from("tasks").select("*").order("created_at", { ascending: false }).limit(120),
       supabase.from("payments").select("*").or(`payer_id.eq.${userId},payee_id.eq.${userId}`),
+      supabase.from("subscriptions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     ]);
     if (data) setTasks(data as ArenaTask[]);
     if (pays) setPayments(pays as Payment[]);
+    if (subRows) setSubs(subRows as Subscription[]);
     setLoading(false);
   }, [userId]);
 
@@ -93,6 +99,19 @@ export default function DashboardClient({
   const firstName = (profile.display_name || email.split("@")[0]).split(" ")[0];
   const notMatchable = isPilot && vettedBadges.length === 0;
 
+  // Billing (clients only). Free = FREE_TASKS_PER_MONTH posts/mo; DB trigger
+  // enforces the real cap, this is just the visible usage meter.
+  const currentSub = !isPilot ? activeSub(subs) : null;
+  const pendingSubRow = !isPilot ? pendingSub(subs) : null;
+  const postedThisMonth = useMemo(() => {
+    if (isPilot) return 0;
+    const start = new Date(); start.setDate(1); start.setHours(0, 0, 0, 0);
+    return tasks.filter(t => t.poster_id === userId && new Date(t.created_at) >= start).length;
+  }, [tasks, isPilot, userId]);
+  const monthlyLimit = currentSub?.tier === "scale" ? null : currentSub?.tier === "pro" ? 50 : FREE_TASKS_PER_MONTH;
+  const planLabel = currentSub?.tier === "scale" ? "Scale" : currentSub?.tier === "pro" ? "Pro" : "Free";
+  const fmtExpiry = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+
   const DOT: Record<string, string> = {
     open: "bg-amber-500", claimed: "bg-electric-violet", delivered: "bg-purple-500",
     approved: "bg-emerald-500", paid: "bg-emerald-500", closed: "bg-outline-variant", ai: "bg-amber-500",
@@ -126,20 +145,55 @@ export default function DashboardClient({
               Payout settings
             </button>
           ) : (
-            <button
-              data-tour="post"
-              onClick={() => setComposerOpen(true)}
-              className="h-9 px-5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity"
-            >
-              Post a task
-            </button>
+            <>
+              <Link
+                data-tour="plan"
+                href="/billing"
+                className="h-9 flex items-center gap-2 px-4 rounded-full border border-border-crisp text-[13px] font-medium text-on-surface-variant hover:text-on-surface hover:border-outline transition-colors"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${planLabel === "Free" ? "bg-outline-variant" : "bg-electric-violet"}`} aria-hidden="true" />
+                {planLabel} plan
+                {monthlyLimit !== null && <span className="text-on-surface-variant/70">· {postedThisMonth}/{monthlyLimit}</span>}
+              </Link>
+              <button
+                data-tour="post"
+                onClick={() => setComposerOpen(true)}
+                className="h-9 px-5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity"
+              >
+                Post a task
+              </button>
+            </>
           )}
         </div>
       </div>
 
       {/* ── Notices — hairline rows ── */}
-      {(isPilot || payments.some(p => p.payee_id === userId && p.status === "payment_sent")) && (
+      {(isPilot || payments.some(p => p.payee_id === userId && p.status === "payment_sent") || (!isPilot && (pendingSubRow || (monthlyLimit !== null && postedThisMonth >= monthlyLimit)))) && (
         <div className="border-y border-border-crisp divide-y divide-border-crisp mb-10">
+          {!isPilot && pendingSubRow && (
+            <div className="flex flex-wrap items-center gap-3 py-3.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" aria-hidden="true" />
+              <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
+                <span className="capitalize font-medium">{pendingSubRow.tier}</span> — awaiting your Airtm payment.{" "}
+                <span className="text-on-surface-variant">Reference {pendingSubRow.reference}. We activate it as soon as the transfer lands.</span>
+              </p>
+              <Link href="/billing" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
+                <span aria-hidden="true">↳</span> Payment details
+              </Link>
+            </div>
+          )}
+          {!isPilot && !pendingSubRow && monthlyLimit !== null && postedThisMonth >= monthlyLimit && (
+            <div className="flex flex-wrap items-center gap-3 py-3.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
+              <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
+                You&apos;ve used all {monthlyLimit} posts on the {planLabel} plan this month.{" "}
+                <span className="text-on-surface-variant">Upgrade to keep hiring — from $20/mo.</span>
+              </p>
+              <Link href="/billing" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
+                <span aria-hidden="true">↳</span> Upgrade plan
+              </Link>
+            </div>
+          )}
           {notMatchable && (
             <div data-tour="vetting" className="flex flex-wrap items-center gap-3 py-3.5">
               <span className="w-1.5 h-1.5 rounded-full bg-electric-violet shrink-0" aria-hidden="true" />
