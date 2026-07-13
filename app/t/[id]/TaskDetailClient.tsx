@@ -24,6 +24,7 @@ export default function TaskDetailClient({
   const [error, setError] = useState("");
   const [deliverText, setDeliverText] = useState("");
   const [showDeliver, setShowDeliver] = useState(false);
+  const [nextMilestoneNote, setNextMilestoneNote] = useState("");
 
   const isOwner = task.poster_id === userId;
   const isMyClaim = task.claimed_by_user_id === userId; // the AI matched this task to me
@@ -133,12 +134,43 @@ export default function TaskDetailClient({
   }
 
   async function approve() {
-    setBusy("approve"); setError("");
-    const { error } = await supabaseBrowser()
+    setBusy("approve"); setError(""); setNextMilestoneNote("");
+    const supabase = supabaseBrowser();
+    const { error } = await supabase
       .from("tasks")
       .update({ payment_status: "approved" })
       .eq("id", task.id);
-    if (error) setError(error.message);
+    if (error) { setError(error.message); await refetch(); setBusy(null); return; }
+
+    // Outcome-style projects: approving a milestone auto-matches the next one
+    // (sequential — the client doesn't juggle multiple freelancers up front).
+    if (task.project_id && task.milestone_index !== null) {
+      const { data: next } = await supabase
+        .from("tasks")
+        .select("id")
+        .eq("project_id", task.project_id)
+        .eq("milestone_index", task.milestone_index + 1)
+        .is("claimed_by_user_id", null)
+        .maybeSingle();
+      if (next) {
+        try {
+          const res = await fetch("/api/assign", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ taskId: next.id }),
+          });
+          const data = await res.json();
+          setNextMilestoneNote(
+            res.ok && data.matched
+              ? `Milestone ${task.milestone_index + 2} matched to ${data.freelancer?.name}.`
+              : "Next milestone posted — matching as soon as a specialist is available."
+          );
+        } catch {
+          setNextMilestoneNote("Next milestone posted — it'll match shortly.");
+        }
+      }
+    }
+
     await refetch();
     setBusy(null);
   }
@@ -164,7 +196,14 @@ export default function TaskDetailClient({
         <span aria-hidden="true">←</span> Back to dashboard
       </Link>
 
-      <p className="text-[12.5px] text-on-surface-variant mt-8 mb-3 flex flex-wrap items-center gap-x-2">
+      {task.project_id && task.milestone_index !== null && (
+        <div className="inline-flex items-center gap-1.5 mt-8 text-[12.5px] font-medium text-electric-violet">
+          <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>stacks</span>
+          Milestone {task.milestone_index + 1} of {task.milestone_total ?? "?"}
+        </div>
+      )}
+
+      <p className={`text-[12.5px] text-on-surface-variant mb-3 flex flex-wrap items-center gap-x-2 ${task.project_id ? "mt-1.5" : "mt-8"}`}>
         {task.category && <span>{task.category}</span>}
         {task.category && <span aria-hidden="true">·</span>}
         <span>{timeAgo(task.created_at)}</span>
@@ -381,6 +420,11 @@ export default function TaskDetailClient({
                 >
                   {busy === "approve" ? "Approving…" : "Approve & continue to payment"}
                 </button>
+                {nextMilestoneNote && (
+                  <p className="text-[13px] text-emerald-600 dark:text-emerald-400 mt-3">
+                    <span aria-hidden="true">↳</span> {nextMilestoneNote}
+                  </p>
+                )}
               </>
             )}
 

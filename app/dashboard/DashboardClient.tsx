@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import {
-  type ArenaTask, type Payment, type Profile, type PayoutMethod,
+  type ArenaTask, type Payment, type Profile, type PayoutMethod, type Project,
   CATEGORIES, PAYOUT_METHODS, formatAmount, taskState,
 } from "@/lib/arena";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import {
   parseTaskLimitError, activeSub, pendingSub, FREE_TASKS_PER_MONTH,
   type Subscription,
 } from "@/lib/billing";
+import ProjectComposer from "@/components/dashboard/ProjectComposer";
 
 export default function DashboardClient({
   userId,
@@ -29,25 +30,32 @@ export default function DashboardClient({
   const [tasks, setTasks] = useState<ArenaTask[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [subs, setSubs] = useState<Subscription[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const incomingBrief = params.get("brief") ?? "";
   const [composerOpen, setComposerOpen] = useState(!!incomingBrief);
+  const [projectComposerOpen, setProjectComposerOpen] = useState(false);
   const [payoutOpen, setPayoutOpen] = useState(params.get("payout") === "1");
+  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
 
   const isPilot = profile.mode === "pilot";
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const refetch = useCallback(async () => {
     const supabase = supabaseBrowser();
-    const [{ data }, { data: pays }, { data: subRows }] = await Promise.all([
+    const [{ data }, { data: pays }, { data: subRows }, { data: projRows }] = await Promise.all([
       supabase.from("tasks").select("*").order("created_at", { ascending: false }).limit(120),
       supabase.from("payments").select("*").or(`payer_id.eq.${userId},payee_id.eq.${userId}`),
       supabase.from("subscriptions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+      // RLS: poster sees their own projects; freelancers see projects via a
+      // milestone task matched to them (see migration 0010).
+      supabase.from("projects").select("*").order("created_at", { ascending: false }),
     ]);
     if (data) setTasks(data as ArenaTask[]);
     if (pays) setPayments(pays as Payment[]);
     if (subRows) setSubs(subRows as Subscription[]);
+    if (projRows) setProjects(projRows as Project[]);
     setLoading(false);
   }, [userId]);
 
@@ -71,6 +79,26 @@ export default function DashboardClient({
     const q = search.trim().toLowerCase();
     return q ? list.filter(t => t.title.toLowerCase().includes(q) || t.brief.toLowerCase().includes(q)) : list;
   }, [tasks, isPilot, userId, search]);
+
+  const projectsById = useMemo(() => new Map(projects.map(p => [p.id, p])), [projects]);
+
+  // Outcome-style intake: tasks sharing a project_id render as one collapsed
+  // project card (milestone progress) instead of N separate rows.
+  const { standaloneTasks, projectGroups } = useMemo(() => {
+    const groups = new Map<string, ArenaTask[]>();
+    const solo: ArenaTask[] = [];
+    for (const t of myTasks) {
+      if (t.project_id) {
+        const arr = groups.get(t.project_id) ?? [];
+        arr.push(t);
+        groups.set(t.project_id, arr);
+      } else {
+        solo.push(t);
+      }
+    }
+    for (const arr of groups.values()) arr.sort((a, b) => (a.milestone_index ?? 0) - (b.milestone_index ?? 0));
+    return { standaloneTasks: solo, projectGroups: groups };
+  }, [myTasks]);
 
   const stats = useMemo(() => {
     if (isPilot) {
@@ -155,6 +183,12 @@ export default function DashboardClient({
                 {planLabel} plan
                 {monthlyLimit !== null && <span className="text-on-surface-variant/70">· {postedThisMonth}/{monthlyLimit}</span>}
               </Link>
+              <button
+                onClick={() => setProjectComposerOpen(true)}
+                className="h-9 px-4 rounded-full border border-border-crisp text-[13px] font-medium text-on-surface-variant hover:text-on-surface hover:border-outline transition-colors"
+              >
+                New project
+              </button>
               <button
                 data-tour="post"
                 onClick={() => setComposerOpen(true)}
@@ -258,7 +292,7 @@ export default function DashboardClient({
       {/* ── List header + search ── */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <h2 className="text-[15px] font-medium text-on-surface">
-          {isPilot ? "My matches" : "My tasks"}
+          {isPilot ? "My matches" : "My tasks & projects"}
         </h2>
         {myTasks.length > 0 && (
           <div className="ml-auto w-full sm:w-64">
@@ -283,10 +317,77 @@ export default function DashboardClient({
           ))}
         </div>
       ) : myTasks.length === 0 ? (
-        <EmptyState isPilot={isPilot} matchable={!notMatchable} onPost={() => setComposerOpen(true)} />
+        <EmptyState
+          isPilot={isPilot}
+          matchable={!notMatchable}
+          onPost={() => setComposerOpen(true)}
+          onNewProject={!isPilot ? () => setProjectComposerOpen(true) : undefined}
+        />
       ) : (
         <div className="divide-y divide-border-crisp border-t border-border-crisp">
-          {myTasks.map(t => {
+          {[...projectGroups.entries()].map(([projectId, milestones]) => {
+            const project = projectsById.get(projectId);
+            const expanded = expandedProjects.has(projectId);
+            const doneCount = milestones.filter(m => m.payment_status === "paid" || m.status === "delivered").length;
+            const totalAmount = milestones.reduce((sum, m) => sum + (m.amount_cents || 0), 0);
+            const currentMilestone = milestones.find(m => m.status !== "delivered" && m.payment_status !== "paid") ?? milestones[milestones.length - 1];
+            return (
+              <div key={projectId} className="py-5">
+                <button
+                  onClick={() => setExpandedProjects(s => {
+                    const next = new Set(s);
+                    next.has(projectId) ? next.delete(projectId) : next.add(projectId);
+                    return next;
+                  })}
+                  className="group flex items-center gap-6 w-full text-left transition-colors hover:bg-surface-container-low -mx-3 px-3 py-1 rounded-lg"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[15px] font-medium text-on-surface truncate flex items-center gap-2">
+                      <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "16px" }}>stacks</span>
+                      {project?.title ?? "Project"}
+                    </p>
+                    <p className="text-[12.5px] text-on-surface-variant mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span>{milestones.length} milestone{milestones.length === 1 ? "" : "s"}</span>
+                      <span aria-hidden="true">·</span>
+                      <span>{doneCount}/{milestones.length} delivered</span>
+                      {!isPilot && currentMilestone && !currentMilestone.claimed_by_user_id && (
+                        <><span aria-hidden="true">·</span><span className="text-electric-violet">Finding a match for milestone {(currentMilestone.milestone_index ?? 0) + 1}…</span></>
+                      )}
+                    </p>
+                  </div>
+                  {totalAmount > 0 && (
+                    <span className="text-[15px] font-semibold tracking-[-0.01em] text-on-surface shrink-0">{formatAmount(totalAmount)}</span>
+                  )}
+                  <span className="material-symbols-outlined text-on-surface-variant/40 group-hover:text-on-surface transition-colors shrink-0" style={{ fontSize: "20px" }}>
+                    {expanded ? "expand_less" : "expand_more"}
+                  </span>
+                </button>
+                {expanded && (
+                  <div className="mt-3 ml-3 pl-4 border-l-2 border-border-crisp space-y-1">
+                    {milestones.map(m => {
+                      const state = taskState(m);
+                      const amount = formatAmount(m.amount_cents);
+                      return (
+                        <Link key={m.id} href={`/t/${m.id}`} className="group flex items-center gap-4 py-2.5 px-3 -mx-3 rounded-lg transition-colors hover:bg-surface-container-low">
+                          <span className="text-[12px] text-on-surface-variant shrink-0 w-16">Milestone {(m.milestone_index ?? 0) + 1}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13.5px] font-medium text-on-surface truncate">{m.title}</p>
+                            <p className="text-[12px] text-on-surface-variant mt-0.5 flex items-center gap-1.5">
+                              <span className={`w-1.5 h-1.5 rounded-full ${DOT[state.tone] ?? "bg-outline-variant"}`} aria-hidden="true" />
+                              {state.label}
+                              {m.deadline && <><span aria-hidden="true">·</span><span>Due {fmtDeadline(m.deadline)}</span></>}
+                            </p>
+                          </div>
+                          {amount && <span className="text-[13px] font-medium text-on-surface shrink-0">{amount}</span>}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {standaloneTasks.map(t => {
             const state = taskState(t);
             const amount = formatAmount(t.amount_cents);
             return (
@@ -338,6 +439,19 @@ export default function DashboardClient({
           userId={userId}
           onClose={() => setComposerOpen(false)}
           onPosted={() => { setComposerOpen(false); refetch(); }}
+        />
+      )}
+
+      {projectComposerOpen && (
+        <ProjectComposer
+          userId={userId}
+          remainingPosts={monthlyLimit === null ? null : Math.max(0, monthlyLimit - postedThisMonth)}
+          onClose={() => setProjectComposerOpen(false)}
+          onCreated={(projectId) => {
+            setProjectComposerOpen(false);
+            setExpandedProjects(s => new Set(s).add(projectId));
+            refetch();
+          }}
         />
       )}
 
@@ -440,7 +554,9 @@ function PayoutModal({ userId, profile, onClose, onSaved }: {
 
 // ─── Small pieces ─────────────────────────────────────────────────────────────
 
-function EmptyState({ isPilot, matchable, onPost }: { isPilot: boolean; matchable: boolean; onPost: () => void }) {
+function EmptyState({ isPilot, matchable, onPost, onNewProject }: {
+  isPilot: boolean; matchable: boolean; onPost: () => void; onNewProject?: () => void;
+}) {
   return (
     <div className="border-t border-border-crisp py-16">
       <p className="text-[17px] font-medium text-on-surface mb-1.5">
@@ -451,16 +567,23 @@ function EmptyState({ isPilot, matchable, onPost }: { isPilot: boolean; matchabl
           ? matchable
             ? "You're vetted. As soon as a client posts work that fits your skills, the AI matches it to you — it shows up here and you get an email with the pay and deadline. No need to keep checking."
             : "Pass the AI skill interview first. Once you're vetted, matching work comes to you automatically — you'll get an email the moment it happens."
-          : "Post your first task and the AI assigns the best vetted specialist — no proposals to review."}
+          : "Post a single task, or describe a bigger outcome and let the AI break it into a milestone plan."}
       </p>
       {isPilot ? (
         <Link href="/vetting" className="text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
           <span aria-hidden="true">↳</span> {matchable ? "Add another category" : "Get vetted"}
         </Link>
       ) : (
-        <button onClick={onPost} className="text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
-          <span aria-hidden="true">↳</span> Post your first task
-        </button>
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
+          <button onClick={onPost} className="text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
+            <span aria-hidden="true">↳</span> Post your first task
+          </button>
+          {onNewProject && (
+            <button onClick={onNewProject} className="text-[13.5px] font-medium text-on-surface-variant hover:text-electric-violet transition-colors">
+              <span aria-hidden="true">↳</span> Or describe a bigger project
+            </button>
+          )}
+        </div>
       )}
     </div>
   );
