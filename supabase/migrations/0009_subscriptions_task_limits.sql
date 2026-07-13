@@ -1,0 +1,6 @@
+-- Client subscriptions (Airtm reference-code flow) + DB-enforced task limits.
+-- Applied to prod 2026-07-13 as `subscriptions_and_task_limits`.
+-- Free: 3 posts/mo · Pro $20: 50/mo · Scale $200: unlimited.
+-- profiles.is_admin is column-locked (insert/update column grants exclude it)
+-- so users cannot self-promote; admins confirm Airtm payments in /admin.
+-- Full SQL lives in the remote migration of the same name.
