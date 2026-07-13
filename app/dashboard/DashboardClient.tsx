@@ -8,6 +8,7 @@ import {
 } from "@/lib/arena";
 import Link from "next/link";
 import Tour, { type TourStep } from "@/components/Tour";
+import { parseTaskLimitError } from "@/lib/billing";
 
 export default function DashboardClient({
   userId,
@@ -423,6 +424,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
   const [deadline, setDeadline] = useState("");
   const [phase, setPhase] = useState<"form" | "matching" | "done" | "error">("form");
   const [matchResult, setMatchResult] = useState<{ matched: boolean; freelancer?: { name: string; band: string; score: number }; reason?: string } | null>(null);
+  const [limitHit, setLimitHit] = useState(false);
   const [polishing, setPolishing] = useState(false);
   const [polishNote, setPolishNote] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -499,7 +501,15 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
       .single();
 
     if (insErr || !inserted) {
-      setError(insErr?.message ?? "Could not post the task.");
+      const limit = insErr ? parseTaskLimitError(insErr.message) : null;
+      setError(
+        limit
+          ? limit.tier === "free"
+            ? `You've used your ${limit.limit} free task posts this month. Upgrade to keep hiring — from $20/mo.`
+            : `You've hit your plan's ${limit.limit} posts this month. Upgrade to Scale for unlimited posting.`
+          : insErr?.message ?? "Could not post the task."
+      );
+      setLimitHit(!!limit);
       setPhase("form");
       return;
     }
@@ -689,7 +699,16 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                 />
               </label>
 
-              {error && <p className="text-sm font-body text-error">{error}</p>}
+              {error && (
+                <div className="text-sm font-body text-error">
+                  {error}
+                  {limitHit && (
+                    <Link href="/billing" className="block mt-2 text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
+                      <span aria-hidden="true">↳</span> See plans &amp; upgrade
+                    </Link>
+                  )}
+                </div>
+              )}
 
               <button
                 onClick={post}
