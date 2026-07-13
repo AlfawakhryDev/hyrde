@@ -35,6 +35,22 @@ export interface ArenaTask {
   // unpaid | approved | paid
   payment_status: string;
   ai_review: string | null; // JSON AiReview
+  // Outcome-style intake: set when this task is one milestone of a project
+  // (see `projects` table). milestone_index is 0-based.
+  project_id: string | null;
+  milestone_index: number | null;
+  milestone_total: number | null;
+}
+
+export interface Project {
+  id: string;
+  poster_id: string;
+  title: string;
+  outcome_brief: string;
+  status: "active" | "completed" | "cancelled";
+  milestone_total: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface AiReview {
