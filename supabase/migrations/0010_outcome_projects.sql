@@ -18,27 +18,29 @@ create table if not exists public.projects (
 );
 alter table public.projects enable row level security;
 
--- Poster sees/owns their own projects. Matched freelancers see projects
--- through their milestone tasks (tasks already carry project_id + their own
--- RLS); projects themselves stay poster-private (title/outcome brief are
--- the client's framing, not something every milestone freelancer needs).
+-- Milestone columns on tasks FIRST, so the policy below can reference them.
+alter table public.tasks add column if not exists project_id uuid references public.projects(id) on delete cascade;
+alter table public.tasks add column if not exists milestone_index int;
+alter table public.tasks add column if not exists milestone_total int;
+create index if not exists tasks_project_id_idx on public.tasks (project_id, milestone_index);
+
+-- Poster sees/owns their own projects.
+drop policy if exists projects_select_own on public.projects;
 create policy projects_select_own on public.projects
   for select to authenticated using (poster_id = auth.uid());
+drop policy if exists projects_insert_own on public.projects;
 create policy projects_insert_own on public.projects
   for insert to authenticated with check (poster_id = auth.uid());
+drop policy if exists projects_update_own on public.projects;
 create policy projects_update_own on public.projects
   for update to authenticated using (poster_id = auth.uid());
 
--- Freelancers matched to a milestone can still read the parent project's
+-- Freelancers matched to a milestone can read the parent project's
 -- title/brief for context (shown in the task detail "part of a project" strip).
+drop policy if exists projects_select_milestone_freelancer on public.projects;
 create policy projects_select_milestone_freelancer on public.projects
   for select to authenticated
   using (exists (
     select 1 from public.tasks t
     where t.project_id = projects.id and t.claimed_by_user_id = auth.uid()
   ));
-
-alter table public.tasks add column if not exists project_id uuid references public.projects(id) on delete cascade;
-alter table public.tasks add column if not exists milestone_index int;
-alter table public.tasks add column if not exists milestone_total int;
-create index if not exists tasks_project_id_idx on public.tasks (project_id, milestone_index);
