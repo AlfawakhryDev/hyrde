@@ -21,11 +21,11 @@ export default async function TaskPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/login?next=/t/${id}`);
 
-  const { data: task } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  // deliverable_text/agent_deliverable are column-locked at the DB level —
+  // get_task_full() nulls them unless the caller is the poster, the matched
+  // freelancer, or the task is paid. A raw select("*") here would 403 on
+  // those two columns for anyone else.
+  const { data: task } = await supabase.rpc("get_task_full", { p_task_id: id });
 
   if (!task) notFound();
 
