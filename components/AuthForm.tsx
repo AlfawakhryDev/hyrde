@@ -141,7 +141,17 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         router.refresh();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong — try again.");
+      const msg = err instanceof Error ? err.message : "Something went wrong — try again.";
+      // A Google/GitHub/Apple-only account has no password, so signInWithPassword
+      // returns "Invalid login credentials" — the exact same generic message as a
+      // wrong password (Supabase deliberately won't reveal which, to prevent email
+      // enumeration). Nudge toward social login on any failed email login so OAuth
+      // users don't get stuck thinking they're locked out.
+      if (mode === "login" && /invalid login credentials/i.test(msg)) {
+        setError("That email and password didn't match. If you signed up with Google, GitHub, or Apple, use one of the buttons above instead — those accounts don't have a password.");
+      } else {
+        setError(msg);
+      }
     } finally {
       setBusy(false);
     }
