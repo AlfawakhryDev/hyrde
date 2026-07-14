@@ -38,16 +38,24 @@ export async function POST(req: NextRequest) {
   }
 
   // Candidate pool: freelancers who passed vetting in this exact category.
-  // "Other"/uncategorized tasks accept any passed vetting.
-  const base = supabase.from("vettings").select("user_id, category, score, band").eq("status", "passed");
+  // "Other"/uncategorized tasks accept any passed vetting. We now also pull the
+  // full `assessment` (verifiedSkills + written summary the grader produced) —
+  // this is the signal that lets the matcher weigh demonstrated-skill fit to the
+  // specific brief, not just a raw score. (Matching v1.5 — see the Matching &
+  // Vetting v2 Linear project; the weighted/embeddings engine is HYR-24.)
+  type Assessment = { verifiedSkills?: string[]; summary?: string };
+  const base = supabase.from("vettings").select("user_id, category, score, band, assessment").eq("status", "passed");
   const { data: passes } = task.category && task.category !== "Other"
     ? await base.eq("category", task.category)
     : await base;
 
-  const byUser = new Map<string, { score: number; band: string; category: string }>();
+  const byUser = new Map<string, { score: number; band: string; category: string; assessment: Assessment | null }>();
   for (const v of passes ?? []) {
     const prev = byUser.get(v.user_id);
-    if (!prev || v.score > prev.score) byUser.set(v.user_id, { score: v.score, band: v.band, category: v.category });
+    // Keep the best-scoring vetting per user, and carry its assessment with it.
+    if (!prev || v.score > prev.score) {
+      byUser.set(v.user_id, { score: v.score, band: v.band, category: v.category, assessment: (v.assessment as Assessment | null) ?? null });
+    }
   }
   byUser.delete(user.id); // can't match a client to their own task
 
@@ -57,11 +65,25 @@ export async function POST(req: NextRequest) {
 
   const { data: profs } = await supabase
     .from("profiles")
-    .select("id, display_name, bio")
+    .select("id, display_name, bio, headline, country")
     .in("id", [...byUser.keys()]);
 
   const candidates = (profs ?? [])
-    .map(p => ({ id: p.id, name: p.display_name || "Freelancer", bio: p.bio || "", ...byUser.get(p.id)! }))
+    .map(p => {
+      const v = byUser.get(p.id)!;
+      return {
+        id: p.id,
+        name: p.display_name || "Freelancer",
+        bio: p.bio || "",
+        headline: p.headline || "",
+        country: p.country || "",
+        score: v.score,
+        band: v.band,
+        category: v.category,
+        verifiedSkills: v.assessment?.verifiedSkills ?? [],
+        summary: v.assessment?.summary ?? "",
+      };
+    })
     .sort((a, b) => b.score - a.score)
     .slice(0, 20);
 
@@ -75,7 +97,14 @@ export async function POST(req: NextRequest) {
   let reason = `Top-scoring vetted ${task.category ?? ""} specialist (${candidates[0].band} · ${candidates[0].score}).`.trim();
 
   try {
-    const prompt = `You are the matching engine on Hyrde, a freelance marketplace. Assign this task to the single best-fit freelancer from the vetted candidates below. Every candidate already passed a graded skill interview in the right category, so weigh their vetting score, band, and how their background fits this specific brief.
+    const prompt = `You are the matching engine on Hyrde, a freelance marketplace. Pick the SINGLE best-fit freelancer for this specific task from the vetted candidates below. Every candidate already passed a graded skill interview, so they all clear the bar — your job is fit to THIS brief, not who's generically "best".
+
+Weigh, in this order:
+1. Demonstrated-skill fit — do the candidate's verifiedSkills and what their interview actually showed (their summary) match what THIS brief needs? This matters most. A candidate whose proven skills squarely fit the brief beats a higher raw score whose skills are adjacent. Judge on substance, not keyword overlap.
+2. Vetting score & band — baseline competence (higher is better, but it's a tie-breaker within similar fit, not the primary axis).
+3. Relevant background from their headline/bio.
+
+Do NOT just pick the highest vettingScore. If the top-scorer's demonstrated skills don't fit the brief and a slightly-lower-scorer's do, pick the better fit and say why.
 
 TASK
 Title: ${task.title}
@@ -83,10 +112,20 @@ Category: ${task.category ?? "General"}
 Brief: """${String(task.brief).slice(0, 1500)}"""
 
 CANDIDATES (JSON)
-${JSON.stringify(candidates.map(c => ({ id: c.id, name: c.name, vettingScore: c.score, band: c.band, bio: c.bio.slice(0, 300) })))}
+${JSON.stringify(candidates.map(c => ({
+  id: c.id,
+  name: c.name,
+  vettingScore: c.score,
+  band: c.band,
+  vettedCategory: c.category,
+  verifiedSkills: c.verifiedSkills,
+  interviewSummary: c.summary.slice(0, 500),
+  headline: c.headline.slice(0, 120),
+  bio: c.bio.slice(0, 300),
+})))}
 
 Return ONLY valid JSON:
-{"chosenId": "<id of the best candidate>", "confidence": <integer 0-100>, "reason": "<one sentence to the client on why this freelancer is the right match>"}`;
+{"chosenId": "<id of the best-fit candidate>", "confidence": <integer 0-100, your confidence THIS candidate is right for THIS brief>, "reason": "<one specific sentence to the client: why this freelancer fits their brief — reference the actual skill/experience match, not just 'top rated'>"}`;
 
     const msg = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
