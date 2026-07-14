@@ -45,14 +45,22 @@ export default function DashboardClient({
   const refetch = useCallback(async () => {
     const supabase = supabaseBrowser();
     const [{ data }, { data: pays }, { data: subRows }, { data: projRows }] = await Promise.all([
-      supabase.from("tasks").select("*").order("created_at", { ascending: false }).limit(120),
+      // deliverable_text/agent_deliverable are column-locked at the DB level
+      // (see get_task_full) — the dashboard list never renders them, so an
+      // explicit column list avoids a 403 that select("*") would now hit.
+      supabase.from("tasks").select(
+        "id, created_at, client_id, title, brief, category, origin, status, agent_completion, agent_summary, poster_id, amount_cents, claimed_by_user_id, claimed_at, payment_status, stripe_payment_intent_id, mount_points, ai_review, deadline, match_reason, match_score, matched_at, project_id, milestone_index, milestone_total"
+      ).order("created_at", { ascending: false }).limit(120),
       supabase.from("payments").select("*").or(`payer_id.eq.${userId},payee_id.eq.${userId}`),
       supabase.from("subscriptions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       // RLS: poster sees their own projects; freelancers see projects via a
       // milestone task matched to them (see migration 0010).
       supabase.from("projects").select("*").order("created_at", { ascending: false }),
     ]);
-    if (data) setTasks(data as ArenaTask[]);
+    // deliverable_text/agent_deliverable are never fetched here (see the
+    // column-locked select above) — stub them so the shared ArenaTask type
+    // still lines up. Nothing in the dashboard list reads either field.
+    if (data) setTasks(data.map(t => ({ ...t, deliverable_text: null, agent_deliverable: null })) as ArenaTask[]);
     if (pays) setPayments(pays as Payment[]);
     if (subRows) setSubs(subRows as Subscription[]);
     if (projRows) setProjects(projRows as Project[]);

@@ -45,9 +45,11 @@ export default function TaskDetailClient({
     Date.now() - new Date(task.claimed_at).getTime() > 72 * 3.6e6;
 
   // ── Live refresh ──────────────────────────────────────────────────────────
+  // deliverable_text/agent_deliverable are column-locked at the DB level (only
+  // the poster, the matched freelancer, or a paid task can see them) — read
+  // through get_task_full() rather than a raw select, or this 403s.
   const refetch = useCallback(async () => {
-    const { data } = await supabaseBrowser()
-      .from("tasks").select("*").eq("id", initialTask.id).maybeSingle();
+    const { data } = await supabaseBrowser().rpc("get_task_full", { p_task_id: initialTask.id });
     if (data) setTask(data as ArenaTask);
   }, [initialTask.id]);
 

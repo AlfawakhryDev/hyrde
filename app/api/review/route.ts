@@ -25,21 +25,28 @@ export async function POST(req: NextRequest) {
   const { taskId } = await req.json();
   if (!taskId) return NextResponse.json({ error: "taskId is required." }, { status: 400 });
 
-  const { data: task, error: fetchErr } = await supabase
+  // deliverable_text is column-locked at the DB level (see get_task_full) —
+  // check ownership/status on the public columns first, then pull the
+  // deliverable itself through the RPC, which only returns it to the poster,
+  // the matched freelancer, or once paid. This request qualifies as poster.
+  const { data: meta, error: fetchErr } = await supabase
     .from("tasks")
-    .select("id, title, brief, poster_id, deliverable_text, ai_review, status")
+    .select("id, title, brief, poster_id, ai_review, status")
     .eq("id", taskId)
     .single();
 
-  if (fetchErr || !task) return NextResponse.json({ error: "Task not found." }, { status: 404 });
-  if (task.poster_id !== user.id) {
+  if (fetchErr || !meta) return NextResponse.json({ error: "Task not found." }, { status: 404 });
+  if (meta.poster_id !== user.id) {
     return NextResponse.json({ error: "Only the poster can request a review." }, { status: 403 });
   }
+  if (meta.ai_review) {
+    return NextResponse.json({ ok: true, review: JSON.parse(meta.ai_review) });
+  }
+
+  const { data: full } = await supabase.rpc("get_task_full", { p_task_id: taskId });
+  const task = { ...meta, deliverable_text: full?.deliverable_text as string | null };
   if (!task.deliverable_text) {
     return NextResponse.json({ error: "Nothing delivered yet." }, { status: 409 });
-  }
-  if (task.ai_review) {
-    return NextResponse.json({ ok: true, review: JSON.parse(task.ai_review) });
   }
 
   const prompt = `You are the impartial quality reviewer on Hyrde, a freelance marketplace. A client posted a task, a freelancer delivered work, and the client is deciding whether to approve. Give a fair, specific assessment. You are not on either side.
