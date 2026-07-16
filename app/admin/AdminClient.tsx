@@ -75,9 +75,14 @@ export default function AdminClient({
 
   return (
     <div className="mx-auto max-w-[880px] px-5 md:px-8 py-12">
-      <Link href="/dashboard" className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
-        <span aria-hidden="true">←</span> Back to dashboard
-      </Link>
+      <div className="flex items-center justify-between gap-3">
+        <Link href="/dashboard" className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+          <span aria-hidden="true">←</span> Back to dashboard
+        </Link>
+        <Link href="/admin/oversight" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors">
+          Oversight <span aria-hidden="true">→</span>
+        </Link>
+      </div>
       <h1 className="text-[40px] font-light tracking-[-0.035em] leading-none text-on-surface mt-8 mb-2">Admin — billing</h1>
       <p className="text-[14px] text-on-surface-variant mb-10 max-w-[520px]">
         Match the reference in the Airtm payment note, then activate. Activation grants 30 days.
