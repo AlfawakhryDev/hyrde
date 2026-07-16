@@ -16,8 +16,8 @@ export default async function AdminPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/admin");
 
-  const { data: me } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
-  if (!me?.is_admin) redirect("/dashboard");
+  const { data: isAdmin } = await supabase.rpc("am_i_admin");
+  if (!isAdmin) redirect("/dashboard");
 
   // Admin RLS policy allows reading all subscriptions; join names for matching
   // against Airtm payment notes.

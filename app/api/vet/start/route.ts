@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   // Already passed this category → nothing to do.
   const { data: existing } = await supabase
     .from("vettings")
-    .select("id, status, mode, transcript, created_at, completed_at")
+    .select("id, status, mode, created_at, completed_at")
     .eq("user_id", user.id)
     .eq("category", category)
     .order("created_at", { ascending: false })
@@ -43,7 +43,8 @@ export async function POST(req: NextRequest) {
   if (existing?.status === "in_progress") {
     const existingMode = (existing.mode ?? "text") as "text" | "video";
     if (existingMode === interviewMode) {
-      const transcript = (existing.transcript ?? []) as { q: string; a?: string }[];
+      const { data: tData } = await supabase.rpc("get_vetting_transcript", { p_id: existing.id });
+      const transcript = (tData ?? []) as { q: string; a?: string }[];
       const current = transcript[transcript.length - 1];
       if (current && current.a === undefined) {
         return NextResponse.json({

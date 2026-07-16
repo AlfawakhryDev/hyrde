@@ -16,7 +16,9 @@ export default async function ProfilePage() {
   if (!user) redirect("/login?next=/profile");
 
   const [{ data: profile }, { data: priv }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    supabase.from("profiles")
+      .select("id, mode, display_name, bio, avatar_url, headline, company, website, country, city")
+      .eq("id", user.id).maybeSingle(),
     supabase.from("profile_private").select("*").eq("user_id", user.id).maybeSingle(),
   ]);
 
@@ -26,7 +28,7 @@ export default async function ProfilePage() {
     <ProfileClient
       userId={user.id}
       email={user.email ?? ""}
-      initialProfile={profile}
+      initialProfile={{ ...profile, payout_method: null, payout_handle: null }}
       initialPrivate={priv ?? null}
     />
   );
