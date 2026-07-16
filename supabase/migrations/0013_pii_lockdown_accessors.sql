@@ -1,0 +1,9 @@
+-- Part A (additive): scoped accessor RPCs so the app keeps working after the
+-- world-readable column grants are revoked in 0014. Applied to prod 2026-07-16
+-- as `pii_lockdown_accessors`. See supabase/README.md for the full bodies.
+--   get_my_payout()               -> owner's own payout method/handle
+--   get_payout_for_task(uuid)     -> payee handle, poster/matched-freelancer only
+--   get_vetting_transcript(uuid)  -> owner's own interview transcript
+--   am_i_admin()                  -> own admin flag without exposing the column
+--   get_match_pool(uuid)          -> vetting assessments to the poster of THAT
+--                                    unmatched task only (matcher signal, not harvestable)

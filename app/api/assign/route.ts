@@ -37,55 +37,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This task is already matched." }, { status: 409 });
   }
 
-  // Candidate pool: freelancers who passed vetting in this exact category.
-  // "Other"/uncategorized tasks accept any passed vetting. We now also pull the
-  // full `assessment` (verifiedSkills + written summary the grader produced) —
-  // this is the signal that lets the matcher weigh demonstrated-skill fit to the
-  // specific brief, not just a raw score. (Matching v1.5 — see the Matching &
-  // Vetting v2 Linear project; the weighted/embeddings engine is HYR-24.)
-  type Assessment = { verifiedSkills?: string[]; summary?: string };
-  const base = supabase.from("vettings").select("user_id, category, score, band, assessment").eq("status", "passed");
-  const { data: passes } = task.category && task.category !== "Other"
-    ? await base.eq("category", task.category)
-    : await base;
-
-  const byUser = new Map<string, { score: number; band: string; category: string; assessment: Assessment | null }>();
-  for (const v of passes ?? []) {
-    const prev = byUser.get(v.user_id);
-    // Keep the best-scoring vetting per user, and carry its assessment with it.
-    if (!prev || v.score > prev.score) {
-      byUser.set(v.user_id, { score: v.score, band: v.band, category: v.category, assessment: (v.assessment as Assessment | null) ?? null });
-    }
+  // Candidate pool comes from get_match_pool(): a SECURITY DEFINER RPC that
+  // returns passed vettings + their assessments (verifiedSkills + grader
+  // summary) ONLY to the poster of THIS unmatched task, already scoped to the
+  // task's category, best-vetting-per-user, poster excluded. This keeps the
+  // matcher's demonstrated-skill signal (Matching v1.5) while stopping the
+  // vetting assessment/transcript from being bulk-harvestable via a raw select.
+  type Candidate = {
+    id: string; name: string; bio: string; headline: string; country: string;
+    score: number; band: string; category: string; verifiedSkills: string[]; summary: string;
+  };
+  const { data: poolData, error: poolErr } = await supabase.rpc("get_match_pool", { p_task_id: task.id });
+  if (poolErr) {
+    return NextResponse.json({ error: "Could not build the candidate pool." }, { status: 500 });
   }
-  byUser.delete(user.id); // can't match a client to their own task
-
-  if (byUser.size === 0) {
-    return NextResponse.json({ matched: false, reason: "no_candidates" });
-  }
-
-  const { data: profs } = await supabase
-    .from("profiles")
-    .select("id, display_name, bio, headline, country")
-    .in("id", [...byUser.keys()]);
-
-  const candidates = (profs ?? [])
-    .map(p => {
-      const v = byUser.get(p.id)!;
-      return {
-        id: p.id,
-        name: p.display_name || "Freelancer",
-        bio: p.bio || "",
-        headline: p.headline || "",
-        country: p.country || "",
-        score: v.score,
-        band: v.band,
-        category: v.category,
-        verifiedSkills: v.assessment?.verifiedSkills ?? [],
-        summary: v.assessment?.summary ?? "",
-      };
-    })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 20);
+  const candidates = ((poolData ?? []) as Candidate[]).slice(0, 20);
 
   if (candidates.length === 0) {
     return NextResponse.json({ matched: false, reason: "no_candidates" });

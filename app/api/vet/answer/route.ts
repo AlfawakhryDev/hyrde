@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   const { data: vetting, error: fetchErr } = await supabase
     .from("vettings")
-    .select("id, user_id, category, status, mode, transcript")
+    .select("id, user_id, category, status, mode")
     .eq("id", vettingId)
     .eq("user_id", user.id)
     .single();
@@ -35,7 +35,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This interview is already finished." }, { status: 409 });
   }
 
-  const transcript = (vetting.transcript ?? []) as TranscriptTurn[];
+  // transcript is no longer world-readable; owner reads their own via RPC.
+  const { data: transcriptData } = await supabase.rpc("get_vetting_transcript", { p_id: vettingId });
+  const transcript = (transcriptData ?? []) as TranscriptTurn[];
   const current = transcript[transcript.length - 1];
   if (!current || current.a !== undefined) {
     return NextResponse.json({ error: "No open question to answer." }, { status: 409 });

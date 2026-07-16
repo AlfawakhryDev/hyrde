@@ -49,12 +49,10 @@ export default function PaymentFlow({
     setPayment((pay as Payment) ?? null);
 
     if (pilotId) {
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("display_name, payout_method, payout_handle")
-        .eq("id", pilotId)
-        .maybeSingle();
-      setPayee(prof ?? null);
+      // Payout handle is not world-readable; this RPC returns it only to the
+      // task's poster or matched freelancer (server-enforced).
+      const { data: prof } = await supabase.rpc("get_payout_for_task", { p_task_id: task.id });
+      setPayee((prof as typeof payee) ?? null);
     }
     setLoaded(true);
   }, [task.id, pilotId]);

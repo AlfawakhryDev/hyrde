@@ -17,12 +17,15 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, mode, display_name, bio, avatar_url, payout_method, payout_handle")
+    .select("id, mode, display_name, bio, avatar_url")
     .eq("id", user.id)
     .maybeSingle();
 
   // No mode picked yet (fresh signup, or account created on mobile) → onboard.
   if (!profile?.mode) redirect("/onboarding");
+
+  // Payout details are no longer world-readable — fetch the owner's own via RPC.
+  const { data: payout } = await supabase.rpc("get_my_payout");
 
   const { data: vettings } = await supabase
     .from("vettings")
@@ -34,7 +37,11 @@ export default async function DashboardPage() {
     <DashboardClient
       userId={user.id}
       email={user.email ?? ""}
-      initialProfile={profile}
+      initialProfile={{
+        ...profile,
+        payout_method: payout?.payout_method ?? null,
+        payout_handle: payout?.payout_handle ?? null,
+      }}
       vettedBadges={vettings ?? []}
     />
   );
