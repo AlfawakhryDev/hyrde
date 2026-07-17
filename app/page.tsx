@@ -37,39 +37,41 @@ export default function Home() {
     <div className="min-h-screen bg-[#ffffff]">
 
       {/* ── Hero — outcomes, not gigs (the headline promise) ── */}
-      <section className="relative -mt-[104px] overflow-hidden bg-[#0A0A0B]">
+      {/* Fills the viewport on every resolution: min-h uses svh (mobile-safe) and
+          the content is vertically centered in the space below the fixed nav. */}
+      <section className="relative -mt-[104px] min-h-[100svh] flex items-center overflow-hidden bg-[#0A0A0B]">
         {/* Ambient: violet glow + faint grid — reacts to the cursor */}
         <HeroBackdrop />
-        <div className="relative mx-auto max-w-[1180px] px-5 md:px-8 pt-[152px] pb-20 md:pt-[180px] md:pb-28">
-          <div className="grid lg:grid-cols-[1.02fr_0.98fr] gap-12 lg:gap-14 items-start lg:items-center">
+        <div className="relative w-full mx-auto max-w-[1180px] px-5 md:px-8 pt-[112px] pb-10 md:pt-[116px] md:pb-12">
+          <div className="grid lg:grid-cols-[1.02fr_0.98fr] gap-10 lg:gap-14 items-center">
 
             {/* Left — the pitch */}
             <div>
-              <div className="flex items-center gap-2 text-white mb-8">
-                <HyrdeMark size={26} />
+              <div className="flex items-center gap-2 text-white mb-5">
+                <HyrdeMark size={24} />
               </div>
 
-              <p className="text-[12.5px] font-medium text-[#A99EE8] mb-5">New — beyond single tasks</p>
-              <h1 className="font-light text-white leading-[1.0] tracking-[-0.035em] text-[clamp(38px,5.1vw,72px)] max-w-[14ch]">
+              <p className="text-[12.5px] font-medium text-[#A99EE8] mb-3.5">New — beyond single tasks</p>
+              <h1 className="font-light text-white leading-[1.0] tracking-[-0.035em] text-[clamp(36px,4.6vw,62px)] max-w-[14ch]">
                 Don&apos;t hire a freelancer.{" "}
-                <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-2xl px-4 leading-[1.12] -rotate-1">Hire an outcome</span>.
+                <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-2xl px-3.5 leading-[1.12] -rotate-1">Hire an outcome</span>.
               </h1>
 
-              <div className="w-full max-w-[520px] border-b border-white/15 my-8" aria-hidden="true" />
+              <div className="w-full max-w-[520px] border-b border-white/15 my-5" aria-hidden="true" />
 
-              <p className="text-white/60 text-[16px] md:text-[17px] max-w-[500px] leading-relaxed mb-7">
+              <p className="text-white/60 text-[15px] md:text-[16px] max-w-[500px] leading-relaxed mb-4">
                 Say what you actually want — &ldquo;I need an MVP,&rdquo; &ldquo;redesign my Shopify store&rdquo; — and
                 the AI scopes it into a milestone plan, matches a vetted specialist to each, and
                 sequences delivery. You manage the plan, not a pile of freelancers.
               </p>
 
-              <ul className="space-y-2.5 max-w-[440px] mb-9">
+              <ul className="space-y-1.5 max-w-[440px] mb-6">
                 {[
                   "AI decomposes the outcome into ordered milestones",
                   "Each milestone matched to one vetted specialist",
                   "Approve a milestone → the next matches automatically",
                 ].map(b => (
-                  <li key={b} className="flex items-start gap-3 text-[14px] text-white/70 leading-relaxed">
+                  <li key={b} className="flex items-start gap-3 text-[13.5px] text-white/70 leading-snug">
                     <span className="text-[#A99EE8] font-bold mt-px" aria-hidden="true">✓</span>{b}
                   </li>
                 ))}
