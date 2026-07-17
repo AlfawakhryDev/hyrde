@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#ffffff]">
 
-      {/* ── Hero — cinematic dark, enormous type ── */}
+      {/* ── Hero — outcomes, not gigs (the headline promise) ── */}
       <section className="relative -mt-[104px] overflow-hidden bg-[#0A0A0B]">
         {/* Ambient: violet glow + faint grid — reacts to the cursor */}
         <HeroBackdrop />
@@ -49,25 +49,38 @@ export default function Home() {
                 <HyrdeMark size={26} />
               </div>
 
-              <h1 className="font-light text-white leading-[0.98] tracking-[-0.04em] text-[clamp(42px,5.8vw,78px)] max-w-[13ch]">
-                The proposal pile ends{" "}
-                <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-2xl px-4 leading-[1.1] -rotate-1">here</span>.
+              <p className="text-[12.5px] font-medium text-[#A99EE8] mb-5">New — beyond single tasks</p>
+              <h1 className="font-light text-white leading-[1.0] tracking-[-0.035em] text-[clamp(38px,5.1vw,72px)] max-w-[14ch]">
+                Don&apos;t hire a freelancer.{" "}
+                <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-2xl px-4 leading-[1.12] -rotate-1">Hire an outcome</span>.
               </h1>
 
               <div className="w-full max-w-[520px] border-b border-white/15 my-8" aria-hidden="true" />
 
-              <p className="text-white/60 text-[16px] md:text-[17px] max-w-[500px] leading-relaxed mb-9">
-                Every freelancer here passed an adaptive AI skill interview. Post a task
-                and the AI matches it to the single best-vetted specialist — no bidding,
-                no browsing, no pay-to-apply.
+              <p className="text-white/60 text-[16px] md:text-[17px] max-w-[500px] leading-relaxed mb-7">
+                Say what you actually want — &ldquo;I need an MVP,&rdquo; &ldquo;redesign my Shopify store&rdquo; — and
+                the AI scopes it into a milestone plan, matches a vetted specialist to each, and
+                sequences delivery. You manage the plan, not a pile of freelancers.
               </p>
+
+              <ul className="space-y-2.5 max-w-[440px] mb-9">
+                {[
+                  "AI decomposes the outcome into ordered milestones",
+                  "Each milestone matched to one vetted specialist",
+                  "Approve a milestone → the next matches automatically",
+                ].map(b => (
+                  <li key={b} className="flex items-start gap-3 text-[14px] text-white/70 leading-relaxed">
+                    <span className="text-[#A99EE8] font-bold mt-px" aria-hidden="true">✓</span>{b}
+                  </li>
+                ))}
+              </ul>
 
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/signup"
                   className="h-11 inline-flex items-center gap-2 px-6 rounded-full bg-[#ffffff] text-[#0A0A0B] text-sm font-medium hover:bg-[#f0f0f2] transition-colors"
                 >
-                  Start hiring
+                  Describe your outcome
                   <span aria-hidden="true">→</span>
                 </Link>
                 <Link
@@ -79,15 +92,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right — the product, playing live */}
+            {/* Right — the outcome plan, building itself */}
             <div className="lg:pl-2">
-              <MatchDemo />
+              <OutcomeShowcase />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Hire outcomes, not gigs — the differentiator ── */}
+      {/* ── Single tasks too — the matching engine, playing live ── */}
       <section className="relative overflow-hidden bg-[#0A0A0B]">
         <div
           aria-hidden="true"
@@ -96,38 +109,27 @@ export default function Home() {
         />
         <div className="relative mx-auto max-w-[1180px] px-5 md:px-8 py-20 md:py-28 grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
           <div>
-            <p className="text-[12px] font-medium text-[#A99EE8] mb-4">New — beyond single tasks</p>
+            <p className="text-[12px] font-medium text-[#A99EE8] mb-4">Or just one thing</p>
             <h2 className="font-light text-white leading-[1.02] tracking-[-0.03em] text-[clamp(32px,4.6vw,56px)] max-w-[13ch]">
-              Don&apos;t hire a freelancer.{" "}
-              <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-xl px-3 leading-[1.15] -rotate-1">Hire an outcome.</span>
+              The proposal pile ends{" "}
+              <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-xl px-3 leading-[1.15] -rotate-1">here</span>.
             </h2>
             <p className="text-white/60 text-[15px] md:text-[16px] max-w-[440px] leading-relaxed mt-7">
-              Say what you actually want — &ldquo;I need an MVP,&rdquo; &ldquo;redesign my Shopify store&rdquo; — and
-              Hyrde&apos;s AI scopes it into a milestone plan, matches a vetted specialist to each,
-              and sequences delivery. You manage the plan, not a pile of freelancers.
+              Got a single task? Post it and the AI matches it to the one best-vetted
+              specialist — no bidding, no browsing, no pay-to-apply. Every freelancer here
+              passed an adaptive AI skill interview.
             </p>
-            <ul className="mt-8 space-y-3 max-w-[420px]">
-              {[
-                "AI decomposes the outcome into ordered milestones",
-                "Each milestone matched to one vetted specialist",
-                "Approve a milestone → the next matches automatically",
-              ].map(b => (
-                <li key={b} className="flex items-start gap-3 text-[14px] text-white/70 leading-relaxed">
-                  <span className="text-[#A99EE8] font-bold mt-px" aria-hidden="true">✓</span>{b}
-                </li>
-              ))}
-            </ul>
             <Link
               href="/signup"
               className="mt-9 h-11 inline-flex items-center gap-2 px-6 rounded-full bg-[#ffffff] text-[#0A0A0B] text-sm font-medium hover:bg-[#f0f0f2] transition-colors"
             >
-              Describe your outcome
+              Post a task
               <span aria-hidden="true">→</span>
             </Link>
           </div>
 
           <div className="lg:pl-2">
-            <OutcomeShowcase />
+            <MatchDemo />
           </div>
         </div>
       </section>
