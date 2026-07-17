@@ -39,8 +39,10 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           text: clean,
+          // turbo v2.5 = low latency; settings tuned for a warm, expressive,
+          // human interviewer rather than a flat narrator.
           model_id: "eleven_turbo_v2_5",
-          voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.15 },
+          voice_settings: { stability: 0.4, similarity_boost: 0.8, style: 0.45, use_speaker_boost: true },
         }),
       });
       if (!r.ok) throw new Error(`elevenlabs ${r.status}`);

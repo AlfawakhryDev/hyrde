@@ -11,6 +11,12 @@ const QUESTION_PLAN = [
   "a specifics-demanding experience question: a real project they shipped in this category — what, for whom, hardest part, measurable outcome. Signal: verifiable specifics",
 ];
 
+// A warm, human opener spoken aloud before the first question (voice mode).
+// Static so it's instant and free; still feels like a real person saying hi.
+export function interviewIntro(category: string): string {
+  return `Hey — thanks for hopping on, good to meet you. I'm your interviewer here at Hyrde, and honestly this is just a real, relaxed conversation about your ${category} work. It's four questions, about ten minutes, no trick stuff — I mostly just want to hear how you actually think through things. So take your time, get specific, and whenever you're ready, let's get into it.`;
+}
+
 export async function nextQuestion(category: string, transcript: TranscriptTurn[]): Promise<string> {
   const idx = transcript.length; // 0-based index of the question being generated
   const history = transcript
@@ -19,19 +25,22 @@ export async function nextQuestion(category: string, transcript: TranscriptTurn[
 
   const msg = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 300,
+    max_tokens: 320,
     messages: [{
       role: "user",
-      content: `You are the vetting interviewer on Hyrde, a freelance marketplace. You interview freelancers claiming skill in: ${category}. Your questions must be answerable in text in 2–8 sentences, but hard to bluff. Never ask questions a generic LLM answer could ace — demand specifics, decisions, trade-offs, and real work.
+      content: `You are Hyrde's interviewer talking with a freelancer who claims skill in: ${category}. This is a SPOKEN, human conversation — your words are read aloud in a natural voice. You are warm, curious, and genuinely listening — and also sharp: you don't let vague answers slide.
 
-${history ? `INTERVIEW SO FAR:\n${history}\n\n` : ""}Generate question ${idx + 1} of ${VETTING_QUESTIONS}: ${QUESTION_PLAN[idx]}.
+${history ? `THE CONVERSATION SO FAR:\n${history}\n\n` : ""}Now say turn ${idx + 1} of ${VETTING_QUESTIONS}. The intent of this turn: ${QUESTION_PLAN[idx]}.
 
-Rules:
-- One question only. No preamble, no "great answer!", no numbering.
-- Plain, direct, professional. Max 3 sentences.
-- Category-specific — never generic "tell me about yourself".
+How to sound:
+- Talk like a real person, not a form. Use contractions and natural rhythm. It will be spoken out loud, so keep it to 2–3 short sentences.
+${idx > 0
+  ? `- FIRST, react briefly and genuinely to what they just said — reference a SPECIFIC detail from their actual answer (a tool, a number, a decision they mentioned), the way a real interviewer would ("Mm, offloading that to a queue makes sense…"). One short clause. Never empty praise like "great answer". If their last answer was vague or dodged the question, gently call it out instead of praising it. THEN ask the next thing.`
+  : `- This is your opening question. Be welcoming for half a beat, then get straight into something real and concrete.`}
+- Stay hard to bluff: demand specifics, real decisions, trade-offs, actual work. Never a question a generic AI answer could ace.
+- No numbering, no "question 3 of 4", no meta narration.
 
-Return ONLY the question text.`,
+Return ONLY the exact words you'd say out loud.`,
     }],
   });
 

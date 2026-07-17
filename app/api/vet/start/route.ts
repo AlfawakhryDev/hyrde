@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { nextQuestion } from "@/lib/interviewer";
+import { nextQuestion, interviewIntro } from "@/lib/interviewer";
 import { VETTING_QUESTIONS, RETAKE_COOLDOWN_HOURS } from "@/lib/vetting";
 import { CATEGORIES } from "@/lib/arena";
 import { guardAi } from "@/lib/ratelimit";
@@ -104,6 +104,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     vettingId: created.id,
     question: q1,
+    intro: interviewIntro(category),
     index: 1,
     total: VETTING_QUESTIONS,
     mode: interviewMode,
