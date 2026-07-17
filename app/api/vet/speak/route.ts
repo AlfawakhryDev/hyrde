@@ -26,32 +26,31 @@ export async function POST(req: NextRequest) {
   const eleven = process.env.ELEVENLABS_API_KEY;
   const openai = process.env.OPENAI_API_KEY;
 
-  try {
-    if (eleven) {
-      // Rachel — a warm, natural default voice; override with ELEVENLABS_VOICE_ID.
+  // Try providers in order; on any failure, fall through to the next, then to
+  // the browser voice (204). One provider's billing/quota error never blocks.
+  if (eleven) {
+    try {
       const voiceId = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM";
       const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
         method: "POST",
-        headers: {
-          "xi-api-key": eleven,
-          "Content-Type": "application/json",
-          Accept: "audio/mpeg",
-        },
+        headers: { "xi-api-key": eleven, "Content-Type": "application/json", Accept: "audio/mpeg" },
         body: JSON.stringify({
           text: clean,
-          // turbo v2.5 = low latency; settings tuned for a warm, expressive,
-          // human interviewer rather than a flat narrator.
-          model_id: "eleven_turbo_v2_5",
+          model_id: process.env.ELEVENLABS_MODEL || "eleven_turbo_v2_5",
           voice_settings: { stability: 0.4, similarity_boost: 0.8, style: 0.45, use_speaker_boost: true },
         }),
       });
-      if (!r.ok) throw new Error(`elevenlabs ${r.status}`);
-      return new NextResponse(r.body, {
-        headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" },
-      });
+      if (r.ok) {
+        return new NextResponse(r.body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" } });
+      }
+      console.error(`ElevenLabs TTS ${r.status} — ${await r.text().catch(() => "")} — falling through`);
+    } catch (err) {
+      console.error("ElevenLabs TTS threw, falling through:", err);
     }
+  }
 
-    if (openai) {
+  if (openai) {
+    try {
       const r = await fetch("https://api.openai.com/v1/audio/speech", {
         method: "POST",
         headers: { Authorization: `Bearer ${openai}`, "Content-Type": "application/json" },
@@ -62,15 +61,15 @@ export async function POST(req: NextRequest) {
           instructions: "Warm, professional technical interviewer. Natural, unhurried, curious.",
         }),
       });
-      if (!r.ok) throw new Error(`openai ${r.status}`);
-      return new NextResponse(r.body, {
-        headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" },
-      });
+      if (r.ok) {
+        return new NextResponse(r.body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" } });
+      }
+      console.error(`OpenAI TTS ${r.status} — falling through to browser voice`);
+    } catch (err) {
+      console.error("OpenAI TTS threw, falling through to browser voice:", err);
     }
-  } catch (err) {
-    console.error("TTS provider failed, client will use browser voice:", err);
   }
 
-  // No provider configured (or it failed) → tell the client to use browser TTS.
+  // No provider succeeded → client uses the browser voice.
   return new NextResponse(null, { status: 204 });
 }
