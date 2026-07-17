@@ -33,11 +33,15 @@ function pickMime(): string {
 export default function VideoAnswer({
   questionIndex,
   submitting,
+  interviewerSpeaking = false,
+  autoRecordSignal = 0,
   onSubmit,
   onUnsupported,
 }: {
   questionIndex: number;
   submitting: boolean;
+  interviewerSpeaking?: boolean;
+  autoRecordSignal?: number;
   onSubmit: (transcript: string, recording: Blob | null, mime: string) => void;
   onUnsupported: (reason: string) => void;
 }) {
@@ -148,6 +152,15 @@ export default function VideoAnswer({
     try { srRef.current?.stop(); } catch { /* ignore */ }
   }
 
+  // Hands-free turn-taking: when the interviewer finishes speaking (signal
+  // bumps), open the mic automatically so the candidate can just answer.
+  useEffect(() => {
+    if (autoRecordSignal > 0 && ready && !recordingRef.current && !submitting) {
+      startRecording();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRecordSignal, ready]);
+
   const transcript = (finalText + (interim ? " " + interim : "")).trim();
   const canSubmit = !recording && finalText.trim().length >= 25 && !submitting;
   const mmss = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}`;
@@ -174,6 +187,18 @@ export default function VideoAnswer({
             <span className="text-[12px] font-medium text-white tabular-nums">{mmss}</span>
           </div>
         )}
+        {interviewerSpeaking && !recording && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/45 backdrop-blur-[1px]">
+            <div className="flex items-center gap-2.5 bg-black/50 rounded-full px-4 py-2">
+              <span className="flex items-end gap-0.5 h-3.5" aria-hidden="true">
+                <span className="w-0.5 bg-white rounded-full animate-[vbar_0.9s_ease-in-out_infinite] h-2" />
+                <span className="w-0.5 bg-white rounded-full animate-[vbar_0.9s_ease-in-out_0.15s_infinite] h-3.5" />
+                <span className="w-0.5 bg-white rounded-full animate-[vbar_0.9s_ease-in-out_0.3s_infinite] h-2.5" />
+              </span>
+              <span className="text-[12.5px] font-medium text-white">Interviewer is speaking — listen, then answer</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Live transcript */}
@@ -198,10 +223,10 @@ export default function VideoAnswer({
           {!recording ? (
             <button
               onClick={startRecording}
-              disabled={!ready || submitting}
+              disabled={!ready || submitting || interviewerSpeaking}
               className="h-10 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
             >
-              {blob || finalText ? "Re-record answer" : "Record answer"}
+              {interviewerSpeaking ? "Interviewer speaking…" : blob || finalText ? "Re-record answer" : "Record answer"}
             </button>
           ) : (
             <button
