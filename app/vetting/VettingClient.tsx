@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/arena";
 import { VETTING_QUESTIONS, BAND_STYLES, type VettingAssessment } from "@/lib/vetting";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import VideoAnswer, { videoInterviewSupported } from "@/components/vetting/VideoAnswer";
+import { speak, cancelSpeech } from "@/lib/speech";
 
 interface ExistingVetting {
   id: string;
@@ -33,8 +34,32 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
   const [mode, setMode] = useState<"text" | "video">("text");
   const [videoOk, setVideoOk] = useState(false);
   const [videoNote, setVideoNote] = useState("");
+  // Voice: the interviewer speaks each question aloud, then hands the mic over.
+  const [speaking, setSpeaking] = useState(false);
+  const [autoRecordSignal, setAutoRecordSignal] = useState(0);
+  const lastSpokenRef = useRef<string>("");
 
   useEffect(() => { setVideoOk(videoInterviewSupported()); }, []);
+
+  // Speak each newly-arrived interviewer question in voice mode, then signal the
+  // recorder to auto-listen — so it plays like a real spoken conversation.
+  const latestQuestion = [...messages].reverse().find(m => m.role === "interviewer")?.text ?? "";
+  useEffect(() => {
+    if (phase !== "interview" || mode !== "video") return;
+    if (!latestQuestion || latestQuestion === lastSpokenRef.current) return;
+    lastSpokenRef.current = latestQuestion;
+    setSpeaking(true);
+    let cancelled = false;
+    speak(latestQuestion).finally(() => {
+      if (cancelled) return;
+      setSpeaking(false);
+      setAutoRecordSignal(s => s + 1); // interviewer finished → open the mic
+    });
+    return () => { cancelled = true; cancelSpeech(); };
+  }, [latestQuestion, phase, mode]);
+
+  // Stop any speech when leaving the interview.
+  useEffect(() => () => cancelSpeech(), []);
 
   const passedByCategory = new Map(
     existing.filter(v => v.status === "passed").map(v => [v.category, v]),
@@ -152,7 +177,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           {category} interview
         </h1>
         <p className="text-[14px] text-on-surface-variant leading-relaxed mb-10 max-w-[480px]">
-          Same four adaptive questions, same grading, either way. Video is the
+          Same four adaptive questions, same grading, either way. The voice interview is the
           stronger signal — clients trust it more, and it proves the answers are yours.
         </p>
 
@@ -162,12 +187,13 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
             className="text-left rounded-2xl bg-surface-container-low p-6 hover:bg-surface-container transition-colors"
           >
             <p className="flex items-center gap-2 text-[15px] font-semibold text-on-surface mb-1.5">
-              Video interview
+              Voice interview
               <span className="text-[10.5px] font-medium text-electric-violet bg-electric-violet/10 px-2 py-0.5 rounded-full">Recommended</span>
             </p>
             <p className="text-[13px] text-on-surface-variant leading-relaxed">
-              Answer out loud on camera. Your speech is transcribed live and graded;
-              the recording is stored privately as proof it's really you.
+              A real conversation — the interviewer <span className="text-on-surface">speaks each question aloud</span>,
+              then the mic opens and you answer on camera. Transcribed live and graded; the recording is
+              stored privately as proof it&apos;s really you.
             </p>
           </button>
           <button
@@ -279,6 +305,28 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           <p className={`text-[20px] md:text-[24px] font-light tracking-[-0.02em] leading-[1.4] ${loadingFirst ? "text-on-surface-variant" : "text-on-surface"}`}>
             {loadingFirst ? "Preparing your first question…" : currentQuestion}
           </p>
+          {mode === "video" && currentQuestion && !waitingNext && !grading && (
+            <div className="flex items-center gap-2.5 mt-4">
+              {speaking ? (
+                <span className="inline-flex items-center gap-2 text-[12.5px] font-medium text-electric-violet">
+                  <span className="flex items-end gap-0.5 h-3.5" aria-hidden="true">
+                    <span className="w-0.5 bg-electric-violet rounded-full animate-[vbar_0.9s_ease-in-out_infinite] h-2" />
+                    <span className="w-0.5 bg-electric-violet rounded-full animate-[vbar_0.9s_ease-in-out_0.15s_infinite] h-3.5" />
+                    <span className="w-0.5 bg-electric-violet rounded-full animate-[vbar_0.9s_ease-in-out_0.3s_infinite] h-2.5" />
+                  </span>
+                  Interviewer is speaking…
+                </span>
+              ) : (
+                <button
+                  onClick={() => { setSpeaking(true); speak(currentQuestion).finally(() => setSpeaking(false)); }}
+                  className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]" style={{ fontSize: "16px" }}>volume_up</span>
+                  Replay question
+                </button>
+              )}
+            </div>
+          )}
           {(waitingNext || grading) && (
             <div className="flex items-center gap-1.5 mt-5">
               <span className="w-1.5 h-1.5 rounded-full bg-on-surface-variant/60 animate-pulse" />
@@ -304,8 +352,10 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           <VideoAnswer
             questionIndex={index}
             submitting={busy}
-            onSubmit={(transcript, blob, mime) => submitAnswer(transcript, blob, mime)}
-            onUnsupported={reason => { setMode("text"); setVideoNote(reason); }}
+            interviewerSpeaking={speaking}
+            autoRecordSignal={autoRecordSignal}
+            onSubmit={(transcript, blob, mime) => { cancelSpeech(); submitAnswer(transcript, blob, mime); }}
+            onUnsupported={reason => { cancelSpeech(); setMode("text"); setVideoNote(reason); }}
           />
         ) : (
           <div className="bg-surface-container-low rounded-2xl p-4">
