@@ -37,7 +37,9 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
   // Voice: the interviewer speaks each question aloud, then hands the mic over.
   const [speaking, setSpeaking] = useState(false);
   const [autoRecordSignal, setAutoRecordSignal] = useState(0);
+  const [intro, setIntro] = useState<string>("");
   const lastSpokenRef = useRef<string>("");
+  const introSpokenRef = useRef(false);
 
   useEffect(() => { setVideoOk(videoInterviewSupported()); }, []);
 
@@ -48,15 +50,20 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
     if (phase !== "interview" || mode !== "video") return;
     if (!latestQuestion || latestQuestion === lastSpokenRef.current) return;
     lastSpokenRef.current = latestQuestion;
+    // On the very first question, break the ice with the spoken intro first.
+    const toSpeak = !introSpokenRef.current && intro
+      ? `${intro} … ${latestQuestion}`
+      : latestQuestion;
+    introSpokenRef.current = true;
     setSpeaking(true);
     let cancelled = false;
-    speak(latestQuestion).finally(() => {
+    speak(toSpeak).finally(() => {
       if (cancelled) return;
       setSpeaking(false);
       setAutoRecordSignal(s => s + 1); // interviewer finished → open the mic
     });
     return () => { cancelled = true; cancelSpeech(); };
-  }, [latestQuestion, phase, mode]);
+  }, [latestQuestion, phase, mode, intro]);
 
   // Stop any speech when leaving the interview.
   useEffect(() => () => cancelSpeech(), []);
@@ -82,6 +89,9 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
     setBusy(true);
     setPhase("interview");
     setMessages([]);
+    setIntro("");
+    introSpokenRef.current = false;
+    lastSpokenRef.current = "";
     try {
       const res = await fetch("/api/vet/start", {
         method: "POST",
@@ -97,6 +107,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       setVettingId(data.vettingId);
       setIndex(data.index);
       if (data.resumed && data.mode) setMode(data.mode);
+      if (data.intro) setIntro(data.intro);
       setMessages([{ role: "interviewer", text: data.question }]);
     } catch {
       setError("Could not reach the interviewer — try again.");
