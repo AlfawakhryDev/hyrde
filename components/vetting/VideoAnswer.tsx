@@ -52,6 +52,13 @@ export default function VideoAnswer({
   const srRef = useRef<SpeechRec>(null);
   const recordingRef = useRef(false);
   const mimeRef = useRef<string>("");
+  // Voice-activity turn-taking: mirror the transcript in a ref, and auto-end
+  // the turn after the candidate goes quiet for a beat.
+  const finalTextRef = useRef("");
+  const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoSubmitRef = useRef(false);
+  const onSubmitRef = useRef(onSubmit);
+  onSubmitRef.current = onSubmit;
 
   const [ready, setReady] = useState(false);
   const [recording, setRecording] = useState(false);
@@ -59,6 +66,11 @@ export default function VideoAnswer({
   const [interim, setInterim] = useState("");
   const [blob, setBlob] = useState<Blob | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [hushing, setHushing] = useState(false); // "you paused, sending…" window
+
+  // How long a pause ends your turn. Long enough to think mid-answer, short
+  // enough to feel like a real back-and-forth.
+  const SILENCE_MS = 3200;
 
   // Acquire camera + mic once.
   useEffect(() => {
@@ -88,7 +100,13 @@ export default function VideoAnswer({
   // Reset per question.
   useEffect(() => {
     setFinalText(""); setInterim(""); setBlob(null); setElapsed(0);
+    finalTextRef.current = "";
+    if (silenceTimerRef.current) { clearTimeout(silenceTimerRef.current); silenceTimerRef.current = null; }
+    setHushing(false);
   }, [questionIndex]);
+
+  // Clear any pending silence timer on unmount.
+  useEffect(() => () => { if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current); }, []);
 
   // Recording timer.
   useEffect(() => {
@@ -96,6 +114,32 @@ export default function VideoAnswer({
     const id = setInterval(() => setElapsed(e => e + 1), 1000);
     return () => clearInterval(id);
   }, [recording]);
+
+  const clearSilence = useCallback(() => {
+    if (silenceTimerRef.current) { clearTimeout(silenceTimerRef.current); silenceTimerRef.current = null; }
+    setHushing(false);
+  }, []);
+
+  // End the turn automatically: stop recording and (via onstop) submit.
+  const finishTurn = useCallback(() => {
+    if (!recordingRef.current) return;
+    autoSubmitRef.current = true;
+    clearSilence();
+    recordingRef.current = false;
+    setRecording(false);
+    setInterim("");
+    try { recorderRef.current?.stop(); } catch { /* ignore */ }
+    try { srRef.current?.stop(); } catch { /* ignore */ }
+  }, [clearSilence]);
+
+  // (Re)start the "gone quiet" countdown. Any speech calls this and resets it;
+  // once the candidate has said something real and then stays silent, submit.
+  const armSilence = useCallback(() => {
+    if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    if (!recordingRef.current || finalTextRef.current.trim().length < 25) { setHushing(false); return; }
+    setHushing(true);
+    silenceTimerRef.current = setTimeout(() => { setHushing(false); finishTurn(); }, SILENCE_MS);
+  }, [finishTurn]);
 
   const startSR = useCallback(() => {
     const Ctor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -106,23 +150,31 @@ export default function VideoAnswer({
     sr.lang = "en-US";
     sr.onresult = (e: any) => {
       let interimChunk = "";
+      let sawSpeech = false;
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const r = e.results[i];
-        if (r.isFinal) setFinalText(prev => (prev + " " + r[0].transcript).trim());
-        else interimChunk += r[0].transcript;
+        sawSpeech = true;
+        if (r.isFinal) {
+          finalTextRef.current = (finalTextRef.current + " " + r[0].transcript).trim();
+          setFinalText(finalTextRef.current);
+        } else interimChunk += r[0].transcript;
       }
       setInterim(interimChunk);
+      // They're talking → cancel any pending auto-submit and rearm from now.
+      if (sawSpeech) armSilence();
     };
     // Chrome stops recognition periodically — restart while still recording.
     sr.onend = () => { if (recordingRef.current) { try { sr.start(); } catch { /* ignore */ } } };
     sr.onerror = () => { /* transient; onend handles restart */ };
     try { sr.start(); } catch { /* ignore */ }
     srRef.current = sr;
-  }, []);
+  }, [armSilence]);
 
   function startRecording() {
     if (!streamRef.current) return;
     setFinalText(""); setInterim(""); setBlob(null); setElapsed(0);
+    finalTextRef.current = ""; autoSubmitRef.current = false;
+    clearSilence();
     chunksRef.current = [];
     const mime = pickMime();
     mimeRef.current = mime;
@@ -132,7 +184,14 @@ export default function VideoAnswer({
         : new MediaRecorder(streamRef.current);
       rec.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
       rec.onstop = () => {
-        setBlob(new Blob(chunksRef.current, { type: mimeRef.current || "video/webm" }));
+        const b = new Blob(chunksRef.current, { type: mimeRef.current || "video/webm" });
+        setBlob(b);
+        // If the turn ended because the candidate went quiet, submit for them.
+        if (autoSubmitRef.current) {
+          autoSubmitRef.current = false;
+          const t = finalTextRef.current.trim();
+          if (t.length >= 25) onSubmitRef.current(t, b, mimeRef.current || "video/webm");
+        }
       };
       rec.start(1000);
       recorderRef.current = rec;
@@ -145,6 +204,8 @@ export default function VideoAnswer({
   }
 
   function stopRecording() {
+    autoSubmitRef.current = false; // manual stop → don't auto-submit
+    clearSilence();
     recordingRef.current = false;
     setRecording(false);
     setInterim("");
@@ -162,7 +223,6 @@ export default function VideoAnswer({
   }, [autoRecordSignal, ready]);
 
   const transcript = (finalText + (interim ? " " + interim : "")).trim();
-  const canSubmit = !recording && finalText.trim().length >= 25 && !submitting;
   const mmss = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}`;
 
   return (
@@ -203,9 +263,17 @@ export default function VideoAnswer({
 
       {/* Live transcript */}
       <div className="p-4">
-        <p className="text-[12px] text-on-surface-variant mb-2">
-          Live transcript — speak your answer; this is what the AI grades.
-        </p>
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <p className="text-[12px] text-on-surface-variant">
+            Just talk — pause when you&apos;re done and the interviewer picks it up.
+          </p>
+          {recording && (
+            <span className={`inline-flex items-center gap-1.5 text-[11.5px] font-medium ${hushing ? "text-electric-violet" : "text-emerald-600 dark:text-emerald-400"}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${hushing ? "bg-electric-violet" : "bg-emerald-500 animate-pulse"}`} aria-hidden="true" />
+              {hushing ? "You paused — sending…" : "Listening"}
+            </span>
+          )}
+        </div>
         <div className="min-h-[72px] max-h-[160px] overflow-y-auto rounded-xl bg-surface-bright px-4 py-3">
           {transcript ? (
             <p className="text-[13.5px] text-on-surface leading-relaxed">
@@ -214,7 +282,7 @@ export default function VideoAnswer({
             </p>
           ) : (
             <p className="text-[13.5px] text-on-surface-variant/60">
-              {recording ? "Listening…" : "Press Record, then answer out loud."}
+              {recording ? "Listening… start talking whenever you're ready." : "Answer out loud — it starts listening automatically after each question."}
             </p>
           )}
         </div>
@@ -226,27 +294,30 @@ export default function VideoAnswer({
               disabled={!ready || submitting || interviewerSpeaking}
               className="h-10 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
             >
-              {interviewerSpeaking ? "Interviewer speaking…" : blob || finalText ? "Re-record answer" : "Record answer"}
+              {interviewerSpeaking ? "Interviewer speaking…" : blob || finalText ? "Answer again" : "Start answering"}
             </button>
           ) : (
-            <button
-              onClick={stopRecording}
-              className="h-10 px-6 rounded-full bg-error text-white text-sm font-medium hover:opacity-90 transition"
-            >
-              Stop recording
-            </button>
+            <>
+              <button
+                onClick={finishTurn}
+                disabled={finalText.trim().length < 25}
+                className="h-10 px-6 rounded-full bg-electric-violet text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-40"
+              >
+                {submitting ? "Sending…" : "Send answer now"}
+              </button>
+              <button
+                onClick={stopRecording}
+                className="h-10 px-5 rounded-full border border-border-crisp text-sm font-medium text-on-surface-variant hover:text-on-surface transition"
+              >
+                Stop
+              </button>
+            </>
           )}
 
-          <button
-            onClick={() => onSubmit(finalText.trim(), blob, mimeRef.current || "video/webm")}
-            disabled={!canSubmit}
-            className="h-10 px-6 rounded-full bg-electric-violet text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-40"
-          >
-            {submitting ? "Submitting…" : "Submit answer"}
-          </button>
-
           <span className="text-[11.5px] text-on-surface-variant ml-auto">
-            {!recording && finalText.trim().length > 0 && finalText.trim().length < 25
+            {recording
+              ? "Or just stop talking — I'll pick it up automatically."
+              : finalText.trim().length > 0 && finalText.trim().length < 25
               ? "Say a little more — a couple of sentences minimum."
               : "Specifics beat polish. Filler words are fine."}
           </span>
