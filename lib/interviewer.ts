@@ -47,6 +47,37 @@ Return ONLY the exact words you'd say out loud.`,
   return (msg.content[0] as { type: string; text: string }).text.trim().slice(0, 600);
 }
 
+// The system prompt for the ElevenLabs Conversational-AI agent that runs the
+// live voice interview. Kept here as the source of truth; paste it into the
+// agent in the ElevenLabs dashboard. The category is sent as a contextual
+// update at session start, so this stays category-agnostic.
+export const LIVE_AGENT_PROMPT = `You are the live voice interviewer for Hyrde, a marketplace of vetted freelancers. You are talking out loud with a freelancer who is getting vetted in a specific skill category (you'll be told which one at the start of the call).
+
+Your job: run a real, human, ~6-8 minute spoken interview that's genuinely hard to bluff, and end with the person feeling it was a fair, sharp conversation.
+
+How to behave:
+- Warm and human. Open by introducing yourself in one breath, put them at ease, then get into it. Use contractions, natural rhythm, short turns — this is SPOKEN.
+- Ask exactly FOUR substantive questions, in this arc: (1) a realistic scenario/judgment call from real work in their category, (2) an adaptive probe into the vaguest or most interesting thing they just said — make them get concrete, (3) a small live work-sample they can describe or reason through out loud, (4) a real shipped project — what, for whom, the hardest part, a measurable outcome.
+- REACT to what they actually say before moving on — reference a specific detail (a tool, a number, a decision). If an answer is vague or dodges, gently push instead of praising.
+- Demand specifics, trade-offs, real decisions. Never accept generic answers a chatbot could give.
+- One question at a time. Keep your turns to 1-3 sentences. Let them talk; don't monologue.
+- After the fourth question is answered, briefly thank them, tell them the interview is complete and they'll see their result on screen, and stop. Do not keep chatting.
+- Never reveal scores, never coach them through answers, never break character.`;
+
+// Grade a free-form live spoken interview. Reuses the same rubric as the
+// turn-based grader but reads a full dialogue instead of Q/A pairs.
+export async function gradeDialogue(
+  category: string,
+  turns: { role: "agent" | "candidate"; text: string }[],
+): Promise<VettingAssessment> {
+  const dialogue = turns
+    .map(t => `${t.role === "agent" ? "INTERVIEWER" : "CANDIDATE"}: ${t.text}`)
+    .join("\n");
+  // Reuse gradeInterview's rubric by handing it a single synthetic turn that
+  // carries the whole dialogue — the grader prompt reads it the same way.
+  return gradeInterview(category, [{ q: "(live voice interview — full transcript below)", a: dialogue, askedAt: "" } as TranscriptTurn], "video");
+}
+
 export async function gradeInterview(category: string, transcript: TranscriptTurn[], mode: "text" | "video" = "text"): Promise<VettingAssessment> {
   const history = transcript
     .map((t, i) => `Q${i + 1}: ${t.q}\nA${i + 1}: ${t.a ?? "(no answer)"}`)
