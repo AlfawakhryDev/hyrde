@@ -5,6 +5,7 @@ import { CATEGORIES } from "@/lib/arena";
 import { VETTING_QUESTIONS, BAND_STYLES, type VettingAssessment } from "@/lib/vetting";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import VideoAnswer, { videoInterviewSupported } from "@/components/vetting/VideoAnswer";
+import LiveInterview from "@/components/vetting/LiveInterview";
 import { speak, cancelSpeech } from "@/lib/speech";
 
 interface ExistingVetting {
@@ -17,7 +18,7 @@ interface ExistingVetting {
   created_at: string;
 }
 
-type Phase = "pick" | "mode" | "interview" | "verdict";
+type Phase = "pick" | "mode" | "interview" | "live" | "verdict";
 
 interface ChatMsg { role: "interviewer" | "you"; text: string }
 
@@ -38,8 +39,33 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
   const [speaking, setSpeaking] = useState(false);
   const [autoRecordSignal, setAutoRecordSignal] = useState(0);
   const [intro, setIntro] = useState<string>("");
+  const [live, setLive] = useState<{ signedUrl: string; vettingId: string } | null>(null);
   const lastSpokenRef = useRef<string>("");
   const introSpokenRef = useRef(false);
+
+  // Start a real-time voice interview. If the live agent isn't configured yet,
+  // fall back gracefully to the recorded voice interview.
+  async function startLive(cat: string) {
+    setCategory(cat);
+    setError("");
+    setBusy(true);
+    try {
+      const res = await fetch("/api/vet/live-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category: cat }),
+      });
+      const data = await res.json();
+      if (res.status === 501) { setBusy(false); start(cat, "video"); return; } // not configured yet
+      if (!res.ok) { setError(data.error ?? "Couldn't start the live interview."); setBusy(false); return; }
+      setLive({ signedUrl: data.signedUrl, vettingId: data.vettingId });
+      setVettingId(data.vettingId);
+      setPhase("live");
+    } catch {
+      setError("Couldn't reach the interviewer — try again.");
+    }
+    setBusy(false);
+  }
 
   useEffect(() => { setVideoOk(videoInterviewSupported()); }, []);
 
@@ -194,17 +220,17 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
 
         <div className="grid sm:grid-cols-2 gap-3">
           <button
-            onClick={() => start(category, "video")}
-            className="text-left rounded-2xl bg-surface-container-low p-6 hover:bg-surface-container transition-colors"
+            onClick={() => startLive(category)}
+            disabled={busy}
+            className="text-left rounded-2xl bg-surface-container-low p-6 hover:bg-surface-container transition-colors disabled:opacity-60"
           >
             <p className="flex items-center gap-2 text-[15px] font-semibold text-on-surface mb-1.5">
-              Voice interview
+              Live voice interview
               <span className="text-[10.5px] font-medium text-electric-violet bg-electric-violet/10 px-2 py-0.5 rounded-full">Recommended</span>
             </p>
             <p className="text-[13px] text-on-surface-variant leading-relaxed">
-              A real conversation — the interviewer <span className="text-on-surface">speaks each question aloud</span>,
-              then the mic opens and you answer on camera. Transcribed live and graded; the recording is
-              stored privately as proof it&apos;s really you.
+              {busy ? "Connecting…" : <>A real-time conversation — the interviewer <span className="text-on-surface">talks with you out loud</span>,
+              listens as you speak, and you can jump in any time. ~7 minutes, four questions, graded on the spot.</>}
             </p>
           </button>
           <button
@@ -279,6 +305,26 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
             </button>
           )}
         </div>
+      </div>
+    );
+  }
+
+  // ── Live voice interview ────────────────────────────────────────────────────
+  if (phase === "live" && live && category) {
+    return (
+      <div className="mx-auto max-w-[720px] px-5 md:px-8 py-12">
+        <div className="mb-8">
+          <p className="text-[13px] font-medium text-on-surface">{category} interview · live</p>
+          <p className="text-[12.5px] text-on-surface-variant mt-0.5">A real conversation — speak naturally.</p>
+        </div>
+        {error && <p className="text-[13px] text-error mb-4">{error}</p>}
+        <LiveInterview
+          signedUrl={live.signedUrl}
+          vettingId={live.vettingId}
+          category={category}
+          onComplete={v => { setVerdict(v); setPhase("verdict"); }}
+          onError={reason => { setError(reason); setLive(null); setPhase("mode"); }}
+        />
       </div>
     );
   }
