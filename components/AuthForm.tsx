@@ -107,7 +107,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
     try {
       if (mode === "signup") {
         if (strength.score < 2) {
-          setError("Pick a stronger password — at least 8 characters, ideally with a number or symbol.");
+          setError("Pick a stronger password. Use at least 8 characters, ideally with a number or symbol.");
           setBusy(false);
           return;
         }
@@ -141,14 +141,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         router.refresh();
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Something went wrong — try again.";
+      const msg = err instanceof Error ? err.message : "Something went wrong. Try again.";
       // A Google/GitHub/Apple-only account has no password, so signInWithPassword
       // returns "Invalid login credentials" — the exact same generic message as a
       // wrong password (Supabase deliberately won't reveal which, to prevent email
       // enumeration). Nudge toward social login on any failed email login so OAuth
       // users don't get stuck thinking they're locked out.
       if (mode === "login" && /invalid login credentials/i.test(msg)) {
-        setError("That email and password didn't match. If you signed up with Google, GitHub, or Apple, use one of the buttons above instead — those accounts don't have a password.");
+        setError("That email and password didn't match. If you signed up with Google, GitHub, or Apple, use one of the buttons above instead. Those accounts don't have a password.");
       } else {
         setError(msg);
       }
@@ -203,13 +203,13 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
               r: "client" as Role,
               icon: "business_center",
               title: "I'm hiring",
-              body: "Post a task and the AI assigns the best vetted specialist — no proposals, no browsing.",
+              body: "Post a task and the AI assigns the best vetted specialist. No proposals, no browsing.",
             },
             {
               r: "pilot" as Role,
               icon: "rocket_launch",
               title: "I want to work",
-              body: "Pass one AI skill interview, then matched work comes to you — with a deadline and pay.",
+              body: "Pass one AI skill interview, then matched work comes to you, with a deadline and pay.",
             },
           ]
         ).map(o => (
@@ -337,7 +337,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
             <p className="text-[13px] text-on-surface leading-relaxed">
               That looks like a personal email.{" "}
               <span className="text-on-surface-variant">
-                Specialists trust work emails faster — briefs and payments feel legit from day one.
+                Specialists trust work emails faster. Briefs and payments feel legit from day one.
               </span>
             </p>
             {!personalOk ? (
@@ -349,7 +349,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 <span aria-hidden="true">↳</span> Continue with this email anyway
               </button>
             ) : (
-              <p className="mt-1.5 text-[12px] text-on-surface-variant">Okay — continuing with a personal email.</p>
+              <p className="mt-1.5 text-[12px] text-on-surface-variant">Okay, continuing with a personal email.</p>
             )}
           </div>
         )}

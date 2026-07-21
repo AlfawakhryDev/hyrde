@@ -40,7 +40,7 @@ function Onboarding() {
       <div className="w-full max-w-2xl text-center">
         <h1 className="text-5xl font-light tracking-[-0.03em] text-on-surface mb-4">How will you use Hyrde?</h1>
         <p className="text-base font-body text-on-surface-variant mb-10">
-          This sets up your account. Hiring and freelancing are separate — pick the one that fits you.
+          This sets up your account. Hiring and freelancing are separate. Pick the one that fits you.
         </p>
 
         <div className="grid md:grid-cols-2 gap-5">
@@ -56,7 +56,7 @@ function Onboarding() {
               {busy === "client" ? "Setting up…" : "I need work done"}
             </h2>
             <p className="text-sm font-body text-on-surface-variant leading-relaxed">
-              Post a task and the AI matches it to the best interview-vetted specialist — no bidding, no proposal spam. AI reviews the work before you pay. Free during early access.
+              Post a task and the AI matches it to the best interview-vetted specialist. No bidding, no proposal spam. AI reviews the work before you pay. Free during early access.
             </p>
           </button>
 
@@ -72,7 +72,7 @@ function Onboarding() {
               {busy === "pilot" ? "Setting up…" : "I want to earn"}
             </h2>
             <p className="text-sm font-body text-on-surface-variant leading-relaxed">
-              Pass one AI skill interview, then work gets matched to you automatically — with a deadline and pay. Finish it, get paid. No bidding, no proposals.
+              Pass one AI skill interview, then work gets matched to you automatically. With a deadline and pay. Finish it, get paid. No bidding, no proposals.
             </p>
           </button>
         </div>

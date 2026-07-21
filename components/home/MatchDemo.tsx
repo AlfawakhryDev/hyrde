@@ -156,12 +156,12 @@ export default function MatchDemo() {
                 </span>
               </div>
               <p className="text-[12.5px] text-white/60 leading-relaxed mt-3 border-t border-white/10 pt-3">
-                <span className="text-white/80 font-medium">Why Sara</span> — highest-vetted in Copywriting,
+                <span className="text-white/80 font-medium">Why Sara</span>. Highest-vetted in Copywriting,
                 with fintech landing-page samples in her interview.
               </p>
             </div>
             <div className="flex items-center justify-between mt-3 px-1 text-[12px]">
-              <span className="text-white/45">Assigned automatically — no bidding</span>
+              <span className="text-white/45">Assigned automatically. No bidding</span>
               <span className="text-white/70 font-medium">$450 · Due Aug 3</span>
             </div>
           </div>

@@ -13,10 +13,10 @@ export default function LoginPage() {
     <AuthShell
       eyebrow="Welcome back"
       title="Log in"
-      subtitle="Post work or pick up matched work — manage everything from your dashboard."
+      subtitle="Post work or pick up matched work, all from your dashboard."
       bullets={[
         "Every freelancer here passed an adaptive AI skill interview.",
-        "The AI matches each task to the right specialist — no bidding.",
+        "The AI matches each task to the right specialist. No bidding.",
         "AI reviews the deliverable against your brief before you pay.",
       ]}
     >

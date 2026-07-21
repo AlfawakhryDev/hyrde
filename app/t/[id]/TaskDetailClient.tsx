@@ -77,9 +77,9 @@ export default function TaskDetailClient({
       });
       const data = await res.json();
       if (!res.ok) setError(data.error ?? "Matching failed.");
-      else if (!data.matched) setError("No vetted specialist is available yet — we'll keep looking as more get vetted.");
+      else if (!data.matched) setError("No vetted specialist is available yet. We'll keep looking as more get vetted.");
     } catch {
-      setError("Matching failed — try again.");
+      setError("Matching failed. Try again.");
     }
     await refetch();
     setBusy(null);
@@ -112,7 +112,7 @@ export default function TaskDetailClient({
       const data = await res.json();
       if (!res.ok) setError(data.error ?? "Review failed.");
     } catch {
-      setError("Review failed — try again.");
+      setError("Review failed. Try again.");
     }
     await refetch();
     setBusy(null);
@@ -165,10 +165,10 @@ export default function TaskDetailClient({
           setNextMilestoneNote(
             res.ok && data.matched
               ? `Milestone ${task.milestone_index + 2} matched to ${data.freelancer?.name}.`
-              : "Next milestone posted — matching as soon as a specialist is available."
+              : "Next milestone posted. Matching as soon as a specialist is available."
           );
         } catch {
-          setNextMilestoneNote("Next milestone posted — it'll match shortly.");
+          setNextMilestoneNote("Next milestone posted. It'll match shortly.");
         }
       }
     }
@@ -261,7 +261,7 @@ export default function TaskDetailClient({
               <span className="w-1.5 h-1.5 rounded-full bg-electric-violet shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 <span className="text-on-surface font-medium">{isMyClaim ? "Why you were matched" : "Why this specialist"}</span>
-                {" — "}
+                {". "}
                 <span className="text-on-surface-variant">{task.match_reason}</span>
               </p>
             </div>
@@ -313,7 +313,7 @@ export default function TaskDetailClient({
               <>
                 <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">Finding your match</h3>
                 <p className="text-[13.5px] text-on-surface-variant mb-5">
-                  The AI assigns the best vetted specialist for this task automatically. If none was available when you posted, run it again — the pool grows as more people get vetted.
+                  The AI assigns the best vetted specialist for this task automatically. If none was available when you posted, run it again. The pool grows as more people get vetted.
                 </p>
                 <button
                   onClick={rematch}
@@ -369,7 +369,7 @@ export default function TaskDetailClient({
               <>
                 <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">Deliverable is in</h3>
                 <p className="text-[13.5px] text-on-surface-variant mb-5">
-                  Review the Pilot&apos;s work below — or let the AI check it against your brief first.
+                  Review the Pilot&apos;s work below. Or let the AI check it against your brief first.
                 </p>
 
                 {aiReview ? (
@@ -387,12 +387,12 @@ export default function TaskDetailClient({
                     <p className="text-[13.5px] text-on-surface-variant leading-relaxed mb-2">{aiReview.summary}</p>
                     {aiReview.strengths.length > 0 && (
                       <p className="text-[13px] text-on-surface-variant">
-                        <span className="text-on-surface font-medium">Strong</span> — {aiReview.strengths.join(" · ")}
+                        <span className="text-on-surface font-medium">Strong</span>. {aiReview.strengths.join(" · ")}
                       </p>
                     )}
                     {aiReview.gaps.length > 0 && (
                       <p className="text-[13px] text-on-surface-variant mt-1">
-                        <span className="text-on-surface font-medium">Gaps</span> — {aiReview.gaps.join(" · ")}
+                        <span className="text-on-surface font-medium">Gaps</span>. {aiReview.gaps.join(" · ")}
                       </p>
                     )}
                   </div>
@@ -460,7 +460,7 @@ export default function TaskDetailClient({
 
       {/* ── Deliverable ── */}
       {task.deliverable_text && (task.status === "delivered" || task.payment_status !== "unpaid") && (
-        <Section label={deliverableUnlocked ? "Deliverable" : "Deliverable — preview until payment is confirmed"}>
+        <Section label={deliverableUnlocked ? "Deliverable" : "Deliverable. Preview until payment is confirmed"}>
           {deliverableUnlocked ? (
             <div className="bg-surface-container-low rounded-2xl p-6 text-[14px] text-on-surface leading-relaxed whitespace-pre-wrap">
               {task.deliverable_text}
@@ -475,7 +475,7 @@ export default function TaskDetailClient({
               </div>
               <p className="text-[13px] text-on-surface-variant mt-4 leading-relaxed max-w-[560px]">
                 You're seeing a preview. Run the free AI quality review above to check it
-                against your brief — then approve and pay to unlock everything. The Pilot
+                against your brief. Then approve and pay to unlock everything. The Pilot
                 only gets paid when you confirm, and you only pay for verified work.
               </p>
             </div>

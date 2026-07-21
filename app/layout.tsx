@@ -5,8 +5,8 @@ import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hyrde.net"),
-  title: { default: "Hyrde — AI-native freelance platform", template: "%s | Hyrde" },
-  description: "The AI-native freelance platform. Clients describe what they need and get the top 5 matches in 60 seconds. Freelancers get AI agents that find work, write intros, and review contracts. Freelancers keep 100% — and hiring is free during early access.",
+  title: { default: "Hyrde. AI-native freelance platform", template: "%s | Hyrde" },
+  description: "The AI-native freelance platform. Clients describe what they need and get the top 5 matches in 60 seconds. Freelancers get AI agents that find work, write intros, and review contracts. Freelancers keep 100%. And hiring is free during early access.",
   keywords: [
     "hire freelancers", "AI freelance platform", "Upwork alternative",
     "Fiverr alternative", "vetted freelancers", "hire developers",
@@ -16,14 +16,14 @@ export const metadata: Metadata = {
     siteName: "Hyrde",
     type: "website",
     url: "https://hyrde.net",
-    title: "Hyrde — Hire pre-vetted freelancers, AI-matched in 60 seconds",
-    description: "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Free to hire — early access.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hyrde — AI-native freelance platform" }],
+    title: "Hyrde. Hire pre-vetted freelancers, AI-matched in 60 seconds",
+    description: "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Free to hire. Early access.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hyrde. AI-native freelance platform" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hyrde — Hire pre-vetted freelancers, AI-matched in 60 seconds",
-    description: "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Free to hire — early access.",
+    title: "Hyrde. Hire pre-vetted freelancers, AI-matched in 60 seconds",
+    description: "Describe your project; get the top 5 vetted freelancers in 60 seconds. No bidding. Free to hire. Early access.",
     images: ["/og.png"],
   },
 };
@@ -36,7 +36,7 @@ const organizationJsonLd = {
   logo: "https://hyrde.net/hyrde-lockup-dark.svg",
   image: "https://hyrde.net/og.png",
   description:
-    "AI-native freelance platform. Pre-vetted talent, AI-matched to your brief in 60 seconds — free to hire during early access.",
+    "AI-native freelance platform. Pre-vetted talent, AI-matched to your brief in 60 seconds. Free to hire during early access.",
   email: "abdelrahman@hyrde.net",
 };
 
