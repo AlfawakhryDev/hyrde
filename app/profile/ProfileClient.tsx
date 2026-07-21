@@ -89,8 +89,8 @@ export default function ProfileClient({
           <h1 className="text-[40px] md:text-[48px] font-light tracking-[-0.035em] leading-none text-on-surface">Profile</h1>
           <p className="text-[14px] text-on-surface-variant mt-3">
             {isPilot
-              ? "What clients see next to your matched work — plus how we reach you."
-              : "What freelancers see on your tasks — plus how we reach you."}
+              ? "What clients see next to your matched work. Plus how we reach you."
+              : "What freelancers see on your tasks. Plus how we reach you."}
           </p>
         </div>
         <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full border border-border-crisp text-xs font-medium text-on-surface-variant">
@@ -99,7 +99,7 @@ export default function ProfileClient({
         </span>
       </div>
 
-      <Section title="Identity" sub="Public — shown wherever your name appears.">
+      <Section title="Identity" sub="Public. Shown wherever your name appears.">
         <label className="flex flex-col gap-1.5">
           <span className={label}>Display name</span>
           <input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" className={input} />
@@ -107,7 +107,7 @@ export default function ProfileClient({
         {isPilot ? (
           <label className="flex flex-col gap-1.5">
             <span className={label}>Headline</span>
-            <input value={headline} onChange={e => setHeadline(e.target.value)} placeholder="e.g. Conversion copywriter — fintech & SaaS" className={input} />
+            <input value={headline} onChange={e => setHeadline(e.target.value)} placeholder="e.g. Conversion copywriter. Fintech & SaaS" className={input} />
             <span className={hint}>One line clients see next to your vetting badge.</span>
           </label>
         ) : (
@@ -119,9 +119,9 @@ export default function ProfileClient({
         <label className="flex flex-col gap-1.5">
           <span className={label}>Bio</span>
           <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3}
-            placeholder={isPilot ? "A few sentences about the work you do best — the AI also uses this to match you." : "A few sentences about what you're building."}
+            placeholder={isPilot ? "A few sentences about the work you do best. The AI also uses this to match you." : "A few sentences about what you're building."}
             className={`${input} resize-y`} />
-          {isPilot && <span className={hint}>The matching engine reads this — specifics get you better-fit work.</span>}
+          {isPilot && <span className={hint}>The matching engine reads this. Specifics get you better-fit work.</span>}
         </label>
         <label className="flex flex-col gap-1.5">
           <span className={label}>Website</span>
@@ -129,7 +129,7 @@ export default function ProfileClient({
         </label>
       </Section>
 
-      <Section title="Location" sub="Public — helps with timezone expectations.">
+      <Section title="Location" sub="Public. Helps with timezone expectations.">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1.5">
             <span className={label}>Country</span>
@@ -142,7 +142,7 @@ export default function ProfileClient({
         </div>
       </Section>
 
-      <Section title="Contact" sub="Private — only you can see this. Never shown publicly.">
+      <Section title="Contact" sub="Private. Only you can see this. Never shown publicly.">
         <label className="flex flex-col gap-1.5">
           <span className={label}>Phone <span className="ml-1.5 rounded-full bg-surface-container px-2 py-0.5 text-[10.5px] font-semibold text-on-surface-variant uppercase tracking-wide">Private</span></span>
           <input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="+20 1x xxx xxxx" className={input} autoComplete="tel" />

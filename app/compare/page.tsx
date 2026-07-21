@@ -5,7 +5,7 @@ import { COMPETITORS, COMPETITOR_SLUGS } from "@/lib/compare";
 export const metadata: Metadata = {
   title: "Compare Hyrde to Upwork, Fiverr & Toptal | Hyrde",
   description:
-    "How Hyrde compares to Upwork, Fiverr, and Toptal for clients — fees, vetting, matching speed, and protection. Honest, side-by-side breakdowns.",
+    "How Hyrde compares to Upwork, Fiverr, and Toptal for clients. Fees, vetting, matching speed, and protection. Honest, side-by-side breakdowns.",
   alternates: { canonical: "/compare" },
   openGraph: {
     title: "Compare Hyrde to Upwork, Fiverr & Toptal",
@@ -28,7 +28,7 @@ export default function CompareHubPage() {
             How Hyrde compares to the platforms you already know
           </h1>
           <p className="font-body text-white/70 text-base md:text-lg max-w-2xl mx-auto">
-            Honest, side-by-side breakdowns — fees, vetting, matching speed, and the protections that actually matter when you&apos;re spending real money.
+            Honest, side-by-side breakdowns. Fees, vetting, matching speed, and the protections that actually matter when you&apos;re spending real money.
           </p>
         </div>
       </section>

@@ -110,7 +110,7 @@ export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[
 
       <h1 className="text-[40px] font-light tracking-[-0.035em] leading-none text-on-surface mt-8 mb-2">Oversight</h1>
       <p className="text-[14px] text-on-surface-variant mb-8 max-w-[620px]">
-        Every task, who it matched to, and their vetting for that category — so a high-value task landing
+        Every task, who it matched to, and their vetting for that category. So a high-value task landing
         with an under-qualified freelancer gets caught by hand while we&apos;re still small.
       </p>
 
@@ -204,7 +204,7 @@ export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[
                   </p>
                 </>
               ) : (
-                <span className="text-on-surface-variant">— unmatched</span>
+                <span className="text-on-surface-variant">unmatched</span>
               )}
             </div>
 
@@ -226,7 +226,7 @@ export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[
       </div>
 
       <p className="text-[12px] text-on-surface-variant mt-8">
-        Read-only. Reassigning or releasing a match is coming (tracked in Linear HYR-5) — for now, open a
+        Read-only. Reassigning or releasing a match is coming (tracked in Linear HYR-5). For now, open a
         flagged task and act from the task page, or in Supabase directly.
       </p>
     </div>

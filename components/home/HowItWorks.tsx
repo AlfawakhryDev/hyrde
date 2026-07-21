@@ -42,7 +42,7 @@ export default function HowItWorks() {
         <p className="text-[12px] font-semibold text-electric-violet mb-1.5">01</p>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Describe the work</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5">
-          One rough sentence is enough — the AI structures it into a brief specialists can act on.
+          One rough sentence is enough. The AI structures it into a brief specialists can act on.
         </p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
           <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-[#9a9aa4] mb-2">New task</p>
@@ -86,7 +86,7 @@ export default function HowItWorks() {
         <p className="text-[12px] font-semibold text-electric-violet mb-1.5">03</p>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Approve &amp; pay direct</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5">
-          The AI checks the deliverable against your brief first. Then you pay the freelancer directly — they keep 100%.
+          The AI checks the deliverable against your brief first. Then you pay the freelancer directly. They keep 100%.
         </p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
           <div className="flex items-center justify-between mb-2.5">

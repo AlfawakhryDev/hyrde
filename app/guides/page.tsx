@@ -3,12 +3,12 @@ import Link from "next/link";
 import { GUIDES_LIST } from "@/lib/guides";
 
 export const metadata: Metadata = {
-  title: "Guides — Hiring & Freelancing, the honest version | Hyrde",
+  title: "Guides. Hiring & Freelancing, the honest version | Hyrde",
   description:
-    "Practical, no-fluff guides for clients hiring freelancers and freelancers finding clients in 2026 — rates, scams, platform comparisons, and pricing.",
+    "Practical, no-fluff guides for clients hiring freelancers and freelancers finding clients in 2026. Rates, scams, platform comparisons, and pricing.",
   alternates: { canonical: "/guides" },
   openGraph: {
-    title: "Hyrde Guides — Hiring & Freelancing, the honest version",
+    title: "Hyrde Guides. Hiring & Freelancing, the honest version",
     description:
       "Practical, no-fluff guides for clients and freelancers in 2026.",
     url: "/guides",
@@ -51,7 +51,7 @@ export default function GuidesIndexPage() {
             Hiring and freelancing, the honest version
           </h1>
           <p className="font-body text-white/70 text-base md:text-lg max-w-2xl mx-auto">
-            No fluff, no affiliate spam. Practical guides on rates, scams, platform fees, and finding the right people — for clients and freelancers alike.
+            No fluff, no affiliate spam. Practical guides on rates, scams, platform fees, and finding the right people. For clients and freelancers alike.
           </p>
         </div>
       </section>

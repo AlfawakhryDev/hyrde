@@ -7,14 +7,14 @@ const UPDATED_ISO = "2026-06-15";
 const UPDATED_LABEL = "June 2026";
 
 export const metadata: Metadata = {
-  title: `Hyrde Freelance Rate Index ${EDITION} — Rates for 24 Skills Across 12 Cities`,
+  title: `Hyrde Freelance Rate Index ${EDITION}. Rates for 24 Skills Across 12 Cities`,
   description:
     `The Hyrde Freelance Rate Index (${EDITION}) tracks real hourly rates for 24 freelance skills across 12 global cities, with junior/mid/senior ranges and a transparent methodology. Free to cite.`,
   alternates: { canonical: "/rates" },
   openGraph: {
     title: `Hyrde Freelance Rate Index ${EDITION}`,
     description:
-      `Real hourly rates for 24 freelance skills across 12 global cities — junior, mid, and senior ranges. Free to cite.`,
+      `Real hourly rates for 24 freelance skills across 12 global cities. Junior, mid, and senior ranges. Free to cite.`,
     url: "/rates",
   },
 };
@@ -83,7 +83,7 @@ export default function RatesPage() {
           The Hyrde Freelance Rate Index
         </h1>
         <p className="text-lg font-body text-on-surface-variant max-w-2xl">
-          Real market hourly rates across <strong className="text-on-surface">24 skills</strong> and <strong className="text-on-surface">12 cities</strong>, with junior, mid, and senior ranges. Whether you&apos;re hiring or freelancing, know what the work is actually worth. Free to cite — see <a href="#methodology" className="text-electric-violet underline underline-offset-2">methodology</a>.
+          Real market hourly rates across <strong className="text-on-surface">24 skills</strong> and <strong className="text-on-surface">12 cities</strong>, with junior, mid, and senior ranges. Whether you&apos;re hiring or freelancing, know what the work is actually worth. Free to cite. See <a href="#methodology" className="text-electric-violet underline underline-offset-2">methodology</a>.
         </p>
       </section>
 
@@ -227,7 +227,7 @@ export default function RatesPage() {
             The Hyrde Freelance Rate Index tracks indicative hourly rates for 24 in-demand freelance skills across 12 global markets. Mid-level rates are the baseline; junior figures are estimated at ~60% and senior at ~150% of the mid rate, consistent with observed spreads across the contract market.
           </p>
           <p>
-            City figures apply a local multiplier to each baseline, reflecting prevailing cost of living and demand — from a premium in {priciestCity[1].label} (+{priciestPct}%) to strong value in {valueCity[1].label} (−{valuePct}%). &quot;Remote&quot; reflects the global blended rate.
+            City figures apply a local multiplier to each baseline, reflecting prevailing cost of living and demand. From a premium in {priciestCity[1].label} (+{priciestPct}%) to strong value in {valueCity[1].label} (−{valuePct}%). &quot;Remote&quot; reflects the global blended rate.
           </p>
           <p>
             Rates are indicative benchmarks for budgeting and pricing decisions, not quotes. Fee comparisons reference publicly reported 2026 effective take rates on major marketplaces (service fees, contract-initiation charges, and payment markups combined), versus Hyrde, which is free to hire during early access (paid plans planned for later). The Index is refreshed periodically; this is the {UPDATED_LABEL} edition.
@@ -265,7 +265,7 @@ export default function RatesPage() {
           <div>
             <h2 className="text-2xl font-bold font-headline mb-2">Ready to get matched?</h2>
             <p className="font-body text-on-primary-container text-sm max-w-md">
-              Post a job brief and our AI finds the top 5 candidates at the right rate in 60 seconds — free to hire during early access.
+              Post a job brief and our AI finds the top 5 candidates at the right rate in 60 seconds. Free to hire during early access.
             </p>
           </div>
           <div className="flex gap-3 shrink-0">

@@ -159,7 +159,7 @@ export default function PaymentFlow({
       <div className="bg-emerald-500/10 rounded-2xl px-5 py-4 mb-8 flex items-center gap-3">
         <div>
           <p className="text-sm font-semibold text-on-surface">
-            Payment complete{amount ? ` — ${amount}` : ""}
+            Payment complete{amount ? `. ${amount}` : ""}
           </p>
           {payment && (
             <p className="text-xs font-body text-on-surface-variant mt-0.5">
@@ -179,8 +179,8 @@ export default function PaymentFlow({
       <div className="bg-error-container/40 rounded-2xl px-5 py-4 mb-8">
         <p className="text-sm font-semibold text-on-surface mb-0.5">Payment disputed</p>
         <p className="text-xs font-body text-on-surface-variant">
-          The Pilot reported not receiving {amount} (ref {payment.reference}). Check the transfer on both sides —
-          the reference code in the note is the fastest way to trace it. Contact{" "}
+          The Pilot reported not receiving {amount} (ref {payment.reference}). Check the transfer on both sides.
+          The reference code in the note is the fastest way to trace it. Contact{" "}
           <a href="mailto:abdelrahman@hyrde.net" className="text-electric-violet underline">support</a> if it can&apos;t be resolved.
         </p>
       </div>
@@ -203,7 +203,7 @@ export default function PaymentFlow({
           {payee?.payout_handle && methodMeta ? (
             <>
               <p className="text-sm font-body text-on-surface-variant mb-4">
-                You approved the work. Settle up over <strong className="text-on-surface">{methodMeta.label}</strong> — no card networks needed.
+                You approved the work. Settle up over <strong className="text-on-surface">{methodMeta.label}</strong>. No card networks needed.
               </p>
               {task.amount_cents === 0 && (
                 <div className="relative mb-4 max-w-56">
@@ -222,13 +222,13 @@ export default function PaymentFlow({
                 disabled={busy}
                 className="bg-electric-violet text-white text-sm font-semibold font-body px-8 py-3.5 rounded-lg hover:opacity-90 transition disabled:opacity-60"
               >
-                {busy ? "Preparing…" : `Get payment instructions${amount ? ` — ${amount}` : ""}`}
+                {busy ? "Preparing…" : `Get payment instructions${amount ? `. ${amount}` : ""}`}
               </button>
             </>
           ) : (
             <p className="text-sm font-body text-on-surface-variant">
-              The Pilot hasn&apos;t added payout details yet. They&apos;ve been prompted on their dashboard —
-              check back shortly.
+              The Pilot hasn&apos;t added payout details yet. They&apos;ve been prompted on their dashboard.
+              Check back shortly.
             </p>
           )}
           {error && <p className="text-sm font-body text-error mt-3">{error}</p>}
@@ -247,9 +247,9 @@ export default function PaymentFlow({
           </h3>
 
           <div className="flex flex-col gap-2.5 mb-4">
-            <CopyRow label={`${methodMeta.label} — ${payee.display_name || "Pilot"}`} value={payee.payout_handle} />
+            <CopyRow label={`${methodMeta.label}. ${payee.display_name || "Pilot"}`} value={payee.payout_handle} />
             {amount && <CopyRow label="Amount (USD)" value={amount.replace("$", "")} />}
-            <CopyRow label="Reference — include it in the transfer note" value={payment.reference} highlight />
+            <CopyRow label="Reference. Include it in the transfer note" value={payment.reference} highlight />
           </div>
 
           <p className="text-xs font-body text-on-surface-variant leading-relaxed bg-surface-container rounded-xl px-4 py-3 mb-4">
@@ -288,7 +288,7 @@ export default function PaymentFlow({
         <Wrap>
         <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl px-5 py-4 mb-8 flex items-center gap-3">
           <div>
-            <p className="text-sm font-semibold text-on-surface">Payment sent — waiting for the Pilot to confirm</p>
+            <p className="text-sm font-semibold text-on-surface">Payment sent. Waiting for the Pilot to confirm</p>
             <p className="text-xs font-body text-on-surface-variant mt-0.5">
               {amount} · ref {payment.reference}. This updates live the moment they confirm.
             </p>
@@ -340,8 +340,8 @@ export default function PaymentFlow({
             {amount} is on its way
           </h3>
           <p className="text-sm font-body text-on-surface-variant mb-1.5">
-            The client says they sent it{payment.method ? ` via ${PAYOUT_METHODS[payment.method as PayoutMethod]?.label ?? payment.method}` : ""} —
-            look for reference <strong className="text-on-surface">{payment.reference}</strong> in the transfer note.
+            The client says they sent it{payment.method ? ` via ${PAYOUT_METHODS[payment.method as PayoutMethod]?.label ?? payment.method}` : ""}.
+            Look for reference <strong className="text-on-surface">{payment.reference}</strong> in the transfer note.
           </p>
           {payment.proof_note && (
             <p className="text-xs font-body text-on-surface-variant mb-4">Client&apos;s note: “{payment.proof_note}”</p>
@@ -352,7 +352,7 @@ export default function PaymentFlow({
               disabled={busy}
               className="bg-emerald-600 text-white text-sm font-semibold font-body px-8 py-3.5 rounded-lg hover:opacity-90 transition disabled:opacity-60"
             >
-              {busy ? "Confirming…" : "Confirm — I received it"}
+              {busy ? "Confirming…" : "Confirm. I received it"}
             </button>
             <button onClick={disputePayment} disabled={busy}
               className="text-sm font-semibold font-body text-on-surface-variant px-4 hover:text-error">

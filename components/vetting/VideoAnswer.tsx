@@ -86,7 +86,7 @@ export default function VideoAnswer({
         if (videoRef.current) videoRef.current.srcObject = stream;
         setReady(true);
       } catch {
-        onUnsupported("Camera or microphone access was denied — you can continue with the text interview instead.");
+        onUnsupported("Camera or microphone access was denied. You can continue with the text interview instead.");
       }
     })();
     return () => {
@@ -199,7 +199,7 @@ export default function VideoAnswer({
       setRecording(true);
       startSR();
     } catch {
-      onUnsupported("Recording couldn't start in this browser — continuing with the text interview.");
+      onUnsupported("Recording couldn't start in this browser. Continuing with the text interview.");
     }
   }
 
@@ -255,7 +255,7 @@ export default function VideoAnswer({
                 <span className="w-0.5 bg-white rounded-full animate-[vbar_0.9s_ease-in-out_0.15s_infinite] h-3.5" />
                 <span className="w-0.5 bg-white rounded-full animate-[vbar_0.9s_ease-in-out_0.3s_infinite] h-2.5" />
               </span>
-              <span className="text-[12.5px] font-medium text-white">Interviewer is speaking — listen, then answer</span>
+              <span className="text-[12.5px] font-medium text-white">Interviewer is speaking. Listen, then answer</span>
             </div>
           </div>
         )}
@@ -265,12 +265,12 @@ export default function VideoAnswer({
       <div className="p-4">
         <div className="flex items-center justify-between gap-2 mb-2">
           <p className="text-[12px] text-on-surface-variant">
-            Just talk — pause when you&apos;re done and the interviewer picks it up.
+            Just talk. Pause when you&apos;re done and the interviewer picks it up.
           </p>
           {recording && (
             <span className={`inline-flex items-center gap-1.5 text-[11.5px] font-medium ${hushing ? "text-electric-violet" : "text-emerald-600 dark:text-emerald-400"}`}>
               <span className={`w-1.5 h-1.5 rounded-full ${hushing ? "bg-electric-violet" : "bg-emerald-500 animate-pulse"}`} aria-hidden="true" />
-              {hushing ? "You paused — sending…" : "Listening"}
+              {hushing ? "You paused. Sending…" : "Listening"}
             </span>
           )}
         </div>
@@ -282,7 +282,7 @@ export default function VideoAnswer({
             </p>
           ) : (
             <p className="text-[13.5px] text-on-surface-variant/60">
-              {recording ? "Listening… start talking whenever you're ready." : "Answer out loud — it starts listening automatically after each question."}
+              {recording ? "Listening… start talking whenever you're ready." : "Answer out loud. It starts listening automatically after each question."}
             </p>
           )}
         </div>
@@ -316,9 +316,9 @@ export default function VideoAnswer({
 
           <span className="text-[11.5px] text-on-surface-variant ml-auto">
             {recording
-              ? "Or just stop talking — I'll pick it up automatically."
+              ? "Or just stop talking. I'll pick it up automatically."
               : finalText.trim().length > 0 && finalText.trim().length < 25
-              ? "Say a little more — a couple of sentences minimum."
+              ? "Say a little more. A couple of sentences minimum."
               : "Specifics beat polish. Filler words are fine."}
           </span>
         </div>

@@ -12,14 +12,14 @@ import OutcomeShowcase from "@/components/home/OutcomeShowcase";
 export const metadata: Metadata = {
   title: { absolute: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde" },
   description:
-    "Every freelancer on Hyrde passed an adaptive AI skill interview. Post a task and the AI matches it to the best-vetted specialist in that exact category — no bidding, no proposal spam, no pay-to-apply.",
+    "Every freelancer on Hyrde passed an adaptive AI skill interview. Post a task and the AI matches it to the best-vetted specialist in that category. No bidding, no proposal spam, no pay-to-apply.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde",
     description:
-      "AI-vetted talent, category-matched to your task. No bidding, no proposal spam. Free to hire — early access.",
+      "AI-vetted talent, matched to your task. No bidding, no proposal spam. Free to hire during early access.",
     url: "https://hyrde.net",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hyrde — AI-vetted freelance talent" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hyrde, AI-vetted freelance talent" }],
   },
 };
 
@@ -51,7 +51,7 @@ export default function Home() {
                 <HyrdeMark size={24} />
               </div>
 
-              <p className="text-[12.5px] font-medium text-[#A99EE8] mb-3.5">New — beyond single tasks</p>
+              <p className="text-[12.5px] font-medium text-[#A99EE8] mb-3.5">Beyond single tasks</p>
               <h1 className="font-light text-white leading-[1.0] tracking-[-0.035em] text-[clamp(36px,4.6vw,62px)] max-w-[14ch]">
                 Don&apos;t hire a freelancer.{" "}
                 <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-2xl px-3.5 leading-[1.12] -rotate-1">Hire an outcome</span>.
@@ -60,9 +60,9 @@ export default function Home() {
               <div className="w-full max-w-[520px] border-b border-white/15 my-5" aria-hidden="true" />
 
               <p className="text-white/60 text-[15px] md:text-[16px] max-w-[500px] leading-relaxed mb-4">
-                Say what you actually want — &ldquo;I need an MVP,&rdquo; &ldquo;redesign my Shopify store&rdquo; — and
-                the AI scopes it into a milestone plan, matches a vetted specialist to each, and
-                sequences delivery. You manage the plan, not a pile of freelancers.
+                Tell us what you actually want, like &ldquo;I need an MVP&rdquo; or &ldquo;redesign my
+                Shopify store.&rdquo; The AI scopes it into a milestone plan, matches a vetted
+                specialist to each step, and sequences delivery. You manage the plan, not a pile of freelancers.
               </p>
 
               <ul className="space-y-1.5 max-w-[440px] mb-6">
@@ -118,7 +118,7 @@ export default function Home() {
             </h2>
             <p className="text-white/60 text-[15px] md:text-[16px] max-w-[440px] leading-relaxed mt-7">
               Got a single task? Post it and the AI matches it to the one best-vetted
-              specialist — no bidding, no browsing, no pay-to-apply. Every freelancer here
+              specialist. No bidding, no browsing, no pay-to-apply. Every freelancer here
               passed an adaptive AI skill interview.
             </p>
             <Link
@@ -198,10 +198,10 @@ export default function Home() {
       <section className="mx-auto max-w-[1320px] px-4 md:px-8 pt-28 pb-10">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-12">
           <h2 className="font-light text-[#7A7A85] leading-[1.05] tracking-[-0.03em] text-[clamp(30px,4.4vw,46px)] max-w-[16ch]">
-            Why teams switch — the tip of the iceberg
+            Why teams switch
           </h2>
           <p className="text-[13px] text-[#9a9aa4] mb-1.5 hidden md:block">
-            <span aria-hidden="true">↳</span> Hover a card — everything below actually happens on Hyrde
+            Hover any card to see it in action.
           </p>
         </div>
         <AliveGrid />
@@ -222,13 +222,13 @@ export default function Home() {
             Vetting built for the AI-spam era
           </h2>
           <p className="text-[15px] text-[#6B6B76] leading-relaxed max-w-[440px] mt-6">
-            Badges can be farmed. Portfolios can be generated. So we interview instead:
-            four adaptive questions — a scenario, a probe into your own answer, a live
-            work sample, a shipped-project deep-dive — graded 0–100 against a strict
-            rubric. Generic answers are detected and capped.
+            Badges can be farmed. Portfolios can be generated. So we interview instead.
+            Four adaptive questions (a scenario, a probe into your own answer, a live
+            work sample, and a shipped-project deep dive), graded out of 100 against a strict
+            rubric. Generic answers get detected and capped.
           </p>
           <Link href="/vetting" className="mt-7 inline-flex items-center gap-2 text-[14px] font-medium text-[#4A4A55] hover:text-electric-violet transition-colors">
-            <span aria-hidden="true">↳</span> Take the interview
+            Take the interview <span aria-hidden="true">→</span>
           </Link>
         </div>
 
@@ -237,7 +237,7 @@ export default function Home() {
           <div className="vc-q rounded-2xl bg-[#F4F3F8] p-5 col-span-2">
             <p className="text-[11px] font-medium text-electric-violet mb-2">Interviewer · 2/4</p>
             <p className="text-[13.5px] text-[#3A3A44] leading-relaxed">
-              &ldquo;You said data ends the argument politely — <span className="vc-probe">walk me through the actual
+              &ldquo;You said data ends the argument politely. <span className="vc-probe">Walk me through the actual
               A/B setup. What sample size before you call it?</span>&rdquo;
             </p>
           </div>
@@ -275,7 +275,7 @@ export default function Home() {
           {
             k: "For freelancers",
             h: "Prove it once. Never bid again.",
-            d: "Pass the ~10-minute interview and matched work comes to you. Keep 100%, get paid on your rails — InstaPay, Airtm, PayPal, USDT.",
+            d: "Pass the 10-minute interview and matched work comes to you. Keep 100%, and get paid on your own rails: InstaPay, Airtm, PayPal, or USDT.",
             cta: "Find work",
             href: "/signup?next=%2Fvetting",
           },

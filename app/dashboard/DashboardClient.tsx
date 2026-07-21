@@ -166,8 +166,8 @@ export default function DashboardClient({
           </h1>
           <p className="text-[14px] text-on-surface-variant mt-3 max-w-[500px]">
             {isPilot
-              ? "Work the AI matched to your vetted skills. Deliver, get paid — no bidding."
-              : "Post a task and the AI assigns the best vetted specialist — no proposals, no browsing."}
+              ? "Work the AI matched to your vetted skills. Deliver, get paid. No bidding."
+              : "Post a task and the AI assigns the best vetted specialist. No proposals, no browsing."}
           </p>
         </div>
 
@@ -216,7 +216,7 @@ export default function DashboardClient({
             <div className="flex flex-wrap items-center gap-3 py-3.5">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
-                <span className="capitalize font-medium">{pendingSubRow.tier}</span> — awaiting your Airtm payment.{" "}
+                <span className="capitalize font-medium">{pendingSubRow.tier}</span>. Awaiting your Airtm payment.{" "}
                 <span className="text-on-surface-variant">Reference {pendingSubRow.reference}. We activate it as soon as the transfer lands.</span>
               </p>
               <Link href="/billing" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
@@ -229,7 +229,7 @@ export default function DashboardClient({
               <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 You&apos;ve used all {monthlyLimit} posts on the {planLabel} plan this month.{" "}
-                <span className="text-on-surface-variant">Upgrade to keep hiring — from $20/mo.</span>
+                <span className="text-on-surface-variant">Upgrade to keep hiring. From $20/mo.</span>
               </p>
               <Link href="/billing" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
                 <span aria-hidden="true">↳</span> Upgrade plan
@@ -241,7 +241,7 @@ export default function DashboardClient({
               <span className="w-1.5 h-1.5 rounded-full bg-electric-violet shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 Pass the AI skill interview so we can match you to work.{" "}
-                <span className="text-on-surface-variant">Graded like a senior practitioner — clients see your score.</span>
+                <span className="text-on-surface-variant">Graded like a senior practitioner. Clients see your score.</span>
               </p>
               <Link href="/vetting" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
                 <span aria-hidden="true">↳</span> Get vetted
@@ -253,7 +253,7 @@ export default function DashboardClient({
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface-variant flex-1 min-w-[240px]">
                 <span className="text-on-surface font-medium">Vetted</span>
-                {" — "}
+                {". "}
                 {vettedBadges.map(b => `${b.category} · ${b.band} ${b.score}`).join("  ·  ")}
                 {" · "}
                 <span>We email you the moment work is matched to you.</span>
@@ -279,7 +279,7 @@ export default function DashboardClient({
             <div className="flex flex-wrap items-center gap-3 py-3.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
-                Money incoming — a client marked a payment as sent.{" "}
+                Money incoming. A client marked a payment as sent.{" "}
                 <span className="text-on-surface-variant">Open the task to confirm you received it.</span>
               </p>
             </div>
@@ -429,13 +429,13 @@ export default function DashboardClient({
           steps={
             (isPilot
               ? [
-                  { id: "vetting", title: "Get vetted first", body: "Pass a ~10-minute AI skill interview once. Then the AI matches you to client work automatically — no bidding." },
-                  { id: "stats", title: "Your numbers, live", body: "Work matched to you, what's active, delivered, and confirmed earnings — updating in real time." },
+                  { id: "vetting", title: "Get vetted first", body: "Pass a ~10-minute AI skill interview once. Then the AI matches you to client work automatically. No bidding." },
+                  { id: "stats", title: "Your numbers, live", body: "Work matched to you, what's active, delivered, and confirmed earnings. Updating in real time." },
                   { id: "payout", title: "How you get paid", body: "Add your Airtm, InstaPay, Vodafone Cash, USDT, PayPal, or bank details so clients can pay you directly." },
                 ]
               : [
-                  { id: "post", title: "Post a task", body: "Describe what you need — AI structures your brief, then assigns the best vetted specialist. No proposals to sift." },
-                  { id: "stats", title: "Your numbers, live", body: "Tasks posted, matched, in progress, and delivered — updating in real time." },
+                  { id: "post", title: "Post a task", body: "Describe what you need. AI structures your brief, then assigns the best vetted specialist. No proposals to sift." },
+                  { id: "stats", title: "Your numbers, live", body: "Tasks posted, matched, in progress, and delivered. Updating in real time." },
                 ]) as TourStep[]
           }
         />
@@ -573,8 +573,8 @@ function EmptyState({ isPilot, matchable, onPost, onNewProject }: {
       <p className="text-[13.5px] text-on-surface-variant max-w-[440px] mb-5">
         {isPilot
           ? matchable
-            ? "You're vetted. As soon as a client posts work that fits your skills, the AI matches it to you — it shows up here and you get an email with the pay and deadline. No need to keep checking."
-            : "Pass the AI skill interview first. Once you're vetted, matching work comes to you automatically — you'll get an email the moment it happens."
+            ? "You're vetted. As soon as a client posts work that fits your skills, the AI matches it to you. It shows up here and you get an email with the pay and deadline. No need to keep checking."
+            : "Pass the AI skill interview first. Once you're vetted, matching work comes to you automatically. You'll get an email the moment it happens."
           : "Post a single task, or describe a bigger outcome and let the AI break it into a milestone plan."}
       </p>
       {isPilot ? (
@@ -622,7 +622,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
     const next = [...files];
     for (const f of Array.from(list)) {
       if (f.size > MAX_FILE_MB * 1024 * 1024) {
-        setError(`${f.name} is over ${MAX_FILE_MB}MB — link large files in the brief instead.`);
+        setError(`${f.name} is over ${MAX_FILE_MB}MB. Link large files in the brief instead.`);
         continue;
       }
       if (next.length >= 5) break;
@@ -633,9 +633,9 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
   const [error, setError] = useState("");
 
   async function polish() {
-    const rough = [title.trim(), brief.trim()].filter(Boolean).join(" — ");
+    const rough = [title.trim(), brief.trim()].filter(Boolean).join(". ");
     if (rough.length < 10) {
-      setError("Write a rough sentence or two first — then the AI can shape it.");
+      setError("Write a rough sentence or two first. Then the AI can shape it.");
       return;
     }
     setError(""); setPolishing(true); setPolishNote("");
@@ -653,7 +653,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
       if (data.budgetUsd && !budget) setBudget(String(data.budgetUsd));
       if (data.note) setPolishNote(data.note);
     } catch {
-      setError("Assistant unavailable — try again.");
+      setError("Assistant unavailable. Try again.");
     } finally {
       setPolishing(false);
     }
@@ -690,7 +690,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
       setError(
         limit
           ? limit.tier === "free"
-            ? `You've used your ${limit.limit} free task posts this month. Upgrade to keep hiring — from $20/mo.`
+            ? `You've used your ${limit.limit} free task posts this month. Upgrade to keep hiring. From $20/mo.`
             : `You've hit your plan's ${limit.limit} posts this month. Upgrade to Scale for unlimited posting.`
           : insErr?.message ?? "Could not post the task."
       );
@@ -747,7 +747,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500/10 mb-4">
                   <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400" style={{ fontVariationSettings: "'FILL' 1" }}>person_check</span>
                 </div>
-                <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Matched — {matchResult.freelancer?.name}</h2>
+                <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Matched. {matchResult.freelancer?.name}</h2>
                 <p className="text-sm text-on-surface-variant mb-2 max-w-[380px] mx-auto">{matchResult.reason}</p>
                 <p className="text-[12px] text-on-surface-variant mb-6">
                   {matchResult.freelancer?.band} · {matchResult.freelancer?.score} vetting score
@@ -758,10 +758,10 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500/10 mb-4">
                   <span className="material-symbols-outlined text-amber-600 dark:text-amber-400" style={{ fontVariationSettings: "'FILL' 1" }}>hourglass_top</span>
                 </div>
-                <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Task posted — finding your match</h2>
+                <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Task posted. Finding your match</h2>
                 <p className="text-sm text-on-surface-variant mb-6 max-w-[380px] mx-auto">
                   No vetted specialist is available in this category just yet. We&apos;ll match
-                  it as soon as one passes the interview — you&apos;ll see it update automatically.
+                  it as soon as one passes the interview. You&apos;ll see it update automatically.
                 </p>
               </>
             )}
@@ -788,7 +788,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
               <input
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder="Task title — e.g. Landing page copy for my coffee brand"
+                placeholder="Task title. E.g. Landing page copy for my coffee brand"
                 className="border border-border-crisp rounded-xl px-4 py-3 text-sm font-body text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet"
               />
               <textarea
@@ -903,7 +903,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                 Post & match
               </button>
               <p className="text-[11px] font-body text-on-surface-variant text-center">
-                The AI matches your task to the best vetted specialist — no bidding, no browsing.
+                The AI matches your task to the best vetted specialist. No bidding, no browsing.
               </p>
             </div>
           </>
