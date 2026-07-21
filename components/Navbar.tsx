@@ -43,7 +43,7 @@ export default function Navbar() {
         href="/signup"
         className="flex items-center justify-center gap-2 h-8 bg-[#0A0A0B] text-white/90 text-[12px] font-medium hover:text-white transition-colors"
       >
-        Early access is live — start hiring free, 3 tasks a month on us
+        Early access is live. Start hiring free, 3 tasks a month on us
         <span aria-hidden="true">→</span>
       </Link>
 

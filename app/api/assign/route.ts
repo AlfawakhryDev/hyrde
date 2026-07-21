@@ -91,7 +91,7 @@ ${JSON.stringify(candidates.map(c => ({
 })))}
 
 Return ONLY valid JSON:
-{"chosenId": "<id of the best-fit candidate>", "confidence": <integer 0-100, your confidence THIS candidate is right for THIS brief>, "reason": "<one specific sentence to the client: why this freelancer fits their brief — reference the actual skill/experience match, not just 'top rated'>"}`;
+{"chosenId": "<id of the best-fit candidate>", "confidence": <integer 0-100, your confidence THIS candidate is right for THIS brief>, "reason": "<one specific, plain sentence to the client on why this freelancer fits their brief. Reference the actual skill or experience match, not just 'top rated'. Never use the em-dash character.>"}`;
 
     const msg = await anthropic.messages.create({
       model: "claude-sonnet-4-6",

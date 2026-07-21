@@ -60,7 +60,7 @@ export default function ProjectComposer({
       setNote(data.note ?? "");
       setPhase("review");
     } catch {
-      setError("The assistant is unavailable — try again.");
+      setError("The assistant is unavailable. Try again.");
     } finally {
       setScoping(false);
     }
@@ -166,7 +166,7 @@ export default function ProjectComposer({
               </button>
             </div>
             <p className="text-[13px] text-on-surface-variant mb-5">
-              &ldquo;I need an MVP&rdquo; or &ldquo;I need my Shopify store redesigned&rdquo; — the AI splits it into an
+              &ldquo;I need an MVP&rdquo; or &ldquo;I need my Shopify store redesigned&rdquo;. The AI splits it into an
               ordered milestone plan. Each milestone is matched to one vetted specialist, one at a time.
             </p>
             <textarea
@@ -261,8 +261,8 @@ export default function ProjectComposer({
                 This uses {milestones.length} of your {remainingPosts} remaining post{remainingPosts === 1 ? "" : "s"} this month.
                 {overQuota && (
                   <>
-                    {" "}Not enough left —{" "}
-                    <Link href="/billing" className="font-medium text-on-surface hover:text-electric-violet transition-colors">upgrade your plan</Link>.
+                    {" "}Not enough left.{" "}
+                    <Link href="/billing" className="font-medium text-on-surface hover:text-electric-violet transition-colors">Upgrade your plan</Link>.
                   </>
                 )}
               </p>
@@ -300,7 +300,7 @@ export default function ProjectComposer({
               <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400" style={{ fontVariationSettings: "'FILL' 1" }}>stacks</span>
             </div>
             <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">
-              Project created — {createdCount} milestone{createdCount === 1 ? "" : "s"}
+              Project created. {createdCount} milestone{createdCount === 1 ? "" : "s"}
             </h2>
             {firstMatch?.matched ? (
               <p className="text-sm text-on-surface-variant mb-2 max-w-[380px] mx-auto">
@@ -308,11 +308,11 @@ export default function ProjectComposer({
               </p>
             ) : (
               <p className="text-sm text-on-surface-variant mb-2 max-w-[380px] mx-auto">
-                Milestone 1 is posted — we&apos;ll match it as soon as a vetted specialist is available.
+                Milestone 1 is posted. We&apos;ll match it as soon as a vetted specialist is available.
               </p>
             )}
             <p className="text-[12px] text-on-surface-variant mb-6 max-w-[380px] mx-auto">
-              The rest match automatically as each milestone gets approved — no need to juggle multiple freelancers up front.
+              The rest match automatically as each milestone gets approved. No need to juggle multiple freelancers up front.
             </p>
             <button
               onClick={() => onCreated(createdProjectId)}

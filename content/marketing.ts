@@ -10,9 +10,9 @@ export const BRAND = {
   name: "Hyrde",
   tagline: "Open at the door. Curated at the match.",
   thesis:
-    "Anyone with real skill joins free and gets matched — no bidding, no spam, no review trap. Companies get a short, vetted shortlist. Freelancers never pay.",
+    "Anyone with real skill joins free and gets matched. No bidding, no spam, no review trap. Companies get a short, vetted shortlist. Freelancers never pay.",
   oneLiner:
-    "Legacy marketplaces are bid boards where freelancers pay to pray. Hyrde is where you get matched — and get paid.",
+    "Legacy marketplaces are bid boards where freelancers pay to pray. Hyrde is where you get matched. And get paid.",
 };
 
 // ─── Global CTAs (reuse everywhere so labels stay consistent) ────────────────
@@ -70,7 +70,7 @@ const COST_GROUPS: CostGroup[] = [
       id: "money",
       theme: "Money wasted",
       icon: "payments",
-      blurb: "What it costs just to fill a seat — before the work even starts.",
+      blurb: "What it costs just to fill a seat. Before the work even starts.",
       stats: [
         {
           id: "cost-to-fill",
@@ -155,7 +155,7 @@ const COST_GROUPS: CostGroup[] = [
           value: 500,
           suffix: "+",
           label: "Applications a single posting can attract",
-          detail: "300–500+ per posting — only ~5% make it past the first screen.",
+          detail: "300–500+ per posting. Only ~5% make it past the first screen.",
           source: "Recruiting industry data",
         },
         {
@@ -172,15 +172,15 @@ const COST_GROUPS: CostGroup[] = [
 ];
 
 const CONTRAST_STATS: ContrastStat[] = [
-  { id: "h-matches",   value: 5,  suffix: "",  label: "Curated matches — not 500 applications" },
+  { id: "h-matches",   value: 5,  suffix: "",  label: "Curated matches. Not 500 applications" },
   { id: "h-speed",     value: 60, suffix: "s", label: "To a ranked, AI-vetted shortlist" },
   { id: "h-proposals", value: 0,  suffix: "",  label: "Proposals a freelancer ever pays for" },
-  { id: "h-fee",       value: 0,  suffix: "",  label: "Platform fee — free in early access" },
+  { id: "h-fee",       value: 0,  suffix: "",  label: "Platform fee. Free in early access" },
 ];
 
 export const COST_OF_HIRING = {
   eyebrow: "The status quo",
-  heading: "Hiring is broken — here's what it costs",
+  heading: "Hiring is broken. Here's what it costs",
   subheading:
     "Every open role burns money, time, and effort before anyone delivers a thing. The numbers below are why we built Hyrde.",
   groups: COST_GROUPS,
@@ -221,17 +221,17 @@ export const ABOUT = {
     eyebrow: "Our mission",
     heading: "Open at the door. Curated at the match.",
     sub:
-      "We're building the freelance platform we always wanted to use — one where talent is proven, not claimed, and getting matched doesn't cost a thing.",
+      "We're building the freelance platform we always wanted to use. One where talent is proven, not claimed, and getting matched doesn't cost a thing.",
   },
   mission: {
     heading: "Why we exist",
     body: [
-      "Hiring online is stuck between two broken extremes. Closed networks gatekeep great people out for having the wrong logo on their résumé. Open bid boards let anyone in — then bury everyone under spam, pay-to-apply credits, and a permanent-review trap where one bad month follows you forever.",
-      "Hyrde takes the best of both. We're open at the door: anyone with real skill joins free and proves it with a short work sample, not a CV. And we're curated at the match: when a company posts a brief, our AI returns a short, ranked, vetted shortlist — not a pile of 500 proposals.",
+      "Hiring online is stuck between two broken extremes. Closed networks gatekeep great people out for having the wrong logo on their résumé. Open bid boards let anyone in. Then bury everyone under spam, pay-to-apply credits, and a permanent-review trap where one bad month follows you forever.",
+      "Hyrde takes the best of both. We're open at the door: anyone with real skill joins free and proves it with a short work sample, not a CV. And we're curated at the match: when a company posts a brief, our AI returns a short, ranked, vetted shortlist. Not a pile of 500 proposals.",
     ],
   },
   problem: {
-    heading: "The problem — in numbers",
+    heading: "The problem. In numbers",
     points: [
       {
         icon: "sentiment_dissatisfied",
@@ -294,14 +294,14 @@ export const ABOUT = {
     {
       pain: {
         headline: "Send 25 proposals to land 1 job",
-        detail: "Upwork charges $0.15 per Connect and most briefs require 4–6. Fiverr takes 20% of everything you earn. Freelancers spend an average of 20 hrs/week on admin, pitching, and self-marketing — before doing any actual work.",
+        detail: "Upwork charges $0.15 per Connect and most briefs require 4–6. Fiverr takes 20% of everything you earn. Freelancers spend an average of 20 hrs/week on admin, pitching, and self-marketing. Before doing any actual work.",
         stat: "20 hrs",
         statLabel: "per week lost to admin & self-marketing",
         source: "FreshBooks Self-Employment Report",
         sourceUrl: "https://www.freshbooks.com/press/self-employed-report",
       },
       fix: {
-        headline: "Your AI agent pitches you automatically — $0 forever",
+        headline: "Your AI agent pitches you automatically. $0 forever",
         detail: "The moment a matching brief posts, Hyrde's AI drafts a personalised, evidence-backed intro on your behalf and sends it. No credits. No proposals. No commission on your earnings.",
         stat: "$0",
         statLabel: "cost to freelancers, always",
@@ -310,7 +310,7 @@ export const ABOUT = {
     {
       pain: {
         headline: "250 applications. 42 days. 23 hours of screening.",
-        detail: "The average tech role attracts 250+ applicants, takes 42 days to fill, and burns 23 hours of internal time just screening CVs — before a single interview. Mis-hires cost $17k–$240k each.",
+        detail: "The average tech role attracts 250+ applicants, takes 42 days to fill, and burns 23 hours of internal time just screening CVs. Before a single interview. Mis-hires cost $17k–$240k each.",
         stat: "42 days",
         statLabel: "average tech role time-to-fill",
         source: "SHRM Human Capital Benchmarking Report",
@@ -333,7 +333,7 @@ export const ABOUT = {
         sourceUrl: "https://business.linkedin.com/talent-solutions/blog",
       },
       fix: {
-        headline: "Living reputation — recent work weighted most",
+        headline: "Living reputation. Recent work weighted most",
         detail: "Hyrde's reputation score weights the last 90 days of delivery signals (on-time rate, repeat hires, response speed) most heavily. New talent proves skill with a work sample and earns their first score from day one.",
         stat: "90 days",
         statLabel: "recent delivery weighted most heavily",
@@ -348,7 +348,7 @@ export const ABOUT = {
       {
         n: "01",
         title: "Prove it, don't claim it",
-        body: "Skip the résumé. New freelancers complete a short, domain-specific work sample. Our AI scores it and builds a verified skill profile — so you have signal from day one, even with zero reviews.",
+        body: "Skip the résumé. New freelancers complete a short, domain-specific work sample. Our AI scores it and builds a verified skill profile. So you have signal from day one, even with zero reviews.",
       },
       {
         n: "02",
@@ -358,12 +358,12 @@ export const ABOUT = {
       {
         n: "03",
         title: "A shortlist, not a pile",
-        body: "Companies describe the work in plain language. Hyrde returns ~5 ranked, AI-vetted candidates — matched on skill and fit, shown blind-first before name, photo, or country.",
+        body: "Companies describe the work in plain language. Hyrde returns ~5 ranked, AI-vetted candidates. Matched on skill and fit, shown blind-first before name, photo, or country.",
       },
       {
         n: "04",
         title: "Get matched, get paid",
-        body: "Browsing and shortlisting are free. During early access, hiring is completely free — no platform fee right now. Paid plans come later (early users get locked-in perks). Freelancers always keep 100%.",
+        body: "Browsing and shortlisting are free. During early access, hiring is completely free. No platform fee right now. Paid plans come later (early users get locked-in perks). Freelancers always keep 100%.",
       },
     ],
   },
@@ -388,7 +388,7 @@ export const ABOUT = {
     heading: "The vision",
     body: [
       "We think the future of work is matched, not advertised. You shouldn't have to market yourself into exhaustion to earn, and you shouldn't have to wade through noise to hire.",
-      "Hyrde is building toward a world where every skilled person has an AI agent working to get them paid, and every company has an AI partner that already knows who's great — so the right match takes seconds, not weeks.",
+      "Hyrde is building toward a world where every skilled person has an AI agent working to get them paid, and every company has an AI partner that already knows who's great. So the right match takes seconds, not weeks.",
     ],
   },
   closing: {
@@ -420,7 +420,7 @@ const PRICING_TIERS: PricingTier[] = [
     name: "Freelancers",
     audience: "Independent talent",
     price: "Free",
-    priceNote: "forever — no catch",
+    priceNote: "forever. No catch",
     loud: true,
     badge: "Always free",
     features: [
@@ -428,7 +428,7 @@ const PRICING_TIERS: PricingTier[] = [
       "No connects, no proposals, no pay-to-apply",
       "Email the moment work is matched to you",
       "Verified skill badge clients can trust",
-      "Get paid direct — InstaPay, Airtm, USDT & more",
+      "Get paid direct. InstaPay, Airtm, USDT & more",
       "Keep 100% of your rate, always",
     ],
     cta: CTA.joinFree,
@@ -478,7 +478,7 @@ export const PRICING = {
   eyebrow: "Pricing",
   heading: "Fair by design. No surprises, ever.",
   subheading:
-    "Freelancers never pay — they keep 100%. Clients start free with 3 task posts a month and upgrade only when they're hiring for real.",
+    "Freelancers never pay. They keep 100%. Clients start free with 3 task posts a month and upgrade only when they're hiring for real.",
   tiers: PRICING_TIERS,
 
   enterpriseCallout: {
@@ -495,11 +495,11 @@ export const PRICING = {
     },
     {
       q: "Is hiring free?",
-      a: "Starting out, yes — every client gets 3 task posts a month free, with full AI matching and delivery review. Pro is $20/month for 50 posts; Scale is $200/month for unlimited.",
+      a: "Starting out, yes. Every client gets 3 task posts a month free, with full AI matching and delivery review. Pro is $20/month for 50 posts; Scale is $200/month for unlimited.",
     },
     {
       q: "How do I pay from anywhere?",
-      a: "Through Airtm at checkout — bank transfer (ACH/IBAN), debit/credit card, stablecoins (USDC/USDT), or 500+ local wallets. Your plan activates the same day the transfer lands.",
+      a: "Through Airtm at checkout. Bank transfer (ACH/IBAN), debit/credit card, stablecoins (USDC/USDT), or 500+ local wallets. Your plan activates the same day the transfer lands.",
     },
     {
       q: "Do you take a cut of what freelancers earn?",
@@ -527,7 +527,7 @@ export const ENTERPRISE = {
     eyebrow: "Hyrde for Enterprise",
     heading: "Vetted talent, at the scale your team hires.",
     sub:
-      "Everything that makes Hyrde fast for a single role — now with the controls, security, and support a large org needs. Private talent pools, SSO, compliance, and a dedicated team behind every hire.",
+      "Everything that makes Hyrde fast for a single role. Now with the controls, security, and support a large org needs. Private talent pools, SSO, compliance, and a dedicated team behind every hire.",
     primaryCta: CTA.bookDemo,
     secondaryCta: { label: "See pricing", href: "/pricing" },
   },
@@ -541,7 +541,7 @@ export const ENTERPRISE = {
     { icon: "groups",        title: "Private, custom-vetted talent pools", body: "We build and maintain reserved pools of pre-vetted talent matched to your exact stack and standards." },
     { icon: "workspaces",    title: "Team workspaces, seats & RBAC", body: "Invite your whole org, organize by team, and control who can post, shortlist, approve, and pay." },
     { icon: "lock",          title: "SSO / SAML + SOC 2", body: "Enterprise single sign-on and SOC 2-aligned security so IT and procurement sign off with confidence." },
-    { icon: "receipt_long",  title: "Consolidated billing", body: "One invoice across every team, role, and contractor — with the reporting finance actually wants." },
+    { icon: "receipt_long",  title: "Consolidated billing", body: "One invoice across every team, role, and contractor. With the reporting finance actually wants." },
     { icon: "monitoring",    title: "Analytics dashboards", body: "Track time-to-hire, spend, match quality, and pipeline health across the whole organization." },
     { icon: "verified_user", title: "Compliance, classification & EOR", body: "Worker classification, contracts, and Employer-of-Record coverage to hire globally without the legal risk." },
     { icon: "hub",           title: "API + ATS / VMS integrations", body: "Pipe Hyrde matches straight into your ATS or VMS, or build on our API to fit your own workflow." },
@@ -553,7 +553,7 @@ export const ENTERPRISE = {
     heading: "Book a demo",
     sub: "Tell us how your team hires and we'll show you Hyrde tailored to it. We'll follow up within one business day.",
     fields: {
-      success: "Thanks — our team will reach out within one business day.",
+      success: "Thanks. Our team will reach out within one business day.",
       note: "Prefer email? Reach us directly at abdelrahman@hyrde.net.",
     },
     cta: { label: "Request access to hire", href: "/get-started" },
@@ -571,9 +571,9 @@ export const SKILL_ASSESSMENT = {
     eyebrow: "Prove it, don't claim it",
     heading: "One short work sample. A verified profile from day one.",
     sub:
-      "No résumé, no reviews required. Spend a few minutes on a real task in your field. Our AI reads your actual work and builds a verified skill score — so great talent gets matched immediately, even on day one.",
+      "No résumé, no reviews required. Spend a few minutes on a real task in your field. Our AI reads your actual work and builds a verified skill score. So great talent gets matched immediately, even on day one.",
     reassurance: [
-      "There's no pass or fail. A lower score still gets you in — we just match you to the right level of work.",
+      "There's no pass or fail. A lower score still gets you in. We just match you to the right level of work.",
       "You can re-take it any time as you grow. Your most recent result is what counts.",
     ],
   },
@@ -583,7 +583,7 @@ export const SKILL_ASSESSMENT = {
     Engineering: {
       title: "Debug & explain",
       prompt:
-        "This React component re-renders on every keystroke and loses focus. Describe what's wrong and how you'd fix it. Pseudocode is fine — we're reading your reasoning, not your syntax.",
+        "This React component re-renders on every keystroke and loses focus. Describe what's wrong and how you'd fix it. Pseudocode is fine. We're reading your reasoning, not your syntax.",
       placeholder:
         "Walk us through the bug, the root cause, and your fix. Mention trade-offs if there are any…",
       minChars: 120,
@@ -645,7 +645,7 @@ export const SKILL_ASSESSMENT = {
 export const REPUTATION = {
   heading: "Reputation that reflects who you are now",
   blurb:
-    "No permanent 1-star. Hyrde weighs objective delivery signals and recent feedback most — so your track record grows with you instead of haunting you.",
+    "No permanent 1-star. Hyrde weighs objective delivery signals and recent feedback most. So your track record grows with you instead of haunting you.",
   signals: [
     { icon: "task_alt",    label: "On-time delivery",     hint: "Milestones hit on schedule" },
     { icon: "repeat",      label: "Repeat-hire rate",     hint: "Clients who come back" },
@@ -660,9 +660,9 @@ export const REPUTATION = {
 export const RISING_TALENT = {
   heading: "Rising-talent auditions",
   blurb:
-    "New to the platform or leveling up? Take a small, real, paid trial task. Deliver well and it becomes your first verified track record — no unpaid spec work, ever.",
+    "New to the platform or leveling up? Take a small, real, paid trial task. Deliver well and it becomes your first verified track record. No unpaid spec work, ever.",
   points: [
-    "Real tasks from real clients — always paid",
+    "Real tasks from real clients. Always paid",
     "Built to be small: a few hours, not a few weeks",
     "Great delivery fast-tracks you into full matches",
   ],
@@ -677,12 +677,12 @@ export const HOME = {
     heading: "Get matched. Get paid.",
     headingAccent: "No bidding, ever.",
     sub:
-      "Open at the door, curated at the match. Anyone with real skill joins free and gets matched by AI. Companies get a vetted shortlist in 60 seconds — and during early access, hiring is free.",
+      "Open at the door, curated at the match. Anyone with real skill joins free and gets matched by AI. Companies get a vetted shortlist in 60 seconds. And during early access, hiring is free.",
   },
   // Top-line proof stats for the hero band.
   proof: [
     { value: "$0",  label: "Cost to freelancers" },
-    { value: "$0",  label: "To hire — early access" },
+    { value: "$0",  label: "To hire. Early access" },
     { value: "~5",  label: "Vetted matches per role" },
     { value: "60s", label: "To your shortlist" },
   ],
@@ -709,14 +709,14 @@ export const SOLUTIONS: SolutionPackage[] = [
     name: "AI Recruiter",
     tagline: "Replace your staffing agency",
     price: "Custom",
-    priceNote: "monthly — tailored to your roles",
+    priceNote: "monthly. Tailored to your roles",
     features: [
       "Unlimited AI-scoped job briefs",
       "Dedicated talent pool (50+ vetted freelancers)",
       "Weekly AI shortlist reports",
       "1 named account manager",
       "ATS integration (Greenhouse, Lever, Ashby)",
-      "Locked-in early-access pricing — no platform fee now",
+      "Locked-in early-access pricing. No platform fee now",
     ],
     cta: { label: "Start 30-day pilot", href: "/get-started" },
   },
@@ -725,7 +725,7 @@ export const SOLUTIONS: SolutionPackage[] = [
     name: "Launch Pod",
     tagline: "A fully AI-curated team for your sprint",
     price: "Custom",
-    priceNote: "per sprint — scoped to your project",
+    priceNote: "per sprint. Scoped to your project",
     highlight: true,
     badge: "Most requested",
     features: [
@@ -743,10 +743,10 @@ export const SOLUTIONS: SolutionPackage[] = [
     name: "Talent Cloud",
     tagline: "Your private on-demand workforce",
     price: "Custom",
-    priceNote: "annual — scoped to your workforce",
+    priceNote: "annual. Scoped to your workforce",
     features: [
       "Private vetted talent cloud (100+ freelancers)",
-      "Unlimited hires — flat annual fee, no per-hire fee",
+      "Unlimited hires. Flat annual fee, no per-hire fee",
       "SOC 2 + SSO + RBAC workspaces",
       "EOR & global compliance coverage",
       "API + ATS/VMS integrations",

@@ -51,7 +51,7 @@ function LiveInner({
     onDisconnect: () => { void finish(); },
     onError: (msg: string) => {
       if (finishingRef.current) return;
-      onError(msg || "The live interview dropped — you can use the text interview instead.");
+      onError(msg || "The live interview dropped. You can use the text interview instead.");
     },
   });
 
@@ -72,7 +72,7 @@ function LiveInner({
       if (!res.ok) { onError(data.error ?? "Couldn't grade the interview."); return; }
       onComplete({ passed: data.passed, assessment: data.assessment });
     } catch {
-      onError("Lost connection while grading — try again.");
+      onError("Lost connection while grading. Try again.");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vettingId]);
@@ -110,7 +110,7 @@ function LiveInner({
     try {
       conversation.startSession({ signedUrl, connectionType: "websocket" });
     } catch {
-      onError("Couldn't reach the microphone — you can use the text interview instead.");
+      onError("Couldn't reach the microphone. You can use the text interview instead.");
     }
   }
 
@@ -125,14 +125,14 @@ function LiveInner({
         </div>
         <h3 className="text-[19px] font-semibold text-on-surface mb-1.5">Live voice interview</h3>
         <p className="text-[13.5px] text-on-surface-variant leading-relaxed max-w-[420px] mx-auto mb-6">
-          A real conversation — the interviewer talks with you, listens as you speak, and you can
+          A real conversation. The interviewer talks with you, listens as you speak, and you can
           jump in any time. Four questions, ~7 minutes. Find a quiet spot.
         </p>
         <button
           onClick={begin}
           className="h-11 px-7 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition"
         >
-          Begin — allow microphone
+          Begin. Allow microphone
         </button>
       </div>
     );
@@ -167,7 +167,7 @@ function LiveInner({
         </div>
 
         <p className="text-[13px] font-medium text-white/80">
-          {phase === "connecting" ? "Connecting…" : agentTalking ? "Interviewer is speaking" : "Listening — go ahead"}
+          {phase === "connecting" ? "Connecting…" : agentTalking ? "Interviewer is speaking" : "Listening. Go ahead"}
         </p>
         <p className="text-[12px] text-white/40 mt-1 tabular-nums">{mmss} · {category}</p>
 
@@ -189,7 +189,7 @@ function LiveInner({
             End &amp; get my result
           </button>
         </div>
-        <p className="text-[11.5px] text-white/35 mt-4">You can talk over the interviewer any time — it&apos;ll stop and listen.</p>
+        <p className="text-[11.5px] text-white/35 mt-4">You can talk over the interviewer any time. It&apos;ll stop and listen.</p>
       </div>
     </div>
   );

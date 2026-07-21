@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 const OUTCOME = "I need an MVP for a habit-tracking app";
 
 const MILESTONES = [
-  { title: "UI/UX design — Figma screens", cat: "Design", usd: "$600", state: "Matching now", tone: "violet" },
+  { title: "UI/UX design. Figma screens", cat: "Design", usd: "$600", state: "Matching now", tone: "violet" },
   { title: "Build the app from the designs", cat: "Development", usd: "$2,800", state: "Queued", tone: "muted" },
   { title: "QA, bug-fix & launch", cat: "QA", usd: "$400", state: "Queued", tone: "muted" },
 ];
@@ -62,7 +62,7 @@ export default function OutcomeShowcase() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400/70 animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
           </span>
-          Hyrde — outcome intake
+          Hyrde. Outcome intake
         </span>
         <span className="text-[11px] font-medium text-white/40">
           {phase === 0 ? "You describe it" : phase === 1 ? "AI scoping…" : "Milestone plan"}
@@ -91,7 +91,7 @@ export default function OutcomeShowcase() {
               ))}
             </div>
             <p className="text-[13px] text-white/55 max-w-[260px] leading-relaxed">
-              Breaking your outcome into an ordered plan — each milestone handed to one vetted specialist.
+              Breaking your outcome into an ordered plan. Each milestone handed to one vetted specialist.
             </p>
           </div>
         )}
@@ -125,7 +125,7 @@ export default function OutcomeShowcase() {
               ))}
             </div>
             <p className="text-[11.5px] text-white/40 mt-3 px-1">
-              Milestone 1 matches now — the rest match automatically as each is approved.
+              Milestone 1 matches now. The rest match automatically as each is approved.
             </p>
           </div>
         )}

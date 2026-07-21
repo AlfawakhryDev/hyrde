@@ -38,7 +38,7 @@ export default function GlobalPay() {
             Get paid on your rails, anywhere
           </h2>
           <p className="text-[14px] text-white/55 leading-relaxed max-w-[420px] mt-5">
-            No Stripe in your country? No problem — clients pay you directly on the rail you
+            No Stripe in your country? No problem. Clients pay you directly on the rail you
             choose, with a tracked reference. Hyrde takes no cut.
           </p>
         </div>

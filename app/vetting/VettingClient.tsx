@@ -62,7 +62,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       setVettingId(data.vettingId);
       setPhase("live");
     } catch {
-      setError("Couldn't reach the interviewer — try again.");
+      setError("Couldn't reach the interviewer. Try again.");
     }
     setBusy(false);
   }
@@ -136,7 +136,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       if (data.intro) setIntro(data.intro);
       setMessages([{ role: "interviewer", text: data.question }]);
     } catch {
-      setError("Could not reach the interviewer — try again.");
+      setError("Could not reach the interviewer. Try again.");
       setPhase("pick");
     } finally {
       setBusy(false);
@@ -145,7 +145,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
 
   async function submitAnswer(mine: string, recording?: Blob | null, mime?: string) {
     if (mine.length < 25 || !vettingId) {
-      setError("A couple of sentences minimum — specifics beat polish.");
+      setError("A couple of sentences minimum. Specifics beat polish.");
       return;
     }
     setMessages(m => [...m, { role: "you", text: mine }]);
@@ -177,7 +177,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong — resubmit.");
+        setError(data.error ?? "Something went wrong. Resubmit.");
         // Give the answer back so they can retry.
         setMessages(m => m.slice(0, -1));
         setAnswer(mine);
@@ -191,7 +191,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
         setMessages(m => [...m, { role: "interviewer", text: data.question }]);
       }
     } catch {
-      setError("Connection hiccup — resubmit your answer.");
+      setError("Connection hiccup. Resubmit your answer.");
       setMessages(m => m.slice(0, -1));
       setAnswer(mine);
     } finally {
@@ -215,7 +215,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
         </h1>
         <p className="text-[14px] text-on-surface-variant leading-relaxed mb-10 max-w-[480px]">
           Same four adaptive questions, same grading, either way. The voice interview is the
-          stronger signal — clients trust it more, and it proves the answers are yours.
+          stronger signal. Clients trust it more, and it proves the answers are yours.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-3">
@@ -229,7 +229,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
               <span className="text-[10.5px] font-medium text-electric-violet bg-electric-violet/10 px-2 py-0.5 rounded-full">Recommended</span>
             </p>
             <p className="text-[13px] text-on-surface-variant leading-relaxed">
-              {busy ? "Connecting…" : <>A real-time conversation — the interviewer <span className="text-on-surface">talks with you out loud</span>,
+              {busy ? "Connecting…" : <>A real-time conversation. The interviewer <span className="text-on-surface">talks with you out loud</span>,
               listens as you speak, and you can jump in any time. ~7 minutes, four questions, graded on the spot.</>}
             </p>
           </button>
@@ -239,7 +239,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           >
             <p className="text-[15px] font-semibold text-on-surface mb-1.5">Text interview</p>
             <p className="text-[13px] text-on-surface-variant leading-relaxed">
-              Type your answers. Works everywhere — no camera or microphone needed.
+              Type your answers. Works everywhere. No camera or microphone needed.
             </p>
           </button>
         </div>
@@ -260,11 +260,11 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
             <span className="text-3xl font-semibold tracking-[-0.02em] text-on-surface">{a.score}</span>
           </div>
           <h1 className="text-4xl font-light tracking-[-0.03em] text-on-surface mb-2">
-            {verdict.passed ? `You're vetted — ${a.band}` : "Not this time"}
+            {verdict.passed ? `You're vetted. ${a.band}` : "Not this time"}
           </h1>
           <p className="text-sm text-on-surface-variant max-w-[440px] mx-auto leading-relaxed">
             {verdict.passed
-              ? `Clients now see a ${a.band} badge in ${category} next to your name. The AI will match ${category} tasks to you automatically — no bidding.`
+              ? `Clients now see a ${a.band} badge in ${category} next to your name. The AI will match ${category} tasks to you automatically. No bidding.`
               : "You can retake the interview in 24 hours. The feedback below is your prep list."}
           </p>
         </div>
@@ -315,7 +315,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       <div className="mx-auto max-w-[720px] px-5 md:px-8 py-12">
         <div className="mb-8">
           <p className="text-[13px] font-medium text-on-surface">{category} interview · live</p>
-          <p className="text-[12.5px] text-on-surface-variant mt-0.5">A real conversation — speak naturally.</p>
+          <p className="text-[12.5px] text-on-surface-variant mt-0.5">A real conversation. Speak naturally.</p>
         </div>
         {error && <p className="text-[13px] text-error mb-4">{error}</p>}
         <LiveInterview
@@ -344,7 +344,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           <div>
             <p className="text-[13px] font-medium text-on-surface">{category} interview</p>
             <p className="text-[12.5px] text-on-surface-variant mt-0.5">
-              {mode === "video" ? "Answer out loud — specifics beat polish." : "Type your answer — specifics beat polish."}
+              {mode === "video" ? "Answer out loud. Specifics beat polish." : "Type your answer. Specifics beat polish."}
             </p>
           </div>
           <div className="flex gap-1.5" aria-hidden="true">
@@ -421,7 +421,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
               onChange={e => setAnswer(e.target.value)}
               rows={5}
               disabled={busy}
-              placeholder="Your answer — name real tools, real decisions, real numbers…"
+              placeholder="Your answer. Name real tools, real decisions, real numbers…"
               className="w-full bg-transparent text-[14px] text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none resize-none disabled:opacity-50"
             />
             <div className="flex items-center justify-between mt-2">
@@ -455,9 +455,9 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
         Get vetted. Let work find you.
       </h1>
       <p className="text-[15px] text-on-surface-variant leading-relaxed mb-3 max-w-[560px]">
-        Four questions, ~10 minutes — on camera or in text: a scenario, a probing follow-up
+        Four questions, ~10 minutes. On camera or in text: a scenario, a probing follow-up
         on your own answer, a live work sample, and a real-project deep-dive. Graded 0–100 by AI against a
-        strict rubric — templated answers are detected and capped.
+        strict rubric. Templated answers are detected and capped.
       </p>
       <p className="text-[13px] text-on-surface-variant mb-8">
         Pass (60+) and clients see your badge everywhere your name appears. Fail and you get
@@ -492,7 +492,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
                 )}
               </div>
               <p className="text-[13px] text-on-surface-variant">
-                {passed ? "Vetted — badge live on your profile" : "4 questions · ~10 minutes"}
+                {passed ? "Vetted. Badge live on your profile" : "4 questions · ~10 minutes"}
               </p>
             </button>
           );

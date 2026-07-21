@@ -84,14 +84,14 @@ export default function SparksPage() {
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 relative z-10">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full mb-5">
             <span className="material-symbols-outlined text-electric-violet animate-floaty" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
-            <span className="text-[11px] font-semibold font-body text-white/80 uppercase tracking-widest">New — Hyrde Sparks</span>
+            <span className="text-[11px] font-semibold font-body text-white/80 uppercase tracking-widest">New. Hyrde Sparks</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold font-headline text-white leading-[1.05] mb-4 max-w-2xl">
             Quick wins.<br />
             <span className="text-electric-violet">Matched in seconds.</span>
           </h1>
           <p className="font-body text-white/55 text-base max-w-xl leading-relaxed mb-10">
-            Micro-tasks under $500, delivered in days — AI-matched to vetted talent the moment you post. No proposals, no bidding, no back-and-forth.
+            Micro-tasks under $500, delivered in days. AI-matched to vetted talent the moment you post. No proposals, no bidding, no back-and-forth.
           </p>
           <div className="flex flex-wrap gap-8">
             {[
@@ -161,7 +161,7 @@ export default function SparksPage() {
           <span className="material-symbols-outlined text-electric-violet mb-3 block animate-floaty relative z-10" style={{ fontSize: "36px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
           <h2 className="text-2xl font-bold font-headline text-white mb-2 relative z-10">Got a quick task?</h2>
           <p className="font-body text-white/55 text-sm mb-7 max-w-sm mx-auto relative z-10">
-            Post a Spark and get AI-matched with a vetted expert in under 60 seconds — no proposals, no bidding.
+            Post a Spark and get AI-matched with a vetted expert in under 60 seconds. No proposals, no bidding.
           </p>
           <Link
             href="/post-job"

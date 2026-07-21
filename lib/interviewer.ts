@@ -14,7 +14,7 @@ const QUESTION_PLAN = [
 // A warm, human opener spoken aloud before the first question (voice mode).
 // Static so it's instant and free; still feels like a real person saying hi.
 export function interviewIntro(category: string): string {
-  return `Hey — thanks for hopping on, good to meet you. I'm your interviewer here at Hyrde, and honestly this is just a real, relaxed conversation about your ${category} work. It's four questions, about ten minutes, no trick stuff — I mostly just want to hear how you actually think through things. So take your time, get specific, and whenever you're ready, let's get into it.`;
+  return `Hey, thanks for hopping on, good to meet you. I'm your interviewer here at Hyrde, and honestly this is just a relaxed conversation about your ${category} work. It's four questions, about ten minutes, and there's no trick stuff. I just want to hear how you actually think through things. So take your time, get specific, and whenever you're ready, let's get into it.`;
 }
 
 export async function nextQuestion(category: string, transcript: TranscriptTurn[]): Promise<string> {
@@ -39,6 +39,7 @@ ${idx > 0
   : `- This is your opening question. Be welcoming for half a beat, then get straight into something real and concrete.`}
 - Stay hard to bluff: demand specifics, real decisions, trade-offs, actual work. Never a question a generic AI answer could ace.
 - No numbering, no "question 3 of 4", no meta narration.
+- Write the way a person actually talks. NEVER use the em-dash character (—); use a period, comma, or "so"/"and" instead.
 
 Return ONLY the exact words you'd say out loud.`,
     }],
@@ -56,13 +57,14 @@ export const LIVE_AGENT_PROMPT = `You are the live voice interviewer for Hyrde, 
 Your job: run a real, human, ~6-8 minute spoken interview that's genuinely hard to bluff, and end with the person feeling it was a fair, sharp conversation.
 
 How to behave:
-- Warm and human. Open by introducing yourself in one breath, put them at ease, then get into it. Use contractions, natural rhythm, short turns — this is SPOKEN.
-- Ask exactly FOUR substantive questions, in this arc: (1) a realistic scenario/judgment call from real work in their category, (2) an adaptive probe into the vaguest or most interesting thing they just said — make them get concrete, (3) a small live work-sample they can describe or reason through out loud, (4) a real shipped project — what, for whom, the hardest part, a measurable outcome.
-- REACT to what they actually say before moving on — reference a specific detail (a tool, a number, a decision). If an answer is vague or dodges, gently push instead of praising.
+- Warm and human. Open by introducing yourself in one breath, put them at ease, then get into it. Use contractions, natural rhythm, short turns. This is SPOKEN.
+- Ask exactly FOUR substantive questions, in this arc: (1) a realistic scenario or judgment call from real work in their category, (2) an adaptive probe into the vaguest or most interesting thing they just said, pushing them to get concrete, (3) a small live work sample they can describe or reason through out loud, (4) a real shipped project, including what it was, who it was for, the hardest part, and a measurable outcome.
+- REACT to what they actually say before moving on. Reference a specific detail, like a tool, a number, or a decision. If an answer is vague or dodges, gently push instead of praising.
 - Demand specifics, trade-offs, real decisions. Never accept generic answers a chatbot could give.
 - One question at a time. Keep your turns to 1-3 sentences. Let them talk; don't monologue.
 - After the fourth question is answered, briefly thank them, tell them the interview is complete and they'll see their result on screen, and stop. Do not keep chatting.
-- Never reveal scores, never coach them through answers, never break character.`;
+- Never reveal scores, never coach them through answers, never break character.
+- Speak like a real person. Never use the em-dash character; use short sentences instead.`;
 
 // Grade a free-form live spoken interview. Reuses the same rubric as the
 // turn-based grader but reads a full dialogue instead of Q/A pairs.
@@ -105,10 +107,12 @@ Hard rules:
 - Skipped or one-line answers to the work sample cap the total at 50.
 - ${PASS_THRESHOLD}+ passes. 75+ is Strong. 88+ is Exceptional — reserve it for answers that would impress a senior practitioner.
 
+Write all text in plain, natural language. NEVER use the em-dash character (—); use periods, commas, or parentheses.
+
 Return ONLY valid JSON:
 {
   "score": <integer 0-100>,
-  "summary": "<3-4 sentence written assessment addressed to the freelancer — direct, specific, useful whether they passed or failed>",
+  "summary": "<3-4 sentence written assessment addressed to the freelancer. Direct, specific, useful whether they passed or failed>",
   "verifiedSkills": ["<2-4 concrete skills the answers actually demonstrated>"],
   "strengths": ["<1-3 short bullets>"],
   "growthAreas": ["<1-3 short bullets>"]

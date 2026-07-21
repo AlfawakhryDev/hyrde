@@ -82,7 +82,7 @@ export default function TaskChat({
       .select()
       .single();
     if (error) {
-      setError("Couldn't send — try again.");
+      setError("Couldn't send. Try again.");
     } else if (data) {
       setMessages(prev => (prev.some(x => x.id === data.id) ? prev : [...prev, data as Message]));
       setDraft("");
@@ -93,7 +93,7 @@ export default function TaskChat({
   return (
     <section className="pt-10 mt-10 border-t border-border-crisp">
       <h2 className="text-[13px] font-medium text-on-surface-variant mb-5">
-        Messages — private between you and the other party
+        Messages. Private between you and the other party
       </h2>
 
       <div className="bg-surface-container-low rounded-2xl overflow-hidden">
@@ -101,7 +101,7 @@ export default function TaskChat({
         <div className="max-h-[360px] min-h-[120px] overflow-y-auto p-4 space-y-2.5">
           {messages.length === 0 && loaded.current && (
             <p className="text-[13px] text-on-surface-variant text-center py-6">
-              No messages yet. Align on scope, deadlines, or details here — everything stays attached to the task.
+              No messages yet. Align on scope, deadlines, or details here. Everything stays attached to the task.
             </p>
           )}
           {messages.map(m => {

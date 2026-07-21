@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 const CANONICAL = "/hire-freelancers-with-ai";
-const TITLE = "Hire Freelancers with AI — Vetted Matches in 60 Seconds | Hyrde";
+const TITLE = "Hire Freelancers with AI. Vetted Matches in 60 Seconds | Hyrde";
 const DESCRIPTION =
-  "Hire freelancers with AI on Hyrde. Describe your project in plain language and AI returns the top 5 pre-vetted freelancers, ranked and explained, in 60 seconds. No bidding, no proposal spam — free to hire during early access.";
+  "Hire freelancers with AI on Hyrde. Describe your project in plain language and AI returns the top 5 pre-vetted freelancers, ranked and explained, in 60 seconds. No bidding, no proposal spam. Free to hire during early access.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -16,11 +16,11 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: CANONICAL },
   openGraph: {
-    title: "Hire Freelancers with AI — Vetted Matches in 60 Seconds",
+    title: "Hire Freelancers with AI. Vetted Matches in 60 Seconds",
     description:
-      "Describe your project; AI returns the top 5 pre-vetted freelancers in 60 seconds. No bidding. Free to hire — early access.",
+      "Describe your project; AI returns the top 5 pre-vetted freelancers in 60 seconds. No bidding. Free to hire. Early access.",
     url: `https://hyrde.net${CANONICAL}`,
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hire freelancers with AI — Hyrde" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Hire freelancers with AI. Hyrde" }],
   },
 };
 
@@ -28,22 +28,22 @@ const STEPS = [
   {
     icon: "edit_note",
     title: "1. Describe what you need",
-    body: "Write your project in plain language — no rigid forms, no job-spec jargon. The AI reads your brief the way a senior recruiter would.",
+    body: "Write your project in plain language. No rigid forms, no job-spec jargon. The AI reads your brief the way a senior recruiter would.",
   },
   {
     icon: "manage_search",
     title: "2. AI scopes & scores every freelancer",
-    body: "Hyrde’s AI scopes the role, then scores every pre-vetted freelancer against your exact requirements — skills, evidence of past work, and fit.",
+    body: "Hyrde’s AI scopes the role, then scores every pre-vetted freelancer against your exact requirements. Skills, evidence of past work, and fit.",
   },
   {
     icon: "auto_awesome",
     title: "3. Get your top 5 in 60 seconds",
-    body: "You get a ranked shortlist of the 5 best matches — each with a plain-English explanation of why the AI picked them. No 500-proposal pile.",
+    body: "You get a ranked shortlist of the 5 best matches. Each with a plain-English explanation of why the AI picked them. No 500-proposal pile.",
   },
   {
     icon: "handshake",
-    title: "4. Pick, hire — free during early access",
-    body: "Choose who you like and start the work. Hiring is free during early access — no platform fee right now.",
+    title: "4. Pick, hire. Free during early access",
+    body: "Choose who you like and start the work. Hiring is free during early access. No platform fee right now.",
   },
 ];
 
@@ -51,22 +51,22 @@ const COMPARE = [
   { dim: "Finding talent", old: "Post a job, wait, sift 50–500 proposals", ai: "AI returns the top 5 matches in 60 seconds" },
   { dim: "Quality", old: '"Top Rated" badges that can be gamed', ai: "Every freelancer pre-vetted before you see them" },
   { dim: "Selection", old: "Read proposals, guess who is real", ai: "Ranked, with AI explanations for each match" },
-  { dim: "Fees", old: "Effective 22–34% all-in take rate", ai: "$0 — free during early access" },
-  { dim: "Effort", old: "Hours of screening per role", ai: "Minutes — the AI does the screening" },
+  { dim: "Fees", old: "Effective 22–34% all-in take rate", ai: "$0. Free during early access" },
+  { dim: "Effort", old: "Hours of screening per role", ai: "Minutes. The AI does the screening" },
 ];
 
 const FAQS = [
   {
     q: "Can I really hire freelancers with AI?",
-    a: "Yes. Hyrde is built around it: you describe your project in plain language, and AI scopes the role, scores every pre-vetted freelancer against your brief, and returns a ranked shortlist of the top 5 — usually in about 60 seconds. You stay in control of the final choice; the AI does the searching and screening.",
+    a: "Yes. Hyrde is built around it: you describe your project in plain language, and AI scopes the role, scores every pre-vetted freelancer against your brief, and returns a ranked shortlist of the top 5. Usually in about 60 seconds. You stay in control of the final choice; the AI does the searching and screening.",
   },
   {
     q: "What is AI freelancer matching?",
-    a: "AI freelancer matching uses a model to read your requirements and compare them against talent profiles, work samples, and evidence of past results — then rank the best fits. Instead of you reading hundreds of proposals, the AI surfaces the few people most qualified for exactly what you described.",
+    a: "AI freelancer matching uses a model to read your requirements and compare them against talent profiles, work samples, and evidence of past results. Then rank the best fits. Instead of you reading hundreds of proposals, the AI surfaces the few people most qualified for exactly what you described.",
   },
   {
     q: "How is hiring freelancers with AI better than Upwork or Fiverr?",
-    a: "On traditional marketplaces you post a job and wait for dozens of proposals, then guess who is genuine. With Hyrde’s AI matching there is no bidding: talent is pre-vetted, you get a ranked top-5 with explanations, and it's free to hire during early access — versus the 22–34% effective take rate clients report elsewhere.",
+    a: "On traditional marketplaces you post a job and wait for dozens of proposals, then guess who is genuine. With Hyrde’s AI matching there is no bidding: talent is pre-vetted, you get a ranked top-5 with explanations, and it's free to hire during early access. Versus the 22–34% effective take rate clients report elsewhere.",
   },
   {
     q: "Is it safe to hire freelancers with AI?",
@@ -74,11 +74,11 @@ const FAQS = [
   },
   {
     q: "What does it cost to hire freelancers with AI on Hyrde?",
-    a: "Right now, during early access, hiring on Hyrde is completely free — posting, AI matching, shortlisting, and the hire itself. Freelancers pay nothing either. We plan to introduce paid plans later, and early users get locked-in perks.",
+    a: "Right now, during early access, hiring on Hyrde is completely free. Posting, AI matching, shortlisting, and the hire itself. Freelancers pay nothing either. We plan to introduce paid plans later, and early users get locked-in perks.",
   },
   {
     q: "What kinds of freelancers can I hire with AI?",
-    a: "Developers, designers, data scientists, ML engineers, marketers, writers, product designers and more — across 24+ skills and 12 cities (or fully remote). The same AI matching works for any role you can describe.",
+    a: "Developers, designers, data scientists, ML engineers, marketers, writers, product designers and more. Across 24+ skills and 12 cities (or fully remote). The same AI matching works for any role you can describe.",
   },
 ];
 
@@ -130,7 +130,7 @@ export default function HireFreelancersWithAIPage() {
 
           <div className="ai-shimmer-pill inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6">
             <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "15px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-            <span className="text-xs font-semibold font-body text-on-surface uppercase tracking-widest">AI-matched in 60 seconds — no bidding</span>
+            <span className="text-xs font-semibold font-body text-on-surface uppercase tracking-widest">AI-matched in 60 seconds. No bidding</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold font-headline text-on-surface mb-5 max-w-3xl leading-[1.07] tracking-tight">
@@ -141,14 +141,14 @@ export default function HireFreelancersWithAIPage() {
           <p className="text-lg md:text-xl font-body text-on-surface-variant max-w-2xl mb-8 leading-relaxed">
             Stop sifting hundreds of proposals. Describe your project in plain language and Hyrde’s AI
             returns the <strong className="text-on-surface font-semibold">top 5 pre-vetted freelancers</strong>,
-            ranked and explained — in about a minute. Free to post.{" "}
+            ranked and explained. In about a minute. Free to post.{" "}
             <strong className="text-on-surface font-semibold">Free to hire during early access.</strong>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 max-w-xl">
             <Link href="/get-started"
               className="flex-1 text-center bg-electric-violet text-white font-bold font-headline px-8 py-4 rounded-2xl hover:shadow-[0_0_36px_rgba(91,79,207,0.45)] transition-all hover:-translate-y-0.5">
-              Hire with AI — free to post
+              Hire with AI. Free to post
             </Link>
             <Link href="/upwork-alternative"
               className="flex-1 text-center bg-white border border-border-crisp text-on-surface font-semibold font-body px-8 py-4 rounded-2xl hover:border-electric-violet transition-colors">

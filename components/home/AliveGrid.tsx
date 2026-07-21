@@ -55,8 +55,8 @@ export default function AliveGrid() {
       <div tabIndex={0} className={`${card} from-[#E9F7F1] to-[#F6FCF9]`}>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Interview-vetted only</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
-          Every freelancer passed an adaptive AI interview — scenario, probing follow-up, live
-          work sample — graded 0–100 against a strict rubric.
+          Every freelancer passed an adaptive AI interview. Scenario, probing follow-up, live
+          work sample. Graded 0–100 against a strict rubric.
         </p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
           <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-[#9a9aa4] mb-2">Live interview · Development</p>
@@ -102,8 +102,8 @@ export default function AliveGrid() {
       <div tabIndex={0} className={`${card} from-[#FFF3E9] to-[#FFFAF5]`}>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">AI-checked delivery</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
-          Before you approve, an impartial AI reviews the deliverable against your brief —
-          verdict, score, and gaps, in writing.
+          Before you approve, an impartial AI reviews the deliverable against your brief.
+          Verdict, score, and gaps, in writing.
         </p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
           <div className="flex items-center justify-between mb-2.5">
@@ -131,7 +131,7 @@ export default function AliveGrid() {
       <div tabIndex={0} className={`${card} from-[#EDEBFF] to-[#FDF6FF]`}>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">$0 fees in early access</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
-          No platform fee, no contract fees — so quotes aren&apos;t padded to claw commissions back.
+          No platform fee, no contract fees. So quotes aren&apos;t padded to claw commissions back.
         </p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
           {[

@@ -40,6 +40,8 @@ Rules:
 - category: exactly one of Development, Design, Copywriting, Marketing, Data, Technical writing, Other.
 - budgetUsd: a fair mid-market one-off price for this scope (integer USD). If scope is genuinely unknowable, estimate the smallest sensible version.
 
+Write in plain, natural language. Never use the em-dash character (—); use periods or commas.
+
 Return ONLY valid JSON:
 {"title": "...", "brief": "...", "category": "...", "budgetUsd": <integer>, "note": "<one short sentence to the client about what you clarified or assumed>"}`;
 

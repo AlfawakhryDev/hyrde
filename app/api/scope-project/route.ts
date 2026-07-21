@@ -49,6 +49,8 @@ Rules:
 - category must be exactly one of: ${CATEGORIES.join(", ")}.
 - projectTitle: max 8 words, describes the whole outcome.
 
+Write all titles and descriptions in plain language. Never use the em-dash character (—).
+
 Return ONLY valid JSON:
 {"projectTitle": "...", "milestones": [{"title": "...", "brief": "...", "category": "...", "budgetUsd": <integer>, "dueInDays": <integer>}], "note": "<one short sentence to the client about how you split this>"}`;
 

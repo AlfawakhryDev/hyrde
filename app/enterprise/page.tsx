@@ -100,7 +100,7 @@ export default function EnterprisePage() {
             Packages built around how you hire at scale
           </h2>
           <p className="font-body text-on-surface-variant leading-relaxed">
-            From replacing your staffing agency to building an entire on-demand workforce — there&apos;s a plan for every stage of scale.
+            From replacing your staffing agency to building an entire on-demand workforce. There&apos;s a plan for every stage of scale.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
