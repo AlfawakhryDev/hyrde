@@ -39,7 +39,7 @@ export default function Footer() {
           <div>
             <Logo />
             <p className="mt-4 text-[13px] leading-relaxed text-on-surface-variant max-w-[240px]">
-              The AI-vetted freelance platform. Prove skill once — hire without the pile.
+              The AI-vetted freelance platform. Prove your skill once, then hire without the pile.
             </p>
             <a
               href="mailto:abdelrahman@hyrde.net"
