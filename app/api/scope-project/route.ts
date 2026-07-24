@@ -29,18 +29,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Log in to scope a project." }, { status: 401 });
   }
 
-  const { outcome } = await req.json();
-  const rough = String(outcome ?? "").trim();
+  const body = await req.json();
+  const rough = String(body?.outcome ?? "").trim();
   if (rough.length < 10) {
     return NextResponse.json({ error: "Describe the outcome in a sentence or two first." }, { status: 400 });
   }
+  // Optional interrogation context: facts we resolved and unknowns we flagged.
+  // When present, the decomposition is calibrated by real answers instead of
+  // guessed from the outcome sentence alone.
+  const facts: string[] = (Array.isArray(body?.facts) ? body.facts : []).slice(0, 20).map((f: unknown) => String(f).slice(0, 300));
+  const risks: string[] = (Array.isArray(body?.risks) ? body.risks : []).slice(0, 12).map((r: unknown) => String(r).slice(0, 300));
+
+  const contextBlock = facts.length
+    ? `\n\nWHAT WE LEARNED IN SCOPING (use these as hard constraints, they are confirmed by the client):\n${facts.map(f => `- ${f}`).join("\n")}${risks.length ? `\n\nOPEN UNKNOWNS (the client did not know; account for them with a milestone or a wider brief where relevant, do not ignore them):\n${risks.map(r => `- ${r}`).join("\n")}` : ""}`
+    : "";
 
   const prompt = `You are the project-scoping assistant on Hyrde, an AI-matched freelance marketplace. A client described an OUTCOME they want (not a single task). Break it into an ordered sequence of milestones. Each milestone is matched to ONE vetted freelancer at a time — later milestones are matched only once earlier ones are approved, so order them so each milestone can start once the prior one's deliverable exists.
 
 CLIENT'S OUTCOME:
 """
 ${rough.slice(0, 2000)}
-"""
+"""${contextBlock}
 
 Rules:
 - 2 to 5 milestones. If this is really a single piece of work, return exactly 1 milestone (the client will be told to use the regular single-task flow instead).

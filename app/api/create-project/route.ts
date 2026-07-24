@@ -2,9 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/arena";
 import { classifyArchetype, mapMilestoneType, estimateBand } from "@/lib/instrumentation";
+import { QUESTION_SET_VERSION } from "@/lib/questiontree";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
+
+// Interrogation payload persisted alongside the scope (spec steps 6-7). Answers
+// and risk flags are computed client-side from the shared question tree; here we
+// clamp and persist them as the immutable record of what was asked and learned.
+type InterrogationAnswer = {
+  key: string; text: string; type: string;
+  value: string | string[]; answered: boolean; variance_weight: number;
+};
+type InterrogationRiskFlag = {
+  source_question_key: string; description: string;
+  likelihood: number; cost_impact_multiplier: [number, number];
+};
+type InterrogationInput = {
+  archetype?: string;
+  confidence?: number;
+  answers?: InterrogationAnswer[];
+  risk_flags?: InterrogationRiskFlag[];
+};
 
 // ── Commit an outcome project + freeze its instrumentation ──────────────────
 // Replaces the browser-side project/task inserts that ProjectComposer used to
@@ -54,8 +73,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Add at least one milestone." }, { status: 400 });
   }
 
-  // Resolve archetype (cheap keyword classification; LLM classifier lands later).
-  const archetypeSlug = classifyArchetype(outcome);
+  const interrogation: InterrogationInput | null =
+    body?.interrogation && typeof body.interrogation === "object" ? body.interrogation : null;
+
+  // Archetype: the classifier's result (via interrogation) wins; else keyword.
+  const archetypeSlug = (interrogation?.archetype && String(interrogation.archetype)) || classifyArchetype(outcome);
   const { data: arch } = await supabase
     .from("project_archetypes").select("id").eq("slug", archetypeSlug).maybeSingle();
 
@@ -82,16 +104,56 @@ export async function POST(req: NextRequest) {
   // child table, so no orphaned scope survives a partial create).
   const rollback = async (): Promise<void> => { await supabase.from("projects").delete().eq("id", projectId); };
 
-  // 2. Frozen scope document v1 with summed cold-start bands.
+  // 2. Interrogation session + answers (spec 6-7), if the client interrogated.
+  //    Persisted before the scope so scope_documents.session_id can reference it.
+  const confidence = interrogation && typeof interrogation.confidence === "number"
+    ? Math.max(0, Math.min(1, interrogation.confidence)) : 0.25;
+  let sessionId: string | null = null;
+  if (interrogation) {
+    const { data: sess } = await supabase
+      .from("interrogation_sessions")
+      .insert({
+        project_id: projectId,
+        archetype_id: arch?.id ?? null,
+        completed_at: new Date().toISOString(),
+        final_confidence: confidence,
+        abandoned: false,
+        question_set_version: QUESTION_SET_VERSION,
+      })
+      .select("id")
+      .single();
+    sessionId = sess?.id ?? null;
+
+    const answers = (Array.isArray(interrogation.answers) ? interrogation.answers : []).slice(0, 30);
+    if (sessionId && answers.length) {
+      const now = new Date().toISOString();
+      await supabase.from("interrogation_answers").insert(
+        answers.map(a => ({
+          session_id: sessionId,
+          question_key: String(a.key).slice(0, 120),
+          question_text: String(a.text).slice(0, 400),
+          answer_raw: JSON.stringify(a.value).slice(0, 600),
+          answer_normalized: { value: a.value },
+          answered: !!a.answered,
+          answered_at: now,
+          variance_weight: Number(a.variance_weight) || 0,
+        })),
+      );
+    }
+  }
+
+  // 3. Frozen scope document v1 with summed cold-start bands.
   const bands = milestones.map(m => estimateBand(m.budgetUsd, m.dueInDays));
   const totalLow = bands.reduce((s, b) => s + b.cost_low, 0);
   const totalHigh = bands.reduce((s, b) => s + b.cost_high, 0);
+  const totalMid = (totalLow + totalHigh) / 2;
   const { data: scope, error: scopeErr } = await supabase
     .from("scope_documents")
     .insert({
       project_id: projectId,
+      session_id: sessionId,
       version: 1,
-      confidence: 0.25,
+      confidence,
       total_estimate_low: totalLow,
       total_estimate_high: totalHigh,
       currency: "USD",
@@ -105,10 +167,37 @@ export async function POST(req: NextRequest) {
   }
   const scopeId: string = scope.id;
 
+  // Risk flags: honest unknowns surfaced during interrogation, with a contingency
+  // band computed from the multiplier against the estimate midpoint.
+  const riskFlags = (Array.isArray(interrogation?.risk_flags) ? interrogation!.risk_flags : []).slice(0, 12);
+  if (riskFlags.length) {
+    await supabase.from("risk_flags").insert(
+      riskFlags.map(r => {
+        const [lo, hi] = Array.isArray(r.cost_impact_multiplier) ? r.cost_impact_multiplier : [1, 1];
+        return {
+          scope_document_id: scopeId,
+          source_question_key: String(r.source_question_key).slice(0, 120),
+          description: String(r.description).slice(0, 400),
+          likelihood: Math.max(0, Math.min(1, Number(r.likelihood) || 0)),
+          cost_impact_low: Math.max(0, Math.round(totalMid * (Number(lo) - 1))),
+          cost_impact_high: Math.max(0, Math.round(totalMid * (Number(hi) - 1))),
+          materialized: null,
+        };
+      }),
+    );
+  }
+
   const events: { project_id: string; event_type: string; payload: Record<string, unknown>; actor: string }[] = [
     { project_id: projectId, event_type: "project_created", payload: { archetype: archetypeSlug, milestone_count: milestones.length }, actor: "client" },
-    { project_id: projectId, event_type: "scope_frozen", payload: { scope_document_id: scopeId, version: 1, total_low: totalLow, total_high: totalHigh, confidence: 0.25 }, actor: "system" },
+    { project_id: projectId, event_type: "scope_frozen", payload: { scope_document_id: scopeId, version: 1, total_low: totalLow, total_high: totalHigh, confidence }, actor: "system" },
   ];
+  if (interrogation) {
+    events.push({
+      project_id: projectId, event_type: "interrogation_completed",
+      payload: { session_id: sessionId, confidence, answers: (interrogation.answers ?? []).length, risk_flags: riskFlags.length, question_set_version: QUESTION_SET_VERSION },
+      actor: "client",
+    });
+  }
 
   // 3. Per milestone: structural row -> immutable estimate -> executable task.
   const start = Date.now();
@@ -197,6 +286,6 @@ export async function POST(req: NextRequest) {
     createdCount: created,
     milestoneTotal: milestones.length,
     firstTaskId,
-    estimateBand: { low: totalLow, high: totalHigh, confidence: 0.25, basis: "heuristic" },
+    estimateBand: { low: totalLow, high: totalHigh, confidence, basis: "heuristic" },
   });
 }
