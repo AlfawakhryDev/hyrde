@@ -1,0 +1,365 @@
+// ── Interrogation engine: question tree + selection (spec 2.3-2.4) ──────────
+// Pure, dependency-free. Imported by BOTH the interrogation UI (question order,
+// progress) and the server (risk-flag derivation, persistence) so the two never
+// disagree. Questions are ranked by cost-variance-resolved-per-question, NOT by
+// relevance: we ask what most reduces uncertainty about what the work will cost.
+//
+// Versioned from the first commit (QUESTION_SET_VERSION) so tree changes stay
+// attributable when question_value analysis starts.
+
+export const QUESTION_SET_VERSION = "shopify-v1";
+
+// Answer budget. Past ~12, completion collapses and we lose the client. If
+// confidence is still low at the ceiling, we emit anyway with risk flags.
+export const QUESTION_BUDGET = 10;
+export const MIN_QUESTIONS = 4;
+// Enough resolved variance to stop early and respect the client's time.
+export const CONFIDENCE_TARGET = 0.8;
+
+export type QuestionType = "single_select" | "multi_select";
+
+export type Question = {
+  key: string;
+  text: string;
+  help?: string;
+  type: QuestionType;
+  options: { value: string; label: string }[];
+  // Fraction of total cost uncertainty this question resolves (0..1).
+  variance_weight: number;
+  affects_milestones: string[];
+  // Follow-up gating: only eligible once `gatedBy.key` is answered `equals`.
+  gatedBy?: { key: string; equals: string };
+  // What an unresolved answer means, and its cost multiplier band.
+  unknown_risk: { description: string; cost_impact_multiplier: [number, number] };
+};
+
+// The value that means "I don't know" for every single_select (multi_select
+// uses an explicit option). dont_know is first-class: it produces a risk flag
+// with a contingency band rather than failing validation.
+export const DONT_KNOW = "dont_know";
+
+// Archetypes that currently have a tree. Others skip interrogation and fall
+// straight through to naive decomposition (honest: we only interrogate where we
+// have calibrated questions).
+export const TREE_ARCHETYPES = new Set(["shopify", "shopify_replatform", "shopify_theme_custom"]);
+export function archetypeHasTree(slug: string | null | undefined): boolean {
+  return !!slug && TREE_ARCHETYPES.has(slug);
+}
+
+const SHOPIFY_TREE: Question[] = [
+  {
+    key: "shopify.catalog_data_quality",
+    text: "Are your product descriptions and images complete and consistent today?",
+    help: "The single biggest driver of migration overruns. Honest answers here save the most.",
+    type: "single_select",
+    options: [
+      { value: "clean", label: "Clean and consistent" },
+      { value: "mixed", label: "Mixed, some gaps" },
+      { value: "messy", label: "Messy or incomplete" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.85,
+    affects_milestones: ["data_migration", "content_migration"],
+    unknown_risk: {
+      description: "Catalog data quality unconfirmed; migration effort could balloon if data is messy.",
+      cost_impact_multiplier: [1.0, 2.5],
+    },
+  },
+  {
+    key: "shopify.custom_apps_count",
+    text: "Do you have any custom-built apps installed?",
+    help: "Each custom app is its own migration risk with hard-to-bound cost.",
+    type: "single_select",
+    options: [
+      { value: "none", label: "None" },
+      { value: "one_two", label: "One or two" },
+      { value: "several", label: "Several" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.8,
+    affects_milestones: ["integration_third_party", "backend_build"],
+    unknown_risk: {
+      description: "Custom apps not enumerated; each one can be an unbounded migration cost.",
+      cost_impact_multiplier: [1.0, 2.2],
+    },
+  },
+  {
+    key: "shopify.integrations",
+    text: "Which of these do you connect to your store?",
+    help: "Each system is a separate integration milestone.",
+    type: "multi_select",
+    options: [
+      { value: "erp", label: "ERP" },
+      { value: "3pl", label: "3PL / fulfilment" },
+      { value: "subscriptions", label: "Subscriptions" },
+      { value: "loyalty", label: "Loyalty / rewards" },
+      { value: "none", label: "None of these" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.8,
+    affects_milestones: ["integration_third_party"],
+    unknown_risk: {
+      description: "Integration surface unconfirmed; each connected system is its own milestone.",
+      cost_impact_multiplier: [1.0, 2.0],
+    },
+  },
+  {
+    key: "shopify.current_theme_origin",
+    text: "Is your current storefront an off-the-shelf theme, or custom-coded?",
+    type: "single_select",
+    options: [
+      { value: "off_the_shelf", label: "Off-the-shelf theme" },
+      { value: "custom", label: "Custom-coded" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.75,
+    affects_milestones: ["frontend_build", "design_page"],
+    unknown_risk: {
+      description: "Theme origin unknown; a custom theme can hide significant technical debt.",
+      cost_impact_multiplier: [1.0, 2.0],
+    },
+  },
+  {
+    key: "shopify.design_input",
+    text: "Do you have an existing brand and design system, or are we designing from scratch?",
+    help: "This is a 3 to 5x swing on the design milestones.",
+    type: "single_select",
+    options: [
+      { value: "brand_system", label: "Full brand system" },
+      { value: "partial", label: "Some brand assets" },
+      { value: "from_scratch", label: "From scratch" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.7,
+    affects_milestones: ["design_system", "design_page"],
+    unknown_risk: {
+      description: "Design starting point unconfirmed; from-scratch design is a large cost delta.",
+      cost_impact_multiplier: [1.0, 3.0],
+    },
+  },
+  {
+    key: "shopify.plus_tier",
+    text: "Are you on Shopify Plus, or a standard plan?",
+    help: "Gates checkout customization, scripts, and API limits.",
+    type: "single_select",
+    options: [
+      { value: "plus", label: "Shopify Plus" },
+      { value: "standard", label: "Standard plan" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.6,
+    affects_milestones: ["payment_config", "integration_third_party"],
+    unknown_risk: {
+      description: "Plan tier unconfirmed; some checkout customization may be unavailable.",
+      cost_impact_multiplier: [1.0, 1.6],
+    },
+  },
+  {
+    key: "shopify.catalog_size",
+    text: "Roughly how many products (SKUs) do you sell?",
+    type: "single_select",
+    options: [
+      { value: "lt_100", label: "Under 100" },
+      { value: "100_1k", label: "100 to 1,000" },
+      { value: "1k_10k", label: "1,000 to 10,000" },
+      { value: "10k_plus", label: "Over 10,000" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.55,
+    affects_milestones: ["data_migration", "content_migration"],
+    unknown_risk: {
+      description: "Catalog size unknown; migration effort scales with SKU count.",
+      cost_impact_multiplier: [1.0, 1.6],
+    },
+  },
+  {
+    key: "shopify.seo_preservation",
+    text: "Do your existing URLs need to be preserved for SEO?",
+    help: "Redirect mapping is its own milestone.",
+    type: "single_select",
+    options: [
+      { value: "yes", label: "Yes, preserve them" },
+      { value: "no", label: "No, fresh start is fine" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.5,
+    affects_milestones: ["seo_preservation"],
+    unknown_risk: {
+      description: "SEO preservation unconfirmed; redirect mapping may add a milestone.",
+      cost_impact_multiplier: [1.0, 1.4],
+    },
+  },
+  {
+    key: "shopify.content_ownership",
+    text: "Who writes the product and page copy?",
+    type: "single_select",
+    options: [
+      { value: "client", label: "We do" },
+      { value: "hyrde", label: "We need a writer" },
+      { value: DONT_KNOW, label: "Undecided" },
+    ],
+    variance_weight: 0.45,
+    affects_milestones: ["content_migration"],
+    unknown_risk: {
+      description: "Copy ownership unassigned; a classic source of scope creep.",
+      cost_impact_multiplier: [1.0, 1.5],
+    },
+  },
+  {
+    key: "shopify.launch_constraint",
+    text: "Is there a fixed launch date you need to hit?",
+    type: "single_select",
+    options: [
+      { value: "fixed", label: "Yes, a hard date" },
+      { value: "flexible", label: "Flexible" },
+      { value: DONT_KNOW, label: "Not sure yet" },
+    ],
+    variance_weight: 0.4,
+    affects_milestones: ["deployment", "qa_functional"],
+    unknown_risk: {
+      description: "Launch constraint unknown; a fixed date compresses sequencing and raises cost.",
+      cost_impact_multiplier: [1.0, 1.3],
+    },
+  },
+  // ── Follow-ups (gated) ──
+  {
+    key: "shopify.checkout_customization",
+    text: "Do you need a customized checkout (scripts, custom fields, or checkout UI)?",
+    type: "single_select",
+    options: [
+      { value: "yes", label: "Yes" },
+      { value: "no", label: "No" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.5,
+    affects_milestones: ["payment_config", "frontend_build"],
+    gatedBy: { key: "shopify.plus_tier", equals: "plus" },
+    unknown_risk: {
+      description: "Checkout customization scope unconfirmed on a Plus plan.",
+      cost_impact_multiplier: [1.0, 1.7],
+    },
+  },
+  {
+    key: "shopify.theme_debt",
+    text: "Is your custom theme documented and maintainable, or has it drifted over time?",
+    type: "single_select",
+    options: [
+      { value: "documented", label: "Documented and clean" },
+      { value: "drifted", label: "Drifted / undocumented" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.6,
+    affects_milestones: ["frontend_build"],
+    gatedBy: { key: "shopify.current_theme_origin", equals: "custom" },
+    unknown_risk: {
+      description: "Custom theme maintainability unknown; undocumented themes carry hidden rework.",
+      cost_impact_multiplier: [1.0, 1.8],
+    },
+  },
+];
+
+// The tree for an archetype. Only Shopify is calibrated today; the sub-archetypes
+// share the Shopify set.
+export function treeFor(archetypeSlug: string | null | undefined): Question[] {
+  return archetypeHasTree(archetypeSlug) ? SHOPIFY_TREE : [];
+}
+
+// Answers are keyed by question.key. single_select => string; multi_select =>
+// string[]. A single_select value of DONT_KNOW, or a multi_select containing
+// DONT_KNOW, is an explicit "I don't know".
+export type AnswerMap = Record<string, string | string[]>;
+
+function isAnswered(a: string | string[] | undefined): boolean {
+  if (a == null) return false;
+  return Array.isArray(a) ? a.length > 0 : a.length > 0;
+}
+function isDontKnow(a: string | string[] | undefined): boolean {
+  if (a == null) return false;
+  return Array.isArray(a) ? a.includes(DONT_KNOW) : a === DONT_KNOW;
+}
+// A question is "resolved" (reduces uncertainty) only if answered with a real
+// value, not I-don't-know.
+function isResolved(a: string | string[] | undefined): boolean {
+  return isAnswered(a) && !isDontKnow(a);
+}
+
+function isEligible(q: Question, answers: AnswerMap): boolean {
+  if (isAnswered(answers[q.key])) return false;
+  if (!q.gatedBy) return true;
+  const parent = answers[q.gatedBy.key];
+  return parent === q.gatedBy.equals;
+}
+
+// Selection: argmax(variance_weight) over eligible (unanswered, gate-satisfied)
+// questions. P(unanswered) is 1 across the eligible set, so weight decides.
+export function selectNextQuestion(tree: Question[], answers: AnswerMap): Question | null {
+  const eligible = tree.filter(q => isEligible(q, answers));
+  if (eligible.length === 0) return null;
+  return eligible.reduce((best, q) => (q.variance_weight > best.variance_weight ? q : best));
+}
+
+// Confidence = fraction of total base variance resolved with real answers.
+// Denominator is the base (ungated) questions, for a stable, honest 0..1.
+export function scopeConfidence(tree: Question[], answers: AnswerMap): number {
+  const base = tree.filter(q => !q.gatedBy);
+  const total = base.reduce((s, q) => s + q.variance_weight, 0);
+  if (total === 0) return 1;
+  const resolved = tree.reduce((s, q) => (isResolved(answers[q.key]) ? s + q.variance_weight : s), 0);
+  return Math.min(1, resolved / total);
+}
+
+// Should the interrogation stop? Budget or confidence ceiling, or nothing left
+// to ask. Never before MIN_QUESTIONS unless the tree is exhausted.
+export function shouldStop(tree: Question[], answers: AnswerMap, askedCount: number): boolean {
+  if (selectNextQuestion(tree, answers) === null) return true;
+  if (askedCount < MIN_QUESTIONS) return false;
+  if (askedCount >= QUESTION_BUDGET) return true;
+  return scopeConfidence(tree, answers) >= CONFIDENCE_TARGET;
+}
+
+export type DerivedRiskFlag = {
+  source_question_key: string;
+  description: string;
+  likelihood: number;
+  cost_impact_multiplier: [number, number];
+};
+
+// Turn unresolved uncertainty into explicit risk flags: every dont_know answer,
+// plus any high-variance base question left unasked at the budget ceiling.
+// Surfacing the unknown honestly IS the product.
+export function deriveRiskFlags(
+  tree: Question[],
+  answers: AnswerMap,
+  askedKeys: Set<string>,
+): DerivedRiskFlag[] {
+  const flags: DerivedRiskFlag[] = [];
+  for (const q of tree) {
+    const asked = askedKeys.has(q.key);
+    const dontKnow = isDontKnow(answers[q.key]);
+    // Skipped = a base question we never got to (budget) and never answered.
+    const skippedHighVariance = !q.gatedBy && !asked && !isAnswered(answers[q.key]) && q.variance_weight >= 0.6;
+    if (dontKnow || skippedHighVariance) {
+      flags.push({
+        source_question_key: q.key,
+        description: q.unknown_risk.description,
+        likelihood: dontKnow ? 0.55 : 0.4,
+        cost_impact_multiplier: q.unknown_risk.cost_impact_multiplier,
+      });
+    }
+  }
+  return flags;
+}
+
+// Compact, human-readable facts from resolved answers, for the decomposer prompt.
+export function answerFacts(tree: Question[], answers: AnswerMap): string[] {
+  const facts: string[] = [];
+  for (const q of tree) {
+    const a = answers[q.key];
+    if (!isResolved(a)) continue;
+    const labels = (Array.isArray(a) ? a : [a])
+      .filter(v => v !== DONT_KNOW)
+      .map(v => q.options.find(o => o.value === v)?.label ?? v);
+    if (labels.length) facts.push(`${q.text} -> ${labels.join(", ")}`);
+  }
+  return facts;
+}
