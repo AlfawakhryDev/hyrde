@@ -180,7 +180,10 @@ create trigger block_update before update on public.milestone_estimates
 create table if not exists public.milestone_actuals (
   id                   uuid primary key default gen_random_uuid(),
   milestone_id         uuid not null references public.milestones(id) on delete cascade,
-  task_id              uuid references public.tasks(id) on delete set null,
+  -- cascade (not set null): milestone_actuals is reachable from a project delete
+  -- via both milestone_id and task_id; a SET NULL update here races the milestone
+  -- cascade and breaks project/user deletion once an actuals row exists.
+  task_id              uuid references public.tasks(id) on delete cascade,
   cost_actual          numeric,
   duration_days_actual numeric,
   started_at           timestamptz,
