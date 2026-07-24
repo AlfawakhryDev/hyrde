@@ -79,9 +79,14 @@ export default function AdminClient({
         <Link href="/dashboard" className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
           <span aria-hidden="true">←</span> Back to dashboard
         </Link>
-        <Link href="/admin/oversight" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors">
-          Oversight <span aria-hidden="true">→</span>
-        </Link>
+        <span className="flex items-center gap-4">
+          <Link href="/admin/instrumentation" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors">
+            Instrumentation
+          </Link>
+          <Link href="/admin/oversight" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors">
+            Oversight <span aria-hidden="true">→</span>
+          </Link>
+        </span>
       </div>
       <h1 className="text-[40px] font-light tracking-[-0.035em] leading-none text-on-surface mt-8 mb-2">Admin — billing</h1>
       <p className="text-[14px] text-on-surface-variant mb-10 max-w-[520px]">
