@@ -452,7 +452,6 @@ export default function DashboardClient({
 
       {projectComposerOpen && (
         <ProjectComposer
-          userId={userId}
           remainingPosts={monthlyLimit === null ? null : Math.max(0, monthlyLimit - postedThisMonth)}
           onClose={() => setProjectComposerOpen(false)}
           onCreated={(projectId) => {
