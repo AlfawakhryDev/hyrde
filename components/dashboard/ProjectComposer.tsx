@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { supabaseBrowser } from "@/lib/supabase/client";
 
 type Milestone = {
   title: string;
@@ -17,12 +16,10 @@ type Milestone = {
 // first milestone is auto-matched here; later ones are matched when the
 // client approves the prior one (see TaskDetailClient's approve()).
 export default function ProjectComposer({
-  userId,
   remainingPosts,
   onClose,
   onCreated,
 }: {
-  userId: string;
   remainingPosts: number | null; // null = unlimited (Scale plan)
   onClose: () => void;
   onCreated: (projectId: string) => void;
@@ -77,58 +74,32 @@ export default function ProjectComposer({
     if (milestones.length === 0) { setError("Add at least one milestone."); return; }
     if (overQuota) { setError("You don't have enough posts left this month for all these milestones."); return; }
     setError(""); setPhase("creating");
-    const supabase = supabaseBrowser();
 
-    const { data: project, error: projErr } = await supabase
-      .from("projects")
-      .insert({
-        poster_id: userId,
-        title: projectTitle || milestones[0].title,
-        outcome_brief: outcome.trim(),
-        milestone_total: milestones.length,
-      })
-      .select()
-      .single();
-
-    if (projErr || !project) {
-      setError(projErr?.message ?? "Could not create the project.");
+    // The whole commit is server-side: it writes the project, a frozen scope
+    // document, an immutable estimate per milestone, and the executable tasks in
+    // one shot (rolling back cleanly on any failure). The client just matches
+    // milestone 1 afterwards, exactly as before.
+    let firstTaskId: string | null = null;
+    try {
+      const res = await fetch("/api/create-project", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectTitle, outcome: outcome.trim(), milestones }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Could not create the project.");
+        setPhase("review");
+        return;
+      }
+      setCreatedProjectId(data.projectId);
+      setCreatedCount(data.createdCount);
+      firstTaskId = data.firstTaskId ?? null;
+    } catch {
+      setError("Could not reach the server. Try again.");
       setPhase("review");
       return;
     }
-    setCreatedProjectId(project.id);
-
-    let created = 0;
-    let firstTaskId: string | null = null;
-    const start = Date.now();
-    for (let i = 0; i < milestones.length; i++) {
-      const m = milestones[i];
-      const { data: task, error: taskErr } = await supabase
-        .from("tasks")
-        .insert({
-          title: m.title,
-          brief: m.brief,
-          category: m.category,
-          origin: "human",
-          status: "open",
-          poster_id: userId,
-          amount_cents: Math.round(m.budgetUsd * 100),
-          deadline: new Date(start + m.dueInDays * 864e5).toISOString(),
-          project_id: project.id,
-          milestone_index: i,
-          milestone_total: milestones.length,
-        })
-        .select("id")
-        .single();
-      if (taskErr || !task) {
-        setError(`Created ${created} of ${milestones.length} milestones, then hit a limit. ${taskErr?.message ?? ""}`.trim());
-        break;
-      }
-      created++;
-      if (i === 0) firstTaskId = task.id;
-    }
-    setCreatedCount(created);
-
-    if (created === 0) { setPhase("review"); return; }
 
     // Only the first milestone is matched now; later ones match once the
     // prior one is approved (see TaskDetailClient approve()).
