@@ -3,6 +3,11 @@
 @theme {
   --font-headline: 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  /* Warm paper: a hair off pure white so the page reads printed, not sterile */
+  --color-paper: #F7F5F0;
+  --color-ink: #14140F;
 
   /* Hyrde brand */
   --color-tech-blue-deep: #0A0A0F;
