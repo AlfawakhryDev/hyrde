@@ -25,15 +25,13 @@ export async function GET(request: Request) {
             if (role) {
               // First sign-in with a pre-picked side: persist it, skip onboarding.
               // Existing accounts keep their mode — the param never overwrites.
-              await supabase.from("profiles").upsert({
-                id: user.id,
-                mode: role,
-                display_name:
+              await supabase.rpc("upsert_my_profile", {
+                p_mode: role,
+                p_display_name:
                   (user.user_metadata?.display_name as string) ||
                   (user.user_metadata?.full_name as string) ||
                   (user.user_metadata?.name as string) ||
                   user.email?.split("@")[0] || "New user",
-                updated_at: new Date().toISOString(),
               });
               return NextResponse.redirect(
                 `${origin}${role === "pilot" && dest === "/dashboard" ? "/vetting" : dest}`

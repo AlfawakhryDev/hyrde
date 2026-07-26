@@ -126,10 +126,9 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
           return;
         }
         // The account type was chosen up front — persist it and skip onboarding.
-        await supabase.from("profiles").upsert({
-          id: data.session.user.id,
-          mode: role,
-          display_name: name || email.split("@")[0],
+        await supabase.rpc("upsert_my_profile", {
+          p_mode: role,
+          p_display_name: name || email.split("@")[0],
         });
         // Freelancers go straight to their activation moment: the interview.
         router.push(role === "pilot" && next === "/dashboard" ? "/vetting" : next);
