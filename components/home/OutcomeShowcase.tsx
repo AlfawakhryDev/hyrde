@@ -51,6 +51,8 @@ export default function OutcomeShowcase() {
         @keyframes os-rise { from { opacity:0; transform: translateY(10px) } to { opacity:1; transform:none } }
         @keyframes os-dot { 0%,80%,100% { opacity:.2 } 40% { opacity:.9 } }
         @keyframes os-caret { 0%,100% { opacity:0 } 50% { opacity:1 } }
+        @keyframes os-draw { to { stroke-dashoffset: 0 } }
+        @keyframes os-ink { from { opacity:0; transform: rotate(3deg) translateY(4px) } to { opacity:1; transform: rotate(3deg) translateY(0) } }
       `}</style>
 
       {/* Panel header */}
@@ -92,20 +94,38 @@ export default function OutcomeShowcase() {
         )}
 
         {phase === 2 && (
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40 mb-3">
-              3 milestones, matched in order
-            </p>
+          <div className="relative">
+            <div className="flex items-center justify-between mb-3">
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
+                3 milestones, matched in order
+              </p>
+              {/* handwritten margin note over the plan */}
+              <span
+                className="text-[#E6BC63] text-[16px] leading-none pointer-events-none"
+                style={{ fontFamily: "var(--font-hand)", animation: "os-ink .4s ease .7s both" }}
+                aria-hidden="true"
+              >
+                one plan, not a pile
+              </span>
+            </div>
             <div className="space-y-2">
               {MILESTONES.map((m, i) => (
                 <div
                   key={m.title}
-                  className={`flex items-center gap-3 rounded-[6px] border px-3.5 py-2.5 ${m.live ? "border-white/20 bg-white/[0.04]" : "border-white/8 bg-white/[0.015]"}`}
+                  className={`relative flex items-center gap-3 rounded-[6px] border px-3.5 py-2.5 ${m.live ? "border-white/20 bg-white/[0.04]" : "border-white/8 bg-white/[0.015]"}`}
                   style={{ animation: `os-rise .5s cubic-bezier(.2,.7,.2,1) both ${0.12 + i * 0.16}s` }}
                 >
                   <span className="grid place-items-center h-6 w-6 shrink-0 rounded-[4px] border border-white/12 font-mono text-white/60 text-[11px]">{i + 1}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] text-white/85 font-medium truncate">{m.title}</p>
+                    <span className="relative inline-block max-w-full align-bottom">
+                      <p className="text-[13px] text-white/85 font-medium truncate">{m.title}</p>
+                      {/* hand-drawn underline under milestone 1, the one matching now */}
+                      {m.live && (
+                        <svg className="pointer-events-none absolute -bottom-1 left-0 w-full h-[6px] text-[#E6BC63]" viewBox="0 0 200 6" preserveAspectRatio="none" aria-hidden="true">
+                          <path d="M1 4 C 40 1, 70 6, 110 3 C 150 1, 180 5, 199 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{ strokeDasharray: 230, strokeDashoffset: 230, animation: "os-draw .8s ease .55s forwards" }} />
+                        </svg>
+                      )}
+                    </span>
                     <p className="text-[11px] text-white/40">{m.cat} · {m.usd}</p>
                   </div>
                   <span className={`shrink-0 inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.1em] ${m.live ? "text-emerald-300" : "text-white/40"}`}>
