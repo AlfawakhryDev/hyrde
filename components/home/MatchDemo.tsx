@@ -41,6 +41,8 @@ export default function MatchDemo() {
         @keyframes hm-fade { from { opacity:0; transform: translateY(8px) } to { opacity:1; transform:none } }
         @keyframes hm-pop  { 0% { opacity:0; transform: scale(.97) } 60% { transform: scale(1.01) } 100% { opacity:1; transform: scale(1) } }
         @keyframes hm-dot  { 0%,80%,100% { opacity:.2 } 40% { opacity:.9 } }
+        @keyframes hm-draw { to { stroke-dashoffset: 0 } }
+        @keyframes hm-ink  { from { opacity:0; transform: rotate(-4deg) translateY(4px) } to { opacity:1; transform: rotate(-4deg) translateY(0) } }
       `}</style>
 
       {/* Panel header */}
@@ -124,17 +126,29 @@ export default function MatchDemo() {
         )}
 
         {phase === 2 && (
-          <div style={{ animation: "hm-pop .5s cubic-bezier(.2,.7,.2,1) both" }}>
+          <div className="relative" style={{ animation: "hm-pop .5s cubic-bezier(.2,.7,.2,1) both" }}>
+            {/* handwritten margin note, marked by hand next to the pick */}
+            <span
+              className="absolute -top-3 right-1 z-10 font-[var(--font-hand)] text-[#E6BC63] text-[17px] leading-none pointer-events-none"
+              style={{ fontFamily: "var(--font-hand)", animation: "hm-ink .4s ease .85s both" }}
+              aria-hidden="true"
+            >
+              the one best fit
+            </span>
             <div className="rounded-[6px] border border-emerald-400/25 bg-emerald-400/[0.05] p-4">
               <div className="flex items-center gap-3">
                 <span className="grid place-items-center h-10 w-10 shrink-0 rounded-full border border-white/15 bg-white/[0.06] text-white text-[15px] font-semibold">
                   {winner.initial}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
+                  {/* hand-drawn circle around the pick, drawn in after the match lands */}
+                  <span className="relative inline-flex items-center gap-1.5">
+                    <svg className="pointer-events-none absolute -left-2.5 -right-2.5 -top-1.5 -bottom-1.5 w-[calc(100%+20px)] h-[calc(100%+12px)] text-[#E6BC63]" viewBox="0 0 140 44" preserveAspectRatio="none" aria-hidden="true">
+                      <path d="M70 5 C 26 4, 7 13, 6 22 C 5 33, 46 40, 76 39 C 122 38, 135 26, 130 16 C 125 8, 96 5, 60 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{ strokeDasharray: 400, strokeDashoffset: 400, animation: "hm-draw .8s ease .5s forwards" }} />
+                    </svg>
                     <p className="text-white text-[14.5px] font-semibold truncate">{winner.name}</p>
                     <span className="material-symbols-outlined text-emerald-400 text-[16px]" style={{ fontSize: "16px", fontVariationSettings: "'FILL' 1" }}>verified</span>
-                  </div>
+                  </span>
                   <p className="text-[12px] text-white/55">Copywriting · {winner.band} · {winner.score} vetting score</p>
                 </div>
                 <span className="shrink-0 inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-emerald-300">
