@@ -75,6 +75,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&display=swap"
           rel="stylesheet"
         />
+        {/* Handwriting for margin annotations on the live demos */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap"
+          rel="stylesheet"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
           rel="stylesheet"

@@ -4,6 +4,7 @@
   --font-headline: 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-hand: 'Caveat', 'Segoe Script', cursive;
 
   /* Warm paper: a hair off pure white so the page reads printed, not sterile */
   --color-paper: #F7F5F0;
