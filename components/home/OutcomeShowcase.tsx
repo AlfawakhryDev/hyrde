@@ -1,22 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
+import SketchCard from "./SketchCard";
 
 // ── "Hire outcomes, not gigs" — the flagship differentiator, playing live ─────
-// A client types an outcome -> the AI scopes it into a milestone plan ->
-// milestone 1 matches, the rest queue. Auto-loops so a first-time visitor grasps
-// the model in one glance. Styled as a precise spec panel, not a glassy demo.
+// A client types an outcome -> it is scoped into a milestone plan -> milestone 1
+// matches, the rest queue. Auto-loops. Drawn as a hand-marked paper card that
+// tilts to the cursor (see SketchCard).
 
 const OUTCOME = "I need an MVP for a habit-tracking app";
+const MARKER = "#B5651D"; // ochre marker for hand annotations on paper
 
 const MILESTONES = [
-  { title: "UI/UX design, Figma screens", cat: "Design", usd: "$600", state: "Matching now", live: true },
-  { title: "Build the app from the designs", cat: "Development", usd: "$2,800", state: "Queued", live: false },
-  { title: "QA, bug-fix and launch", cat: "QA", usd: "$400", state: "Queued", live: false },
+  { title: "UI/UX design, Figma screens", cat: "Design", usd: "$600", state: "matching now", live: true },
+  { title: "Build the app from the designs", cat: "Development", usd: "$2,800", state: "queued", live: false },
+  { title: "QA, bug-fix and launch", cat: "QA", usd: "$400", state: "queued", live: false },
 ];
 
-// phase 0 typing · 1 scoping · 2 milestones revealed (held)
 export default function OutcomeShowcase() {
-  const [phase, setPhase] = useState(0);
+  const [phase, setPhase] = useState(0); // 0 typing · 1 scoping · 2 revealed
   const [typed, setTyped] = useState(0);
 
   useEffect(() => {
@@ -24,57 +25,41 @@ export default function OutcomeShowcase() {
     setTyped(0);
     let i = 0;
     const id = setInterval(() => {
-      i++;
-      setTyped(i);
-      if (i >= OUTCOME.length) {
-        clearInterval(id);
-        setTimeout(() => setPhase(1), 550);
-      }
+      i++; setTyped(i);
+      if (i >= OUTCOME.length) { clearInterval(id); setTimeout(() => setPhase(1), 550); }
     }, 34);
     return () => clearInterval(id);
   }, [phase]);
 
   useEffect(() => {
-    if (phase === 1) {
-      const t = setTimeout(() => setPhase(2), 1500);
-      return () => clearTimeout(t);
-    }
-    if (phase === 2) {
-      const t = setTimeout(() => setPhase(0), 4200);
-      return () => clearTimeout(t);
-    }
+    if (phase === 1) { const t = setTimeout(() => setPhase(2), 1500); return () => clearTimeout(t); }
+    if (phase === 2) { const t = setTimeout(() => setPhase(0), 4400); return () => clearTimeout(t); }
   }, [phase]);
 
   return (
-    <div className="relative w-full rounded-[10px] border border-white/12 bg-[#17160F] p-5 md:p-6 shadow-[0_28px_70px_-34px_rgba(0,0,0,0.9)]">
+    <SketchCard rotate={-1.4}>
       <style>{`
         @keyframes os-rise { from { opacity:0; transform: translateY(10px) } to { opacity:1; transform:none } }
-        @keyframes os-dot { 0%,80%,100% { opacity:.2 } 40% { opacity:.9 } }
+        @keyframes os-dot { 0%,80%,100% { opacity:.25 } 40% { opacity:.9 } }
         @keyframes os-caret { 0%,100% { opacity:0 } 50% { opacity:1 } }
         @keyframes os-draw { to { stroke-dashoffset: 0 } }
-        @keyframes os-ink { from { opacity:0; transform: rotate(3deg) translateY(4px) } to { opacity:1; transform: rotate(3deg) translateY(0) } }
+        @keyframes os-ink { from { opacity:0; transform: rotate(-3deg) translateY(4px) } to { opacity:1; transform: rotate(-3deg) translateY(0) } }
       `}</style>
 
-      {/* Panel header */}
-      <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/8">
-        <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400/70 animate-ping" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          </span>
-          Outcome intake
-        </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/35">
-          {phase === 0 ? "You describe it" : phase === 1 ? "Scoping" : "Milestone plan"}
+      {/* Header — handwritten title, no status dot */}
+      <div className="flex items-end justify-between mb-4 pb-3 border-b border-[#DAD6C8]">
+        <span className="text-[#1A1A14] text-[22px] leading-none" style={{ fontFamily: "var(--font-hand)" }}>Outcome intake</span>
+        <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677]">
+          {phase === 0 ? "you describe it" : phase === 1 ? "scoping" : "the plan"}
         </span>
       </div>
 
       {/* The outcome input */}
-      <div className="rounded-[6px] border border-white/10 bg-white/[0.02] p-4">
-        <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-white/40 mb-2">The outcome you want</div>
-        <p className="text-white text-[14.5px] md:text-[15px] font-medium leading-snug min-h-[2.6em]">
+      <div className="rounded-[3px] border border-[#DAD6C8] bg-[#FCFBF4] p-4">
+        <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#8A8677] mb-2">the outcome you want</div>
+        <p className="text-[#1A1A14] text-[14.5px] md:text-[15px] font-medium leading-snug min-h-[2.6em]">
           {OUTCOME.slice(0, typed)}
-          {phase === 0 && <span className="inline-block w-[2px] h-[1.05em] -mb-[2px] ml-0.5 bg-white/70" style={{ animation: "os-caret 1s step-end infinite" }} />}
+          {phase === 0 && <span className="inline-block w-[2px] h-[1.05em] -mb-[2px] ml-0.5 bg-[#1A1A14]" style={{ animation: "os-caret 1s step-end infinite" }} />}
         </p>
       </div>
 
@@ -84,10 +69,10 @@ export default function OutcomeShowcase() {
           <div className="flex flex-col items-center justify-center h-[210px] text-center" style={{ animation: "os-rise .4s ease both" }}>
             <div className="flex items-center gap-1.5 mb-4">
               {[0, 1, 2].map(i => (
-                <span key={i} className="h-1.5 w-1.5 rounded-full bg-white/70" style={{ animation: `os-dot 1.2s ease-in-out ${i * 0.18}s infinite` }} />
+                <span key={i} className="h-1.5 w-1.5 rounded-full bg-[#1A1A14]" style={{ animation: `os-dot 1.2s ease-in-out ${i * 0.18}s infinite` }} />
               ))}
             </div>
-            <p className="text-[13px] text-white/50 max-w-[260px] leading-relaxed">
+            <p className="text-[13px] text-[#6B6A5E] max-w-[260px] leading-relaxed">
               Breaking your outcome into an ordered plan. Each milestone handed to one vetted specialist.
             </p>
           </div>
@@ -96,15 +81,8 @@ export default function OutcomeShowcase() {
         {phase === 2 && (
           <div className="relative">
             <div className="flex items-center justify-between mb-3">
-              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
-                3 milestones, matched in order
-              </p>
-              {/* handwritten margin note over the plan */}
-              <span
-                className="text-[#E6BC63] text-[16px] leading-none pointer-events-none"
-                style={{ fontFamily: "var(--font-hand)", animation: "os-ink .4s ease .7s both" }}
-                aria-hidden="true"
-              >
+              <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677]">3 milestones, matched in order</p>
+              <span className="text-[16px] leading-none pointer-events-none" style={{ fontFamily: "var(--font-hand)", color: MARKER, animation: "os-ink .4s ease .7s both" }} aria-hidden="true">
                 one plan, not a pile
               </span>
             </div>
@@ -112,30 +90,28 @@ export default function OutcomeShowcase() {
               {MILESTONES.map((m, i) => (
                 <div
                   key={m.title}
-                  className={`relative flex items-center gap-3 rounded-[6px] border px-3.5 py-2.5 ${m.live ? "border-white/20 bg-white/[0.04]" : "border-white/8 bg-white/[0.015]"}`}
+                  className={`flex items-center gap-3 rounded-[3px] border px-3.5 py-2.5 ${m.live ? "border-[#1A1A14]/30 bg-[#FCFBF4]" : "border-[#E2DFD3] bg-transparent"}`}
                   style={{ animation: `os-rise .5s cubic-bezier(.2,.7,.2,1) both ${0.12 + i * 0.16}s` }}
                 >
-                  <span className="grid place-items-center h-6 w-6 shrink-0 rounded-[4px] border border-white/12 font-mono text-white/60 text-[11px]">{i + 1}</span>
+                  <span className="grid place-items-center h-6 w-6 shrink-0 rounded-[3px] border border-[#CFCBBC] font-mono text-[#6B6A5E] text-[11px]">{i + 1}</span>
                   <div className="flex-1 min-w-0">
                     <span className="relative inline-block max-w-full align-bottom">
-                      <p className="text-[13px] text-white/85 font-medium truncate">{m.title}</p>
-                      {/* hand-drawn underline under milestone 1, the one matching now */}
+                      <p className="text-[13px] text-[#1A1A14] font-medium truncate">{m.title}</p>
                       {m.live && (
-                        <svg className="pointer-events-none absolute -bottom-1 left-0 w-full h-[6px] text-[#E6BC63]" viewBox="0 0 200 6" preserveAspectRatio="none" aria-hidden="true">
-                          <path d="M1 4 C 40 1, 70 6, 110 3 C 150 1, 180 5, 199 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{ strokeDasharray: 230, strokeDashoffset: 230, animation: "os-draw .8s ease .55s forwards" }} />
+                        <svg className="pointer-events-none absolute -bottom-1 left-0 w-full h-[6px]" viewBox="0 0 200 6" preserveAspectRatio="none" aria-hidden="true" style={{ color: MARKER }}>
+                          <path d="M1 4 C 40 1, 70 6, 110 3 C 150 1, 180 5, 199 3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{ strokeDasharray: 230, strokeDashoffset: 230, animation: "os-draw .8s ease .55s forwards" }} />
                         </svg>
                       )}
                     </span>
-                    <p className="text-[11px] text-white/40">{m.cat} · {m.usd}</p>
+                    <p className="text-[11px] text-[#8A8677]">{m.cat} · {m.usd}</p>
                   </div>
-                  <span className={`shrink-0 inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.1em] ${m.live ? "text-emerald-300" : "text-white/40"}`}>
-                    {m.live && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />}
+                  <span className={`shrink-0 font-mono text-[9.5px] uppercase tracking-[0.1em] ${m.live ? "text-emerald-700" : "text-[#A5A292]"}`}>
                     {m.state}
                   </span>
                 </div>
               ))}
             </div>
-            <p className="text-[11.5px] text-white/40 mt-3 px-1 leading-relaxed">
+            <p className="text-[11.5px] text-[#8A8677] mt-3 px-1 leading-relaxed">
               Milestone 1 matches now. The rest match automatically as each is approved.
             </p>
           </div>
@@ -143,10 +119,10 @@ export default function OutcomeShowcase() {
 
         {phase === 0 && (
           <div className="flex items-center justify-center h-[210px]">
-            <p className="text-[12.5px] text-white/30 italic">Not &ldquo;a React developer.&rdquo; The whole outcome.</p>
+            <p className="text-[15px]" style={{ fontFamily: "var(--font-hand)", color: "#A5A292" }}>Not &ldquo;a React developer.&rdquo; The whole outcome.</p>
           </div>
         )}
       </div>
-    </div>
+    </SketchCard>
   );
 }
