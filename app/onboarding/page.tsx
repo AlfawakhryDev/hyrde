@@ -17,12 +17,12 @@ function Onboarding() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
 
-    const { error } = await supabase.from("profiles").upsert({
-      id: user.id,
-      mode,
-      display_name:
+    // Write via a SECURITY DEFINER RPC: a direct profiles upsert trips the
+    // is_admin/payout column lockdown ("permission denied for table profiles").
+    const { error } = await supabase.rpc("upsert_my_profile", {
+      p_mode: mode,
+      p_display_name:
         (user.user_metadata?.display_name as string) || user.email?.split("@")[0] || "New user",
-      updated_at: new Date().toISOString(),
     });
     if (error) {
       setError(error.message);
