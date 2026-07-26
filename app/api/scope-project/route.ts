@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
 import { guardAi } from "@/lib/ratelimit";
 import { CATEGORIES } from "@/lib/arena";
+import { MILESTONE_TYPES } from "@/lib/instrumentation";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -56,12 +57,13 @@ Rules:
 - Each milestone must be independently completable by one freelancer and produce a concrete deliverable.
 - Each milestone: a short title (max 9 words), a 2-4 sentence brief written as if to the freelancer who'll do it (include what the prior milestone handed off, if any), a category, a fair mid-market USD budget (integer), and suggested days-from-project-start it should be due by (integer, increasing).
 - category must be exactly one of: ${CATEGORIES.join(", ")}.
+- milestoneType classifies the KIND of work for cost tracking. It must be exactly one of: ${MILESTONE_TYPES.join(", ")}. Pick the single closest one to each milestone's actual work.
 - projectTitle: max 8 words, describes the whole outcome.
 
 Write all titles and descriptions in plain language. Never use the em-dash character (—).
 
 Return ONLY valid JSON:
-{"projectTitle": "...", "milestones": [{"title": "...", "brief": "...", "category": "...", "budgetUsd": <integer>, "dueInDays": <integer>}], "note": "<one short sentence to the client about how you split this>"}`;
+{"projectTitle": "...", "milestones": [{"title": "...", "brief": "...", "category": "...", "milestoneType": "...", "budgetUsd": <integer>, "dueInDays": <integer>}], "note": "<one short sentence to the client about how you split this>"}`;
 
   try {
     const msg = await anthropic.messages.create({
@@ -73,12 +75,16 @@ Return ONLY valid JSON:
     const parsed = JSON.parse(raw.replace(/^```json\n?/, "").replace(/\n?```$/, "").trim());
 
     const cats = new Set<string>(CATEGORIES);
+    const types = new Set<string>(MILESTONE_TYPES);
     const milestones = (Array.isArray(parsed.milestones) ? parsed.milestones : [])
       .slice(0, 5)
       .map((m: Record<string, unknown>) => ({
         title: String(m.title ?? "").slice(0, 90),
         brief: String(m.brief ?? "").slice(0, 2000),
         category: cats.has(String(m.category)) ? String(m.category) : "Other",
+        // LLM-classified controlled milestone type (Call C). Empty when the model
+        // returns an off-vocabulary value; create-project keyword-maps the fallback.
+        milestoneType: types.has(String(m.milestoneType)) ? String(m.milestoneType) : "",
         budgetUsd: Math.max(0, Math.min(50000, Math.round(Number(m.budgetUsd) || 0))),
         dueInDays: Math.max(1, Math.min(365, Math.round(Number(m.dueInDays) || 7))),
       }))

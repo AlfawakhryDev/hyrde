@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/arena";
-import { classifyArchetype, mapMilestoneType, estimateBand } from "@/lib/instrumentation";
+import { classifyArchetype, mapMilestoneType, estimateBand, MILESTONE_TYPES, type MilestoneType } from "@/lib/instrumentation";
 import { QUESTION_SET_VERSION } from "@/lib/questiontree";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +40,7 @@ type MilestoneInput = {
   title: string;
   brief: string;
   category: string;
+  milestoneType: string; // LLM-classified controlled type ("" = fall back to keyword map)
   budgetUsd: number;
   dueInDays: number;
 };
@@ -61,6 +62,7 @@ export async function POST(req: NextRequest) {
       title: String(m.title ?? "").slice(0, 90),
       brief: String(m.brief ?? "").slice(0, 2000),
       category: cats.has(String(m.category)) ? String(m.category) : "Other",
+      milestoneType: (MILESTONE_TYPES as readonly string[]).includes(String(m.milestoneType)) ? String(m.milestoneType) : "",
       budgetUsd: Math.max(0, Math.min(50000, Math.round(Number(m.budgetUsd) || 0))),
       dueInDays: Math.max(1, Math.min(365, Math.round(Number(m.dueInDays) || 7))),
     }))
@@ -207,7 +209,10 @@ export async function POST(req: NextRequest) {
   for (let i = 0; i < milestones.length; i++) {
     const m = milestones[i];
     const band = bands[i];
-    const mapped = mapMilestoneType(m.title, m.brief, m.category);
+    // Prefer the LLM's controlled classification (Call C); keyword-map otherwise.
+    const mapped = m.milestoneType
+      ? { type: m.milestoneType as MilestoneType, matched: true, rawLabel: `llm:${m.category}: ${m.title}` }
+      : mapMilestoneType(m.title, m.brief, m.category);
 
     const { data: milestone, error: mErr } = await supabase
       .from("milestones")
