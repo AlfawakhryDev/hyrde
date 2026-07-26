@@ -48,8 +48,8 @@ export default function HeroBackdrop() {
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 90% 60% at 70% 20%, rgba(91,79,207,0.28), transparent 60%)," +
-            "radial-gradient(ellipse 60% 50% at 15% 85%, rgba(169,158,232,0.12), transparent 60%)," +
+            "radial-gradient(ellipse 90% 60% at 70% 20%, rgba(247,245,240,0.10), transparent 60%)," +
+            "radial-gradient(ellipse 60% 50% at 15% 85%, rgba(247,245,240,0.05), transparent 60%)," +
             "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px)," +
             "linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
           backgroundSize: "auto, auto, 56px 56px, 56px 56px",
@@ -62,9 +62,9 @@ export default function HeroBackdrop() {
         style={{
           opacity: "var(--reveal)",
           backgroundImage:
-            "radial-gradient(240px at var(--mx) var(--my), rgba(91,79,207,0.22), transparent 70%)," +
-            "linear-gradient(rgba(169,158,232,0.35) 1px, transparent 1px)," +
-            "linear-gradient(90deg, rgba(169,158,232,0.35) 1px, transparent 1px)",
+            "radial-gradient(240px at var(--mx) var(--my), rgba(247,245,240,0.10), transparent 70%)," +
+            "linear-gradient(rgba(247,245,240,0.22) 1px, transparent 1px)," +
+            "linear-gradient(90deg, rgba(247,245,240,0.22) 1px, transparent 1px)",
           backgroundSize: "auto, 56px 56px, 56px 56px",
           WebkitMaskImage:
             "radial-gradient(260px circle at var(--mx) var(--my), black 0%, rgba(0,0,0,0.4) 55%, transparent 80%)",
@@ -79,7 +79,7 @@ export default function HeroBackdrop() {
         style={{
           opacity: "calc(var(--reveal) * 0.9)",
           background:
-            "radial-gradient(140px circle at var(--mx) var(--my), rgba(169,158,232,0.14), transparent 70%)",
+            "radial-gradient(140px circle at var(--mx) var(--my), rgba(247,245,240,0.10), transparent 70%)",
         }}
       />
     </div>

@@ -11,6 +11,7 @@ type Milestone = {
   title: string;
   brief: string;
   category: string;
+  milestoneType?: string; // LLM-classified controlled type, passed through to create
   budgetUsd: number;
   dueInDays: number;
 };

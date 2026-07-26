@@ -8,7 +8,7 @@ const CSS = `
 .gp-band { outline: none; }
 .gp-band .gp-rail { transition: all .35s ease; }
 ${RAILS.map((_, i) =>
-  `.gp-band:is(:hover,:focus-within) .gp-rail-${i} { border-color: rgba(169,158,232,.6); color: #fff; background: rgba(169,158,232,.12); transition-delay: ${0.06 + i * 0.09}s }`
+  `.gp-band:is(:hover,:focus-within) .gp-rail-${i} { border-color: rgba(247,245,240,.55); color: #fff; background: rgba(247,245,240,.08); transition-delay: ${0.06 + i * 0.09}s }`
 ).join("\n")}
 .gp-band .gp-step { opacity: .35; transition: opacity .3s ease; }
 .gp-band:is(:hover,:focus-within) .gp-step-1 { opacity: 1; transition-delay: .1s }
@@ -23,19 +23,19 @@ ${RAILS.map((_, i) =>
 
 export default function GlobalPay() {
   return (
-    <div tabIndex={0} className="gp-band relative overflow-hidden rounded-2xl bg-[#0A0A0B] px-8 md:px-14 py-14 md:py-16 cursor-default select-none">
+    <div tabIndex={0} className="gp-band relative overflow-hidden rounded-[8px] bg-[#100F0B] px-8 md:px-14 py-14 md:py-16 cursor-default select-none">
       <style>{CSS}</style>
       <div
         aria-hidden="true"
         className="gp-glow absolute inset-0"
-        style={{ backgroundImage: "radial-gradient(ellipse 70% 90% at 85% 20%, rgba(91,79,207,0.3), transparent 60%)" }}
+        style={{ backgroundImage: "radial-gradient(ellipse 70% 90% at 85% 20%, rgba(247,245,240,0.06), transparent 60%)" }}
       />
 
       <div className="relative grid lg:grid-cols-2 gap-10 items-center">
         <div>
-          <p className="text-[12px] font-medium text-white/50 mb-3">Borderless by design</p>
-          <h2 className="font-light text-white leading-[1.04] tracking-[-0.03em] text-[clamp(30px,4.2vw,50px)] max-w-[15ch]">
-            Get paid on your rails, anywhere
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/45 mb-4">Borderless by design</p>
+          <h2 className="font-display font-light text-[#F7F5F0] leading-[1.06] tracking-[-0.015em] text-[clamp(30px,4.2vw,50px)] max-w-[15ch]">
+            Get paid on your rails, anywhere.
           </h2>
           <p className="text-[14px] text-white/55 leading-relaxed max-w-[420px] mt-5">
             No Stripe in your country? No problem. Clients pay you directly on the rail you
