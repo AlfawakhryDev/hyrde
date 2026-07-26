@@ -40,11 +40,11 @@ const CSS = `
 .alive:is(:hover,:focus-within) .ag-strike-2::after { transform: scaleX(1); transition-delay: .2s }
 .alive:is(:hover,:focus-within) .ag-strike-3::after { transform: scaleX(1); transition-delay: .35s }
 .alive .ag-keep { opacity: .35; transform: scale(.94); transition: all .45s cubic-bezier(.2,.9,.3,1.2) .55s; }
-.alive:is(:hover,:focus-within) .ag-keep { opacity: 1; transform: scale(1.04); color: #5B4FCF; }
+.alive:is(:hover,:focus-within) .ag-keep { opacity: 1; transform: scale(1.04); color: #14140F; }
 `;
 
 const card =
-  "alive group rounded-2xl bg-gradient-to-br p-6 min-h-[300px] flex flex-col cursor-default select-none";
+  "alive group rounded-[8px] border border-[#E7E4DB] bg-[#FBFAF6] p-6 min-h-[300px] flex flex-col cursor-default select-none";
 
 export default function AliveGrid() {
   return (
@@ -52,7 +52,7 @@ export default function AliveGrid() {
       <style>{CSS}</style>
 
       {/* 1 — Interview-vetted only */}
-      <div tabIndex={0} className={`${card} from-[#E9F7F1] to-[#F6FCF9]`}>
+      <div tabIndex={0} className={`${card}`}>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Interview-vetted only</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
           Every freelancer passed an adaptive AI interview. Scenario, probing follow-up, live
@@ -63,7 +63,7 @@ export default function AliveGrid() {
           <p className="text-[13px] text-[#4A4A55] mb-2.5">How would you cut LCP on a slow storefront?</p>
           <div className="flex items-center text-[13px] font-medium text-[#232329]">
             <span className="ag-type">Preload the hero image, inline critical CSS, ship RSC…</span>
-            <span className="ag-caret text-[#5B4FCF]">▍</span>
+            <span className="ag-caret text-[#14140F]">▍</span>
           </div>
           <div className="flex justify-end mt-2">
             <span className="ag-stamp inline-flex items-center gap-1.5 rounded-full border-2 border-emerald-500/70 text-emerald-600 text-[12px] font-bold px-2.5 py-0.5">
@@ -74,7 +74,7 @@ export default function AliveGrid() {
       </div>
 
       {/* 2 — Zero proposals */}
-      <div tabIndex={0} className={`${card} from-[#EDEBFF] to-[#F7F6FF]`}>
+      <div tabIndex={0} className={`${card}`}>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Zero proposals</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
           There is no apply button, so there is nothing to spam. The AI assigns your task to one
@@ -90,8 +90,8 @@ export default function AliveGrid() {
               {txt}
             </div>
           ))}
-          <div className="ag-win rounded-lg bg-[#ffffff] shadow-[0_4px_20px_rgba(91,79,207,.14)] px-3.5 py-2.5 flex items-center gap-2.5">
-            <span className="grid place-items-center h-6 w-6 rounded-full bg-gradient-to-br from-[#6D5FD6] to-[#A99EE8] text-white text-[10.5px] font-semibold">S</span>
+          <div className="ag-win rounded-lg bg-[#ffffff] shadow-[0_4px_20px_rgba(20,20,15,.1)] px-3.5 py-2.5 flex items-center gap-2.5">
+            <span className="grid place-items-center h-6 w-6 rounded-full border border-[#E3E0D8] bg-white text-[#57564F] text-[10.5px] font-semibold">S</span>
             <span className="text-[13px] font-medium text-[#232329] flex-1">AI matched: Sara K.</span>
             <span className="text-[11.5px] font-semibold text-emerald-600">Strong · 91 ✓</span>
           </div>
@@ -99,7 +99,7 @@ export default function AliveGrid() {
       </div>
 
       {/* 3 — AI-checked delivery */}
-      <div tabIndex={0} className={`${card} from-[#FFF3E9] to-[#FFFAF5]`}>
+      <div tabIndex={0} className={`${card}`}>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">AI-checked delivery</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
           Before you approve, an impartial AI reviews the deliverable against your brief.
@@ -114,7 +114,7 @@ export default function AliveGrid() {
             </span>
           </div>
           <div className="h-1.5 rounded-full bg-[#F1F0F5] overflow-hidden mb-3">
-            <div className="ag-bar h-full rounded-full bg-gradient-to-r from-[#A99EE8] to-[#5B4FCF]" />
+            <div className="ag-bar h-full rounded-full bg-[#14140F]" />
           </div>
           <div className="relative h-6">
             <span className="ag-idle absolute inline-flex items-center gap-1.5 rounded-full bg-[#F1F0F5] text-[#6B6B76] text-[11.5px] font-medium px-2.5 py-1">
@@ -128,7 +128,7 @@ export default function AliveGrid() {
       </div>
 
       {/* 4 — Keep 100% */}
-      <div tabIndex={0} className={`${card} from-[#EDEBFF] to-[#FDF6FF]`}>
+      <div tabIndex={0} className={`${card}`}>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">$0 fees in early access</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
           No platform fee, no contract fees. So quotes aren&apos;t padded to claw commissions back.
