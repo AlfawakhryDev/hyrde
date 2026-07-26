@@ -38,12 +38,15 @@ export type Question = {
 // with a contingency band rather than failing validation.
 export const DONT_KNOW = "dont_know";
 
-// Archetypes that currently have a tree. Others skip interrogation and fall
-// straight through to naive decomposition (honest: we only interrogate where we
-// have calibrated questions).
-export const TREE_ARCHETYPES = new Set(["shopify", "shopify_replatform", "shopify_theme_custom"]);
-export function archetypeHasTree(slug: string | null | undefined): boolean {
-  return !!slug && TREE_ARCHETYPES.has(slug);
+// Shopify has a specialized, calibrated tree. Everything else uses the generic
+// tree below, so EVERY project gets interrogated (never zero questions).
+export const SHOPIFY_ARCHETYPES = new Set(["shopify", "shopify_replatform", "shopify_theme_custom"]);
+export function isShopify(slug: string | null | undefined): boolean {
+  return !!slug && SHOPIFY_ARCHETYPES.has(slug);
+}
+// Every archetype now resolves to a tree (Shopify-specific or generic).
+export function archetypeHasTree(): boolean {
+  return true;
 }
 
 const SHOPIFY_TREE: Question[] = [
@@ -258,10 +261,157 @@ const SHOPIFY_TREE: Question[] = [
   },
 ];
 
-// The tree for an archetype. Only Shopify is calibrated today; the sub-archetypes
-// share the Shopify set.
+// Generic tree — used for every non-Shopify project so nothing skips
+// interrogation. These are the questions that move cost variance on almost any
+// freelance outcome, regardless of domain (a game, an app, a brand, content...).
+const GENERIC_TREE: Question[] = [
+  {
+    key: "generic.scope_clarity",
+    text: "How defined is what you need right now?",
+    help: "The biggest driver of cost variance. Honesty here saves the most.",
+    type: "single_select",
+    options: [
+      { value: "detailed_spec", label: "I have a detailed spec" },
+      { value: "rough_idea", label: "A rough idea" },
+      { value: "just_outcome", label: "Just the outcome, help me shape it" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.85,
+    affects_milestones: ["discovery", "frontend_build"],
+    unknown_risk: {
+      description: "Scope is not yet defined; effort could vary widely until it is pinned down.",
+      cost_impact_multiplier: [1.0, 2.5],
+    },
+  },
+  {
+    key: "generic.existing_assets",
+    text: "What can we build on?",
+    type: "single_select",
+    options: [
+      { value: "ready", label: "Brand, designs or code, ready to go" },
+      { value: "some", label: "Some pieces exist" },
+      { value: "scratch", label: "Starting from scratch" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.7,
+    affects_milestones: ["design_system", "design_page", "frontend_build"],
+    unknown_risk: {
+      description: "Starting materials unconfirmed; building from scratch is a large cost delta.",
+      cost_impact_multiplier: [1.0, 2.0],
+    },
+  },
+  {
+    key: "generic.integrations",
+    text: "Does it need to connect to other tools or systems?",
+    help: "Each connection is its own piece of work.",
+    type: "multi_select",
+    options: [
+      { value: "payments", label: "Payments" },
+      { value: "accounts", label: "Login / accounts" },
+      { value: "external_api", label: "External APIs" },
+      { value: "data_import", label: "Import existing data" },
+      { value: "none", label: "None of these" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.7,
+    affects_milestones: ["integration_third_party", "backend_build"],
+    unknown_risk: {
+      description: "Integration surface unconfirmed; each connected system adds work.",
+      cost_impact_multiplier: [1.0, 2.0],
+    },
+  },
+  {
+    key: "generic.platform",
+    text: "Any platform or technology it has to be built on?",
+    type: "single_select",
+    options: [
+      { value: "specific", label: "Yes, a specific platform or stack" },
+      { value: "flexible", label: "No preference, recommend one" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.6,
+    affects_milestones: ["frontend_build", "backend_build"],
+    unknown_risk: {
+      description: "Platform constraints unknown; the wrong assumption can mean rework.",
+      cost_impact_multiplier: [1.0, 1.6],
+    },
+  },
+  {
+    key: "generic.content_ownership",
+    text: "Who provides the content, copy, or assets?",
+    type: "single_select",
+    options: [
+      { value: "client", label: "We do" },
+      { value: "hyrde", label: "We need help with it" },
+      { value: DONT_KNOW, label: "Undecided" },
+    ],
+    variance_weight: 0.55,
+    affects_milestones: ["content_migration", "design_page"],
+    unknown_risk: {
+      description: "Who supplies content is unassigned; a classic source of scope creep.",
+      cost_impact_multiplier: [1.0, 1.5],
+    },
+  },
+  {
+    key: "generic.approvals",
+    text: "Who signs off on the work?",
+    type: "single_select",
+    options: [
+      { value: "just_me", label: "Just me" },
+      { value: "small_team", label: "A small team" },
+      { value: "stakeholders", label: "Several stakeholders" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.5,
+    affects_milestones: ["discovery"],
+    unknown_risk: {
+      description: "Multiple approvers can drive review cycles and rework.",
+      cost_impact_multiplier: [1.0, 1.6],
+    },
+  },
+  {
+    key: "generic.timeline",
+    text: "Is there a hard deadline you need to hit?",
+    type: "single_select",
+    options: [
+      { value: "fixed", label: "Yes, a fixed date" },
+      { value: "flexible", label: "Flexible" },
+      { value: DONT_KNOW, label: "Not sure yet" },
+    ],
+    variance_weight: 0.5,
+    affects_milestones: ["deployment", "qa_functional"],
+    unknown_risk: {
+      description: "A fixed date compresses sequencing and can raise cost.",
+      cost_impact_multiplier: [1.0, 1.3],
+    },
+  },
+  {
+    key: "generic.success_metric",
+    text: "How will you judge it's done well?",
+    type: "single_select",
+    options: [
+      { value: "specific", label: "A specific measure" },
+      { value: "general", label: "General satisfaction" },
+      { value: DONT_KNOW, label: "I'm not sure yet" },
+    ],
+    variance_weight: 0.4,
+    affects_milestones: ["qa_functional"],
+    unknown_risk: {
+      description: "Undefined success criteria make acceptance ambiguous.",
+      cost_impact_multiplier: [1.0, 1.4],
+    },
+  },
+];
+
+// The tree for an archetype: Shopify gets its calibrated set, everything else
+// gets the generic set. Never returns empty, so interrogation always runs.
 export function treeFor(archetypeSlug: string | null | undefined): Question[] {
-  return archetypeHasTree(archetypeSlug) ? SHOPIFY_TREE : [];
+  return isShopify(archetypeSlug) ? SHOPIFY_TREE : GENERIC_TREE;
+}
+
+// Which question-set version was used, for attribution in the dataset.
+export function versionFor(archetypeSlug: string | null | undefined): string {
+  return isShopify(archetypeSlug) ? "shopify-v1" : "generic-v1";
 }
 
 // Answers are keyed by question.key. single_select => string; multi_select =>

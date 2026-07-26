@@ -20,6 +20,7 @@ type InterrogationRiskFlag = {
 };
 type InterrogationInput = {
   archetype?: string;
+  question_set_version?: string;
   confidence?: number;
   answers?: InterrogationAnswer[];
   risk_flags?: InterrogationRiskFlag[];
@@ -110,6 +111,7 @@ export async function POST(req: NextRequest) {
   //    Persisted before the scope so scope_documents.session_id can reference it.
   const confidence = interrogation && typeof interrogation.confidence === "number"
     ? Math.max(0, Math.min(1, interrogation.confidence)) : 0.25;
+  const qsVersion = String(interrogation?.question_set_version || QUESTION_SET_VERSION).slice(0, 40);
   let sessionId: string | null = null;
   if (interrogation) {
     const { data: sess } = await supabase
@@ -120,7 +122,7 @@ export async function POST(req: NextRequest) {
         completed_at: new Date().toISOString(),
         final_confidence: confidence,
         abandoned: false,
-        question_set_version: QUESTION_SET_VERSION,
+        question_set_version: qsVersion,
       })
       .select("id")
       .single();
@@ -196,7 +198,7 @@ export async function POST(req: NextRequest) {
   if (interrogation) {
     events.push({
       project_id: projectId, event_type: "interrogation_completed",
-      payload: { session_id: sessionId, confidence, answers: (interrogation.answers ?? []).length, risk_flags: riskFlags.length, question_set_version: QUESTION_SET_VERSION },
+      payload: { session_id: sessionId, confidence, answers: (interrogation.answers ?? []).length, risk_flags: riskFlags.length, question_set_version: qsVersion },
       actor: "client",
     });
   }
