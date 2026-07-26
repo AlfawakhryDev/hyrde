@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags,
-  answerFacts, archetypeHasTree, CONFIDENCE_TARGET, DONT_KNOW,
+  answerFacts, isShopify, versionFor, CONFIDENCE_TARGET, DONT_KNOW,
   type Question, type AnswerMap,
 } from "@/lib/questiontree";
 
@@ -72,9 +72,10 @@ export default function ProjectComposer({
       setArchetype(slug);
       setDisambiguation(Array.isArray(data.disambiguation_questions) ? data.disambiguation_questions : []);
 
-      if (archetypeHasTree(slug) && conf >= 0.7) beginInterrogation(slug);
-      else if (archetypeHasTree(slug)) setPhase("confirm");     // leaning Shopify but unsure
-      else runScope(slug, [], []);                              // no tree -> naive scope
+      // Every project gets interrogated. Only ask the Shopify confirm when the
+      // classifier is unsure AND leaning Shopify (specialized vs generic tree).
+      if (isShopify(slug) && conf < 0.7) setPhase("confirm");
+      else beginInterrogation(slug);
     } catch {
       // Classifier down: fall through to naive scoping so creation never blocks.
       runScope("other", [], []);
@@ -124,7 +125,7 @@ export default function ProjectComposer({
         body: JSON.stringify({ outcome: outcome.trim(), archetype: slug, facts, risks }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? "Could not scope this."); setPhase(archetypeHasTree(slug) ? "interrogate" : "outcome"); return; }
+      if (!res.ok) { setError(data.error ?? "Could not scope this."); setPhase("interrogate"); return; }
       setProjectTitle(data.projectTitle);
       setMilestones(data.milestones);
       setNote(data.note ?? "");
@@ -149,6 +150,7 @@ export default function ProjectComposer({
     if (asked.length === 0) return null;
     return {
       archetype,
+      question_set_version: versionFor(archetype),
       confidence: scopeConfidence(tree, answers),
       answers: asked.map(q => {
         const v = answers[q.key];
@@ -248,7 +250,7 @@ export default function ProjectComposer({
                 className="text-left rounded-xl border border-border-crisp px-4 py-3.5 text-sm font-medium text-on-surface hover:border-electric-violet transition">
                 Yes, it&apos;s a Shopify store
               </button>
-              <button onClick={() => runScope("other", [], [])}
+              <button onClick={() => beginInterrogation("other")}
                 className="text-left rounded-xl border border-border-crisp px-4 py-3.5 text-sm font-medium text-on-surface hover:border-electric-violet transition">
                 No, something else
               </button>
