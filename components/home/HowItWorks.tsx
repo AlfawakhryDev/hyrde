@@ -19,7 +19,7 @@ const CSS = `
 .hw-card .hw-pill { opacity: 0; transform: translateY(6px) scale(.8); transition: all .4s cubic-bezier(.2,.9,.3,1.35) .8s; }
 .hw-card:is(:hover,:focus-within) .hw-pill { opacity: 1; transform: none; }
 .hw-card .hw-ava { transition: box-shadow .4s .8s, transform .4s .8s; }
-.hw-card:is(:hover,:focus-within) .hw-ava { box-shadow: 0 0 0 3px rgba(91,79,207,.35); transform: scale(1.06); }
+.hw-card:is(:hover,:focus-within) .hw-ava { box-shadow: 0 0 0 3px rgba(20,20,15,.28); transform: scale(1.06); }
 
 /* 3 — AI check appears, then PAID stamps */
 .hw-card .hw-check { opacity: 0; transform: translateX(-6px); transition: all .35s ease .15s; }
@@ -30,7 +30,7 @@ const CSS = `
 `;
 
 const card =
-  "hw-card group rounded-2xl bg-[#F7F6FA] p-6 min-h-[280px] flex flex-col cursor-default select-none";
+  "hw-card group rounded-[8px] border border-[#E7E4DB] bg-[#FBFAF6] p-6 min-h-[280px] flex flex-col cursor-default select-none";
 
 export default function HowItWorks() {
   return (
@@ -39,7 +39,7 @@ export default function HowItWorks() {
 
       {/* Step 1 */}
       <div tabIndex={0} className={card}>
-        <p className="text-[12px] font-semibold text-electric-violet mb-1.5">01</p>
+        <p className="font-mono text-[12px] tracking-[0.1em] text-[#8A887E] mb-2">01</p>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Describe the work</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5">
           One rough sentence is enough. The AI structures it into a brief specialists can act on.
@@ -49,10 +49,10 @@ export default function HowItWorks() {
           <p className="text-[13px] font-medium text-[#232329] mb-1.5">Landing page copy for fintech app</p>
           <div className="flex items-center text-[12.5px] text-[#6B6B76]">
             <span className="hw-type">Voice: confident, no jargon. 6 sections + CTA…</span>
-            <span className="text-electric-violet">▍</span>
+            <span className="text-[#14140F]">▍</span>
           </div>
           <div className="flex justify-end mt-2">
-            <span className="hw-chip inline-flex items-center gap-1 rounded-full bg-electric-violet/10 text-electric-violet text-[11.5px] font-semibold px-2.5 py-1">
+            <span className="hw-chip inline-flex items-center gap-1 rounded-full bg-[#14140F]/[0.06] text-[#14140F] text-[11.5px] font-semibold px-2.5 py-1">
               ✦ Polished with AI
             </span>
           </div>
@@ -61,7 +61,7 @@ export default function HowItWorks() {
 
       {/* Step 2 */}
       <div tabIndex={0} className={card}>
-        <p className="text-[12px] font-semibold text-electric-violet mb-1.5">02</p>
+        <p className="font-mono text-[12px] tracking-[0.1em] text-[#8A887E] mb-2">02</p>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">The AI matches</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5">
           It scores every vetted specialist in the category and assigns the single best fit. No bidding, no browsing.
@@ -74,8 +74,8 @@ export default function HowItWorks() {
           </div>
           <div className="flex items-center gap-3">
             <span className="shrink-0 rounded-lg bg-[#F1F0F5] px-2.5 py-1.5 text-[11.5px] font-medium text-[#4A4A55]">Your task</span>
-            <div className="hw-line flex-1 h-[2px] rounded-full bg-gradient-to-r from-[#A99EE8] to-[#5B4FCF]" />
-            <span className="hw-ava grid place-items-center h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-[#6D5FD6] to-[#A99EE8] text-white text-[13px] font-semibold">S</span>
+            <div className="hw-line flex-1 h-[2px] rounded-full bg-[#14140F]" />
+            <span className="hw-ava grid place-items-center h-9 w-9 shrink-0 rounded-full border border-[#E3E0D8] bg-white text-[#57564F] text-[13px] font-semibold">S</span>
           </div>
           <p className="text-right text-[11.5px] text-[#9a9aa4] mt-1.5">Sara K. · Copywriting · Strong</p>
         </div>
@@ -83,7 +83,7 @@ export default function HowItWorks() {
 
       {/* Step 3 */}
       <div tabIndex={0} className={`${card} sm:col-span-2 lg:col-span-1`}>
-        <p className="text-[12px] font-semibold text-electric-violet mb-1.5">03</p>
+        <p className="font-mono text-[12px] tracking-[0.1em] text-[#8A887E] mb-2">03</p>
         <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Approve &amp; pay direct</h3>
         <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5">
           The AI checks the deliverable against your brief first. Then you pay the freelancer directly. They keep 100%.
@@ -95,7 +95,7 @@ export default function HowItWorks() {
               AI check ✓ 92/100
             </span>
           </div>
-          <div className="flex items-center justify-between rounded-lg bg-[#F7F6FA] px-3 py-2">
+          <div className="flex items-center justify-between rounded-[5px] bg-[#F4F2EC] px-3 py-2">
             <span className="text-[12px] text-[#6B6B76] font-mono">HYR-8F2K1C</span>
             <span className="hw-paid inline-flex items-center rounded-md border-2 border-emerald-500/70 text-emerald-600 text-[11px] font-bold px-2 py-0.5">
               PAID

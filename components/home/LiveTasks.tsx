@@ -28,21 +28,21 @@ export default function LiveTasks() {
 
   return (
     <section className="mx-auto max-w-[1120px] px-5 md:px-6 pb-16">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
-        <h2 className="text-[13px] font-medium text-[#8A8A94]">Live in the Arena right now</h2>
+      <div className="flex items-center gap-2.5 mb-5">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-[#8A887E]">Live on Hyrde right now</span>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {rows.map((t, i) => (
           <Link
             key={t.id}
             href="/signup"
-            className="group bg-[#F4F3F8] rounded-2xl p-4 hover:bg-[#EEEDF4] transition-colors animate-fadeup"
+            className="group rounded-[8px] border border-[#E7E4DB] bg-[#FBFAF6] p-4 hover:bg-[#F4F2EC] transition-colors animate-fadeup"
             style={{ animationDelay: `${i * 70}ms` }}
           >
             <div className="flex items-center gap-2 mb-2">
               {t.category && (
-                <span className="text-[11px] font-medium text-[#5B4FCF] bg-[#5B4FCF]/10 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-medium text-[#57564F] bg-[#14140F]/[0.05] border border-[#E3E0D8] px-2 py-0.5 rounded-full">
                   {t.category}
                 </span>
               )}
