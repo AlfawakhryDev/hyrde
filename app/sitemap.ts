@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const static_pages = [
     { url: base,                          lastModified: now, priority: 1.0 },
+    { url: `${base}/cost-estimator`,      lastModified: now, priority: 0.95 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
     { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
@@ -48,15 +49,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  // Tier 2: /hire/[skill]/[city] — 25×12 = 300 pages (scales to 20K+)
-  const skill_city_pages = ALL_SKILL_SLUGS.flatMap(skill =>
-    ALL_CITY_SLUGS.map(city => ({
-      url: `${base}/hire/${skill}/${city}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }))
-  );
-
-  return [...static_pages, ...comparison_pages, ...guide_pages, ...skill_pages, ...skill_city_pages];
+  // NOTE: /hire/[skill]/[city] pages (skill×city) are deliberately NOT in the
+  // sitemap and are noindexed. On a young domain, ~660 near-duplicate templated
+  // pages read as doorway pages and can suppress indexing of the whole site. We
+  // ship a tight set of substantive pages first; the city pages get reinstated
+  // once they carry genuinely unique, local content.
+  return [...static_pages, ...comparison_pages, ...guide_pages, ...skill_pages];
 }
