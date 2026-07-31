@@ -7,6 +7,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 import { HyrdeMark } from "./Logo";
 
 const NAV_LINKS = [
+  { href: "/cost-estimator", label: "Estimate cost" },
   { href: "/vetting", label: "Find work" },
   { href: "/hire",    label: "Talent"  },
   { href: "/pricing", label: "Pricing" },
