@@ -5,7 +5,7 @@ const COLUMNS: { heading: string; links: { href: string; label: string }[] }[] =
   {
     heading: "Product",
     links: [
-      { href: "/agent",   label: "AI Agent" },
+      { href: "/cost-estimator", label: "Free cost estimator" },
       { href: "/hire",    label: "Hire talent" },
       { href: "/jobs",    label: "Browse jobs" },
       { href: "/pricing", label: "Pricing" },

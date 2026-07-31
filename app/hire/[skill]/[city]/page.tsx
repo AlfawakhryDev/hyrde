@@ -30,6 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: { canonical },
     openGraph: { title, description, url: canonical },
+    // Thin, templated skill×city variants: keep them crawlable (follow) so link
+    // equity reaches the substantive /hire/[skill] hubs, but out of the index
+    // until each carries genuinely unique local content.
+    robots: { index: false, follow: true },
   };
 }
 

@@ -6,12 +6,20 @@ import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://hyrde.net"),
   title: { default: "Hyrde. AI-native freelance platform", template: "%s | Hyrde" },
-  description: "The AI-native freelance platform. Clients describe what they need and get the top 5 matches in 60 seconds. Freelancers get AI agents that find work, write intros, and review contracts. Freelancers keep 100%. And hiring is free during early access.",
+  description: "Hyrde is the AI-native freelance platform. Describe an outcome or a task and the AI matches it to the one best interview-vetted specialist. No bidding, no proposal spam. Freelancers keep 100%, and hiring is free during early access.",
   keywords: [
-    "hire freelancers", "AI freelance platform", "Upwork alternative",
-    "Fiverr alternative", "vetted freelancers", "hire developers",
+    "hire freelancers", "AI freelance platform", "hire an outcome", "Upwork alternative",
+    "Fiverr alternative", "vetted freelancers", "interview vetted freelancers", "hire developers",
     "hire designers", "freelance marketplace", "AI talent matching",
   ],
+  // Search-engine ownership verification. Set these in Vercel env and redeploy;
+  // undefined values are omitted, so nothing renders until a token is provided.
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION }
+      : {},
+  },
   openGraph: {
     siteName: "Hyrde",
     type: "website",
