@@ -113,7 +113,13 @@ export default function Home() {
       {/* ── Single tasks too — the matching engine, live ── */}
       <section className="relative overflow-hidden bg-[#100F0B]">
         <div className="relative mx-auto max-w-[1180px] px-5 md:px-8 py-20 md:py-28 grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
-          <div>
+          {/* Demo on the LEFT this section, to alternate the rhythm against the hero.
+              On mobile the text still comes first (order) so it reads top-down. */}
+          <div className="order-2 lg:order-1 lg:pr-2">
+            <MatchDemo />
+          </div>
+
+          <div className="order-1 lg:order-2">
             <Kicker n="01" label="Single tasks" dark />
             <h2 className="font-display font-light text-[#F7F5F0] leading-[1.06] tracking-[-0.015em] text-[clamp(32px,4.6vw,54px)] max-w-[13ch]">
               The proposal pile ends <em className="italic font-normal">here</em>.
@@ -129,10 +135,6 @@ export default function Home() {
             >
               Post a task
             </Link>
-          </div>
-
-          <div className="lg:pl-2">
-            <MatchDemo />
           </div>
         </div>
       </section>
