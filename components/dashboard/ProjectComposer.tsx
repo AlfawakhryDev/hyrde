@@ -23,19 +23,31 @@ type Milestone = {
 // as hard constraints -> freeze the scope. Non-Shopify archetypes skip straight
 // to naive decomposition (we only interrogate where we have calibrated
 // questions). Only the first milestone is auto-matched here.
+// One-tap starting points so a new client never faces a blank box.
+export const PROJECT_TEMPLATES = [
+  { label: "An MVP for my idea", outcome: "I need an MVP built for my product idea. It should let users sign up and use the core feature. " },
+  { label: "A landing page", outcome: "I need a high-converting landing page for my product, with copy and design. " },
+  { label: "A Shopify store", outcome: "I need my Shopify store set up and designed, ready to sell. " },
+  { label: "A brand identity", outcome: "I need a brand identity: a logo, colour palette, and simple brand guidelines. " },
+  { label: "Social content", outcome: "I need a month of social media content and a posting plan for my brand. " },
+  { label: "A mobile app", outcome: "I need a mobile app built for iOS and Android for my idea. " },
+];
+
 export default function ProjectComposer({
   remainingPosts,
   onClose,
   onCreated,
+  initialOutcome = "",
 }: {
   remainingPosts: number | null; // null = unlimited (Scale plan)
   onClose: () => void;
   onCreated: (projectId: string) => void;
+  initialOutcome?: string;
 }) {
   const [phase, setPhase] = useState<
     "outcome" | "classifying" | "confirm" | "interrogate" | "scoping" | "review" | "creating" | "done"
   >("outcome");
-  const [outcome, setOutcome] = useState("");
+  const [outcome, setOutcome] = useState(initialOutcome);
   const [projectTitle, setProjectTitle] = useState("");
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [note, setNote] = useState("");
@@ -225,6 +237,21 @@ export default function ProjectComposer({
               placeholder="What's the outcome you want?"
               className={input}
             />
+            {/* One-tap starters, so there's never a blank page */}
+            <div className="mt-3">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">Start from an example</p>
+              <div className="flex flex-wrap gap-2">
+                {PROJECT_TEMPLATES.map(t => (
+                  <button
+                    key={t.label}
+                    onClick={() => setOutcome(t.outcome)}
+                    className="rounded-full border border-border-crisp px-3 py-1.5 text-[12.5px] font-medium text-on-surface-variant hover:border-electric-violet hover:text-on-surface transition-colors"
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             {error && <p className="text-sm font-body text-error mt-3">{error}</p>}
             <button
               onClick={submitOutcome}
