@@ -12,7 +12,7 @@ import {
   parseTaskLimitError, activeSub, pendingSub, FREE_TASKS_PER_MONTH,
   type Subscription,
 } from "@/lib/billing";
-import ProjectComposer from "@/components/dashboard/ProjectComposer";
+import ProjectComposer, { PROJECT_TEMPLATES } from "@/components/dashboard/ProjectComposer";
 
 export default function DashboardClient({
   userId,
@@ -36,6 +36,8 @@ export default function DashboardClient({
   const incomingBrief = params.get("brief") ?? "";
   const [composerOpen, setComposerOpen] = useState(!!incomingBrief);
   const [projectComposerOpen, setProjectComposerOpen] = useState(false);
+  const [projectSeed, setProjectSeed] = useState("");
+  const openProject = (seed = "") => { setProjectSeed(seed); setProjectComposerOpen(true); };
   const [payoutOpen, setPayoutOpen] = useState(params.get("payout") === "1");
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
 
@@ -204,17 +206,18 @@ export default function DashboardClient({
                 {monthlyLimit !== null && <span className="text-on-surface-variant/70">· {postedThisMonth}/{monthlyLimit}</span>}
               </Link>
               <button
-                onClick={() => setProjectComposerOpen(true)}
-                className="h-9 px-4 rounded-full border border-border-crisp text-[13px] font-medium text-on-surface-variant hover:text-on-surface hover:border-outline transition-colors"
+                data-tour="post"
+                onClick={() => openProject()}
+                className="h-9 px-5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2"
               >
+                <span className="material-symbols-outlined" style={{ fontSize: "17px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
                 New project
               </button>
               <button
-                data-tour="post"
                 onClick={() => setComposerOpen(true)}
-                className="h-9 px-5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity"
+                className="h-9 px-3 rounded-full text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
               >
-                Post a task
+                Single task
               </button>
             </>
           )}
@@ -341,7 +344,8 @@ export default function DashboardClient({
           isPilot={isPilot}
           matchable={!notMatchable}
           onPost={() => setComposerOpen(true)}
-          onNewProject={!isPilot ? () => setProjectComposerOpen(true) : undefined}
+          onNewProject={!isPilot ? () => openProject() : undefined}
+          onTemplate={!isPilot ? openProject : undefined}
         />
       ) : (
         <div className="divide-y divide-border-crisp border-t border-border-crisp">
@@ -457,7 +461,7 @@ export default function DashboardClient({
                   { id: "payout", title: "How you get paid", body: "Add your Airtm, InstaPay, Vodafone Cash, USDT, PayPal, or bank details so clients can pay you directly." },
                 ]
               : [
-                  { id: "post", title: "Post a task", body: "Describe what you need. AI structures your brief, then assigns the best vetted specialist. No proposals to sift." },
+                  { id: "post", title: "Start a project", body: "Describe the outcome you want. The AI breaks it into a milestone plan and matches a vetted specialist to each step. No proposals to sift." },
                   { id: "stats", title: "Your numbers, live", body: "Tasks posted, matched, in progress, and delivered. Updating in real time." },
                 ]) as TourStep[]
           }
@@ -476,9 +480,11 @@ export default function DashboardClient({
       {projectComposerOpen && (
         <ProjectComposer
           remainingPosts={monthlyLimit === null ? null : Math.max(0, monthlyLimit - postedThisMonth)}
-          onClose={() => setProjectComposerOpen(false)}
+          initialOutcome={projectSeed}
+          onClose={() => { setProjectComposerOpen(false); setProjectSeed(""); }}
           onCreated={(projectId) => {
             setProjectComposerOpen(false);
+            setProjectSeed("");
             setExpandedProjects(s => new Set(s).add(projectId));
             refetch();
           }}
@@ -584,37 +590,64 @@ function PayoutModal({ userId, profile, onClose, onSaved }: {
 
 // ─── Small pieces ─────────────────────────────────────────────────────────────
 
-function EmptyState({ isPilot, matchable, onPost, onNewProject }: {
-  isPilot: boolean; matchable: boolean; onPost: () => void; onNewProject?: () => void;
+function EmptyState({ isPilot, matchable, onPost, onNewProject, onTemplate }: {
+  isPilot: boolean; matchable: boolean; onPost: () => void;
+  onNewProject?: () => void; onTemplate?: (seed: string) => void;
 }) {
-  return (
-    <div className="border-t border-border-crisp py-16">
-      <p className="text-[17px] font-medium text-on-surface mb-1.5">
-        {isPilot ? "No matches yet" : "No tasks posted yet"}
-      </p>
-      <p className="text-[13.5px] text-on-surface-variant max-w-[440px] mb-5">
-        {isPilot
-          ? matchable
+  if (isPilot) {
+    return (
+      <div className="border-t border-border-crisp py-16">
+        <p className="text-[17px] font-medium text-on-surface mb-1.5">No matches yet</p>
+        <p className="text-[13.5px] text-on-surface-variant max-w-[440px] mb-5">
+          {matchable
             ? "You're vetted. As soon as a client posts work that fits your skills, the AI matches it to you. It shows up here and you get an email with the pay and deadline. No need to keep checking."
-            : "Pass the AI skill interview first. Once you're vetted, matching work comes to you automatically. You'll get an email the moment it happens."
-          : "Post a single task, or describe a bigger outcome and let the AI break it into a milestone plan."}
-      </p>
-      {isPilot ? (
+            : "Pass the AI skill interview first. Once you're vetted, matching work comes to you automatically. You'll get an email the moment it happens."}
+        </p>
         <Link href="/vetting" className="text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
-          <span aria-hidden="true">↳</span> {matchable ? "Add another category" : "Get vetted"}
+          {matchable ? "Add another category" : "Get vetted"}
         </Link>
-      ) : (
-        <div className="flex flex-wrap gap-x-5 gap-y-2">
-          <button onClick={onPost} className="text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
-            <span aria-hidden="true">↳</span> Post your first task
-          </button>
-          {onNewProject && (
-            <button onClick={onNewProject} className="text-[13.5px] font-medium text-on-surface-variant hover:text-electric-violet transition-colors">
-              <span aria-hidden="true">↳</span> Or describe a bigger project
+      </div>
+    );
+  }
+
+  // Client first-run: lead with the outcome value prop, remove the blank page.
+  return (
+    <div className="border-t border-border-crisp pt-14 pb-8">
+      <div className="max-w-[560px]">
+        <h3 className="font-display text-[clamp(26px,3.4vw,34px)] leading-tight tracking-[-0.015em] text-on-surface">
+          What outcome do you need?
+        </h3>
+        <p className="text-[14.5px] text-on-surface-variant leading-relaxed mt-3 mb-6">
+          Describe it in a sentence. The AI breaks it into a milestone plan, prices each step, and matches
+          a vetted specialist to each. No bidding, no proposal spam, free to hire during early access.
+        </p>
+
+        <p className="text-[11px] uppercase tracking-[0.16em] text-on-surface-variant mb-2.5">Start in one tap</p>
+        <div className="flex flex-wrap gap-2 mb-7">
+          {PROJECT_TEMPLATES.map(t => (
+            <button
+              key={t.label}
+              onClick={() => onTemplate?.(t.outcome)}
+              className="rounded-full border border-border-crisp px-3.5 py-2 text-[13px] font-medium text-on-surface hover:border-electric-violet hover:bg-electric-violet/[0.04] transition-colors"
+            >
+              {t.label}
             </button>
-          )}
+          ))}
         </div>
-      )}
+
+        <div className="flex flex-wrap items-center gap-4">
+          <button
+            onClick={onNewProject}
+            className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
+            Describe your first project
+          </button>
+          <button onClick={onPost} className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+            or post a single task
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
