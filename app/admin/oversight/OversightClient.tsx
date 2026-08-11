@@ -32,7 +32,19 @@ export type OverviewStats = {
   vetted: number;
   tasks_total: number;
   tasks_matched: number;
-  tasks_unmatched: number;
+  tasks_open: number;
+  tasks_cancelled: number;
+};
+
+export type OverviewClient = {
+  email: string;
+  display_name: string | null;
+  company: string | null;
+  country: string | null;
+  signed_up: string;
+  tasks_posted: number;
+  projects: number;
+  last_post: string | null;
 };
 
 // A task is "high value" above this — the threshold where a bad match actually
@@ -71,10 +83,11 @@ function reviewFlags(t: OverviewTask): Flag[] {
 
 const CANCELLABLE = new Set(["open", "mounted", "in_progress", "agent_attempted"]);
 
-export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[]; stats: OverviewStats }) {
+export default function OversightClient({ tasks, stats, clients }: { tasks: OverviewTask[]; stats: OverviewStats; clients: OverviewClient[] }) {
   const [search, setSearch] = useState("");
   const [reviewOnly, setReviewOnly] = useState(false);
   const [cancelling, setCancelling] = useState<string | null>(null);
+  const [showClients, setShowClients] = useState(false);
 
   // Admin can pull back a bad auto-match: unassigns the freelancer and closes the
   // task (server-enforced; delivered/paid work is protected).
@@ -130,14 +143,15 @@ export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[
       </p>
 
       {/* Stats */}
-      <dl className="grid grid-cols-3 md:grid-cols-6 gap-6 pb-8 mb-8 border-b border-border-crisp">
+      <dl className="grid grid-cols-3 md:grid-cols-7 gap-5 pb-8 mb-8 border-b border-border-crisp">
         {[
           ["Clients", stats.clients],
           ["Freelancers", stats.freelancers],
           ["Vetted", stats.vetted],
           ["Tasks", stats.tasks_total],
           ["Matched", stats.tasks_matched],
-          ["Unmatched", stats.tasks_unmatched],
+          ["Open", stats.tasks_open],
+          ["Cancelled", stats.tasks_cancelled],
         ].map(([label, val]) => (
           <div key={label as string}>
             <dt className="text-[12px] text-on-surface-variant mb-1">{label}</dt>
@@ -145,6 +159,52 @@ export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[
           </div>
         ))}
       </dl>
+
+      {/* Clients quick-peek */}
+      <div className="mb-8">
+        <button
+          onClick={() => setShowClients(v => !v)}
+          className="flex items-center gap-2 text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>{showClients ? "expand_less" : "expand_more"}</span>
+          Clients ({clients.length})
+          <span className="text-on-surface-variant font-normal">
+            · {clients.filter(c => c.tasks_posted === 0).length} haven&apos;t posted yet
+          </span>
+        </button>
+        {showClients && (
+          <div className="mt-4 overflow-x-auto rounded-xl border border-border-crisp">
+            <table className="w-full text-[12.5px]">
+              <thead>
+                <tr className="text-on-surface-variant text-left border-b border-border-crisp">
+                  <th className="font-medium px-3 py-2">Name</th>
+                  <th className="font-medium px-3 py-2">Email</th>
+                  <th className="font-medium px-3 py-2">Company</th>
+                  <th className="font-medium px-3 py-2">Signed up</th>
+                  <th className="font-medium px-3 py-2 text-right">Tasks</th>
+                  <th className="font-medium px-3 py-2 text-right">Projects</th>
+                  <th className="font-medium px-3 py-2">Last post</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clients.map(c => (
+                  <tr key={c.email} className={`border-b border-border-crisp/60 last:border-0 ${c.tasks_posted === 0 ? "bg-amber-500/[0.04]" : ""}`}>
+                    <td className="px-3 py-2 font-medium text-on-surface whitespace-nowrap">{c.display_name || "—"}</td>
+                    <td className="px-3 py-2 text-on-surface-variant whitespace-nowrap">
+                      <a href={`mailto:${c.email}`} className="hover:text-electric-violet transition-colors">{c.email}</a>
+                    </td>
+                    <td className="px-3 py-2 text-on-surface-variant whitespace-nowrap">{c.company || "—"}</td>
+                    <td className="px-3 py-2 text-on-surface-variant whitespace-nowrap">{when(c.signed_up)}</td>
+                    <td className={`px-3 py-2 text-right tabular-nums ${c.tasks_posted === 0 ? "text-amber-600 font-medium" : "text-on-surface"}`}>{c.tasks_posted}</td>
+                    <td className="px-3 py-2 text-right tabular-nums text-on-surface">{c.projects}</td>
+                    <td className="px-3 py-2 text-on-surface-variant whitespace-nowrap">{c.last_post ? when(c.last_post) : "never"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
