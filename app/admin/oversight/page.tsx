@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
-import OversightClient, { type OverviewTask, type OverviewStats } from "./OversightClient";
+import OversightClient, { type OverviewTask, type OverviewStats, type OverviewClient } from "./OversightClient";
 
 export const metadata: Metadata = {
   title: "Oversight",
@@ -31,7 +31,7 @@ export default async function OversightPage() {
     redirect("/dashboard");
   }
 
-  const payload = data as { tasks: OverviewTask[]; stats: OverviewStats };
+  const payload = data as { tasks: OverviewTask[]; stats: OverviewStats; clients: OverviewClient[] };
 
-  return <OversightClient tasks={payload.tasks ?? []} stats={payload.stats} />;
+  return <OversightClient tasks={payload.tasks ?? []} stats={payload.stats} clients={payload.clients ?? []} />;
 }
