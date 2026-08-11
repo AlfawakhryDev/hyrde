@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { supabaseBrowser } from "@/lib/supabase/client";
 
 export type OverviewTask = {
   id: string;
@@ -68,9 +69,23 @@ function reviewFlags(t: OverviewTask): Flag[] {
   return flags;
 }
 
+const CANCELLABLE = new Set(["open", "mounted", "in_progress", "agent_attempted"]);
+
 export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[]; stats: OverviewStats }) {
   const [search, setSearch] = useState("");
   const [reviewOnly, setReviewOnly] = useState(false);
+  const [cancelling, setCancelling] = useState<string | null>(null);
+
+  // Admin can pull back a bad auto-match: unassigns the freelancer and closes the
+  // task (server-enforced; delivered/paid work is protected).
+  async function cancelTask(id: string, title: string) {
+    if (!confirm(`Cancel "${title}"? This unassigns the matched specialist and closes the task.`)) return;
+    setCancelling(id);
+    const { error } = await supabaseBrowser().rpc("cancel_task", { p_task: id });
+    setCancelling(null);
+    if (error) { alert(error.message); return; }
+    window.location.reload();
+  }
 
   const withFlags = useMemo(
     () => tasks.map(t => ({ t, flags: reviewFlags(t) })),
@@ -220,6 +235,15 @@ export default function OversightClient({ tasks, stats }: { tasks: OverviewTask[
                   <span aria-hidden="true">⚠</span> {f.text}
                 </span>
               ))}
+              {CANCELLABLE.has(t.status) && t.payment_status !== "paid" && (
+                <button
+                  onClick={() => cancelTask(t.id, t.title)}
+                  disabled={cancelling === t.id}
+                  className="mt-0.5 text-[11.5px] font-medium text-on-surface-variant hover:text-error transition-colors disabled:opacity-50"
+                >
+                  {cancelling === t.id ? "Cancelling…" : "Cancel task"}
+                </button>
+              )}
             </div>
           </div>
         ))}

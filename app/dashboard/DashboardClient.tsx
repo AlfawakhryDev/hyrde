@@ -67,6 +67,18 @@ export default function DashboardClient({
     setLoading(false);
   }, [userId]);
 
+  // Poster can cancel a project that auto-matched but has no delivered/paid work:
+  // unassigns the freelancer and closes the open milestones (server-enforced).
+  const [cancelling, setCancelling] = useState<string | null>(null);
+  async function cancelProject(projectId: string, title: string) {
+    if (!confirm(`Cancel "${title}"? This unassigns any matched specialist and closes the open milestones. Delivered or paid work is kept.`)) return;
+    setCancelling(projectId);
+    const { error } = await supabaseBrowser().rpc("cancel_project", { p_project: projectId });
+    setCancelling(null);
+    if (error) { alert(error.message); return; }
+    refetch();
+  }
+
   useEffect(() => {
     refetch();
     const supabase = supabaseBrowser();
@@ -358,7 +370,9 @@ export default function DashboardClient({
                       <span>{milestones.length} milestone{milestones.length === 1 ? "" : "s"}</span>
                       <span aria-hidden="true">·</span>
                       <span>{doneCount}/{milestones.length} delivered</span>
-                      {!isPilot && currentMilestone && !currentMilestone.claimed_by_user_id && (
+                      {project?.status === "cancelled" ? (
+                        <><span aria-hidden="true">·</span><span className="text-error font-medium">Cancelled</span></>
+                      ) : !isPilot && currentMilestone && !currentMilestone.claimed_by_user_id && (
                         <><span aria-hidden="true">·</span><span className="text-electric-violet">Finding a match for milestone {(currentMilestone.milestone_index ?? 0) + 1}…</span></>
                       )}
                     </p>
@@ -390,6 +404,15 @@ export default function DashboardClient({
                         </Link>
                       );
                     })}
+                    {!isPilot && project?.status !== "cancelled" && doneCount < milestones.length && (
+                      <button
+                        onClick={() => cancelProject(projectId, project?.title ?? "this project")}
+                        disabled={cancelling === projectId}
+                        className="mt-2 ml-3 text-[12.5px] font-medium text-on-surface-variant hover:text-error transition-colors disabled:opacity-50"
+                      >
+                        {cancelling === projectId ? "Cancelling…" : "Cancel project"}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
