@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const static_pages = [
     { url: base,                          lastModified: now, priority: 1.0 },
     { url: `${base}/cost-estimator`,      lastModified: now, priority: 0.95 },
+    { url: `${base}/faq`,                 lastModified: now, priority: 0.9 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
     { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
