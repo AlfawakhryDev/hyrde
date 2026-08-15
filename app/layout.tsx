@@ -44,8 +44,18 @@ const organizationJsonLd = {
   logo: "https://hyrde.net/hyrde-lockup-dark.svg",
   image: "https://hyrde.net/og.png",
   description:
-    "AI-native freelance platform. Pre-vetted talent, AI-matched to your brief in 60 seconds. Free to hire during early access.",
+    "Hyrde is an AI-native freelance platform. Clients describe an outcome or task and the AI matches it to one interview-vetted specialist. No bidding, no proposal spam. Freelancers keep 100%. Free to hire during early access.",
   email: "abdelrahman@hyrde.net",
+  slogan: "Don't hire a freelancer. Hire an outcome.",
+  foundingDate: "2026",
+  areaServed: "Worldwide",
+  knowsAbout: [
+    "hiring freelancers", "AI talent matching", "vetted freelancers",
+    "outcome-based hiring", "freelance marketplace", "no-bidding hiring",
+  ],
+  // ponytail: add real social profile URLs to sameAs once they exist (LinkedIn/X);
+  // sameAs is the strongest entity-consolidation signal for answer engines.
+  sameAs: [],
 };
 
 const websiteJsonLd = {

@@ -25,6 +25,7 @@ const COLUMNS: { heading: string; links: { href: string; label: string }[] }[] =
     heading: "Company",
     links: [
       { href: "/about",      label: "Why Hyrde" },
+      { href: "/faq",        label: "FAQ" },
       { href: "/enterprise", label: "Enterprise" },
       { href: "/upwork-alternative", label: "Compare platforms" },
     ],
