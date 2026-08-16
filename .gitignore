@@ -55,3 +55,6 @@ next-env.d.ts
 
 # graphify knowledge graph (each dev builds locally; hooks keep it fresh)
 /graphify-out/
+
+# keep the example (real .env* stays ignored)
+!.env.example
