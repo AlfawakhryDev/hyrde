@@ -1,0 +1,23 @@
+# Hyrde
+
+> Hyrde is an AI-native freelance platform. Clients describe an outcome or a task and the AI matches it to a single interview-vetted specialist. No bidding, no proposal spam. Freelancers keep 100%. Free to hire during early access.
+
+## What it is
+- You describe a task or a whole outcome; the AI scopes it into milestones, prices each step, and matches a vetted specialist to each.
+- Every freelancer passes an adaptive AI skill interview (graded 0 to 100 against a strict rubric) before they can be matched.
+- An AI reviews the deliverable against your brief before you pay. You can cancel unmatched work at any time.
+- Pricing: free to hire during early access. Client plans are Pro at 20 USD per month (50 posts) and Scale at 200 USD per month (unlimited). Freelancers keep 100 percent, with no bid or connect fees.
+- Global: freelancers get paid on their own rails including InstaPay, Airtm, PayPal, and USDT.
+
+## Key pages
+- Home: https://hyrde.net
+- FAQ: https://hyrde.net/faq
+- Free project cost estimator (no signup): https://hyrde.net/cost-estimator
+- Pricing: https://hyrde.net/pricing
+- How vetting works: https://hyrde.net/vetting
+- Hyrde vs Upwork: https://hyrde.net/upwork-alternative
+
+## Differentiators
+- "Hire an outcome, not a freelancer": describe the result you want, not a gig.
+- No bidding and no proposals: the AI assigns one vetted specialist instead of flooding you with applicants.
+- Interview-vetted talent, not self-reported badges or buyable reviews.
