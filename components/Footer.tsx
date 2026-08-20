@@ -71,7 +71,10 @@ export default function Footer() {
 
         <div className="mt-12 pt-6 border-t border-border-crisp flex flex-wrap items-center justify-between gap-3">
           <p className="text-[13px] text-on-surface-variant">© 2026 Hyrde</p>
-          <p className="text-[13px] text-on-surface-variant">Made in Cairo</p>
+          <div className="flex items-center gap-4">
+            <Link href="/de" hrefLang="de" className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors">Deutsch</Link>
+            <p className="text-[13px] text-on-surface-variant">Made in Cairo</p>
+          </div>
         </div>
       </div>
     </footer>
