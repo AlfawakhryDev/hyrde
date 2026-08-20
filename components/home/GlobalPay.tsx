@@ -1,13 +1,16 @@
 // ── Get paid anywhere — the rails light up on hover ──────────────────────────
 // Dark full-width band. Hovering lights each payout rail in sequence and plays
 // the reference → sent → confirmed flow. Pure CSS, tap-focus on touch.
+import { tFor, type Locale } from "@/lib/i18n";
 
-const RAILS = ["InstaPay", "Vodafone Cash", "USDT", "Airtm", "PayPal", "Bank wire"];
+// Provider names are brand nouns and stay verbatim; only the generic last rail
+// ("Bank wire") is localized, appended per-locale below.
+const BRAND_RAILS = ["InstaPay", "Vodafone Cash", "USDT", "Airtm", "PayPal"];
 
 const CSS = `
 .gp-band { outline: none; }
 .gp-band .gp-rail { transition: all .35s ease; }
-${RAILS.map((_, i) =>
+${Array.from({ length: BRAND_RAILS.length + 1 }, (_, i) =>
   `.gp-band:is(:hover,:focus-within) .gp-rail-${i} { border-color: rgba(247,245,240,.55); color: #fff; background: rgba(247,245,240,.08); transition-delay: ${0.06 + i * 0.09}s }`
 ).join("\n")}
 .gp-band .gp-step { opacity: .35; transition: opacity .3s ease; }
@@ -21,7 +24,9 @@ ${RAILS.map((_, i) =>
 .gp-band:is(:hover,:focus-within) .gp-glow { opacity: 1; }
 `;
 
-export default function GlobalPay() {
+export default function GlobalPay({ locale = "en" }: { locale?: Locale }) {
+  const t = tFor(locale);
+  const RAILS = [...BRAND_RAILS, t("pay.bankWire")];
   return (
     <div tabIndex={0} className="gp-band relative overflow-hidden rounded-[8px] bg-[#100F0B] px-8 md:px-14 py-14 md:py-16 cursor-default select-none">
       <style>{CSS}</style>
@@ -33,13 +38,12 @@ export default function GlobalPay() {
 
       <div className="relative grid lg:grid-cols-2 gap-10 items-center">
         <div>
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/45 mb-4">Borderless by design</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/45 mb-4">{t("pay.kick")}</p>
           <h2 className="font-display font-light text-[#F7F5F0] leading-[1.06] tracking-[-0.015em] text-[clamp(30px,4.2vw,50px)] max-w-[15ch]">
-            Get paid on your rails, anywhere.
+            {t("pay.h")}
           </h2>
           <p className="text-[14px] text-white/55 leading-relaxed max-w-[420px] mt-5">
-            No Stripe in your country? No problem. Clients pay you directly on the rail you
-            choose, with a tracked reference. Hyrde takes no cut.
+            {t("pay.p")}
           </p>
         </div>
 
@@ -56,17 +60,17 @@ export default function GlobalPay() {
           </div>
           <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 max-w-[420px]">
             <div className="gp-step gp-step-1 flex items-center justify-between py-1.5 text-[13px]">
-              <span className="text-white/60">Reference</span>
+              <span className="text-white/60">{t("pay.ref")}</span>
               <span className="font-mono text-white/90">HYR-8F2K1C</span>
             </div>
             <div className="gp-step gp-step-2 flex items-center justify-between py-1.5 text-[13px] border-t border-white/8">
-              <span className="text-white/60">Client marked</span>
-              <span className="text-white/90 font-medium">Payment sent</span>
+              <span className="text-white/60">{t("pay.clientMarked")}</span>
+              <span className="text-white/90 font-medium">{t("pay.sent")}</span>
             </div>
             <div className="gp-step gp-step-3 flex items-center justify-between py-1.5 text-[13px] border-t border-white/8">
-              <span className="text-white/60">You confirmed</span>
+              <span className="text-white/60">{t("pay.youConfirmed")}</span>
               <span className="gp-ok inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 text-emerald-300 text-[11.5px] font-semibold px-2.5 py-0.5">
-                Received ✓
+                {t("pay.received")}
               </span>
             </div>
           </div>

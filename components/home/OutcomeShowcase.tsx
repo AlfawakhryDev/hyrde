@@ -1,22 +1,24 @@
 "use client";
 import { useEffect, useState } from "react";
 import SketchCard from "./SketchCard";
+import { tFor, type Locale } from "@/lib/i18n";
 
 // ── "Hire outcomes, not gigs" — the flagship differentiator, playing live ─────
 // A client types an outcome -> it is scoped into a milestone plan -> milestone 1
-// matches, the rest queue. Auto-loops. Drawn as a hand-marked paper card that
-// tilts to the cursor (see SketchCard).
+// matches, the rest queue. Auto-loops. Hand-marked paper card that tilts to the
+// cursor (see SketchCard). Locale-aware so /de renders it in German.
 
-const OUTCOME = "I need an MVP for a habit-tracking app";
 const MARKER = "#B5651D"; // ochre marker for hand annotations on paper
 
-const MILESTONES = [
-  { title: "UI/UX design, Figma screens", cat: "Design", usd: "$600", state: "matching now", live: true },
-  { title: "Build the app from the designs", cat: "Development", usd: "$2,800", state: "queued", live: false },
-  { title: "QA, bug-fix and launch", cat: "QA", usd: "$400", state: "queued", live: false },
-];
+export default function OutcomeShowcase({ locale = "en" }: { locale?: Locale }) {
+  const t = tFor(locale);
+  const OUTCOME = t("demo.oTyped");
+  const MILESTONES = [
+    { title: t("demo.oM1"), cat: "Design", usd: "$600", state: t("demo.oMatching"), live: true },
+    { title: t("demo.oM2"), cat: "Development", usd: "$2,800", state: t("demo.oQueued"), live: false },
+    { title: t("demo.oM3"), cat: "QA", usd: "$400", state: t("demo.oQueued"), live: false },
+  ];
 
-export default function OutcomeShowcase() {
   const [phase, setPhase] = useState(0); // 0 typing · 1 scoping · 2 revealed
   const [typed, setTyped] = useState(0);
 
@@ -29,11 +31,12 @@ export default function OutcomeShowcase() {
       if (i >= OUTCOME.length) { clearInterval(id); setTimeout(() => setPhase(1), 550); }
     }, 34);
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   useEffect(() => {
-    if (phase === 1) { const t = setTimeout(() => setPhase(2), 1500); return () => clearTimeout(t); }
-    if (phase === 2) { const t = setTimeout(() => setPhase(0), 4400); return () => clearTimeout(t); }
+    if (phase === 1) { const id = setTimeout(() => setPhase(2), 1500); return () => clearTimeout(id); }
+    if (phase === 2) { const id = setTimeout(() => setPhase(0), 4400); return () => clearTimeout(id); }
   }, [phase]);
 
   return (
@@ -48,15 +51,15 @@ export default function OutcomeShowcase() {
 
       {/* Header — handwritten title, no status dot */}
       <div className="flex items-end justify-between mb-4 pb-3 border-b border-[#DAD6C8]">
-        <span className="text-[#1A1A14] text-[22px] leading-none" style={{ fontFamily: "var(--font-hand)" }}>Outcome intake</span>
+        <span className="text-[#1A1A14] text-[22px] leading-none" style={{ fontFamily: "var(--font-hand)" }}>{t("demo.oIntake")}</span>
         <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677]">
-          {phase === 0 ? "you describe it" : phase === 1 ? "scoping" : "the plan"}
+          {phase === 0 ? t("demo.oPhase0") : phase === 1 ? t("demo.oPhase1") : t("demo.oPhase2")}
         </span>
       </div>
 
       {/* The outcome input */}
       <div className="rounded-[3px] border border-[#DAD6C8] bg-[#FCFBF4] p-4">
-        <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#8A8677] mb-2">the outcome you want</div>
+        <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#8A8677] mb-2">{t("demo.oInputLabel")}</div>
         <p className="text-[#1A1A14] text-[14.5px] md:text-[15px] font-medium leading-snug min-h-[2.6em]">
           {OUTCOME.slice(0, typed)}
           {phase === 0 && <span className="inline-block w-[2px] h-[1.05em] -mb-[2px] ml-0.5 bg-[#1A1A14]" style={{ animation: "os-caret 1s step-end infinite" }} />}
@@ -72,18 +75,16 @@ export default function OutcomeShowcase() {
                 <span key={i} className="h-1.5 w-1.5 rounded-full bg-[#1A1A14]" style={{ animation: `os-dot 1.2s ease-in-out ${i * 0.18}s infinite` }} />
               ))}
             </div>
-            <p className="text-[13px] text-[#6B6A5E] max-w-[260px] leading-relaxed">
-              Breaking your outcome into an ordered plan. Each milestone handed to one vetted specialist.
-            </p>
+            <p className="text-[13px] text-[#6B6A5E] max-w-[260px] leading-relaxed">{t("demo.oScoping")}</p>
           </div>
         )}
 
         {phase === 2 && (
           <div className="relative">
             <div className="flex items-center justify-between mb-3">
-              <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677]">3 milestones, matched in order</p>
+              <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677]">{t("demo.oPlan")}</p>
               <span className="text-[16px] leading-none pointer-events-none" style={{ fontFamily: "var(--font-hand)", color: MARKER, animation: "os-ink .4s ease .7s both" }} aria-hidden="true">
-                one plan, not a pile
+                {t("demo.oNote")}
               </span>
             </div>
             <div className="space-y-2">
@@ -111,15 +112,13 @@ export default function OutcomeShowcase() {
                 </div>
               ))}
             </div>
-            <p className="text-[11.5px] text-[#8A8677] mt-3 px-1 leading-relaxed">
-              Milestone 1 matches now. The rest match automatically as each is approved.
-            </p>
+            <p className="text-[11.5px] text-[#8A8677] mt-3 px-1 leading-relaxed">{t("demo.oFooter")}</p>
           </div>
         )}
 
         {phase === 0 && (
           <div className="flex items-center justify-center h-[210px]">
-            <p className="text-[15px]" style={{ fontFamily: "var(--font-hand)", color: "#A5A292" }}>Not &ldquo;a React developer.&rdquo; The whole outcome.</p>
+            <p className="text-[15px]" style={{ fontFamily: "var(--font-hand)", color: "#A5A292" }}>{t("demo.oPlaceholder")}</p>
           </div>
         )}
       </div>
