@@ -1,5 +1,7 @@
+"use client";
 import Link from "next/link";
 import Logo from "./Logo";
+import { useT } from "./I18nProvider";
 
 const COLUMNS: { heading: string; links: { href: string; label: string }[] }[] = [
   {
@@ -32,7 +34,14 @@ const COLUMNS: { heading: string; links: { href: string; label: string }[] }[] =
   },
 ];
 
+const HEADING_KEY: Record<string, string> = {
+  Product: "footer.product",
+  "For freelancers": "footer.forFreelancers",
+  Company: "footer.company",
+};
+
 export default function Footer() {
+  const t = useT();
   return (
     <footer className="border-t border-border-crisp bg-surface-gray">
       <div className="mx-auto max-w-[1120px] px-5 md:px-6 py-14">
@@ -40,7 +49,7 @@ export default function Footer() {
           <div>
             <Logo />
             <p className="mt-4 text-[13px] leading-relaxed text-on-surface-variant max-w-[240px]">
-              The AI-vetted freelance platform. Prove your skill once, then hire without the pile.
+              {t("footer.tagline")}
             </p>
             <a
               href="mailto:abdelrahman@hyrde.net"
@@ -52,7 +61,7 @@ export default function Footer() {
 
           {COLUMNS.map(col => (
             <nav key={col.heading} aria-label={col.heading}>
-              <h3 className="text-[13px] font-medium text-on-surface mb-3">{col.heading}</h3>
+              <h3 className="text-[13px] font-medium text-on-surface mb-3">{t(HEADING_KEY[col.heading] ?? col.heading)}</h3>
               <ul className="space-y-2">
                 {col.links.map(l => (
                   <li key={l.href}>
@@ -73,7 +82,7 @@ export default function Footer() {
           <p className="text-[13px] text-on-surface-variant">© 2026 Hyrde</p>
           <div className="flex items-center gap-4">
             <Link href="/de" hrefLang="de" className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors">Deutsch</Link>
-            <p className="text-[13px] text-on-surface-variant">Made in Cairo</p>
+            <p className="text-[13px] text-on-surface-variant">{t("footer.madeIn")}</p>
           </div>
         </div>
       </div>
