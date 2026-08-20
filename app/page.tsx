@@ -8,12 +8,13 @@ import AliveGrid from "@/components/home/AliveGrid";
 import HowItWorks from "@/components/home/HowItWorks";
 import GlobalPay from "@/components/home/GlobalPay";
 import OutcomeShowcase from "@/components/home/OutcomeShowcase";
+import { altLanguages } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: { absolute: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde" },
   description:
     "Every freelancer on Hyrde passed an adaptive AI skill interview. Post a task and the AI matches it to the best-vetted specialist in that category. No bidding, no proposal spam, no pay-to-apply.",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", languages: altLanguages("/", "/de") },
   openGraph: {
     title: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde",
     description:
