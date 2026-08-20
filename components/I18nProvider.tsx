@@ -17,7 +17,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   // only, so a brief flip on load is fine and there's no hydration mismatch).
   const [locale, set] = useState<Locale>(DEFAULT_LOCALE);
   useEffect(() => {
-    const l = readCookieLocale();
+    // On the /de marketing routes the URL wins, so a cold visitor (no cookie)
+    // still gets German chrome; elsewhere the cookie decides.
+    const l: Locale = /^\/de(\/|$)/.test(window.location.pathname) ? "de" : readCookieLocale();
     set(l);
     document.documentElement.lang = l;
   }, []);
