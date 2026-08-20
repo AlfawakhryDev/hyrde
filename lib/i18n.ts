@@ -20,6 +20,14 @@ export function altLanguages(enPath: string, dePath: string) {
   return { en: enPath, de: dePath, "x-default": enPath };
 }
 
+// A translator bound to an explicit locale (works in server + client render, no
+// context needed). Used by the marketing homepage + demos which are URL-based.
+import { messages } from "./messages";
+export function tFor(locale: Locale) {
+  return (key: string, vars?: Record<string, string | number>) =>
+    translate(messages[locale] as Record<string, unknown>, messages.en as Record<string, unknown>, key, vars);
+}
+
 // Dot-path lookup with {var} interpolation; falls back to English, then the key.
 export function translate(
   messages: Record<string, unknown>,

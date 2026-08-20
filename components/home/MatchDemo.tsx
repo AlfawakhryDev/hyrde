@@ -1,29 +1,34 @@
 "use client";
 import { useEffect, useState } from "react";
 import SketchCard from "./SketchCard";
+import { tFor, type Locale } from "@/lib/i18n";
 
 // ── The product, playing on a loop ────────────────────────────────────────────
 // Post a task -> the AI scans vetted specialists -> it assigns the single best
 // fit, marked by hand. Drawn as a paper sketch card that tilts to the cursor.
+// Locale-aware so /de renders it in German.
 
 const MARKER = "#B5651D"; // ochre marker for hand annotations on paper
-
-const CANDIDATES = [
-  { initial: "S", name: "Sara K.", band: "Strong", score: 91, best: true },
-  { initial: "M", name: "Maya R.", band: "Strong", score: 86 },
-  { initial: "Y", name: "Youssef A.", band: "Solid", score: 79 },
-  { initial: "O", name: "Omar H.", band: "Solid", score: 71 },
-];
-const BEST = CANDIDATES.findIndex(c => c.best);
 const PHASE_MS = [1900, 2500, 4200];
 
-export default function MatchDemo() {
+export default function MatchDemo({ locale = "en" }: { locale?: Locale }) {
+  const t = tFor(locale);
+  const strong = t("demo.mBandStrong");
+  const solid = t("demo.mBandSolid");
+  const CANDIDATES = [
+    { initial: "S", name: "Sara K.", band: strong, score: 91, best: true },
+    { initial: "M", name: "Maya R.", band: strong, score: 86 },
+    { initial: "Y", name: "Youssef A.", band: solid, score: 79 },
+    { initial: "O", name: "Omar H.", band: solid, score: 71 },
+  ];
+  const BEST = CANDIDATES.findIndex(c => c.best);
+
   const [phase, setPhase] = useState(0);
   const [scan, setScan] = useState(0);
 
   useEffect(() => {
-    const t = setTimeout(() => setPhase(p => (p + 1) % 3), PHASE_MS[phase]);
-    return () => clearTimeout(t);
+    const id = setTimeout(() => setPhase(p => (p + 1) % 3), PHASE_MS[phase]);
+    return () => clearTimeout(id);
   }, [phase]);
 
   useEffect(() => {
@@ -31,10 +36,12 @@ export default function MatchDemo() {
     let i = 0; setScan(0);
     const id = setInterval(() => { i = (i + 1) % CANDIDATES.length; setScan(i); }, 380);
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  const phaseLabel = ["task posted", "matching", "matched"][phase];
+  const phaseLabel = [t("demo.mPhase0"), t("demo.mPhase1"), t("demo.mPhase2")][phase];
   const winner = CANDIDATES[BEST];
+  const cat = t("demo.mCat");
 
   return (
     <SketchCard rotate={1.2}>
@@ -48,7 +55,7 @@ export default function MatchDemo() {
 
       {/* Header — handwritten title, no status dot */}
       <div className="flex items-end justify-between mb-4 pb-3 border-b border-[#DAD6C8]">
-        <span className="text-[#1A1A14] text-[22px] leading-none" style={{ fontFamily: "var(--font-hand)" }}>Matching engine</span>
+        <span className="text-[#1A1A14] text-[22px] leading-none" style={{ fontFamily: "var(--font-hand)" }}>{t("demo.mEngine")}</span>
         <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677] tabular-nums">{phaseLabel}</span>
       </div>
 
@@ -60,14 +67,14 @@ export default function MatchDemo() {
 
       {/* Task card */}
       <div className="rounded-[3px] border border-[#DAD6C8] bg-[#FCFBF4] p-4">
-        <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#8A8677] mb-1.5">new client task</div>
-        <p className="text-[#1A1A14] text-[14.5px] md:text-[15px] font-medium leading-snug">Conversion copy for a fintech landing page</p>
+        <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#8A8677] mb-1.5">{t("demo.mTaskLabel")}</div>
+        <p className="text-[#1A1A14] text-[14.5px] md:text-[15px] font-medium leading-snug">{t("demo.mTask")}</p>
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2.5 text-[12px] text-[#8A8677]">
-          <span className="inline-flex items-center rounded-[3px] border border-[#CFCBBC] px-2 py-0.5 text-[#57564A]">Copywriting</span>
+          <span className="inline-flex items-center rounded-[3px] border border-[#CFCBBC] px-2 py-0.5 text-[#57564A]">{cat}</span>
           <span aria-hidden="true">·</span>
           <span className="font-medium text-[#57564A]">$450</span>
           <span aria-hidden="true">·</span>
-          <span>Due Aug 3</span>
+          <span>{t("demo.mDue")}</span>
         </div>
       </div>
 
@@ -81,14 +88,14 @@ export default function MatchDemo() {
               ))}
             </div>
             <p className="text-[13px] text-[#6B6A5E] max-w-[240px] leading-relaxed">
-              Reading the brief and pulling every interview-vetted specialist in <span className="text-[#1A1A14] font-medium">Copywriting</span>.
+              {t("demo.mReadingPre")}<span className="text-[#1A1A14] font-medium">{cat}</span>.
             </p>
           </div>
         )}
 
         {phase === 1 && (
           <div>
-            <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677] mb-3">scoring vetted specialists</p>
+            <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#8A8677] mb-3">{t("demo.mScoring")}</p>
             <div className="space-y-1.5">
               {CANDIDATES.map((c, i) => {
                 const active = i === scan;
@@ -108,7 +115,7 @@ export default function MatchDemo() {
         {phase === 2 && (
           <div className="relative" style={{ animation: "hm-pop .5s cubic-bezier(.2,.7,.2,1) both" }}>
             <span className="absolute -top-3 right-1 z-10 text-[17px] leading-none pointer-events-none" style={{ fontFamily: "var(--font-hand)", color: MARKER, animation: "hm-ink .4s ease .85s both" }} aria-hidden="true">
-              the one best fit
+              {t("demo.mNote")}
             </span>
             <div className="rounded-[3px] border border-emerald-700/30 bg-emerald-700/[0.06] p-4">
               <div className="flex items-center gap-3">
@@ -121,17 +128,17 @@ export default function MatchDemo() {
                     <p className="text-[#1A1A14] text-[14.5px] font-semibold truncate">{winner.name}</p>
                     <span className="material-symbols-outlined text-emerald-700 text-[16px]" style={{ fontSize: "16px", fontVariationSettings: "'FILL' 1" }}>verified</span>
                   </span>
-                  <p className="text-[12px] text-[#6B6A5E]">Copywriting · {winner.band} · {winner.score} vetting score</p>
+                  <p className="text-[12px] text-[#6B6A5E]">{cat} · {winner.band} · {winner.score}{t("demo.mVetting")}</p>
                 </div>
-                <span className="shrink-0 font-mono text-[9.5px] uppercase tracking-[0.12em] text-emerald-700">matched</span>
+                <span className="shrink-0 font-mono text-[9.5px] uppercase tracking-[0.12em] text-emerald-700">{t("demo.mMatched")}</span>
               </div>
               <p className="text-[12.5px] text-[#57564A] leading-relaxed mt-3 border-t border-[#D6D9CC] pt-3">
-                <span className="text-[#1A1A14] font-medium">Why Sara.</span> Highest-vetted in Copywriting, with fintech landing-page samples in her interview.
+                <span className="text-[#1A1A14] font-medium">{t("demo.mWhyName")}</span>{t("demo.mWhyBody")}
               </p>
             </div>
             <div className="flex items-center justify-between mt-3 px-1 text-[12px]">
-              <span className="text-[#8A8677]">Assigned automatically. No bidding.</span>
-              <span className="text-[#57564A] font-medium">$450 · Due Aug 3</span>
+              <span className="text-[#8A8677]">{t("demo.mAssigned")}</span>
+              <span className="text-[#57564A] font-medium">$450 · {t("demo.mDue")}</span>
             </div>
           </div>
         )}

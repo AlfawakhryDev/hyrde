@@ -2,6 +2,7 @@
 // Each card is a miniature of the real product that performs on hover (and on
 // tap-focus for touch): the interview types, spam sweeps away, the review bar
 // fills, the fees get struck through. Pure CSS — no JS, fully reversible.
+import { tFor, type Locale } from "@/lib/i18n";
 
 const CSS = `
 .alive { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease; outline: none; }
@@ -46,28 +47,26 @@ const CSS = `
 const card =
   "alive group rounded-[8px] border border-[#E7E4DB] bg-[#FBFAF6] p-6 min-h-[300px] flex flex-col cursor-default select-none";
 
-export default function AliveGrid() {
+export default function AliveGrid({ locale = "en" }: { locale?: Locale }) {
+  const t = tFor(locale);
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       <style>{CSS}</style>
 
       {/* 1 — Interview-vetted only */}
       <div tabIndex={0} className={`${card}`}>
-        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Interview-vetted only</h3>
-        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
-          Every freelancer passed an adaptive AI interview. Scenario, probing follow-up, live
-          work sample. Graded 0–100 against a strict rubric.
-        </p>
+        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">{t("grid.g1H")}</h3>
+        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">{t("grid.g1P")}</p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
-          <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-[#9a9aa4] mb-2">Live interview · Development</p>
-          <p className="text-[13px] text-[#4A4A55] mb-2.5">How would you cut LCP on a slow storefront?</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-[#9a9aa4] mb-2">{t("grid.g1Live")}</p>
+          <p className="text-[13px] text-[#4A4A55] mb-2.5">{t("grid.g1Q")}</p>
           <div className="flex items-center text-[13px] font-medium text-[#232329]">
-            <span className="ag-type">Preload the hero image, inline critical CSS, ship RSC…</span>
+            <span className="ag-type">{t("grid.g1A")}</span>
             <span className="ag-caret text-[#14140F]">▍</span>
           </div>
           <div className="flex justify-end mt-2">
             <span className="ag-stamp inline-flex items-center gap-1.5 rounded-full border-2 border-emerald-500/70 text-emerald-600 text-[12px] font-bold px-2.5 py-0.5">
-              STRONG · 87
+              {t("grid.g1Stamp")}
             </span>
           </div>
         </div>
@@ -75,16 +74,13 @@ export default function AliveGrid() {
 
       {/* 2 — Zero proposals */}
       <div tabIndex={0} className={`${card}`}>
-        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">Zero proposals</h3>
-        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
-          There is no apply button, so there is nothing to spam. The AI assigns your task to one
-          specialist who proved the skill.
-        </p>
+        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">{t("grid.g2H")}</h3>
+        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">{t("grid.g2P")}</p>
         <div className="mt-auto space-y-1.5">
           {[
-            ["ag-spam-1", "“Dear sir, I am expert in all technology…”"],
-            ["ag-spam-2", "“I can do this $5 only please award”"],
-            ["ag-spam-3", "“PROPOSAL!!! 15 years experience kindly…”"],
+            ["ag-spam-1", t("grid.g2Spam1")],
+            ["ag-spam-2", t("grid.g2Spam2")],
+            ["ag-spam-3", t("grid.g2Spam3")],
           ].map(([cls, txt]) => (
             <div key={cls} className={`ag-spam ${cls} rounded-lg bg-[#ffffff]/70 px-3.5 py-2 text-[12.5px] text-[#9a9aa4] line-clamp-1`}>
               {txt}
@@ -92,22 +88,19 @@ export default function AliveGrid() {
           ))}
           <div className="ag-win rounded-lg bg-[#ffffff] shadow-[0_4px_20px_rgba(20,20,15,.1)] px-3.5 py-2.5 flex items-center gap-2.5">
             <span className="grid place-items-center h-6 w-6 rounded-full border border-[#E3E0D8] bg-white text-[#57564F] text-[10.5px] font-semibold">S</span>
-            <span className="text-[13px] font-medium text-[#232329] flex-1">AI matched: Sara K.</span>
-            <span className="text-[11.5px] font-semibold text-emerald-600">Strong · 91 ✓</span>
+            <span className="text-[13px] font-medium text-[#232329] flex-1">{t("grid.g2Match")}</span>
+            <span className="text-[11.5px] font-semibold text-emerald-600">{t("grid.g2Score")}</span>
           </div>
         </div>
       </div>
 
       {/* 3 — AI-checked delivery */}
       <div tabIndex={0} className={`${card}`}>
-        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">AI-checked delivery</h3>
-        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
-          Before you approve, an impartial AI reviews the deliverable against your brief.
-          Verdict, score, and gaps, in writing.
-        </p>
+        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">{t("grid.g3H")}</h3>
+        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">{t("grid.g3P")}</p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
           <div className="flex items-center justify-between mb-2.5">
-            <span className="text-[12px] font-medium text-[#4A4A55]">Deliverable vs. brief</span>
+            <span className="text-[12px] font-medium text-[#4A4A55]">{t("grid.g3VsBrief")}</span>
             <span className="relative text-[13px] font-semibold text-[#232329]">
               <span className="ag-idle absolute right-0">…</span>
               <span className="ag-done">92/100</span>
@@ -118,10 +111,10 @@ export default function AliveGrid() {
           </div>
           <div className="relative h-6">
             <span className="ag-idle absolute inline-flex items-center gap-1.5 rounded-full bg-[#F1F0F5] text-[#6B6B76] text-[11.5px] font-medium px-2.5 py-1">
-              Reviewing…
+              {t("grid.g3Reviewing")}
             </span>
             <span className="ag-done absolute inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[11.5px] font-semibold px-2.5 py-1">
-              Verdict: Approve
+              {t("grid.g3Verdict")}
             </span>
           </div>
         </div>
@@ -129,15 +122,13 @@ export default function AliveGrid() {
 
       {/* 4 — Keep 100% */}
       <div tabIndex={0} className={`${card}`}>
-        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">$0 fees in early access</h3>
-        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">
-          No platform fee, no contract fees. So quotes aren&apos;t padded to claw commissions back.
-        </p>
+        <h3 className="text-[17px] font-semibold text-[#232329] mb-1.5">{t("grid.g4H")}</h3>
+        <p className="text-[13.5px] text-[#5B5B66] leading-relaxed mb-5 max-w-[46ch]">{t("grid.g4P")}</p>
         <div className="mt-auto rounded-xl bg-[#ffffff] shadow-[0_4px_20px_rgba(10,10,15,.06)] p-4">
           {[
-            ["ag-strike-1", "Platform commission", "−10%"],
-            ["ag-strike-2", "Connects & bid fees", "−$0.15/apply"],
-            ["ag-strike-3", "Payment processing padding", "−5%"],
+            ["ag-strike-1", t("grid.g4Row1L"), t("grid.g4Row1C")],
+            ["ag-strike-2", t("grid.g4Row2L"), t("grid.g4Row2C")],
+            ["ag-strike-3", t("grid.g4Row3L"), t("grid.g4Row3C")],
           ].map(([cls, label, cost]) => (
             <div key={cls} className="flex items-center justify-between py-1.5 text-[13px] text-[#6B6B76]">
               <span className={`ag-strike ${cls}`}>{label}</span>
@@ -145,7 +136,7 @@ export default function AliveGrid() {
             </div>
           ))}
           <div className="flex items-center justify-between pt-2.5 mt-1.5 border-t border-[#F1F0F5]">
-            <span className="text-[13px] font-medium text-[#232329]">The freelancer keeps</span>
+            <span className="text-[13px] font-medium text-[#232329]">{t("grid.g4Keep")}</span>
             <span className="ag-keep text-[22px] font-semibold tracking-[-0.02em] text-[#232329]">100%</span>
           </div>
         </div>
