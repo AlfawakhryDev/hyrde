@@ -13,6 +13,7 @@ import {
   type Subscription,
 } from "@/lib/billing";
 import ProjectComposer, { PROJECT_TEMPLATES } from "@/components/dashboard/ProjectComposer";
+import { useT } from "@/components/I18nProvider";
 
 export default function DashboardClient({
   userId,
@@ -33,6 +34,7 @@ export default function DashboardClient({
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const t = useT();
   const incomingBrief = params.get("brief") ?? "";
   const [composerOpen, setComposerOpen] = useState(!!incomingBrief);
   const [projectComposerOpen, setProjectComposerOpen] = useState(false);
@@ -192,7 +194,7 @@ export default function DashboardClient({
               onClick={() => setPayoutOpen(true)}
               className="h-9 px-4 rounded-full border border-border-crisp text-[13px] font-medium text-on-surface-variant hover:text-on-surface hover:border-outline transition-colors"
             >
-              Payout settings
+              {t("dash.payoutSettings")}
             </button>
           ) : (
             <>
@@ -211,13 +213,13 @@ export default function DashboardClient({
                 className="h-9 px-5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: "17px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
-                New project
+                {t("dash.newProject")}
               </button>
               <button
                 onClick={() => setComposerOpen(true)}
                 className="h-9 px-3 rounded-full text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
               >
-                Single task
+                {t("dash.singleTask")}
               </button>
             </>
           )}
@@ -315,7 +317,7 @@ export default function DashboardClient({
       {/* ── List header + search ── */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <h2 className="text-[15px] font-medium text-on-surface">
-          {isPilot ? "My matches" : "My tasks & projects"}
+          {isPilot ? t("dash.titlePilot") : t("dash.titleClient")}
         </h2>
         {myTasks.length > 0 && (
           <div className="ml-auto w-full sm:w-64">
@@ -375,9 +377,9 @@ export default function DashboardClient({
                       <span aria-hidden="true">·</span>
                       <span>{doneCount}/{milestones.length} delivered</span>
                       {project?.status === "cancelled" ? (
-                        <><span aria-hidden="true">·</span><span className="text-error font-medium">Cancelled</span></>
+                        <><span aria-hidden="true">·</span><span className="text-error font-medium">{t("dash.cancelled")}</span></>
                       ) : !isPilot && currentMilestone && !currentMilestone.claimed_by_user_id && (
-                        <><span aria-hidden="true">·</span><span className="text-electric-violet">Finding a match for milestone {(currentMilestone.milestone_index ?? 0) + 1}…</span></>
+                        <><span aria-hidden="true">·</span><span className="text-electric-violet">{t("dash.findingMatch", { n: (currentMilestone.milestone_index ?? 0) + 1 })}</span></>
                       )}
                     </p>
                   </div>
@@ -414,7 +416,7 @@ export default function DashboardClient({
                         disabled={cancelling === projectId}
                         className="mt-2 ml-3 text-[12.5px] font-medium text-on-surface-variant hover:text-error transition-colors disabled:opacity-50"
                       >
-                        {cancelling === projectId ? "Cancelling…" : "Cancel project"}
+                        {cancelling === projectId ? t("dash.cancelling") : t("dash.cancelProject")}
                       </button>
                     )}
                   </div>
@@ -594,10 +596,11 @@ function EmptyState({ isPilot, matchable, onPost, onNewProject, onTemplate }: {
   isPilot: boolean; matchable: boolean; onPost: () => void;
   onNewProject?: () => void; onTemplate?: (seed: string) => void;
 }) {
+  const t = useT();
   if (isPilot) {
     return (
       <div className="border-t border-border-crisp py-16">
-        <p className="text-[17px] font-medium text-on-surface mb-1.5">No matches yet</p>
+        <p className="text-[17px] font-medium text-on-surface mb-1.5">{t("dash.noMatchesTitle")}</p>
         <p className="text-[13.5px] text-on-surface-variant max-w-[440px] mb-5">
           {matchable
             ? "You're vetted. As soon as a client posts work that fits your skills, the AI matches it to you. It shows up here and you get an email with the pay and deadline. No need to keep checking."
@@ -615,22 +618,21 @@ function EmptyState({ isPilot, matchable, onPost, onNewProject, onTemplate }: {
     <div className="border-t border-border-crisp pt-14 pb-8">
       <div className="max-w-[560px]">
         <h3 className="font-display text-[clamp(26px,3.4vw,34px)] leading-tight tracking-[-0.015em] text-on-surface">
-          What outcome do you need?
+          {t("dash.emptyOutcomeTitle")}
         </h3>
         <p className="text-[14.5px] text-on-surface-variant leading-relaxed mt-3 mb-6">
-          Describe it in a sentence. The AI breaks it into a milestone plan, prices each step, and matches
-          a vetted specialist to each. No bidding, no proposal spam, free to hire during early access.
+          {t("dash.emptyOutcomeBody")}
         </p>
 
-        <p className="text-[11px] uppercase tracking-[0.16em] text-on-surface-variant mb-2.5">Start in one tap</p>
+        <p className="text-[11px] uppercase tracking-[0.16em] text-on-surface-variant mb-2.5">{t("dash.startInOneTap")}</p>
         <div className="flex flex-wrap gap-2 mb-7">
-          {PROJECT_TEMPLATES.map(t => (
+          {PROJECT_TEMPLATES.map(tpl => (
             <button
-              key={t.label}
-              onClick={() => onTemplate?.(t.outcome)}
+              key={tpl.label}
+              onClick={() => onTemplate?.(tpl.outcome)}
               className="rounded-full border border-border-crisp px-3.5 py-2 text-[13px] font-medium text-on-surface hover:border-electric-violet hover:bg-electric-violet/[0.04] transition-colors"
             >
-              {t.label}
+              {tpl.label}
             </button>
           ))}
         </div>
@@ -641,10 +643,10 @@ function EmptyState({ isPilot, matchable, onPost, onNewProject, onTemplate }: {
             className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <span className="material-symbols-outlined" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
-            Describe your first project
+            {t("dash.describeFirst")}
           </button>
           <button onClick={onPost} className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
-            or post a single task
+            {t("dash.orSingleTask")}
           </button>
         </div>
       </div>
