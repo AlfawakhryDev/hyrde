@@ -5,13 +5,15 @@ import { usePathname, useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { HyrdeMark } from "./Logo";
+import { useT } from "./I18nProvider";
+import LangSwitcher from "./LangSwitcher";
 
 const NAV_LINKS = [
-  { href: "/cost-estimator", label: "Estimate cost" },
-  { href: "/vetting", label: "Find work" },
-  { href: "/hire",    label: "Talent"  },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about",   label: "Company" },
+  { href: "/cost-estimator", key: "nav.estimate" },
+  { href: "/vetting", key: "nav.findWork" },
+  { href: "/hire",    key: "nav.talent"  },
+  { href: "/pricing", key: "nav.pricing" },
+  { href: "/about",   key: "nav.company" },
 ];
 
 export default function Navbar() {
@@ -19,6 +21,7 @@ export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const t = useT();
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function Navbar() {
         href="/signup"
         className="flex items-center justify-center gap-2 h-8 bg-[#0A0A0B] text-white/90 text-[12px] font-medium hover:text-white transition-colors"
       >
-        Early access is live. Start hiring free, 3 tasks a month on us
+        {t("nav.announce")}
         <span aria-hidden="true">→</span>
       </Link>
 
@@ -68,18 +71,19 @@ export default function Navbar() {
                     : "text-on-surface-variant hover:text-on-surface"
                 }`}
               >
-                {link.label}
+                {t(link.key)}
               </Link>
             ))}
           </div>
 
           <span className="hidden md:block w-px h-4 bg-border-crisp mx-1.5" aria-hidden="true" />
+          <LangSwitcher className="hidden md:inline-flex mr-1" />
 
           {user ? (
             <div className="hidden md:flex items-center gap-1.5">
               <Link href="/dashboard"
                 className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity">
-                Dashboard
+                {t("nav.dashboard")}
               </Link>
               <Link href="/profile" title="Profile" aria-label="Profile"
                 className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
@@ -96,11 +100,11 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-1.5">
               <Link href="/login"
                 className="px-3 py-1.5 rounded-full text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
-                Log in
+                {t("nav.login")}
               </Link>
               <Link href="/signup"
                 className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity">
-                Sign up
+                {t("nav.signup")}
               </Link>
             </div>
           )}
@@ -128,34 +132,38 @@ export default function Navbar() {
                 className={`block px-3 py-2.5 rounded-lg text-[15px] font-medium ${
                   isActive(link.href) ? "text-on-surface bg-surface-container" : "text-on-surface-variant"
                 }`}>
-                {link.label}
+                {t(link.key)}
               </Link>
             ))}
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <span className="text-[13px] text-on-surface-variant">{t("common.language")}</span>
+              <LangSwitcher />
+            </div>
             <div className="flex gap-2 pt-2 mt-1 border-t border-border-crisp">
               {user ? (
                 <>
                   <Link href="/dashboard" onClick={() => setOpen(false)}
                     className="flex-1 h-10 flex items-center justify-center rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium">
-                    Dashboard
+                    {t("nav.dashboard")}
                   </Link>
                   <Link href="/profile" onClick={() => setOpen(false)}
                     className="flex-1 h-10 flex items-center justify-center rounded-full border border-border-crisp text-sm font-medium text-on-surface">
-                    Profile
+                    {t("nav.profile")}
                   </Link>
                   <button onClick={signOut}
                     className="flex-1 h-10 flex items-center justify-center rounded-full border border-border-crisp text-sm font-medium text-on-surface">
-                    Sign out
+                    {t("nav.signOut")}
                   </button>
                 </>
               ) : (
                 <>
                   <Link href="/login" onClick={() => setOpen(false)}
                     className="flex-1 h-10 flex items-center justify-center rounded-full border border-border-crisp text-sm font-medium text-on-surface">
-                    Log in
+                    {t("nav.login")}
                   </Link>
                   <Link href="/signup" onClick={() => setOpen(false)}
                     className="flex-1 h-10 flex items-center justify-center rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium">
-                    Sign up
+                    {t("nav.signup")}
                   </Link>
                 </>
               )}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteShell from "@/components/SiteShell";
 import { Analytics } from "@vercel/analytics/next";
+import { I18nProvider } from "@/components/I18nProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hyrde.net"),
@@ -104,7 +105,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-body">
-        <SiteShell>{children}</SiteShell>
+        <I18nProvider>
+          <SiteShell>{children}</SiteShell>
+        </I18nProvider>
         <Analytics />
       </body>
     </html>
