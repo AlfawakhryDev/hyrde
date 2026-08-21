@@ -3,6 +3,12 @@ import { createServerClient } from "@supabase/ssr";
 import ws from "ws";
 import { LOCALE_COOKIE } from "@/lib/i18n";
 
+// German-speaking market. Vercel sets `x-vercel-ip-country` (ISO 3166-1 alpha-2)
+// on every edge request and overwrites any client-sent value, so it can't be
+// spoofed in production. Next 15+ removed `request.geo`; reading the header is
+// the dependency-free equivalent of `@vercel/functions` geolocation().
+const DACH = new Set(["DE", "AT", "CH", "LI"]);
+
 // Refreshes the Supabase auth session on every matched request and keeps the
 // auth cookies in sync between the browser and the server. Also gates the
 // app area (/dashboard, /onboarding, /t) behind a session.
@@ -11,13 +17,17 @@ import { LOCALE_COOKIE } from "@/lib/i18n";
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // German-default: a first-time visitor to the root gets the German homepage.
-  // Anyone who explicitly picked English (hyrde_locale=en, set by the language
-  // switcher) keeps the English root. Handled before the auth logic since `/`
-  // is public; reversible by dropping "/" from the matcher below.
+  // Root landing: route by locale. An explicit choice (the language switcher
+  // sets hyrde_locale) always wins; otherwise DACH visitors get the German
+  // homepage and everyone else the English one. Handled before the auth logic
+  // since `/` is public; reversible by dropping "/" from the matcher below.
   if (path === "/") {
-    if (request.cookies.get(LOCALE_COOKIE)?.value === "en") return NextResponse.next();
-    return NextResponse.redirect(new URL("/de", request.url));
+    const choice = request.cookies.get(LOCALE_COOKIE)?.value;
+    if (choice === "en") return NextResponse.next();
+    if (choice === "de") return NextResponse.redirect(new URL("/de", request.url));
+    const country = request.headers.get("x-vercel-ip-country");
+    if (country && DACH.has(country)) return NextResponse.redirect(new URL("/de", request.url));
+    return NextResponse.next(); // no explicit choice, non-DACH → English
   }
 
   let response = NextResponse.next({ request });
