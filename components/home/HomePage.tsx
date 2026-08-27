@@ -8,6 +8,7 @@ import HowItWorks from "@/components/home/HowItWorks";
 import GlobalPay from "@/components/home/GlobalPay";
 import OutcomeShowcase from "@/components/home/OutcomeShowcase";
 import { tFor, type Locale } from "@/lib/i18n";
+import { faqFor, faqJsonLd } from "@/lib/faq";
 
 // ── Shared marketing homepage ─────────────────────────────────────────────────
 // Rendered by both / (en) and /de (de). Every string comes from the dictionary
@@ -46,8 +47,32 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
     [t("home.compareGuides"), "/guides"],
     [t("home.compareTalent"), "/hire"],
   ];
+  // Top 6 FAQs surface on the homepage (visible content backs the FAQPage schema);
+  // the full set lives on /faq. Answer engines quote these directly.
+  const faqs = faqFor(locale).slice(0, 6);
+  const faqMoreHref = locale === "de" ? "/de/faq" : "/faq";
+  const faqLd = faqJsonLd(faqs);
+  const serviceLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Hyrde",
+    serviceType: "AI-matched, interview-vetted freelance talent",
+    provider: { "@type": "Organization", name: "Hyrde", url: "https://hyrde.net" },
+    areaServed: "Worldwide",
+    description:
+      locale === "de"
+        ? "Beschreibe ein Ergebnis oder eine Aufgabe; die KI vermittelt einen im Interview geprüften Spezialisten. Kein Bieten, kein Angebots-Spam."
+        : "Describe an outcome or task; the AI matches one interview-vetted specialist. No bidding, no proposal spam.",
+    offers: [
+      { "@type": "Offer", name: "Early access", price: "0", priceCurrency: "USD" },
+      { "@type": "Offer", name: "Pro", price: "20", priceCurrency: "USD" },
+      { "@type": "Offer", name: "Scale", price: "200", priceCurrency: "USD" },
+    ],
+  };
   return (
     <div className="min-h-screen bg-paper">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }} />
 
       {/* ── Hero — outcomes, not gigs ── */}
       <section className="relative -mt-[104px] min-h-[100svh] flex items-center overflow-hidden bg-[#100F0B]">
@@ -266,6 +291,29 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
             </Link>
           </div>
         ))}
+      </section>
+
+      {/* ── FAQ (visible content backs the FAQPage schema above) ── */}
+      <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-8 pb-20">
+        <Kicker n="07" label={t("home.faqKicker")} />
+        <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16">
+          <div>
+            <h2 className="font-display font-light text-ink leading-[1.05] tracking-[-0.015em] text-[clamp(30px,4vw,46px)]">
+              {t("home.faqH2")}
+            </h2>
+            <Link href={faqMoreHref} className="mt-6 inline-block text-[14px] font-medium text-ink underline decoration-[#C9C5B8] underline-offset-[5px] hover:decoration-ink transition-colors">
+              {t("home.faqMore")}
+            </Link>
+          </div>
+          <dl className="divide-y divide-[#E3E0D8] border-t border-[#E3E0D8]">
+            {faqs.map(f => (
+              <div key={f.q} className="py-5">
+                <dt className="text-[15.5px] font-semibold text-ink leading-snug">{f.q}</dt>
+                <dd className="mt-2 text-[14px] text-[#57564F] leading-[1.6]">{f.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </section>
 
       {/* ── Compare row (internal links) ── */}
