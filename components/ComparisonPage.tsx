@@ -15,12 +15,27 @@ export default function ComparisonPage({ c }: { c: Competitor }) {
       acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   };
+  // Breadcrumbs give the SERP a labelled path and help sitelinks on these
+  // high-intent "[competitor] alternative" pages.
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://hyrde.net" },
+      { "@type": "ListItem", position: 2, name: "Compare", item: "https://hyrde.net/compare" },
+      { "@type": "ListItem", position: 3, name: `Hyrde vs ${c.name}`, item: `https://hyrde.net/${c.slug}-alternative` },
+    ],
+  };
 
   return (
     <div className="bg-surface-gray">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       {/* ── Hero ── */}
