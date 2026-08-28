@@ -54,9 +54,16 @@ const organizationJsonLd = {
     "hiring freelancers", "AI talent matching", "vetted freelancers",
     "outcome-based hiring", "freelance marketplace", "no-bidding hiring",
   ],
-  // ponytail: add real social profile URLs to sameAs once they exist (LinkedIn/X);
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "abdelrahman@hyrde.net",
+    contactType: "customer support",
+    availableLanguage: ["en", "de"],
+  },
   // sameAs is the strongest entity-consolidation signal for answer engines.
-  sameAs: [],
+  // The public source repo is a real, verifiable entity link; add LinkedIn/X here
+  // once those profiles exist.
+  sameAs: ["https://github.com/AlfawakhryDev/hyrde"],
 };
 
 const websiteJsonLd = {
