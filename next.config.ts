@@ -57,6 +57,14 @@ const LEGACY_REDIRECTS: { from: string; to: string }[] = [
   { from: "/join", to: "/" },
   { from: "/welcome", to: "/" },
 
+  // Marketplace-era informational pages. The questions they answered are now
+  // answered by the how-it-works and legal-structure pages.
+  { from: "/faq", to: "/wie-es-funktioniert" },
+  { from: "/faq/:path*", to: "/wie-es-funktioniert" },
+  { from: "/vetting", to: "/wie-es-funktioniert" },
+  { from: "/investors", to: "/" },
+  { from: "/t/:path*", to: "/" },
+
   // German is now the default locale for every client-facing surface (§6), so
   // the /de mirror is redundant rather than translated.
   { from: "/de", to: "/" },
