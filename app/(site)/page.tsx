@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ClipboardList, FileSignature, Stamp } from "lucide-react";
+import AlternativesTable from "@/components/site/AlternativesTable";
 import WerkvertragCard from "@/components/site/WerkvertragCard";
 import { VERTICAL } from "@/lib/vertical";
 
@@ -115,10 +116,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── The alternatives ── */}
+      <section className="border-b border-wv-line">
+        <div className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-20">
+          <Marker n="02" label="Die Alternativen" />
+          <div className="mt-7 max-w-[62ch]">
+            <h2 className="text-[clamp(26px,3.4vw,38px)] font-semibold leading-[1.12] tracking-[-0.02em] text-wv-ink">
+              Die Kapazität fehlt heute, nicht in sieben Monaten.
+            </h2>
+            <p className="mt-5 text-[15px] leading-[1.62] text-wv-slate">
+              Eine IT-Stelle in Deutschland bleibt im Mittel 7,7 Monate unbesetzt. Bis dahin steht
+              das Vorhaben. Die folgende Gegenüberstellung nennt die Unterschiede, ohne sie zu
+              bewerten.
+            </p>
+          </div>
+          <div className="mt-10">
+            <AlternativesTable />
+          </div>
+        </div>
+      </section>
+
       {/* ── How it works ── */}
       <section className="border-b border-wv-line">
         <div className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-20">
-          <Marker n="02" label="Ablauf" />
+          <Marker n="03" label="Ablauf" />
           <h2 className="mt-7 max-w-[20ch] text-[clamp(26px,3.4vw,38px)] font-semibold leading-[1.12] tracking-[-0.02em] text-wv-ink">
             Vom definierten Ergebnis zur Abnahme, in drei Schritten.
           </h2>
@@ -143,7 +164,7 @@ export default function Home() {
       {/* ── The proof: compliance dossier + relationship chain ── */}
       <section className="border-b border-wv-line">
         <div className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-20">
-          <Marker n="03" label="Nachweis" />
+          <Marker n="04" label="Nachweis" />
           <div className="mt-7 grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
             <div>
               <h2 className="max-w-[18ch] text-[clamp(26px,3.4vw,38px)] font-semibold leading-[1.12] tracking-[-0.02em] text-wv-ink">
@@ -192,7 +213,7 @@ export default function Home() {
       {/* ── Vertical focus ── */}
       <section className="border-b border-wv-line">
         <div className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-20">
-          <Marker n="04" label="Fokus" />
+          <Marker n="05" label="Fokus" />
           <h2 className="mt-7 max-w-[22ch] text-[clamp(26px,3.4vw,38px)] font-semibold leading-[1.12] tracking-[-0.02em] text-wv-ink">
             Ein Fokus: {VERTICAL.labelDe}.
           </h2>
