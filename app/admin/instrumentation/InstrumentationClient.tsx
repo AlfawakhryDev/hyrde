@@ -42,14 +42,27 @@ export type TaskRequest = {
   status: string;
 };
 
+export type DemoRequest = {
+  id: string;
+  created_at: string;
+  name: string;
+  email: string;
+  company: string | null;
+  note: string | null;
+  source: string;
+  status: string;
+};
+
 export default function InstrumentationClient({
   metrics: m,
   requests = [],
   names = {},
+  demos = [],
 }: {
   metrics: Metrics;
   requests?: TaskRequest[];
   names?: Record<string, string>;
+  demos?: DemoRequest[];
 }) {
   const hasData = m.settled_projects > 0;
   const fmtReqDate = (iso: string) =>
@@ -73,6 +86,36 @@ export default function InstrumentationClient({
         Estimate versus actual, captured immutably on every project. Scope accuracy is the number that
         compounds as work closes. Nothing here is hand-entered.
       </p>
+
+      {/* DEMO REQUESTS: high-intent leads from the "Book a demo" button */}
+      <div className="rounded-3xl border-2 border-electric-violet/40 bg-electric-violet/[0.04] p-6 md:p-7 mb-6">
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-electric-violet">Demo requests</div>
+          <span className="text-[12px] text-on-surface-variant tabular-nums">{demos.length} total</span>
+        </div>
+        <p className="text-[13px] text-on-surface-variant mb-5 max-w-[560px]">
+          People who clicked “Book a demo”. Reach out to schedule.
+        </p>
+        {demos.length === 0 ? (
+          <p className="text-[13px] text-on-surface-variant">No demo requests yet.</p>
+        ) : (
+          <div className="flex flex-col divide-y divide-border-crisp">
+            {demos.map(d => (
+              <div key={d.id} className="py-3 flex gap-3">
+                <span className="shrink-0 text-[11px] text-on-surface-variant tabular-nums w-[52px]">{fmtReqDate(d.created_at)}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-x-2">
+                    <span className="text-[14px] font-medium text-on-surface">{d.name}</span>
+                    {d.company && <span className="text-[12px] text-on-surface-variant">· {d.company}</span>}
+                  </div>
+                  <a href={`mailto:${d.email}`} className="text-[12.5px] text-electric-violet hover:underline">{d.email}</a>
+                  {d.note && <p className="text-[13px] text-on-surface-variant leading-snug mt-1 line-clamp-2">{d.note}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* DEMAND SIGNAL: what clients tried to post, captured even if they churned */}
       <div className="rounded-3xl border border-border-crisp p-6 md:p-7 mb-10">

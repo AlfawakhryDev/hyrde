@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
-import InstrumentationClient, { type Metrics, type TaskRequest } from "./InstrumentationClient";
+import InstrumentationClient, { type Metrics, type TaskRequest, type DemoRequest } from "./InstrumentationClient";
 
 export const metadata: Metadata = {
   title: "Instrumentation",
@@ -40,5 +40,13 @@ export default async function InstrumentationPage() {
     : { data: [] as { id: string; display_name: string | null; company: string | null }[] };
   const names = Object.fromEntries((profiles ?? []).map(p => [p.id, p.company || p.display_name || "—"]));
 
-  return <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} />;
+  // Demo requests — high-intent leads from the "Book a demo" button.
+  const { data: demoRows } = await supabase
+    .from("demo_requests")
+    .select("id, created_at, name, email, company, note, source, status")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const demos = (demoRows ?? []) as DemoRequest[];
+
+  return <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} demos={demos} />;
 }

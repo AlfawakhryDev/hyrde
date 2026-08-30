@@ -7,6 +7,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 import { HyrdeMark } from "./Logo";
 import { useT } from "./I18nProvider";
 import LangSwitcher from "./LangSwitcher";
+import BookDemo from "./BookDemo";
 
 const NAV_LINKS = [
   { href: "/cost-estimator", key: "nav.estimate" },
@@ -79,6 +80,8 @@ export default function Navbar() {
           <span className="hidden md:block w-px h-4 bg-border-crisp mx-1.5" aria-hidden="true" />
           <LangSwitcher className="hidden md:inline-flex mr-1" />
 
+          <span className="hidden md:inline-flex mr-1.5"><BookDemo variant="nav" /></span>
+
           {user ? (
             <div className="hidden md:flex items-center gap-1.5">
               <Link href="/dashboard"
@@ -127,6 +130,9 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden flex justify-center px-4 pt-2">
           <div className="w-full max-w-sm rounded-2xl bg-surface-bright/95 backdrop-blur-xl border border-border-crisp shadow-[0_8px_32px_rgba(10,10,15,0.12)] p-3">
+            <div className="[&>button]:w-full [&>button]:justify-center [&>button]:h-11 mb-2" onClick={() => setOpen(false)}>
+              <BookDemo variant="nav" />
+            </div>
             {NAV_LINKS.map(link => (
               <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
                 className={`block px-3 py-2.5 rounded-lg text-[15px] font-medium ${
