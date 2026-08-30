@@ -42,6 +42,18 @@ export async function POST(req: NextRequest) {
 
   const fallbackSlug = classifyArchetype(rough);
 
+  // Demand signal: store what the client is trying to post BEFORE we run the AI,
+  // so it's captured even if they see the plan and churn without completing.
+  // Never block classification on this.
+  try {
+    await supabase.from("task_requests").insert({
+      user_id: user.id,
+      raw_text: rough,
+      kind: "outcome",
+      archetype: fallbackSlug,
+    });
+  } catch { /* capture is best-effort */ }
+
   const prompt = `You classify a client's project request into ONE archetype so the right scoping questions load. Return STRICT JSON only, no prose, no markdown fences.
 
 ARCHETYPES:

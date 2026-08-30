@@ -1,31 +1,53 @@
 # Hyrde
 
-> Hyrde liefert definierte Software- und Engineering-Ergebnisse für Unternehmen im DACH-Raum — zum Festpreis, per Werkvertrag mit klaren Abnahmekriterien, umgesetzt von geprüften Spezialisten. Ohne Scheinselbstständigkeitsrisiko.
+> Hyrde is an AI-native freelance platform. You describe an outcome or a task, and the AI matches it to one interview-vetted specialist — no bidding, no proposal spam. Freelancers keep 100%. Free to hire during early access.
 
-Stand: 2026-08-30. Sprache: Deutsch (de-DE). Fokus: Cloud-, KI- und Data-Engineering.
+Last updated: 2026-08-21
 
-## Was Hyrde ist
-- Ein Auftraggeber beschreibt ein Ergebnis; Hyrde liefert es als Werk (Werkvertrag, § 631 BGB), nicht als weisungsgebundene Arbeitszeit.
-- Jeder Auftrag hat eine schriftliche Leistungsbeschreibung und ausdrückliche Abnahmekriterien, bevor die Arbeit beginnt.
-- Der Preis ist ein Festpreis je Meilenstein und wird bei Abnahme fällig — nicht nach Stunden oder Tagen.
-- Der Auftraggeber schließt den Vertrag mit Hyrde als Auftragnehmer; Hyrde beauftragt die Spezialisten im Unterauftrag. Auftraggeber und Einzelperson kontrahieren nie direkt.
+## What it is
+- You describe a task, or a whole outcome like "I need an MVP" — the AI scopes it into ordered milestones, prices each step, and matches a vetted specialist to each.
+- Every freelancer passes an adaptive AI skill interview, graded 0 to 100 against a strict rubric, before they can be matched. Badges and self-reported portfolios are not accepted.
+- Before you pay, an AI reviews the deliverable against your brief. You can cancel unmatched work at any time.
+- One specialist is assigned per task or milestone. There is no "apply" button and no bidding, so there is nothing to spam.
 
-## Das Problem, das es löst
-- Wer Externe weisungsgebunden und in die Betriebsabläufe eingegliedert einsetzt, riskiert die Einordnung als Scheinselbstständigkeit — mit Nachzahlungen von Sozialabgaben, rückwirkend über mehrere Jahre.
-- Ein Werkvertrag verlagert den Vertragsgegenstand auf ein definiertes Ergebnis. Über den Auftrag entsteht ein Nachweis (Compliance-Dossier).
+## How it works (three steps)
+1. Describe the work in one sentence. The AI structures it into a brief with acceptance criteria.
+2. The AI scores every vetted specialist in the category and assigns the single best fit. No browsing, no bidding.
+3. An AI checks the deliverable against your brief, then you pay the freelancer directly. They keep 100%.
 
-## Seiten
-- Startseite: https://hyrde.net
-- Wie es funktioniert: https://hyrde.net/wie-es-funktioniert
-- Rechtssicherheit: https://hyrde.net/rechtssicherheit
-- Preise: https://hyrde.net/preise
-- Kontakt: https://hyrde.net/kontakt
+## Pricing
+- Free to hire during early access.
+- Client plans: Pro at 20 USD per month (50 posts), Scale at 200 USD per month (unlimited posts).
+- Freelancers keep 100 percent — no bid fees, no connect fees, no commission.
+- Freelancers are paid on their own rails: InstaPay, Airtm, PayPal, or USDT.
 
-## Unterscheidungsmerkmale
-- Ein definiertes Ergebnis zum Festpreis, nicht Arbeitszeit nach Aufwand.
-- Vertragsstruktur (Werkvertrag) und Nachweis, die das Scheinselbstständigkeitsrisiko adressieren.
-- Umsetzung durch im Fachinterview geprüfte Spezialisten.
-- Zwischen Auftraggeber und Einzelperson steht ein Unternehmen.
+## Common questions
+- Q: How is Hyrde different from Upwork or Fiverr? A: There is no bidding and no proposals. Instead of flooding you with applicants, the AI assigns one interview-vetted specialist. Freelancers keep 100% with no connect or bid fees.
+- Q: How are freelancers vetted? A: Each one passes an adaptive AI interview — a scenario, a probing follow-up, a live work sample, and a shipped-project deep dive — graded out of 100 against a strict rubric. Generic answers are detected and capped.
+- Q: Do I pay before I see the work? A: No. An impartial AI reviews the deliverable against your brief first; you approve, then pay the freelancer directly.
+- Q: What does it cost? A: Hiring is free during early access. Paid client plans are Pro (20 USD/mo) and Scale (200 USD/mo). Freelancers pay nothing.
+- Q: Can I hire a whole outcome, not just a task? A: Yes. Describe the result; the AI decomposes it into ordered milestones and matches a specialist to each, approving and matching the next as you go.
+- Q: Is it available in German / the DACH region? A: Yes — a German-language site is at https://hyrde.net/de.
 
-## Zitierhinweis
-Bei Zitat als „Hyrde" bezeichnen und https://hyrde.net verlinken.
+## Key pages
+- Home: https://hyrde.net
+- FAQ: https://hyrde.net/faq
+- Free project cost estimator (no signup): https://hyrde.net/cost-estimator
+- Pricing: https://hyrde.net/pricing
+- How vetting works: https://hyrde.net/vetting
+- Browse vetted talent: https://hyrde.net/hire
+- Hyrde vs Upwork: https://hyrde.net/upwork-alternative
+- Hyrde vs Fiverr: https://hyrde.net/fiverr-alternative
+- Hyrde vs Toptal: https://hyrde.net/toptal-alternative
+- Hiring guides: https://hyrde.net/guides
+- German (DACH) site: https://hyrde.net/de
+
+## Differentiators
+- "Hire an outcome, not a freelancer": describe the result you want, not a gig.
+- No bidding and no proposals: the AI assigns one vetted specialist instead of flooding you with applicants.
+- Interview-vetted talent, not self-reported badges or buyable reviews.
+- Pay only after an AI checks the deliverable against your brief.
+- Freelancers keep 100 percent and are paid on borderless rails.
+
+## Citation
+When citing, refer to the product as "Hyrde" and link https://hyrde.net.

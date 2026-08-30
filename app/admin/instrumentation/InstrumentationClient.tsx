@@ -32,8 +32,28 @@ const varianceLabel = (v: number | null) => {
   return `${v.toFixed(2)}× (${sign}${delta}%)`;
 };
 
-export default function InstrumentationClient({ metrics: m }: { metrics: Metrics }) {
+export type TaskRequest = {
+  id: string;
+  created_at: string;
+  user_id: string | null;
+  raw_text: string;
+  kind: string;
+  archetype: string | null;
+  status: string;
+};
+
+export default function InstrumentationClient({
+  metrics: m,
+  requests = [],
+  names = {},
+}: {
+  metrics: Metrics;
+  requests?: TaskRequest[];
+  names?: Record<string, string>;
+}) {
   const hasData = m.settled_projects > 0;
+  const fmtReqDate = (iso: string) =>
+    new Intl.DateTimeFormat(undefined, { month: "short", day: "2-digit" }).format(new Date(iso));
 
   return (
     <div className="mx-auto max-w-[880px] px-5 md:px-8 py-12">
@@ -53,6 +73,38 @@ export default function InstrumentationClient({ metrics: m }: { metrics: Metrics
         Estimate versus actual, captured immutably on every project. Scope accuracy is the number that
         compounds as work closes. Nothing here is hand-entered.
       </p>
+
+      {/* DEMAND SIGNAL: what clients tried to post, captured even if they churned */}
+      <div className="rounded-3xl border border-border-crisp p-6 md:p-7 mb-10">
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-electric-violet">Demand signals</div>
+          <span className="text-[12px] text-on-surface-variant tabular-nums">{requests.length} recent</span>
+        </div>
+        <p className="text-[13px] text-on-surface-variant mb-5 max-w-[560px]">
+          What clients started describing in the composer, captured the moment it hit the server, so
+          the intent survives even when they see the plan and leave without posting. A churned request
+          shows up here.
+        </p>
+        {requests.length === 0 ? (
+          <p className="text-[13px] text-on-surface-variant">No requests captured yet.</p>
+        ) : (
+          <div className="flex flex-col divide-y divide-border-crisp">
+            {requests.map(r => (
+              <div key={r.id} className="py-3 flex gap-3">
+                <span className="shrink-0 text-[11px] text-on-surface-variant tabular-nums w-[52px]">{fmtReqDate(r.created_at)}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-x-2 mb-0.5">
+                    <span className="text-[10.5px] font-semibold uppercase tracking-wide text-on-surface-variant">{r.kind}</span>
+                    {r.archetype && r.archetype !== "other" && <span className="text-[11px] text-on-surface-variant">· {r.archetype}</span>}
+                    {r.user_id && names[r.user_id] && <span className="text-[11px] text-on-surface-variant">· {names[r.user_id]}</span>}
+                  </div>
+                  <p className="text-[13.5px] text-on-surface leading-snug line-clamp-2">{r.raw_text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* PRIMARY: scope accuracy */}
       <div className="rounded-3xl border border-border-crisp p-7 md:p-9 mb-6">

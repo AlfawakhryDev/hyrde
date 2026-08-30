@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
-import InstrumentationClient, { type Metrics } from "./InstrumentationClient";
+import InstrumentationClient, { type Metrics, type TaskRequest } from "./InstrumentationClient";
 
 export const metadata: Metadata = {
   title: "Instrumentation",
@@ -25,5 +25,20 @@ export default async function InstrumentationPage() {
   const { data, error } = await supabase.rpc("instrumentation_metrics");
   if (error) redirect("/dashboard");
 
-  return <InstrumentationClient metrics={data as Metrics} />;
+  // Demand signals — what clients tried to post (captured at /api/classify and
+  // /api/brief), so churned intent is visible here. Admin-gated via RLS.
+  const { data: reqs } = await supabase
+    .from("task_requests")
+    .select("id, created_at, user_id, raw_text, kind, archetype, status")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const requests = (reqs ?? []) as TaskRequest[];
+
+  const ids = [...new Set(requests.map(r => r.user_id).filter(Boolean))] as string[];
+  const { data: profiles } = ids.length
+    ? await supabase.from("profiles").select("id, display_name, company").in("id", ids)
+    : { data: [] as { id: string; display_name: string | null; company: string | null }[] };
+  const names = Object.fromEntries((profiles ?? []).map(p => [p.id, p.company || p.display_name || "—"]));
+
+  return <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} />;
 }
