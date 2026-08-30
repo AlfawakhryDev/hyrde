@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHead from "@/components/site/PageHead";
+import JsonLd from "@/components/site/JsonLd";
+import { breadcrumbLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Wie es funktioniert",
@@ -34,6 +36,7 @@ const STEPS = [
 export default function Page() {
   return (
     <>
+      <JsonLd data={breadcrumbLd([{ name: "Start", path: "/" }, { name: "Wie es funktioniert", path: "/wie-es-funktioniert" }])} />
       <PageHead
         marker="Ablauf"
         title="Vom definierten Ergebnis zur Abnahme."

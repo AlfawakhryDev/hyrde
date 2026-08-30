@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHead from "@/components/site/PageHead";
+import JsonLd from "@/components/site/JsonLd";
+import { breadcrumbLd } from "@/lib/seo";
 import {
   COMMITMENTS_DE,
   ENGAGEMENT_TIERS,
@@ -18,6 +20,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
+      <JsonLd data={breadcrumbLd([{ name: "Start", path: "/" }, { name: "Preise", path: "/preise" }])} />
       <PageHead
         marker="Preise"
         title="Ein Festpreis je Ergebnis."

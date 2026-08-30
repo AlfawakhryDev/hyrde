@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PageHead from "@/components/site/PageHead";
 import IntakeForm from "@/components/site/IntakeForm";
+import JsonLd from "@/components/site/JsonLd";
+import { breadcrumbLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Kontakt",
@@ -11,6 +13,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
+      <JsonLd data={breadcrumbLd([{ name: "Start", path: "/" }, { name: "Kontakt", path: "/kontakt" }])} />
       <PageHead
         marker="Kontakt"
         title="Beschreiben Sie Ihr Ergebnis."
