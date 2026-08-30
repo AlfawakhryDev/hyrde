@@ -9,6 +9,7 @@ import GlobalPay from "@/components/home/GlobalPay";
 import OutcomeShowcase from "@/components/home/OutcomeShowcase";
 import { tFor, type Locale } from "@/lib/i18n";
 import { faqFor, faqJsonLd } from "@/lib/faq";
+import BookDemo from "@/components/BookDemo";
 
 // ── Shared marketing homepage ─────────────────────────────────────────────────
 // Rendered by both / (en) and /de (de). Every string comes from the dictionary
@@ -105,6 +106,7 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
               </div>
 
               <div className="flex flex-wrap items-center gap-4 mt-9">
+                <BookDemo variant="hero" />
                 <Link
                   href="/signup"
                   className="h-11 inline-flex items-center gap-2 px-6 rounded-full bg-[#F7F5F0] text-[#100F0B] text-sm font-medium hover:bg-white transition-colors"
