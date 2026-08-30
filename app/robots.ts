@@ -2,7 +2,8 @@ import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   const base = "https://hyrde.net";
-  const privatePaths = ["/api/", "/dashboard"];
+  // Ops and auth surfaces are not for crawlers.
+  const privatePaths = ["/api/", "/dashboard", "/admin", "/auth/"];
   // AEO: explicitly welcome the answer-engine crawlers so we can be cited.
   const aiBots = [
     "GPTBot", "OAI-SearchBot", "ChatGPT-User",       // OpenAI
