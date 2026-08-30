@@ -10,36 +10,6 @@
   --color-paper: #F7F5F0;
   --color-ink: #14140F;
 
-  /* ── Werkvertrag design system (2026-08 pivot) ─────────────────────────
-     Grounded in German technical documentation: paper, dense ink, one
-     structural blueprint blue, an amber reserved ONLY for compliance
-     warnings, and one neutral grey scale. Five values. Amber is never
-     decorative. See CLAUDE.md §10. Prefixed `wv-` so nothing collides with
-     the pre-pivot tokens above (which are being unwound). */
-  --font-sans: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
-
-  --color-wv-paper: #FBFBF9;   /* page ground — paper white, neutral not cream */
-  --color-wv-panel: #F3F3EF;   /* a hair darker: raised panels, form fields */
-  --color-wv-ink: #17181B;     /* dense near-black display + body */
-  --color-wv-slate: #3B3D42;   /* secondary ink */
-  --color-wv-ash: #6B6E73;     /* muted / captions */
-  --color-wv-mist: #9C9EA3;    /* faint / disabled */
-  --color-wv-line: #E4E3DE;    /* hairline rules + borders */
-  --color-wv-blue: #1A4C7C;    /* structural blueprint blue */
-  --color-wv-blue-tint: #E9F0F6; /* blueprint fill */
-  --color-wv-signal: #A15E08;  /* signal amber — COMPLIANCE WARNINGS ONLY */
-  --color-wv-signal-tint: #F7EEDF;
-  --color-wv-ok: #2C6E49;      /* Abnahme / signed-off green, used sparingly */
-
-  /* ── LEGACY: pre-pivot marketplace tokens ─────────────────────────────
-     Everything from here to the end of this block belongs to the marketplace
-     build and is being unwound (CLAUDE.md §0). It survives only because the
-     internal surfaces that still reference it — dashboard, auth, billing,
-     onboarding — have not been rebuilt on the wv-* system yet.
-
-     Do not use these in new work. The public surface uses wv-* exclusively.
-     Delete this block once those internal surfaces are ported. */
   /* Hyrde brand */
   --color-tech-blue-deep: #0A0A0F;
   --color-tech-blue-muted: #1a1a2e;
@@ -86,10 +56,52 @@
   --color-on-error-container: #93000a;
 }
 
-/* No dark theme. §10 specifies a paper-white document that reads like
-   something you could hand to a legal department, and the public surface has
-   no dark: variants. The previous class-based override block was unreachable
-   anyway — nothing in the codebase ever set class="dark". */
+/* ── Dark theme (site default) ──────────────────────────────────────────
+   Class-based: <html class="dark">. Overrides the semantic color tokens so
+   every utility built on them (bg-surface-*, text-on-surface, border-crisp …)
+   flips automatically. Literal utilities that can't reference a token
+   (bg-white, bg-tech-blue-deep) are remapped explicitly below. */
+.dark {
+  color-scheme: dark;
+
+  --color-tech-blue-deep: #0A0A0F;      /* kept dark: now only dark panels/borders */
+  --color-tech-blue-muted: #161618;
+  --color-surface-gray: #0A0A0B;
+  --color-border-crisp: #232326;
+
+  --color-surface: #0A0A0B;
+  --color-surface-dim: #060607;
+  --color-surface-bright: #1C1C1F;
+  --color-surface-container-lowest: #111113;
+  --color-surface-container-low: #141416;
+  --color-surface-container: #18181B;
+  --color-surface-container-high: #1E1E21;
+  --color-surface-container-highest: #242428;
+
+  --color-on-surface: #EDEDEF;
+  --color-on-surface-variant: #9A9AA3;
+  --color-inverse-surface: #EDEDEF;
+  --color-inverse-on-surface: #0A0A0B;
+
+  --color-outline: #6a6a78;
+  --color-outline-variant: #333338;
+}
+
+/* Literal utilities that have no token to flip */
+.dark body { background: #0A0A0B; color: #EDEDEF; }
+.dark .bg-white { background-color: #131315; }
+.dark .bg-tech-blue-deep { background-color: #131315; }   /* elevated dark panel */
+.dark .border-tech-blue-deep { border-color: #2A2A2F; }
+.dark .glass-card {
+  background: rgba(21, 21, 28, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.dark .ai-shimmer-pill {
+  background:
+    linear-gradient(#15151c, #15151c) padding-box,
+    linear-gradient(90deg, #5B4FCF, #A99EE8, #5B4FCF) border-box;
+}
+.dark .glow-accent { opacity: 0.22; }
 
 /* Material Symbols */
 .material-symbols-outlined {
@@ -128,33 +140,12 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--color-wv-paper);
-  color: var(--color-wv-ink);
-  font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
+  background: #FAFAFA;
+  color: #111113;
+  font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
   text-rendering: optimizeLegibility;
-}
-
-/* German compound nouns routinely exceed a phone's line box —
-   "Scheinselbstständigkeitsrisiko" is 30 characters and forced 87px of
-   horizontal page scroll at 375px before this. Hyphenation is the correct
-   typographic answer in German rather than shrinking the type, and <html>
-   carries lang="de-DE" so the browser applies German hyphenation rules.
-   §10 asks explicitly that the scale be tested against this word. */
-h1, h2, h3, h4 {
-  hyphens: auto;
-  overflow-wrap: break-word;
-}
-
-/* Abnahme stamp — the one animation §10 allows: a sign-off thuds into place. */
-@keyframes wv-stamp {
-  0%   { opacity: 0; transform: rotate(-4deg) scale(1.6); }
-  60%  { opacity: 1; transform: rotate(-4deg) scale(0.94); }
-  100% { opacity: 1; transform: rotate(-4deg) scale(1); }
-}
-@keyframes wv-inkfill {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
 }
 
 /* ── Motion: AI-native micro-animations ──────────────────────────────── */

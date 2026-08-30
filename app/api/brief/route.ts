@@ -26,6 +26,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Write a sentence or two first — then I can shape it." }, { status: 400 });
   }
 
+  // Demand signal: capture the single-task intent before shaping it, so it's
+  // stored even if the client sees the polished brief and leaves without posting.
+  try {
+    await supabase.from("task_requests").insert({
+      user_id: user.id,
+      raw_text: String(rough).trim(),
+      kind: "task",
+    });
+  } catch { /* capture is best-effort */ }
+
   const prompt = `You are the intake assistant on Hyrde, an AI-native freelance marketplace. A client typed a rough description of work they need. Rewrite it into a crisp, structured brief that (a) an AI agent can attempt immediately and (b) a human freelancer can scope without a single follow-up question.
 
 CLIENT'S ROUGH DESCRIPTION:

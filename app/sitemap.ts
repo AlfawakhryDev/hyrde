@@ -1,37 +1,62 @@
 import { MetadataRoute } from "next";
+import { ALL_SKILL_SLUGS, ALL_CITY_SLUGS } from "@/lib/data";
+import { COMPETITOR_SLUGS } from "@/lib/compare";
+import { GUIDE_SLUGS } from "@/lib/guides";
 
-/**
- * The indexable surface is deliberately small.
- *
- * Every marketplace-era URL this file used to advertise — /hire, /pricing,
- * /compare, the competitor-alternative pages, the guide hub, the 25 skill
- * pages — now 301s to the Werkvertrag site (see next.config.ts). Listing a
- * redirecting URL in a sitemap earns a "Page with redirect" indexing error in
- * Search Console, so they are gone rather than remapped.
- *
- * Impressum, Datenschutz and AGB are excluded on purpose: they carry
- * `robots: { index: false }` while they are unreviewed placeholders (§4). They
- * belong here once a Fachanwalt has signed them off, not before.
- */
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://hyrde.net";
-  const now = new Date();
+  const now  = new Date();
 
-  return [
-    { url: base, lastModified: now, changeFrequency: "monthly", priority: 1.0 },
-    {
-      url: `${base}/wie-es-funktioniert`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${base}/rechtssicherheit`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    { url: `${base}/preise`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/kontakt`, lastModified: now, changeFrequency: "yearly", priority: 0.7 },
+  const static_pages = [
+    { url: base,                          lastModified: now, priority: 1.0 },
+    { url: `${base}/cost-estimator`,      lastModified: now, priority: 0.95 },
+    { url: `${base}/faq`,                 lastModified: now, priority: 0.9, alternates: { languages: { de: `${base}/de/faq` } } },
+    // German (DACH) landing surface
+    { url: `${base}/de`,                  lastModified: now, priority: 0.9, alternates: { languages: { en: base } } },
+    { url: `${base}/de/faq`,              lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/faq` } } },
+    { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
+    { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
+    { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
+    { url: `${base}/vetting`,         lastModified: now, priority: 0.85 },
+    { url: `${base}/agent`,           lastModified: now, priority: 0.9 },
+    { url: `${base}/pricing`,         lastModified: now, priority: 0.8 },
+    { url: `${base}/enterprise`,      lastModified: now, priority: 0.8 },
+    { url: `${base}/rates`,           lastModified: now, priority: 0.8 },
+    { url: `${base}/talent`,          lastModified: now, priority: 0.7 },
+    { url: `${base}/about`,           lastModified: now, priority: 0.7 },
+    { url: `${base}/jobs`,            lastModified: now, priority: 0.7 },
+    { url: `${base}/guides`,          lastModified: now, priority: 0.8 },
+    { url: `${base}/compare`,         lastModified: now, priority: 0.8 },
   ];
+
+  // Authority hub: editorial guides (client + freelancer clusters)
+  const guide_pages = GUIDE_SLUGS.map(slug => ({
+    url: `${base}/guides/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  // Switcher / comparison pages — "[competitor] alternative" (high client intent)
+  const comparison_pages = COMPETITOR_SLUGS.map(slug => ({
+    url: `${base}/${slug}-alternative`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.9,
+  }));
+
+  // Tier 1: /hire/[skill] — 25 pages
+  const skill_pages = ALL_SKILL_SLUGS.map(skill => ({
+    url: `${base}/hire/${skill}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  // NOTE: /hire/[skill]/[city] pages (skill×city) are deliberately NOT in the
+  // sitemap and are noindexed. On a young domain, ~660 near-duplicate templated
+  // pages read as doorway pages and can suppress indexing of the whole site. We
+  // ship a tight set of substantive pages first; the city pages get reinstated
+  // once they carry genuinely unique, local content.
+  return [...static_pages, ...comparison_pages, ...guide_pages, ...skill_pages];
 }
