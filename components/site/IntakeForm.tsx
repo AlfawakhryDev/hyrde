@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { isBusinessEmail } from "@/lib/email";
 
-// Scope-intake form (CLAUDE.md §8.2): a form, not an AI product. Writes one
-// `leads` row via the anon client (RLS allows INSERT only). Ops follows up by
-// hand. Honeypot field drops naive bots without a captcha.
+// Pre-order / early-access registration (CLAUDE.md §8.2): a form, not an AI
+// product. Writes one `leads` row via the anon client (RLS allows INSERT only).
+// Business email + phone are required so ops has a reachable, qualified contact;
+// the DB trigger enforce_business_email is the real gate. Honeypot drops bots.
 
 const BUDGETS = ["Noch offen", "unter 15.000 €", "15.000–30.000 €", "30.000–60.000 €", "über 60.000 €"];
 const TIMELINES = ["Noch offen", "So bald wie möglich", "in 1–3 Monaten", "in 3–6 Monaten"];
@@ -32,27 +34,40 @@ export default function IntakeForm() {
 
     const contact_name = (data.get("contact_name") as string).trim();
     const email = (data.get("email") as string).trim();
+    const phone = (data.get("phone") as string).trim();
+    const company = (data.get("company") as string).trim();
     const outcome = (data.get("outcome") as string).trim();
-    if (!contact_name || !email || !outcome) {
-      setError("Bitte füllen Sie Name, E-Mail und die Ergebnisbeschreibung aus.");
+    if (!contact_name || !email || !phone || !company || !outcome) {
+      setError("Bitte füllen Sie Name, Unternehmen, geschäftliche E-Mail, Telefon und die Ergebnisbeschreibung aus.");
+      return;
+    }
+    if (!isBusinessEmail(email)) {
+      setError("Bitte verwenden Sie Ihre geschäftliche E-Mail-Adresse (keine privaten Anbieter wie Gmail, GMX oder Web.de).");
       return;
     }
 
     setBusy(true);
     const { error } = await supabaseBrowser().from("leads").insert({
-      company: (data.get("company") as string).trim() || null,
+      company,
       contact_name,
       email,
+      phone,
       role: (data.get("role") as string).trim() || null,
       outcome,
       budget_range: (data.get("budget_range") as string) || null,
       timeline: (data.get("timeline") as string) || null,
       locale: "de",
+      source: "preorder",
     });
     setBusy(false);
 
     if (error) {
-      setError("Die Übermittlung ist fehlgeschlagen. Bitte versuchen Sie es erneut oder schreiben Sie an kontakt@hyrde.net.");
+      // The DB gate rejects free-provider domains even if the client check is bypassed.
+      if (error.message?.includes("BUSINESS_EMAIL_REQUIRED")) {
+        setError("Bitte verwenden Sie Ihre geschäftliche E-Mail-Adresse (keine privaten Anbieter).");
+      } else {
+        setError("Die Übermittlung ist fehlgeschlagen. Bitte versuchen Sie es erneut oder schreiben Sie an kontakt@hyrde.net.");
+      }
       return;
     }
     setDone(true);
@@ -84,14 +99,18 @@ export default function IntakeForm() {
           <input id="contact_name" name="contact_name" required className={fieldCls} autoComplete="name" />
         </div>
         <div>
-          <label htmlFor="email" className={labelCls}>E-Mail *</label>
-          <input id="email" name="email" type="email" required className={fieldCls} autoComplete="email" />
+          <label htmlFor="company" className={labelCls}>Unternehmen *</label>
+          <input id="company" name="company" required className={fieldCls} autoComplete="organization" />
         </div>
         <div>
-          <label htmlFor="company" className={labelCls}>Unternehmen</label>
-          <input id="company" name="company" className={fieldCls} autoComplete="organization" />
+          <label htmlFor="email" className={labelCls}>Geschäftliche E-Mail *</label>
+          <input id="email" name="email" type="email" required className={fieldCls} autoComplete="email" placeholder="name@ihre-firma.de" />
         </div>
         <div>
+          <label htmlFor="phone" className={labelCls}>Telefon *</label>
+          <input id="phone" name="phone" type="tel" required className={fieldCls} autoComplete="tel" placeholder="+49 …" />
+        </div>
+        <div className="sm:col-span-2">
           <label htmlFor="role" className={labelCls}>Ihre Rolle</label>
           <input id="role" name="role" className={fieldCls} placeholder="z. B. CTO, Head of Engineering" />
         </div>

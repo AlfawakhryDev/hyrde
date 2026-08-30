@@ -22,7 +22,7 @@ export default async function Page() {
 
   const { data: leads } = await supabase
     .from("leads")
-    .select("id, created_at, company, contact_name, email, role, outcome, budget_range, timeline, status")
+    .select("id, created_at, company, contact_name, email, phone, role, outcome, budget_range, timeline, status")
     .order("created_at", { ascending: false })
     .limit(500);
 

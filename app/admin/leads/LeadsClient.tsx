@@ -9,6 +9,7 @@ export type Lead = {
   company: string | null;
   contact_name: string;
   email: string;
+  phone: string | null;
   role: string | null;
   outcome: string;
   budget_range: string | null;
@@ -108,6 +109,7 @@ export default function LeadsClient({ initial }: { initial: Lead[] }) {
                     <td className="px-3 py-3">
                       <div className="font-medium text-wv-ink">{l.contact_name}</div>
                       <a href={`mailto:${l.email}`} className="text-[12px] text-wv-blue hover:underline">{l.email}</a>
+                      {l.phone && <div><a href={`tel:${l.phone}`} className="text-[12px] text-wv-blue hover:underline">{l.phone}</a></div>}
                       {l.role && <div className="text-[12px] text-wv-ash">{l.role}</div>}
                     </td>
                     <td className="px-3 py-3 text-wv-slate">{l.company || "—"}</td>
