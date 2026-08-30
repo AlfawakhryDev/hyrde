@@ -3,6 +3,8 @@ import { ClipboardList, FileSignature, Stamp } from "lucide-react";
 import AlternativesTable from "@/components/site/AlternativesTable";
 import WerkvertragCard from "@/components/site/WerkvertragCard";
 import { VERTICAL } from "@/lib/vertical";
+import JsonLd from "@/components/site/JsonLd";
+import { FAQS_DE, faqLd } from "@/lib/seo";
 
 // Numbered section marker — numbering is earned here (CLAUDE.md §10).
 function Marker({ n, label }: { n: string; label: string }) {
@@ -44,6 +46,7 @@ const DOSSIER = [
 export default function Home() {
   return (
     <>
+      <JsonLd data={faqLd(FAQS_DE)} />
       {/* ── Hero ── */}
       <section className="border-b border-wv-line">
         <div className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-24">
@@ -235,6 +238,21 @@ export default function Home() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* ── FAQ (visible content backs the FAQPage schema) ── */}
+      <section className="border-b border-wv-line">
+        <div className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-20">
+          <Marker n="06" label="Häufige Fragen" />
+          <dl className="mt-8 grid gap-px overflow-hidden rounded-[4px] border border-wv-line bg-wv-line md:grid-cols-2">
+            {FAQS_DE.map((f) => (
+              <div key={f.q} className="bg-wv-paper p-7">
+                <dt className="text-[15px] font-semibold leading-snug tracking-[-0.01em] text-wv-ink">{f.q}</dt>
+                <dd className="mt-2.5 text-[13.5px] leading-[1.6] text-wv-slate">{f.a}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
