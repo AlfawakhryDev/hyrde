@@ -2,19 +2,17 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
-// "Book a demo" — one component, three placements. The trigger button is styled
+// "Book a demo" — one component, two placements. The trigger button is styled
 // by `variant`; clicking it opens a modal that captures the request into
-// public.demo_requests (public insert, admin-only read). Impossible to miss:
-// the navbar button, a big hero button, and a floating always-on-screen button
-// all reuse this.
+// public.demo_requests (public insert, admin-only read). The hero button is the
+// loud one; the nav button is calm (h-8, flat, no glow) so it sits inside the
+// pill nav without fighting the site's monochrome palette.
 
-type Variant = "nav" | "hero" | "float";
+type Variant = "nav" | "hero";
 
 const TRIGGER: Record<Variant, string> = {
-  nav: "inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-electric-violet text-white text-[13px] font-semibold hover:bg-[#4a3fc7] transition-colors shadow-[0_2px_12px_rgba(91,79,207,0.35)]",
+  nav: "inline-flex items-center h-8 px-3.5 rounded-full bg-electric-violet text-white text-[13px] font-semibold hover:bg-[#4a3fc7] transition-colors",
   hero: "inline-flex items-center gap-2 h-[52px] px-7 rounded-full bg-electric-violet text-white text-[15px] font-semibold hover:bg-[#4a3fc7] transition-colors shadow-[0_10px_34px_-6px_rgba(91,79,207,0.6)]",
-  float:
-    "fixed bottom-5 right-5 z-[70] inline-flex items-center gap-2 h-[52px] pl-5 pr-6 rounded-full bg-electric-violet text-white text-[14.5px] font-semibold shadow-[0_12px_40px_-6px_rgba(91,79,207,0.7)] hover:bg-[#4a3fc7] hover:scale-[1.03] transition-all animate-floaty",
 };
 
 const labelCls = "block text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-1.5 font-medium";
@@ -61,7 +59,6 @@ export default function BookDemo({ variant = "nav", label = "Book a demo" }: { v
   return (
     <>
       <button type="button" onClick={() => { setOpen(true); setDone(false); setError(""); }} className={TRIGGER[variant]}>
-        {variant === "float" && <span className="material-symbols-outlined" style={{ fontSize: "20px", fontVariationSettings: "'FILL' 1" }}>event</span>}
         {label}
       </button>
 

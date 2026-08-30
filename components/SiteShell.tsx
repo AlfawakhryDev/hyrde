@@ -2,7 +2,6 @@
 import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import BookDemo from "./BookDemo";
 
 // Immersive routes render full-bleed with no marketing navbar/footer.
 const IMMERSIVE: string[] = [];
@@ -18,8 +17,6 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main className="pt-[128px]">{children}</main>
       <Footer />
-      {/* Always-on-screen, can't-miss demo CTA on every marketing page */}
-      <BookDemo variant="float" />
     </>
   );
 }
