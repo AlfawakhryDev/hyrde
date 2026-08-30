@@ -17,7 +17,7 @@ export default function Page() {
       <PageHead
         marker="Kontakt"
         title="Beschreiben Sie Ihr Ergebnis."
-        intro="Ein kurzer Umriss genügt. Wir melden uns in der Regel innerhalb eines Werktags mit Leistungsbeschreibung, Abnahmekriterien und einem Festpreis."
+        intro="Ein kurzer Umriss genügt. Bitte mit geschäftlicher E-Mail und Telefonnummer — wir melden uns in der Regel innerhalb eines Werktags mit Leistungsbeschreibung, Abnahmekriterien und einem Festpreis."
       />
       <section className="mx-auto max-w-[820px] px-5 py-14 md:px-8 md:py-16">
         <IntakeForm />
