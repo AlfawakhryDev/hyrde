@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import JsonLd from "@/components/site/JsonLd";
+import { organizationLd, serviceLd, websiteLd } from "@/lib/seo";
 
 // Self-hosted (next/font) — no request to Google's servers at render time.
 // This is deliberate: embedding Google Fonts via <link> to fonts.gstatic.com
@@ -28,6 +30,17 @@ export const metadata: Metadata = {
   },
   description:
     "Hyrde liefert definierte Software- und Engineering-Ergebnisse für Unternehmen im DACH-Raum — zum Festpreis, per Werkvertrag mit klaren Abnahmekriterien. Umgesetzt von geprüften Spezialisten. Ohne Scheinselbstständigkeitsrisiko.",
+  keywords: [
+    "Werkvertrag",
+    "Scheinselbstständigkeit vermeiden",
+    "Festpreis Softwareentwicklung",
+    "Cloud Engineering DACH",
+    "Data Engineering Dienstleister",
+    "KI-Entwicklung Festpreis",
+    "IT-Werkleistung",
+    "externe Entwicklung ohne Scheinselbstständigkeit",
+  ],
+  alternates: { canonical: "/" },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
     other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
@@ -46,33 +59,14 @@ export const metadata: Metadata = {
   },
 };
 
-// On-message Organization entity — describes an outcome-delivery / Werkleistung
-// provider, not a marketplace. No banned vocabulary (CLAUDE.md §7).
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Hyrde",
-  url: "https://hyrde.net",
-  description:
-    "Hyrde liefert definierte Software- und Engineering-Ergebnisse zum Festpreis per Werkvertrag, mit klaren Abnahmekriterien und einem Compliance-Dossier je Auftrag.",
-  slogan: "Definierte Ergebnisse. Festpreis. Ohne Scheinselbstständigkeitsrisiko.",
-  areaServed: ["DE", "AT", "CH"],
-  knowsAbout: [
-    "Werkvertrag",
-    "Scheinselbstständigkeit",
-    "Festpreis-Softwareentwicklung",
-    "Cloud-Engineering",
-    "Data-Engineering",
-    "KI-Systeme",
-  ],
-  sameAs: [],
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de-DE" className={`${plexSans.variable} ${plexMono.variable}`}>
       <head>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+        {/* Entity graph, on-message (Werkleistung provider, not a marketplace, §7). */}
+        <JsonLd data={organizationLd} />
+        <JsonLd data={serviceLd} />
+        <JsonLd data={websiteLd} />
       </head>
       <body>
         {children}

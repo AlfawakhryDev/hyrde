@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import PageHead from "@/components/site/PageHead";
+import JsonLd from "@/components/site/JsonLd";
+import { breadcrumbLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Rechtssicherheit",
@@ -29,6 +31,7 @@ const POINTS = [
 export default function Page() {
   return (
     <>
+      <JsonLd data={breadcrumbLd([{ name: "Start", path: "/" }, { name: "Rechtssicherheit", path: "/rechtssicherheit" }])} />
       <PageHead
         marker="Rechtssicherheit"
         title="Der Vertrag ist das Produkt."
