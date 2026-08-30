@@ -18,12 +18,26 @@ import BookDemo from "@/components/BookDemo";
 // routes stay static.
 
 const CHIP_CLUSTER = [
-  { label: "Development",       x: "6%",  y: "12%" },
-  { label: "Design",            x: "62%", y: "6%"  },
-  { label: "Copywriting",       x: "74%", y: "38%" },
-  { label: "Marketing",         x: "8%",  y: "58%" },
-  { label: "Data",              x: "58%", y: "72%" },
-  { label: "Technical writing", x: "22%", y: "84%" },
+  { label: "Development", x: "6%",  y: "12%" },
+  { label: "Research",    x: "62%", y: "6%"  },
+  { label: "Finance",     x: "74%", y: "38%" },
+  { label: "Design",      x: "8%",  y: "58%" },
+  { label: "Operations",  x: "58%", y: "72%" },
+  { label: "Legal",       x: "22%", y: "84%" },
+];
+
+// Categories shown in the "any expertise" section — non-tech first, so a
+// finance or family-office buyer sees themselves before the code. Each links to
+// a real /hire/[skill] page.
+const CATEGORIES = [
+  { name: "Research & Analysis", example: "A market map of the GCC family-office space.", href: "/hire/market-research-analyst" },
+  { name: "Finance & Modeling",  example: "An investor-ready three-statement model.",     href: "/hire/financial-modeler" },
+  { name: "Business & Admin",    example: "An executive assistant for inbox and scheduling.", href: "/hire/executive-assistant" },
+  { name: "Legal & Compliance",  example: "Contract review and redlining.",                href: "/hire/contract-specialist" },
+  { name: "Design & Brand",      example: "A pitch deck that tells your story.",           href: "/hire/presentation-designer" },
+  { name: "Writing & Docs",      example: "A business plan, board-ready.",                 href: "/hire/business-plan-writer" },
+  { name: "Marketing & Growth",  example: "A go-to-market plan and launch content.",       href: "/hire/growth-marketer" },
+  { name: "Development & Data",   example: "An MVP, or a production data pipeline.",        href: "/hire/fullstack-developer" },
 ];
 
 
@@ -152,6 +166,33 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
               {t("home.singleCta")}
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── Any expertise, not just tech ── */}
+      <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-24 md:pt-32">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="h-px w-7 bg-[#D8D4C8]" aria-hidden="true" />
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-[#8A887E]">Any expertise</span>
+        </div>
+        <h2 className="font-display font-light text-ink leading-[1.05] tracking-[-0.015em] text-[clamp(32px,4.6vw,52px)] max-w-[18ch]">
+          Not just tech. <em className="italic font-normal">Any</em> defined outcome.
+        </h2>
+        <p className="text-[15px] text-[#57564F] leading-[1.62] mt-6 max-w-[540px]">
+          Describe the result — a market map, a financial model, a brand, a contract review, an app.
+          The AI matches an interview-vetted specialist in that field. Research and finance through to
+          design, ops, and code.
+        </p>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {CATEGORIES.map(c => (
+            <div key={c.name} className="flex flex-col rounded-[8px] border border-[#E7E4DB] bg-[#FBFAF6] p-5">
+              <h3 className="text-[15px] font-semibold text-[#232329]">{c.name}</h3>
+              <p className="mt-2 flex-1 text-[13px] text-[#5B5B66] leading-relaxed">{c.example}</p>
+              <Link href={c.href} className="mt-4 inline-block text-[12.5px] font-medium text-electric-violet hover:underline">
+                Find a specialist →
+              </Link>
+            </div>
+          ))}
         </div>
       </section>
 
