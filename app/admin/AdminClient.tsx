@@ -80,6 +80,9 @@ export default function AdminClient({
           <span aria-hidden="true">←</span> Back to dashboard
         </Link>
         <span className="flex items-center gap-4">
+          <Link href="/admin/leads" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors">
+            Leads
+          </Link>
           <Link href="/admin/werkvertrag" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors">
             Werkvertrag
           </Link>
