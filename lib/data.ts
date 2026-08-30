@@ -25,6 +25,28 @@ export const SKILLS: Record<string, { label: string; category: string; avgRate: 
   "wordpress-developer":    { label: "WordPress Developer",    category: "Engineering",  avgRate: 50,  demand: "medium" },
   "shopify-developer":      { label: "Shopify Developer",      category: "Engineering",  avgRate: 60,  demand: "high"   },
   "blockchain-developer":   { label: "Blockchain Developer",   category: "Engineering",  avgRate: 120, demand: "medium" },
+
+  // ── Beyond tech: knowledge work, finance, operations, legal ──────────
+  // Hyrde matches any defined outcome, not only engineering. These broaden the
+  // taxonomy the matcher draws from and give non-tech buyers (family offices,
+  // finance, ops teams) a page that speaks to them.
+  "market-research-analyst": { label: "Market Research Analyst", category: "Research",    avgRate: 65,  demand: "high"   },
+  "financial-analyst":       { label: "Financial Analyst",       category: "Finance",     avgRate: 75,  demand: "high"   },
+  "financial-modeler":       { label: "Financial Modeler",       category: "Finance",     avgRate: 85,  demand: "high"   },
+  "due-diligence-analyst":   { label: "Due Diligence Analyst",   category: "Finance",     avgRate: 95,  demand: "medium" },
+  "bookkeeper":              { label: "Bookkeeper",              category: "Finance",     avgRate: 40,  demand: "medium" },
+  "accountant":              { label: "Accountant",              category: "Finance",     avgRate: 55,  demand: "medium" },
+  "executive-assistant":     { label: "Executive Assistant",     category: "Operations",  avgRate: 35,  demand: "high"   },
+  "virtual-assistant":       { label: "Virtual Assistant",       category: "Operations",  avgRate: 30,  demand: "high"   },
+  "project-manager":         { label: "Project Manager",         category: "Operations",  avgRate: 70,  demand: "high"   },
+  "operations-manager":      { label: "Operations Manager",      category: "Operations",  avgRate: 75,  demand: "medium" },
+  "paralegal":               { label: "Paralegal",               category: "Legal",       avgRate: 50,  demand: "medium" },
+  "legal-researcher":        { label: "Legal Researcher",        category: "Legal",       avgRate: 60,  demand: "medium" },
+  "contract-specialist":     { label: "Contract Specialist",     category: "Legal",       avgRate: 70,  demand: "medium" },
+  "business-plan-writer":    { label: "Business Plan Writer",    category: "Writing",     avgRate: 60,  demand: "medium" },
+  "grant-writer":            { label: "Grant Writer",            category: "Writing",     avgRate: 55,  demand: "medium" },
+  "presentation-designer":   { label: "Presentation Designer",   category: "Design",      avgRate: 55,  demand: "high"   },
+  "translator":              { label: "Translator",              category: "Writing",     avgRate: 40,  demand: "medium" },
 };
 
 export const CITIES: Record<string, { label: string; country: string; region: string; multiplier: number }> = {
@@ -159,4 +181,15 @@ export const MOCK_FREELANCERS = [
   { id: "6", name: "Omar S.",    skill: "data-scientist",    rate: 100, score: 92, bio: "ML + analytics. Python/SQL/dbt. Ex-McKinsey data team.",             location: "dubai"      },
   { id: "7", name: "Priya N.",   skill: "copywriter",        rate: 55,  score: 89, bio: "B2B SaaS copy. 200+ landing pages shipped. Conversion-focused.",     location: "remote"     },
   { id: "8", name: "Carlos B.",  skill: "shopify-developer", rate: 60,  score: 87, bio: "100+ Shopify stores. Custom themes + apps. 5-star rated.",           location: "toronto"    },
+  // Beyond tech — so non-engineering pages show relevant specialists
+  { id: "9",  name: "Yara H.",  skill: "financial-modeler",       rate: 85, score: 95, bio: "10 yrs FP&A, ex-sovereign fund. Three-statement models, LBOs, IC decks.", location: "dubai"   },
+  { id: "10", name: "Karim A.", skill: "market-research-analyst", rate: 60, score: 92, bio: "Market maps and competitive research. GCC and MENA focus.",              location: "cairo"   },
+  { id: "11", name: "Noura S.", skill: "financial-analyst",       rate: 75, score: 90, bio: "Equity research background. Valuation, comps, and investor memos.",       location: "dubai"   },
+  { id: "12", name: "Omar F.",  skill: "due-diligence-analyst",   rate: 95, score: 91, bio: "Buy-side due diligence. Data rooms, red flags, IC-ready memos.",          location: "london"  },
+  { id: "13", name: "Dana R.",  skill: "executive-assistant",     rate: 35, score: 94, bio: "EA to two founders. Inbox, calendar, travel, and light ops.",             location: "remote"  },
+  { id: "14", name: "Layla M.", skill: "business-plan-writer",    rate: 60, score: 89, bio: "50+ funded business plans and information memoranda. Investor-ready.",   location: "remote"  },
+  { id: "15", name: "Sami T.",  skill: "presentation-designer",   rate: 55, score: 93, bio: "Pitch and board decks. Story plus design. Decks that closed rounds.",    location: "berlin"  },
+  { id: "16", name: "Hana K.",  skill: "paralegal",               rate: 50, score: 88, bio: "Corporate paralegal. Contracts, filings, and compliance support.",        location: "remote"  },
+  { id: "17", name: "Ali N.",   skill: "bookkeeper",              rate: 40, score: 90, bio: "Xero and QuickBooks. Monthly close and reconciliations.",                 location: "cairo"   },
+  { id: "18", name: "Rana B.",  skill: "translator",              rate: 40, score: 92, bio: "Arabic and English. Legal and financial translation. Sworn.",             location: "dubai"   },
 ];
