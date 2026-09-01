@@ -6,18 +6,26 @@
 //    layout reads it and provides messages to a client context (useT). Strings not
 //    yet translated fall back to English, so switching works everywhere and German
 //    coverage grows as the dictionary fills.
-export const LOCALES = ["en", "de"] as const;
+export const LOCALES = ["en", "de", "ar"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_COOKIE = "hyrde_locale";
 
-export function isLocale(v: unknown): v is Locale {
-  return v === "en" || v === "de";
+// Right-to-left locales. Arabic renders RTL; everything below the <html dir>
+// flips automatically (text alignment, flex/inline flow, list markers).
+export const RTL_LOCALES: readonly Locale[] = ["ar"];
+export function dirFor(locale: Locale): "rtl" | "ltr" {
+  return RTL_LOCALES.includes(locale) ? "rtl" : "ltr";
 }
 
-// hreflang alternates for Next metadata `alternates.languages`.
-export function altLanguages(enPath: string, dePath: string) {
-  return { en: enPath, de: dePath, "x-default": enPath };
+export function isLocale(v: unknown): v is Locale {
+  return v === "en" || v === "de" || v === "ar";
+}
+
+// hreflang alternates for Next metadata `alternates.languages`. Arabic uses the
+// ar-SA region tag (Saudi) as the primary Arabic signal for search engines.
+export function altLanguages(enPath: string, dePath: string, arPath: string) {
+  return { en: enPath, de: dePath, "ar-SA": arPath, "x-default": enPath };
 }
 
 // A translator bound to an explicit locale (works in server + client render, no

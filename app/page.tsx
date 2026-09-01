@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: { absolute: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde" },
   description:
     "Every freelancer on Hyrde passed an adaptive AI skill interview. Post a task and the AI matches it to the best-vetted specialist in that category. No bidding, no proposal spam, no pay-to-apply.",
-  alternates: { canonical: "/", languages: altLanguages("/", "/de") },
+  alternates: { canonical: "/", languages: altLanguages("/", "/de", "/ar") },
   openGraph: {
     title: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde",
     description:

@@ -8,12 +8,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now  = new Date();
 
   const static_pages = [
-    { url: base,                          lastModified: now, priority: 1.0 },
+    { url: base,                          lastModified: now, priority: 1.0, alternates: { languages: { de: `${base}/de`, "ar-SA": `${base}/ar` } } },
     { url: `${base}/cost-estimator`,      lastModified: now, priority: 0.95 },
-    { url: `${base}/faq`,                 lastModified: now, priority: 0.9, alternates: { languages: { de: `${base}/de/faq` } } },
+    { url: `${base}/faq`,                 lastModified: now, priority: 0.9, alternates: { languages: { de: `${base}/de/faq`, "ar-SA": `${base}/ar/faq` } } },
     // German (DACH) landing surface
     { url: `${base}/de`,                  lastModified: now, priority: 0.9, alternates: { languages: { en: base } } },
     { url: `${base}/de/faq`,              lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/faq` } } },
+    // Arabic (Saudi / GCC) landing surface
+    { url: `${base}/ar`,                  lastModified: now, priority: 0.9, alternates: { languages: { en: base } } },
+    { url: `${base}/ar/faq`,              lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/faq` } } },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
     { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
