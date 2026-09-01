@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: { absolute: "Hyrde. Geprüfte Freelancer finden, per KI vermittelt" },
   description:
     "Beschreibe ein Ergebnis oder eine Aufgabe, und die KI vermittelt dir einen im Interview geprüften Spezialisten. Keine Ausschreibungen, kein Angebots-Spam. Freelancer behalten 100 Prozent. Kostenlos im Early Access.",
-  alternates: { canonical: "/de", languages: altLanguages("/", "/de") },
+  alternates: { canonical: "/de", languages: altLanguages("/", "/de", "/ar") },
   keywords: [
     "Freelancer finden", "geprüfte Freelancer", "Freelancer statt Agentur",
     "Entwickler finden", "Freelancer Deutschland", "Freelancer vermitteln lassen",

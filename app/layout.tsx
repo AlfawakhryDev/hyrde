@@ -58,7 +58,7 @@ const organizationJsonLd = {
     "@type": "ContactPoint",
     email: "abdelrahman@hyrde.net",
     contactType: "customer support",
-    availableLanguage: ["en", "de"],
+    availableLanguage: ["en", "de", "ar"],
   },
   // sameAs is the strongest entity-consolidation signal for answer engines.
   // The public source repo is a real, verifiable entity link; add LinkedIn/X here
@@ -86,6 +86,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme');document.documentElement.classList.toggle('dark',t!=='light');}catch(e){}})();`,
+          }}
+        />
+        {/* No-flash locale/dir: URL wins on /ar and /de, else the cookie. Sets
+            dir=rtl for Arabic before paint so the layout never flips visibly. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=location.pathname,l;if(/^\\/ar(\\/|$)/.test(p))l='ar';else if(/^\\/de(\\/|$)/.test(p))l='de';else{var m=document.cookie.match(/(?:^|; )hyrde_locale=([^;]+)/);l=m?m[1]:'en';}document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}catch(e){}})();`,
           }}
         />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />

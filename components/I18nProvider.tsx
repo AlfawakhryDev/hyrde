@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useCallback, useEffect, useState, type ReactNode } from "react";
 import { messages } from "@/lib/messages";
-import { translate, isLocale, DEFAULT_LOCALE, LOCALE_COOKIE, type Locale } from "@/lib/i18n";
+import { translate, isLocale, dirFor, DEFAULT_LOCALE, LOCALE_COOKIE, type Locale } from "@/lib/i18n";
 
 type Ctx = { locale: Locale; setLocale: (l: Locale) => void };
 const I18n = createContext<Ctx>({ locale: DEFAULT_LOCALE, setLocale: () => {} });
@@ -17,15 +17,18 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   // only, so a brief flip on load is fine and there's no hydration mismatch).
   const [locale, set] = useState<Locale>(DEFAULT_LOCALE);
   useEffect(() => {
-    // On the /de marketing routes the URL wins, so a cold visitor (no cookie)
-    // still gets German chrome; elsewhere the cookie decides.
-    const l: Locale = /^\/de(\/|$)/.test(window.location.pathname) ? "de" : readCookieLocale();
+    // On the /de and /ar marketing routes the URL wins, so a cold visitor (no
+    // cookie) still gets the right chrome; elsewhere the cookie decides.
+    const path = window.location.pathname;
+    const l: Locale = /^\/de(\/|$)/.test(path) ? "de" : /^\/ar(\/|$)/.test(path) ? "ar" : readCookieLocale();
     set(l);
     document.documentElement.lang = l;
+    document.documentElement.dir = dirFor(l); // rtl for Arabic — flips nav/footer too
   }, []);
   const setLocale = useCallback((l: Locale) => {
     document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
     document.documentElement.lang = l;
+    document.documentElement.dir = dirFor(l);
     set(l);
   }, []);
   return <I18n.Provider value={{ locale, setLocale }}>{children}</I18n.Provider>;
