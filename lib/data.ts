@@ -56,6 +56,14 @@ export const CITIES: Record<string, { label: string; country: string; region: st
   "berlin":         { label: "Berlin",         country: "DE", region: "Europe",        multiplier: 1.0  },
   "amsterdam":      { label: "Amsterdam",      country: "NL", region: "Europe",        multiplier: 1.1  },
   "dubai":          { label: "Dubai",          country: "AE", region: "MENA",          multiplier: 1.15 },
+  // GCC expansion (2026-09-01). Search Console shows real, English-language
+  // hiring demand out of the Gulf ("shopify developer dubai", "ui designer
+  // dubai", UAE = 50 impressions), so the Gulf gets first-class city pages.
+  "abu-dhabi":      { label: "Abu Dhabi",      country: "AE", region: "MENA",          multiplier: 1.15 },
+  "riyadh":         { label: "Riyadh",         country: "SA", region: "MENA",          multiplier: 1.1  },
+  "jeddah":         { label: "Jeddah",         country: "SA", region: "MENA",          multiplier: 1.0  },
+  "doha":           { label: "Doha",           country: "QA", region: "MENA",          multiplier: 1.15 },
+  "kuwait-city":    { label: "Kuwait City",    country: "KW", region: "MENA",          multiplier: 1.05 },
   "cairo":          { label: "Cairo",          country: "EG", region: "MENA",          multiplier: 0.65 },
   "toronto":        { label: "Toronto",        country: "CA", region: "North America", multiplier: 1.1  },
   "sydney":         { label: "Sydney",         country: "AU", region: "APAC",          multiplier: 1.15 },
@@ -81,6 +89,60 @@ export function getRate(skillSlug: string, citySlug: string): number {
 
 export const ALL_SKILL_SLUGS = Object.keys(SKILLS);
 export const ALL_CITY_SLUGS  = Object.keys(CITIES);
+
+// ─── Which skill×city pages are allowed in the index ────────────────
+// History: all ~660 skill×city pages were noindexed in v0.10.0 on the theory
+// that a young domain would read them as doorway pages. The Search Console
+// export of 2026-09-01 falsified half of that: those pages produced **61% of
+// all impressions** (1,259 of 2,077), led by /hire/wordpress-developer/amsterdam
+// at 389. Noindexing them was throwing away the only demand the site has.
+//
+// So: neither "index all 660" (real doorway risk) nor "index none" (proven
+// loss). We index a curated set — pages with demonstrated search demand, plus
+// the GCC grid we're now investing in — and leave the long tail noindexed.
+// Add a pair here only when GSC shows impressions for it, or it's strategic.
+
+// Pairs with proven impressions in GSC (2026-06-15 → 2026-08-29).
+const PROVEN_CITY_PAGES = [
+  "wordpress-developer/amsterdam", "shopify-developer/london", "wordpress-developer/berlin",
+  "ui-designer/singapore", "node-developer/new-york", "ux-designer/san-francisco",
+  "ui-designer/new-york", "mobile-developer/cairo", "shopify-developer/dubai",
+  "fullstack-developer/new-york", "ux-designer/sydney", "ui-designer/dubai",
+  "growth-marketer/new-york", "product-designer/toronto", "3d-designer/new-york",
+  "data-scientist/singapore", "video-editor/dubai", "data-scientist/new-york",
+  "ui-designer/toronto", "wordpress-developer/san-francisco", "ux-designer/london",
+  "shopify-developer/singapore", "mobile-developer/san-francisco", "shopify-developer/barcelona",
+  "product-designer/barcelona", "copywriter/toronto", "growth-marketer/san-francisco",
+  "technical-writer/new-york", "video-editor/san-francisco", "video-editor/sydney",
+  "3d-designer/berlin", "data-scientist/amsterdam", "seo-specialist/barcelona",
+  "shopify-developer/amsterdam", "wordpress-developer/cairo", "node-developer/san-francisco",
+  "content-writer/sydney", "ux-designer/dubai", "ml-engineer/dubai", "copywriter/berlin",
+  "wordpress-developer/london", "shopify-developer/new-york", "ui-designer/london",
+];
+
+// GCC is the current strategic bet — Gulf hiring demand shows up in English in
+// GSC, so these get indexed ahead of proven impressions rather than after.
+const GCC_CITIES = ["dubai", "abu-dhabi", "riyadh", "jeddah", "doha", "kuwait-city"];
+const GCC_SKILLS = [
+  "shopify-developer", "wordpress-developer", "fullstack-developer", "mobile-developer",
+  "ui-designer", "ux-designer", "product-designer", "video-editor", "growth-marketer",
+  "seo-specialist", "content-writer", "data-analyst", "financial-modeler",
+  "market-research-analyst", "executive-assistant", "presentation-designer",
+];
+
+export const INDEXED_CITY_PAGES: ReadonlySet<string> = new Set([
+  ...PROVEN_CITY_PAGES,
+  ...GCC_CITIES.flatMap(c => GCC_SKILLS.map(s => `${s}/${c}`)),
+  // Remote is a genuine, non-duplicative intent ("hire X remotely").
+  ...GCC_SKILLS.map(s => `${s}/remote`),
+].filter(pair => {
+  const [s, c] = pair.split("/");
+  return SKILLS[s] !== undefined && CITIES[c] !== undefined; // drop typos/renames
+}));
+
+export function isIndexedCityPage(skill: string, city: string): boolean {
+  return INDEXED_CITY_PAGES.has(`${skill}/${city}`);
+}
 
 // ─── pSEO content helpers (unique value per skill×city page) ─────────
 // Deterministic so the same combo always renders the same copy, but

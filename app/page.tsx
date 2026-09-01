@@ -3,9 +3,12 @@ import HomePage from "@/components/home/HomePage";
 import { altLanguages } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: { absolute: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde" },
+  // Brand-led title: "hyrde" is the only query that earns clicks (242 impr,
+  // pos 5.4, 10 of 18 total clicks) and competes with an unrelated Hyrde IoT
+  // company, so the brand goes first and the description answers "what is it".
+  title: { absolute: "Hyrde — Hire Interview-Vetted Freelancers, AI-Matched" },
   description:
-    "Every freelancer on Hyrde passed an adaptive AI skill interview. Post a task and the AI matches it to the best-vetted specialist in that category. No bidding, no proposal spam, no pay-to-apply.",
+    "Hyrde is an AI-native freelance platform. Describe an outcome or task and the AI matches it to one interview-vetted specialist — no bidding, no proposal spam, no pay-to-apply. Freelancers keep 100%, and hiring is free during early access.",
   alternates: { canonical: "/", languages: altLanguages("/", "/de", "/ar") },
   openGraph: {
     title: "Hire Interview-Vetted Freelancers, AI-Matched | Hyrde",

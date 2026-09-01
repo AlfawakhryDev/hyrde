@@ -1,8 +1,9 @@
 import { MetadataRoute } from "next";
-import { ALL_SKILL_SLUGS, ALL_CITY_SLUGS } from "@/lib/data";
+import { ALL_SKILL_SLUGS, INDEXED_CITY_PAGES } from "@/lib/data";
 import { COMPETITOR_SLUGS } from "@/lib/compare";
 import { GUIDE_SLUGS } from "@/lib/guides";
 import { AR_GUIDE_SLUGS } from "@/lib/guides.ar";
+import { AR_CITY_SLUGS } from "@/lib/gcc.ar";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://hyrde.net";
@@ -19,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/ar`,                  lastModified: now, priority: 0.9, alternates: { languages: { en: base } } },
     { url: `${base}/ar/faq`,              lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/faq` } } },
     { url: `${base}/ar/guides`,           lastModified: now, priority: 0.8 },
+    { url: `${base}/ar/hire`,             lastModified: now, priority: 0.85 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
     { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
@@ -50,6 +52,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.75,
   }));
 
+  // Arabic GCC city pages — the Arabic-language surface for the Gulf hiring
+  // demand that GSC shows arriving in English today.
+  const ar_city_pages = AR_CITY_SLUGS.map(slug => ({
+    url: `${base}/ar/hire/${slug}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   // Switcher / comparison pages — "[competitor] alternative" (high client intent)
   const comparison_pages = COMPETITOR_SLUGS.map(slug => ({
     url: `${base}/${slug}-alternative`,
@@ -66,10 +77,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  // NOTE: /hire/[skill]/[city] pages (skill×city) are deliberately NOT in the
-  // sitemap and are noindexed. On a young domain, ~660 near-duplicate templated
-  // pages read as doorway pages and can suppress indexing of the whole site. We
-  // ship a tight set of substantive pages first; the city pages get reinstated
-  // once they carry genuinely unique, local content.
-  return [...static_pages, ...comparison_pages, ...guide_pages, ...ar_guide_pages, ...skill_pages];
+  // Curated skill×city pages. These were pulled from the sitemap entirely in
+  // v0.10.0 as suspected doorway pages — but the 2026-09-01 Search Console
+  // export showed they generate 61% of all impressions. We now submit the
+  // curated allowlist (proven demand + the GCC grid, see INDEXED_CITY_PAGES);
+  // the remaining long tail stays out of the sitemap and noindexed.
+  const city_pages = [...INDEXED_CITY_PAGES].map(pair => ({
+    url: `${base}/hire/${pair}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [
+    ...static_pages, ...comparison_pages, ...guide_pages,
+    ...ar_guide_pages, ...ar_city_pages, ...skill_pages, ...city_pages,
+  ];
 }
