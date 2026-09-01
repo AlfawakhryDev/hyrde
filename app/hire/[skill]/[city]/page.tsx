@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SKILLS, CITIES, MOCK_FREELANCERS, ALL_SKILL_SLUGS, ALL_CITY_SLUGS, getRate, getRateContext, getSkillCityIntro, getSkillCityFaqs, getCityRateComparisons } from "@/lib/data";
+import { SKILLS, CITIES, MOCK_FREELANCERS, ALL_SKILL_SLUGS, ALL_CITY_SLUGS, isIndexedCityPage, getRate, getRateContext, getSkillCityIntro, getSkillCityFaqs, getCityRateComparisons } from "@/lib/data";
 import FreelancerCard from "@/components/FreelancerCard";
 
 interface Props { params: Promise<{ skill: string; city: string }> }
@@ -30,10 +30,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: { canonical },
     openGraph: { title, description, url: canonical },
-    // Thin, templated skill×city variants: keep them crawlable (follow) so link
-    // equity reaches the substantive /hire/[skill] hubs, but out of the index
-    // until each carries genuinely unique local content.
-    robots: { index: false, follow: true },
+    // Curated indexing (see INDEXED_CITY_PAGES in lib/data.ts): pages with
+    // proven search demand + the GCC grid are indexable; the long tail stays
+    // crawlable-but-noindexed so link equity still reaches the /hire/[skill]
+    // hubs without flooding the index with near-duplicates.
+    robots: isIndexedCityPage(skill, city)
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
   };
 }
 
