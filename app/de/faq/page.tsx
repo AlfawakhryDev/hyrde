@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: { absolute: "Hyrde FAQ. Was es ist, wie es funktioniert, Preise" },
   description:
     "Antworten auf häufige Fragen zu Hyrde: was es ist, wie die KI-Vermittlung funktioniert, Preise, wie Freelancer geprüft werden und wie es sich von Upwork und Fiverr unterscheidet.",
-  alternates: { canonical: "/de/faq", languages: altLanguages("/faq", "/de/faq") },
+  alternates: { canonical: "/de/faq", languages: altLanguages("/faq", "/de/faq", "/ar/faq") },
 };
 
 const FAQS: { q: string; a: string }[] = [

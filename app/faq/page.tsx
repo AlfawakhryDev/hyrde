@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: { absolute: "Hyrde FAQ. What It Is, How It Works, and Pricing | Hyrde" },
   description:
     "Answers to common questions about Hyrde: what it is, how the AI matching works, pricing, how freelancers are vetted, and how it differs from Upwork and Fiverr.",
-  alternates: { canonical: "/faq", languages: altLanguages("/faq", "/de/faq") },
+  alternates: { canonical: "/faq", languages: altLanguages("/faq", "/de/faq", "/ar/faq") },
 };
 
 // BLUF (bottom-line-up-front), atomic answers, built to be quoted by answer

@@ -3,9 +3,21 @@ import { usePathname, useRouter } from "next/navigation";
 import { type Locale } from "@/lib/i18n";
 import { useLocale, useSetLocale } from "./I18nProvider";
 
-// Marketing pages that have a German URL twin (SEO). App pages have no twin and
-// re-render instantly from the context locale.
-const TWIN: Record<string, string> = { "/": "/de", "/faq": "/de/faq" };
+// Marketing pages that have localized URL twins (SEO). Keyed by the English base
+// path; each entry maps to the /de and /ar URL. App pages have no twin and just
+// re-render from the context locale (and flip dir for Arabic via setLocale).
+const TWIN: Record<string, { de: string; ar: string }> = {
+  "/": { de: "/de", ar: "/ar" },
+  "/faq": { de: "/de/faq", ar: "/ar/faq" },
+};
+
+// Strip a /de or /ar prefix to get the English base path.
+function enBase(path: string): string {
+  if (path === "/de" || path === "/ar") return "/";
+  return path.replace(/^\/(de|ar)(?=\/)/, "") || "/";
+}
+
+const LABEL: Record<Locale, string> = { en: "EN", de: "DE", ar: "AR" };
 
 export default function LangSwitcher({ className = "" }: { className?: string }) {
   const active = useLocale();
@@ -15,9 +27,14 @@ export default function LangSwitcher({ className = "" }: { className?: string })
 
   function switchTo(target: Locale) {
     if (target === active) return;
-    setLocale(target); // sets cookie + re-renders app UI in the new language
-    if (target === "de" && TWIN[pathname]) router.push(TWIN[pathname]);
-    else if (target === "en" && pathname.startsWith("/de")) router.push(pathname.replace(/^\/de/, "") || "/");
+    setLocale(target); // cookie + dir + re-render app UI in the new language
+    const base = enBase(pathname);
+    const twin = TWIN[base];
+    if (twin) {
+      router.push(target === "en" ? base : twin[target]);
+    } else if (target === "en" && /^\/(de|ar)(\/|$)/.test(pathname)) {
+      router.push(base);
+    }
   }
 
   return (
@@ -26,7 +43,7 @@ export default function LangSwitcher({ className = "" }: { className?: string })
       role="group"
       aria-label="Language"
     >
-      {(["en", "de"] as const).map(loc => (
+      {(["en", "de", "ar"] as const).map(loc => (
         <button
           key={loc}
           onClick={() => switchTo(loc)}
@@ -35,7 +52,7 @@ export default function LangSwitcher({ className = "" }: { className?: string })
             active === loc ? "bg-on-surface text-inverse-on-surface" : "text-on-surface-variant hover:text-on-surface"
           }`}
         >
-          {loc === "en" ? "EN" : "DE"}
+          {LABEL[loc]}
         </button>
       ))}
     </div>
