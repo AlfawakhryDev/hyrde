@@ -55,11 +55,12 @@ function Kicker({ n, label, dark = false }: { n: string; label: string; dark?: b
 
 export default function HomePage({ locale = "en" }: { locale?: Locale }) {
   const t = tFor(locale);
+  const guidesHref = locale === "ar" ? "/ar/guides" : "/guides";
   const compare: [string, string][] = [
     ["Hyrde vs Upwork", "/upwork-alternative"],
     ["Hyrde vs Fiverr", "/fiverr-alternative"],
     ["Hyrde vs Toptal", "/toptal-alternative"],
-    [t("home.compareGuides"), "/guides"],
+    [t("home.compareGuides"), guidesHref],
     [t("home.compareTalent"), "/hire"],
   ];
   // Top 6 FAQs surface on the homepage (visible content backs the FAQPage schema);
