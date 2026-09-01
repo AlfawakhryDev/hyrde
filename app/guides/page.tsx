@@ -3,7 +3,7 @@ import Link from "next/link";
 import { GUIDES_LIST } from "@/lib/guides";
 
 export const metadata: Metadata = {
-  title: "Guides. Hiring & Freelancing, the honest version | Hyrde",
+  title: { absolute: "Guides. Hiring & Freelancing, the honest version | Hyrde" },
   description:
     "Practical, no-fluff guides for clients hiring freelancers and freelancers finding clients in 2026. Rates, scams, platform comparisons, and pricing.",
   alternates: { canonical: "/guides" },

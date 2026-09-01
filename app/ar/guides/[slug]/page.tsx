@@ -1,36 +1,37 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { GUIDES, GUIDE_SLUGS, getGuide } from "@/lib/guides";
+import { AR_GUIDES, AR_GUIDE_SLUGS, getArGuide } from "@/lib/guides.ar";
 
 interface Props { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
-  return GUIDE_SLUGS.map(slug => ({ slug }));
+  return AR_GUIDE_SLUGS.map(slug => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const g = getGuide(slug);
+  const g = getArGuide(slug);
   if (!g) return {};
-  const canonical = `/guides/${slug}`;
+  const canonical = `/ar/guides/${slug}`;
   return {
     title: { absolute: g.metaTitle },
     description: g.metaDescription,
     alternates: { canonical },
-    openGraph: { title: g.metaTitle, description: g.metaDescription, url: canonical, type: "article" },
+    openGraph: { title: g.metaTitle, description: g.metaDescription, url: canonical, type: "article", locale: "ar_SA" },
   };
 }
 
-export default async function GuidePage({ params }: Props) {
+export default async function ArabicGuidePage({ params }: Props) {
   const { slug } = await params;
-  const g = getGuide(slug);
+  const g = getArGuide(slug);
   if (!g) notFound();
 
-  const url = `https://hyrde.net/guides/${slug}`;
+  const url = `https://hyrde.net/ar/guides/${slug}`;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
+    inLanguage: "ar",
     headline: g.title,
     description: g.metaDescription,
     datePublished: g.updated,
@@ -42,6 +43,7 @@ export default async function GuidePage({ params }: Props) {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    inLanguage: "ar",
     mainEntity: g.faqs.map(f => ({
       "@type": "Question",
       name: f.q,
@@ -52,25 +54,25 @@ export default async function GuidePage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://hyrde.net" },
-      { "@type": "ListItem", position: 2, name: "Guides", item: "https://hyrde.net/guides" },
+      { "@type": "ListItem", position: 1, name: "الرئيسية", item: "https://hyrde.net/ar" },
+      { "@type": "ListItem", position: 2, name: "الأدلة", item: "https://hyrde.net/ar/guides" },
       { "@type": "ListItem", position: 3, name: g.title, item: url },
     ],
   };
 
-  const related = g.related.map(s => GUIDES[s]).filter(Boolean);
+  const related = g.related.map(s => AR_GUIDES[s]).filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-surface-gray">
+    <div lang="ar" dir="rtl" className="min-h-screen bg-surface-gray">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       <article className="max-w-[760px] mx-auto px-6 md:px-8 pt-20 pb-16">
         <nav className="text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2 flex-wrap">
-          <Link href="/" className="hover:text-electric-violet transition-colors">Home</Link>
+          <Link href="/ar" className="hover:text-electric-violet transition-colors">الرئيسية</Link>
           <span>/</span>
-          <Link href="/guides" className="hover:text-electric-violet transition-colors">Guides</Link>
+          <Link href="/ar/guides" className="hover:text-electric-violet transition-colors">الأدلة</Link>
           <span>/</span>
           <span className="text-on-surface">{g.clusterLabel}</span>
         </nav>
@@ -84,11 +86,11 @@ export default async function GuidePage({ params }: Props) {
         <p className="text-xs font-body text-on-surface-variant inline-flex items-center gap-4 mb-8">
           <span className="inline-flex items-center gap-1.5">
             <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>schedule</span>
-            {g.readMins} min read
+            {g.readMins} دقائق قراءة
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>update</span>
-            Updated {new Date(g.updated).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            تحديث {new Date(g.updated).toLocaleDateString("ar", { month: "long", year: "numeric" })}
           </span>
         </p>
 
@@ -110,7 +112,7 @@ export default async function GuidePage({ params }: Props) {
               <ul className="mt-4 space-y-2">
                 {sec.bullets.map((b, k) => (
                   <li key={k} className="flex items-start gap-3 font-body text-on-surface-variant text-base">
-                    <span className="material-symbols-outlined text-electric-violet shrink-0 mt-0.5" style={{ fontSize: "18px" }}>chevron_right</span>
+                    <span className="material-symbols-outlined text-electric-violet shrink-0 mt-0.5" style={{ fontSize: "18px" }}>chevron_left</span>
                     <span>{b}</span>
                   </li>
                 ))}
@@ -131,7 +133,7 @@ export default async function GuidePage({ params }: Props) {
 
         {/* FAQ */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold font-headline text-on-surface mb-5">Frequently asked</h2>
+          <h2 className="text-2xl font-bold font-headline text-on-surface mb-5">الأسئلة الشائعة</h2>
           <div className="space-y-3">
             {g.faqs.map((f, i) => (
               <details key={i} className="bg-white rounded-xl border border-border-crisp p-5 group">
@@ -148,10 +150,10 @@ export default async function GuidePage({ params }: Props) {
         {/* Related */}
         {related.length > 0 && (
           <section className="border-t border-border-crisp pt-8">
-            <h2 className="text-lg font-bold font-headline text-on-surface mb-4">Keep reading</h2>
+            <h2 className="text-lg font-bold font-headline text-on-surface mb-4">اقرأ أيضاً</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {related.map(r => (
-                <Link key={r.slug} href={`/guides/${r.slug}`}
+                <Link key={r.slug} href={`/ar/guides/${r.slug}`}
                   className="group bg-white rounded-xl border border-border-crisp p-5 hover:border-electric-violet/50 transition-colors">
                   <span className="text-xs font-semibold font-body text-electric-violet uppercase tracking-widest">{r.clusterLabel}</span>
                   <h3 className="font-bold font-headline text-on-surface text-base leading-snug mt-2 group-hover:text-electric-violet transition-colors">{r.title}</h3>
