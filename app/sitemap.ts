@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 import { ALL_SKILL_SLUGS, ALL_CITY_SLUGS } from "@/lib/data";
 import { COMPETITOR_SLUGS } from "@/lib/compare";
 import { GUIDE_SLUGS } from "@/lib/guides";
+import { AR_GUIDE_SLUGS } from "@/lib/guides.ar";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://hyrde.net";
@@ -17,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Arabic (Saudi / GCC) landing surface
     { url: `${base}/ar`,                  lastModified: now, priority: 0.9, alternates: { languages: { en: base } } },
     { url: `${base}/ar/faq`,              lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/faq` } } },
+    { url: `${base}/ar/guides`,           lastModified: now, priority: 0.8 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
     { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
@@ -40,6 +42,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  // Arabic (Saudi/GCC) editorial guides
+  const ar_guide_pages = AR_GUIDE_SLUGS.map(slug => ({
+    url: `${base}/ar/guides/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  }));
+
   // Switcher / comparison pages — "[competitor] alternative" (high client intent)
   const comparison_pages = COMPETITOR_SLUGS.map(slug => ({
     url: `${base}/${slug}-alternative`,
@@ -61,5 +71,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // pages read as doorway pages and can suppress indexing of the whole site. We
   // ship a tight set of substantive pages first; the city pages get reinstated
   // once they carry genuinely unique, local content.
-  return [...static_pages, ...comparison_pages, ...guide_pages, ...skill_pages];
+  return [...static_pages, ...comparison_pages, ...guide_pages, ...ar_guide_pages, ...skill_pages];
 }
