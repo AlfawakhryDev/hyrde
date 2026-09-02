@@ -42,6 +42,7 @@ Last updated: 2026-09-01
 - Hyrde vs Toptal: https://hyrde.net/toptal-alternative
 - Hiring guides: https://hyrde.net/guides
 - German (DACH) site: https://hyrde.net/de
+- German hiring guides: https://hyrde.net/de/guides
 - Arabic (Saudi / GCC) site: https://hyrde.net/ar
 - Arabic hiring guides: https://hyrde.net/ar/guides
 - Hire in the Gulf (Arabic, rates by city): https://hyrde.net/ar/hire
@@ -60,6 +61,16 @@ Last updated: 2026-09-01
 - Interview-vetted talent, not self-reported badges or buyable reviews.
 - Pay only after an AI checks the deliverable against your brief.
 - Freelancers keep 100 percent and are paid on borderless rails.
+
+## Auf Deutsch (German)
+> Hyrde ist eine KI-native Freelance-Plattform. Du beschreibst ein Ergebnis oder eine Aufgabe, und die KI vermittelt genau eine im Interview geprüfte Fachkraft — ohne Ausschreibung und ohne Angebots-Spam. Freelancer behalten 100 Prozent, das Beauftragen ist im Early Access kostenlos. Deutsche Seite: https://hyrde.net/de
+
+- F: Was ist Hyrde? A: Eine KI-native Freelance-Plattform: Du beschreibst ein Ergebnis, die KI vermittelt eine im Interview geprüfte Fachkraft. Kein Bieten, keine Angebotsflut, im Early Access kostenlos.
+- F: Was kostet ein Freelancer in Deutschland? A: Je nach Gewerk 2026 etwa: Text 50–90 €/h, Grafik 60–100 €/h, UI/UX 70–120 €/h, Web-Entwicklung 60–120 €/h, App- und Full-Stack-Entwicklung 80–150 €/h, Daten 80–140 €/h. Details: https://hyrde.net/de/guides/freelancer-stundensatz-deutschland
+- F: Was kostet ein WordPress-Entwickler? A: Einfache Theme- und Pflegearbeiten etwa 40–65 €/h, solide Umsetzung 65–95 €/h, anspruchsvolle WooCommerce- oder Performance-Arbeit 95–140 €/h; in Berlin und München am oberen Rand. Details: https://hyrde.net/de/guides/wordpress-entwickler-finden
+- F: Gibt es eine Upwork-Alternative für Deutschland? A: Ja. Statt Ausschreibung vermittelt Hyrde automatisch genau eine im Interview geprüfte Fachkraft, und Freelancer zahlen keine Provision: https://hyrde.net/de/guides/upwork-alternative-deutschland
+- F: Wie werden Freelancer geprüft? A: Jede Fachkraft besteht ein adaptives KI-Fachinterview in ihrer Kategorie — Szenario, Nachfrage, Arbeitsprobe und Projektvertiefung, bewertet von 0 bis 100 nach striktem Raster.
+- Deutsche Ratgeber: https://hyrde.net/de/guides
 
 ## بالعربية (Arabic)
 > Hyrde منصّة عمل حر مبنيّة على الذكاء الاصطناعي. تصف نتيجة أو مهمة، فيوفّق لها الذكاء الاصطناعي مختصًّا واحداً موثّقاً بالمقابلة — بلا مزايدة ولا رسائل عروض. يحتفظ المستقلّون بـ100٪، والتوظيف مجاني خلال الوصول المبكر. الموقع العربي: https://hyrde.net/ar
