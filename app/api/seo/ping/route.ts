@@ -20,11 +20,23 @@ const HOST = "hyrde.net";
 const SLICE = 40;
 
 function authorized(req: Request): boolean {
-  // Vercel sets x-vercel-cron on scheduled invocations; a manual call needs the
-  // CRON_SECRET bearer. If no secret is configured, only the cron can run it.
-  if (req.headers.get("x-vercel-cron")) return true;
+  // CRON_SECRET only. Vercel sends `Authorization: Bearer $CRON_SECRET` on
+  // scheduled invocations once that env var is set.
+  //
+  // We deliberately do NOT trust the `x-vercel-cron` header: Vercel does not
+  // strip it from inbound requests, so anyone could set it by hand and drive
+  // this endpoint (verified against prod — it returned 200). This route has an
+  // external side effect (it POSTs our URLs to IndexNow), so it fails closed:
+  // no secret configured means nobody, including the cron, can run it.
   const secret = process.env.CRON_SECRET;
-  return !!secret && req.headers.get("authorization") === `Bearer ${secret}`;
+  if (!secret) return false;
+  const auth = req.headers.get("authorization") ?? "";
+  const expected = `Bearer ${secret}`;
+  // Constant-time-ish compare: bail on length first, then diff every byte.
+  if (auth.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < auth.length; i++) diff |= auth.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
 }
 
 export async function GET(req: Request) {
