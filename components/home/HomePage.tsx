@@ -55,7 +55,7 @@ function Kicker({ n, label, dark = false }: { n: string; label: string; dark?: b
 
 export default function HomePage({ locale = "en" }: { locale?: Locale }) {
   const t = tFor(locale);
-  const guidesHref = locale === "ar" ? "/ar/guides" : "/guides";
+  const guidesHref = locale === "ar" ? "/ar/guides" : locale === "de" ? "/de/guides" : "/guides";
   const compare: [string, string][] = [
     ["Hyrde vs Upwork", "/upwork-alternative"],
     ["Hyrde vs Fiverr", "/fiverr-alternative"],

@@ -1,13 +1,23 @@
 import { MetadataRoute } from "next";
 import { ALL_SKILL_SLUGS, INDEXED_CITY_PAGES } from "@/lib/data";
 import { COMPETITOR_SLUGS } from "@/lib/compare";
-import { GUIDE_SLUGS } from "@/lib/guides";
-import { AR_GUIDE_SLUGS } from "@/lib/guides.ar";
+import { GUIDE_SLUGS, GUIDES } from "@/lib/guides";
+import { AR_GUIDE_SLUGS, AR_GUIDES } from "@/lib/guides.ar";
+import { DE_GUIDE_SLUGS, DE_GUIDES } from "@/lib/guides.de";
 import { AR_CITY_SLUGS } from "@/lib/gcc.ar";
+
+// Date of the last meaningful site-wide content change. Bump this when you
+// ship new copy/pages; do NOT set it to new Date() (see note below).
+const SITE_REV = new Date("2026-09-01");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://hyrde.net";
-  const now  = new Date();
+  // Real modification dates. This used to be `new Date()` on every request, so
+  // all ~234 URLs claimed to change every time the sitemap was fetched — a
+  // false freshness signal that Google discounts and that makes Bing's
+  // lastmod+IndexNow pairing useless. Bump SITE_REV when site-wide content
+  // changes; editorial pages report their own `updated` date instead.
+  const now = SITE_REV;
 
   const static_pages = [
     { url: base,                          lastModified: now, priority: 1.0, alternates: { languages: { de: `${base}/de`, "ar-SA": `${base}/ar` } } },
@@ -16,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // German (DACH) landing surface
     { url: `${base}/de`,                  lastModified: now, priority: 0.9, alternates: { languages: { en: base } } },
     { url: `${base}/de/faq`,              lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/faq` } } },
+    { url: `${base}/de/guides`,           lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/guides` } } },
     // Arabic (Saudi / GCC) landing surface
     { url: `${base}/ar`,                  lastModified: now, priority: 0.9, alternates: { languages: { en: base } } },
     { url: `${base}/ar/faq`,              lastModified: now, priority: 0.8, alternates: { languages: { en: `${base}/faq` } } },
@@ -39,7 +50,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Authority hub: editorial guides (client + freelancer clusters)
   const guide_pages = GUIDE_SLUGS.map(slug => ({
     url: `${base}/guides/${slug}`,
-    lastModified: now,
+    lastModified: new Date(GUIDES[slug].updated),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
@@ -47,7 +58,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Arabic (Saudi/GCC) editorial guides
   const ar_guide_pages = AR_GUIDE_SLUGS.map(slug => ({
     url: `${base}/ar/guides/${slug}`,
-    lastModified: now,
+    lastModified: new Date(AR_GUIDES[slug].updated),
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  }));
+
+  // German (DACH) editorial guides
+  const de_guide_pages = DE_GUIDE_SLUGS.map(slug => ({
+    url: `${base}/de/guides/${slug}`,
+    lastModified: new Date(DE_GUIDES[slug].updated),
     changeFrequency: "monthly" as const,
     priority: 0.75,
   }));
@@ -91,6 +110,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...static_pages, ...comparison_pages, ...guide_pages,
-    ...ar_guide_pages, ...ar_city_pages, ...skill_pages, ...city_pages,
+    ...ar_guide_pages, ...de_guide_pages, ...ar_city_pages, ...skill_pages, ...city_pages,
   ];
 }
