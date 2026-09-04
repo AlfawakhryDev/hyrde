@@ -8,6 +8,10 @@ export const maxDuration = 30;
 
 const anthropic = new Anthropic();
 
+// Minimum fit before we put a name in front of a client. Below this we report
+// "no relevant candidate" instead of assigning someone unrelated.
+const MIN_FIT = 55;
+
 // ── AI matching ──────────────────────────────────────────────────────────────
 // The core of the product: a client posts a task, and the AI assigns the best
 // interview-vetted freelancer in that category — no bidding, no browsing, no
@@ -57,10 +61,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ matched: false, reason: "no_candidates" });
   }
 
-  // Default to the top-scoring vetted candidate; let the AI refine the pick.
-  let chosen = candidates[0];
-  let confidence = candidates[0].score;
-  let reason = `Top-scoring vetted ${task.category ?? ""} specialist (${candidates[0].band} · ${candidates[0].score}).`.trim();
+  // RELEVANCE FLOOR. This used to default to candidates[0] — the top scorer —
+  // and assign them no matter what, so a task whose category was 'Other' or
+  // misclassified pulled the whole roster (get_match_pool opens up for those)
+  // and handed the client someone with no relevant skill. That is how clients
+  // ended up with "matches that weren't specialized". We now start with NO
+  // choice: the AI must nominate someone and clear MIN_FIT, or we report back
+  // that there is no fit rather than inventing one.
+  let chosen: Candidate | null = null;
+  let confidence = 0;
+  let reason = "";
 
   try {
     const prompt = `You are the matching engine on Hyrde, a freelance marketplace. Pick the SINGLE best-fit freelancer for this specific task from the vetted candidates below. Every candidate already passed a graded skill interview, so they all clear the bar — your job is fit to THIS brief, not who's generically "best".
@@ -71,6 +81,8 @@ Weigh, in this order:
 3. Relevant background from their headline/bio.
 
 Do NOT just pick the highest vettingScore. If the top-scorer's demonstrated skills don't fit the brief and a slightly-lower-scorer's do, pick the better fit and say why.
+
+If NOBODY here has demonstrated skills relevant to this brief, say so honestly by returning chosenId null. Assigning an unrelated specialist is a worse outcome than reporting no match, so never stretch to fill the slot.
 
 TASK
 Title: ${task.title}
@@ -91,7 +103,7 @@ ${JSON.stringify(candidates.map(c => ({
 })))}
 
 Return ONLY valid JSON:
-{"chosenId": "<id of the best-fit candidate>", "confidence": <integer 0-100, your confidence THIS candidate is right for THIS brief>, "reason": "<one specific, plain sentence to the client on why this freelancer fits their brief. Reference the actual skill or experience match, not just 'top rated'. Never use the em-dash character.>"}`;
+{"chosenId": "<id of the best-fit candidate, or null if none genuinely fit>", "confidence": <integer 0-100, your confidence THIS candidate is right for THIS brief>, "reason": "<one specific, plain sentence to the client on why this freelancer fits their brief. Reference the actual skill or experience match, not just 'top rated'. Never use the em-dash character.>"}`;
 
     const msg = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
@@ -100,14 +112,21 @@ Return ONLY valid JSON:
     });
     const raw = (msg.content[0] as { type: string; text: string }).text.trim();
     const parsed = JSON.parse(raw.replace(/^```json\n?/, "").replace(/\n?```$/, "").trim());
-    const picked = candidates.find(c => c.id === parsed.chosenId);
-    if (picked) {
+    const picked = parsed.chosenId ? candidates.find(c => c.id === parsed.chosenId) : null;
+    const fit = Math.max(0, Math.min(100, Number(parsed.confidence) || 0));
+    if (picked && fit >= MIN_FIT) {
       chosen = picked;
-      confidence = Math.max(0, Math.min(100, Number(parsed.confidence) || picked.score));
-      if (parsed.reason) reason = String(parsed.reason).slice(0, 300);
+      confidence = fit;
+      reason = String(parsed.reason ?? "").slice(0, 300)
+        || `Vetted ${picked.category} specialist (${picked.band} · ${picked.score}).`;
     }
   } catch (err) {
-    console.error("Match AI failed, using top-scorer:", err);
+    // Fail closed: an unmatched task is recoverable, a wrong match is not.
+    console.error("Match AI failed; leaving task unmatched:", err);
+  }
+
+  if (!chosen) {
+    return NextResponse.json({ matched: false, reason: "no_relevant_candidate" });
   }
 
   // Assign atomically so two concurrent matches can't double-book.
