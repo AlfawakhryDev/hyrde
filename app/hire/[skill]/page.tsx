@@ -27,12 +27,13 @@ export default async function HireSkillPage({ params }: Props) {
   const skillData = SKILLS[skill];
   if (!skillData) notFound();
 
-  const freelancers = MOCK_FREELANCERS
+  // Only ever show specialists in THIS skill. There used to be a fallback here
+  // that showed the top 3 by score regardless of skill, so /hire/financial-modeler
+  // rendered a wall of React developers when no finance specialist existed. A
+  // real client called that out. An empty state is the honest answer.
+  const displayFreelancers = MOCK_FREELANCERS
     .filter(f => f.skill === skill)
     .sort((a, b) => b.score - a.score);
-
-  const fallback = [...MOCK_FREELANCERS].sort((a, b) => b.score - a.score).slice(0, 3);
-  const displayFreelancers = freelancers.length > 0 ? freelancers : fallback;
 
   return (
     <div className="min-h-screen bg-surface-gray">
@@ -81,14 +82,35 @@ export default async function HireSkillPage({ params }: Props) {
             <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-3">
               Available now
             </p>
-            <div className="space-y-3">
-              {displayFreelancers.map((f, i) => (
-                <FreelancerCard key={f.id} freelancer={f} highlight={i === 0} />
-              ))}
-            </div>
-            <p className="text-xs font-body text-on-surface-variant text-center mt-3">
-              + more matched after you post
-            </p>
+            {displayFreelancers.length > 0 ? (
+              <>
+                <div className="space-y-3">
+                  {displayFreelancers.map((f, i) => (
+                    <FreelancerCard key={f.id} freelancer={f} highlight={i === 0} />
+                  ))}
+                </div>
+                <p className="text-xs font-body text-on-surface-variant text-center mt-3">
+                  + more matched after you post
+                </p>
+              </>
+            ) : (
+              /* Honest empty state. We would rather show nobody than pad the list
+                 with specialists from an unrelated trade. */
+              <div className="bg-white rounded-xl border border-border-crisp p-6">
+                <p className="font-body text-on-surface text-sm font-semibold mb-2">
+                  No vetted {skillData.label} in the roster yet.
+                </p>
+                <p className="font-body text-on-surface-variant text-sm leading-relaxed mb-4">
+                  We only list specialists who passed the interview in this exact category, so we
+                  will not show you someone from another trade. Describe what you need and we will
+                  source and vet a {skillData.label} for it.
+                </p>
+                <Link href="/post-job"
+                  className="inline-block bg-tech-blue-deep text-white font-semibold font-body px-5 py-2.5 rounded-full hover:scale-[0.97] transition-transform text-sm">
+                  Describe what you need
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </section>
