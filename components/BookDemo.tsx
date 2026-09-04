@@ -27,7 +27,12 @@ const labelCls = "block text-[11px] uppercase tracking-[0.12em] text-on-surface-
 const fieldCls =
   "w-full border border-border-crisp rounded-xl px-3.5 py-2.5 text-sm text-on-surface bg-surface-bright focus:outline-none focus:border-on-surface transition-colors";
 
-export default function BookDemo({ variant = "nav", label }: { variant?: Variant; label?: string }) {
+export default function BookDemo({ variant = "nav", label, defaultNote = "" }: {
+  variant?: Variant; label?: string;
+  /** Prefills "what do you want to see" — the composer passes the scoped plan
+   *  and the audited site URL so a booked call arrives with its deal context. */
+  defaultNote?: string;
+}) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -115,7 +120,7 @@ export default function BookDemo({ variant = "nav", label }: { variant?: Variant
               </div>
               <div>
                 <label htmlFor="bd-note" className={labelCls}>{t("book.see")}</label>
-                <textarea id="bd-note" name="note" rows={3} className={`${fieldCls} resize-y`} placeholder={t("book.seePh")} />
+                <textarea id="bd-note" name="note" rows={3} defaultValue={defaultNote} className={`${fieldCls} resize-y`} placeholder={t("book.seePh")} />
               </div>
             </div>
 

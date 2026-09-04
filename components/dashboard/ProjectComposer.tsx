@@ -1,11 +1,30 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import BookDemo from "@/components/BookDemo";
 import {
   treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags,
   answerFacts, isShopify, versionFor, CONFIDENCE_TARGET, DONT_KNOW,
   type Question, type AnswerMap,
 } from "@/lib/questiontree";
+
+// Mirrors lib/siteaudit's SiteContext. Declared locally because that module
+// imports node:dns/node:net for its SSRF guard and must never enter the client
+// bundle — the server does the fetching and parsing, we only render the result.
+type SiteContext = {
+  url: string; title: string; lang: string; dir: string;
+  platform: string; theme: string; internalLinks: number; images: number;
+  languages: string[]; findings: string[];
+};
+
+type Specialist = {
+  id: string; name: string; band: string; score: number; headline: string;
+  country: string; verifiedSkills: string[]; fit: number; milestone: string; reason: string;
+};
+
+// Cheap client-side check for "does this brief contain a site to read?".
+// The server re-parses properly (lib/siteaudit findUrl) before fetching.
+const HAS_URL = /\bhttps?:\/\/\S{4,}/i;
 
 type Milestone = {
   title: string;
@@ -45,13 +64,18 @@ export default function ProjectComposer({
   initialOutcome?: string;
 }) {
   const [phase, setPhase] = useState<
-    "outcome" | "classifying" | "confirm" | "interrogate" | "scoping" | "review" | "creating" | "done"
+    "outcome" | "reading" | "classifying" | "confirm" | "interrogate" | "scoping" | "review" | "creating" | "done"
   >("outcome");
   const [outcome, setOutcome] = useState(initialOutcome);
   const [projectTitle, setProjectTitle] = useState("");
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
+
+  // Live site read (when the brief contains a URL) + who should join the call.
+  const [siteContext, setSiteContext] = useState<SiteContext | null>(null);
+  const [specialists, setSpecialists] = useState<Specialist[] | null>(null);
+  const [specialistsLoading, setSpecialistsLoading] = useState(false);
 
   // Interrogation state
   const [archetype, setArchetype] = useState<string>("other");
@@ -66,12 +90,38 @@ export default function ProjectComposer({
   const [firstMatch, setFirstMatch] = useState<{ matched: boolean; freelancer?: { name: string }; reason?: string } | null>(null);
 
   const totalUsd = milestones.reduce((s, m) => s + m.budgetUsd, 0);
+  // Prefills the call request so the captured lead carries the actual deal.
+  const callNote = [
+    projectTitle && `Project: ${projectTitle}`,
+    siteContext?.url && `Site: ${siteContext.url}${siteContext.platform ? ` (${siteContext.platform})` : ""}`,
+    milestones.length ? `Plan: ${milestones.map(m => m.title).join(" / ")}` : "",
+    totalUsd ? `Indicative budget: $${totalUsd.toLocaleString()}` : "",
+  ].filter(Boolean).join("\n");
   const overQuota = remainingPosts !== null && milestones.length > remainingPosts;
 
   // ── Step 1: classify ──
   async function submitOutcome() {
     if (outcome.trim().length < 10) { setError("Describe the outcome in a sentence or two first."); return; }
-    setError(""); setPhase("classifying");
+    setError("");
+
+    // "redo our website: https://example.com" — read the real site first so the
+    // plan is grounded in what is actually there (platform, language, size)
+    // instead of guessed from one sentence. Never blocks: if the fetch fails we
+    // carry on and scope from the text alone.
+    let ctx: SiteContext | null = null;
+    if (HAS_URL.test(outcome)) {
+      setPhase("reading");
+      try {
+        const r = await fetch("/api/site-audit", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: outcome.trim() }),
+        });
+        const d = await r.json();
+        if (r.ok && d.context) { ctx = d.context as SiteContext; setSiteContext(ctx); }
+      } catch { /* site unreadable, scope from the text */ }
+    }
+
+    setPhase("classifying");
     try {
       const res = await fetch("/api/classify", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -90,7 +140,7 @@ export default function ProjectComposer({
       else beginInterrogation(slug);
     } catch {
       // Classifier down: fall through to naive scoping so creation never blocks.
-      runScope("other", [], []);
+      runScope("other", [], [], ctx);
     }
   }
 
@@ -128,13 +178,36 @@ export default function ProjectComposer({
     await runScope(archetype, facts, risks);
   }
 
+  // ── Who should get on a call ──
+  // Relevance-gated server-side: an empty list is a valid, honest answer and we
+  // render it as such rather than padding with unrelated specialists.
+  async function loadSpecialists(title: string, ms: Milestone[], ctx: SiteContext | null) {
+    setSpecialistsLoading(true);
+    try {
+      const res = await fetch("/api/suggest-specialists", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          projectTitle: title,
+          milestones: ms.map(m => ({ title: m.title, brief: m.brief, category: m.category })),
+          siteSummary: ctx ? [`${ctx.url} (${ctx.platform || "unknown platform"}${ctx.theme ? `, ${ctx.theme} theme` : ""}, lang ${ctx.lang || "?"}${ctx.dir ? `/${ctx.dir}` : ""})`, ...ctx.findings].join(" ") : "",
+        }),
+      });
+      const data = await res.json();
+      setSpecialists(Array.isArray(data.suggestions) ? data.suggestions : []);
+    } catch {
+      setSpecialists([]);
+    } finally {
+      setSpecialistsLoading(false);
+    }
+  }
+
   // ── Step 3: decompose (scope), using interrogation answers as constraints ──
-  async function runScope(slug: string, facts: string[], risks: string[]) {
+  async function runScope(slug: string, facts: string[], risks: string[], ctx: SiteContext | null = null) {
     setError(""); setPhase("scoping");
     try {
       const res = await fetch("/api/scope-project", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ outcome: outcome.trim(), archetype: slug, facts, risks }),
+        body: JSON.stringify({ outcome: outcome.trim(), archetype: slug, facts, risks, siteContext: ctx ?? siteContext }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Could not scope this."); setPhase("interrogate"); return; }
@@ -142,6 +215,9 @@ export default function ProjectComposer({
       setMilestones(data.milestones);
       setNote(data.note ?? "");
       setPhase("review");
+      // Kick off specialist suggestions as soon as a plan exists, so the client
+      // sees who would actually do the work while reviewing it.
+      loadSpecialists(data.projectTitle, data.milestones, ctx ?? siteContext);
     } catch {
       setError("The assistant is unavailable. Try again.");
       setPhase("outcome");
@@ -262,6 +338,10 @@ export default function ProjectComposer({
           </>
         )}
 
+        {phase === "reading" && (
+          <Spinner title="Reading your site" sub="Fetching the page to see what it's built on before we plan the work." />
+        )}
+
         {phase === "classifying" && (
           <Spinner title="Reading your request" sub="Working out what kind of project this is." />
         )}
@@ -357,6 +437,34 @@ export default function ProjectComposer({
             </div>
             {note && <p className="text-[13px] text-on-surface-variant mb-5">{note}</p>}
 
+            {/* What we actually read off their live site. Shown so the client can
+                see the plan is grounded in their real setup, not a guess. */}
+            {siteContext && (
+              <div className="rounded-xl border border-border-crisp bg-surface-container/40 p-4 mb-4">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">
+                  We read your site
+                </p>
+                <p className="text-[13px] font-medium text-on-surface break-all mb-1">{siteContext.url}</p>
+                <p className="text-[12.5px] text-on-surface-variant mb-2">
+                  {[
+                    siteContext.platform && `Built on ${siteContext.platform}`,
+                    siteContext.theme && `${siteContext.theme} theme`,
+                    siteContext.lang && `lang ${siteContext.lang}${siteContext.dir ? `/${siteContext.dir}` : ""}`,
+                    siteContext.internalLinks ? `~${siteContext.internalLinks} internal links` : "",
+                  ].filter(Boolean).join(" · ")}
+                </p>
+                {siteContext.findings.length > 0 && (
+                  <ul className="flex flex-col gap-1">
+                    {siteContext.findings.slice(0, 4).map((f, i) => (
+                      <li key={i} className="text-[12.5px] text-on-surface-variant flex gap-2">
+                        <span className="text-on-surface-variant/60">·</span><span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+
             <div className="flex flex-col gap-3 mb-4">
               {milestones.map((m, i) => (
                 <div key={i} className="rounded-xl border border-border-crisp p-4">
@@ -405,6 +513,72 @@ export default function ProjectComposer({
             <div className="flex items-center justify-between py-3 border-t border-border-crisp mb-1">
               <span className="text-[13px] text-on-surface-variant">Total across {milestones.length} milestone{milestones.length === 1 ? "" : "s"}</span>
               <span className="text-[16px] font-semibold text-on-surface">${totalUsd.toLocaleString()}</span>
+            </div>
+
+            {/* Who should get on a call. Server-side relevance floor means this
+                list is either genuinely fitting people or empty — we never pad
+                it with specialists from an unrelated trade. */}
+            <div className="border-t border-border-crisp pt-4 mb-2">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-3">
+                Who would work on this
+              </p>
+
+              {specialistsLoading && (
+                <p className="text-[13px] text-on-surface-variant">Matching vetted specialists to this plan…</p>
+              )}
+
+              {!specialistsLoading && specialists && specialists.length > 0 && (
+                <>
+                  <div className="flex flex-col gap-2.5 mb-4">
+                    {specialists.map(sp => (
+                      <div key={sp.id} className="rounded-xl border border-border-crisp p-3.5">
+                        <div className="flex items-center justify-between gap-3 mb-1">
+                          <span className="text-[14px] font-semibold text-on-surface">{sp.name}</span>
+                          <span className="shrink-0 text-[11px] font-medium text-on-surface-variant">
+                            {sp.band} · {sp.score}{sp.country ? ` · ${sp.country}` : ""}
+                          </span>
+                        </div>
+                        {sp.milestone && (
+                          <p className="text-[12px] text-on-surface-variant mb-1">For: {sp.milestone}</p>
+                        )}
+                        <p className="text-[12.5px] text-on-surface leading-snug">{sp.reason}</p>
+                        {sp.verifiedSkills.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {sp.verifiedSkills.slice(0, 3).map(k => (
+                              <span key={k} className="rounded-full bg-surface-container px-2.5 py-1 text-[11px] text-on-surface-variant">
+                                {k.length > 46 ? k.slice(0, 46) + "…" : k}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <BookDemo
+                      variant="nav"
+                      label="Book a call with them"
+                      defaultNote={callNote}
+                    />
+                    <span className="text-[12px] text-on-surface-variant">
+                      Or create the project below and milestone 1 gets matched now.
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {!specialistsLoading && specialists && specialists.length === 0 && (
+                <div className="rounded-xl border border-border-crisp p-4">
+                  <p className="text-[13px] text-on-surface font-medium mb-1.5">
+                    No vetted specialist is a genuine fit for this yet.
+                  </p>
+                  <p className="text-[12.5px] text-on-surface-variant leading-relaxed mb-3">
+                    We will not put an unrelated freelancer in front of you. Book a call and we will
+                    source and vet specialists specifically for this plan.
+                  </p>
+                  <BookDemo variant="nav" label="Book a call" defaultNote={callNote} />
+                </div>
+              )}
             </div>
 
             {remainingPosts !== null && (

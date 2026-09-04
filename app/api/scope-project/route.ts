@@ -4,6 +4,8 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { guardAi } from "@/lib/ratelimit";
 import { CATEGORIES } from "@/lib/arena";
 import { MILESTONE_TYPES } from "@/lib/instrumentation";
+import type { SiteContext } from "@/lib/siteaudit";
+import { contextToFacts } from "@/lib/siteaudit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -41,6 +43,14 @@ export async function POST(req: NextRequest) {
   const facts: string[] = (Array.isArray(body?.facts) ? body.facts : []).slice(0, 20).map((f: unknown) => String(f).slice(0, 300));
   const risks: string[] = (Array.isArray(body?.risks) ? body.risks : []).slice(0, 12).map((r: unknown) => String(r).slice(0, 300));
 
+  // When the brief contained a URL, /api/site-audit already read the live site.
+  // Those observations are evidence, not guesses, so they carry more weight
+  // than anything inferred from the sentence — the plan must fit THIS site.
+  const site: SiteContext | null = body?.siteContext ?? null;
+  const siteBlock = site
+    ? `\n\nWHAT WE READ FROM THE CLIENT'S ACTUAL SITE (fetched live just now, treat as ground truth):\n${contextToFacts(site).map(f => `- ${f}`).join("\n")}\n\nGround every milestone in these observations. Name the real platform, language and constraints in the briefs. Do not propose work that contradicts them, and do not invent pages or features you did not see.`
+    : "";
+
   const contextBlock = facts.length
     ? `\n\nWHAT WE LEARNED IN SCOPING (use these as hard constraints, they are confirmed by the client):\n${facts.map(f => `- ${f}`).join("\n")}${risks.length ? `\n\nOPEN UNKNOWNS (the client did not know; account for them with a milestone or a wider brief where relevant, do not ignore them):\n${risks.map(r => `- ${r}`).join("\n")}` : ""}`
     : "";
@@ -50,7 +60,7 @@ export async function POST(req: NextRequest) {
 CLIENT'S OUTCOME:
 """
 ${rough.slice(0, 2000)}
-"""${contextBlock}
+"""${siteBlock}${contextBlock}
 
 Rules:
 - 2 to 5 milestones. If this is really a single piece of work, return exactly 1 milestone (the client will be told to use the regular single-task flow instead).
@@ -58,7 +68,7 @@ Rules:
 - Each milestone: a short title (max 9 words), a 2-4 sentence brief written as if to the freelancer who'll do it (include what the prior milestone handed off, if any), a category, a fair mid-market USD budget (integer), and suggested days-from-project-start it should be due by (integer, increasing).
 - category must be exactly one of: ${CATEGORIES.join(", ")}.
 - milestoneType classifies the KIND of work for cost tracking. It must be exactly one of: ${MILESTONE_TYPES.join(", ")}. Pick the single closest one to each milestone's actual work.
-- projectTitle: max 8 words, describes the whole outcome.
+- projectTitle: max 8 words, describes the whole outcome. Write it entirely in ONE script: if the client's site or brand name is in Arabic, either transliterate it to Latin letters or write the whole title in Arabic. Never mix Arabic and Latin characters inside a single word.
 
 Write all titles and descriptions in plain language. Never use the em-dash character (—).
 

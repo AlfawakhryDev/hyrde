@@ -54,9 +54,13 @@ export default async function HireSkillCityPage({ params }: Props) {
   const ctx         = getRateContext(skill, city)!;
   const cityRates   = getCityRateComparisons(skill, city, 5);
 
+  // Skill match is required. This was `f.skill === skill || f.location === city`,
+  // so anyone in the city surfaced regardless of trade — /hire/3d-designer/dubai
+  // listed a WordPress developer purely for being in Dubai. Same-city specialists
+  // in the right skill rank first; nobody unrelated is ever shown.
   const freelancers = MOCK_FREELANCERS
-    .filter(f => f.skill === skill || f.location === city)
-    .sort((a, b) => b.score - a.score)
+    .filter(f => f.skill === skill)
+    .sort((a, b) => (b.location === city ? 1 : 0) - (a.location === city ? 1 : 0) || b.score - a.score)
     .slice(0, 3);
 
   // Structured data: FAQPage + BreadcrumbList for rich results
