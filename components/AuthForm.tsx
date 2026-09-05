@@ -46,6 +46,17 @@ function GithubIcon() {
   );
 }
 
+function MicrosoftIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 23 23" aria-hidden="true">
+      <path fill="#F25022" d="M1 1h10v10H1z" />
+      <path fill="#7FBA00" d="M12 1h10v10H12z" />
+      <path fill="#00A4EF" d="M1 12h10v10H1z" />
+      <path fill="#FFB900" d="M12 12h10v10H12z" />
+    </svg>
+  );
+}
+
 function AppleIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -58,6 +69,13 @@ function AppleIcon() {
 // Developer Services ID + secret are configured in Supabase (needs the $99
 // Apple Developer Program; see Supabase dashboard → Auth → Providers → Apple).
 const APPLE_ENABLED = false;
+
+// Microsoft / Entra ID. Supabase calls the provider "azure". It stays hidden
+// until NEXT_PUBLIC_MICROSOFT_AUTH=1 is set, because the provider is only
+// usable once an Azure app registration exists and its client id + secret are
+// pasted into the Supabase Azure provider. Shipping the button before that
+// would just show users an "Unsupported provider" error.
+const MICROSOFT_ENABLED = process.env.NEXT_PUBLIC_MICROSOFT_AUTH === "1";
 
 // Soft work-email nudge for clients: warn on free/personal domains, allow anyway.
 const FREE_EMAIL_DOMAINS = new Set([
@@ -82,7 +100,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [oauthBusy, setOauthBusy] = useState<"google" | "github" | "apple" | null>(null);
+  const [oauthBusy, setOauthBusy] = useState<"google" | "github" | "apple" | "azure" | null>(null);
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   // Signup picks a side first — client or freelancer — before anything else.
@@ -159,7 +177,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   // Social login via Supabase's native OAuth — same session/profile/RLS as email
   // signup, no separate auth provider. On signup the chosen role rides along in
   // the callback URL; the callback persists it for first-time accounts.
-  async function oauth(provider: "google" | "github" | "apple") {
+  async function oauth(provider: "google" | "github" | "apple" | "azure") {
     setError("");
     setBusy(true);
     setOauthBusy(provider);
@@ -167,7 +185,12 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
     const supabase = supabaseBrowser();
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${location.origin}/auth/callback?${roleQS}next=${encodeURIComponent(next)}` },
+      options: {
+        redirectTo: `${location.origin}/auth/callback?${roleQS}next=${encodeURIComponent(next)}`,
+        // Entra returns no email address unless these are asked for explicitly,
+        // and an account with no email breaks profile creation downstream.
+        ...(provider === "azure" ? { scopes: "openid email profile" } : {}),
+      },
     });
     // On success the browser navigates to the provider — no need to unset busy.
     if (error) {
@@ -265,6 +288,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
           [
             { p: "google" as const, icon: <GoogleIcon />, label: "Continue with Google", show: true },
             { p: "github" as const, icon: <GithubIcon />, label: "Continue with GitHub", show: true },
+            { p: "azure" as const, icon: <MicrosoftIcon />, label: "Continue with Microsoft", show: MICROSOFT_ENABLED },
             { p: "apple" as const, icon: <AppleIcon />, label: "Continue with Apple", show: APPLE_ENABLED },
           ]
         ).filter(b => b.show).map(b => (
