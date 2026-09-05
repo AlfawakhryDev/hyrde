@@ -50,10 +50,13 @@ export default function VerifyEmailCard({ email, next }: { email: string; next: 
   }
 
   // Strict Mode mounts twice in dev; the ref keeps that to one request.
-  // The dashboard is warmed at the same time, so entering the code is the last
-  // thing that has to happen — not the start of a fresh page load.
+  //
+  // Deliberately NOT prefetching `next`. The proxy answers a prefetch of a
+  // gated route with a redirect back here, Next caches that answer, and the
+  // navigation after a successful confirm then resolves straight to /verify
+  // again — the card sat on "Email confirmed" until the page was reloaded by
+  // hand. Warming the route is not worth poisoning it.
   useEffect(() => {
-    router.prefetch(next);
     if (asked.current) return;
     asked.current = true;
     void send(false);
@@ -80,7 +83,11 @@ export default function VerifyEmailCard({ email, next }: { email: string; next: 
       // the row on the way in, and a card sitting there unchanged for that beat
       // reads as a click that did nothing.
       setEntering(true);
-      router.replace(next);
+      // A full document load, not router.replace. The client router still holds
+      // the pre-verification answer for this route, so a soft navigation lands
+      // back on /verify. This is the one moment in the app where throwing the
+      // cache away is exactly what we want.
+      window.location.replace(next);
     } catch {
       setErrorKey("verify.errNet");
       setBusy(false);
