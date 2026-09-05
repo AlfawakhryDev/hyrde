@@ -378,34 +378,37 @@ export default function ProjectComposer({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-6" onClick={requestClose}>
+      {confirmingClose && (
+        <div
+          className="absolute inset-0 z-[70] flex items-center justify-center bg-surface-bright/95 backdrop-blur-sm p-6"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="max-w-[34ch] text-center">
+            <h3 className="text-[17px] font-semibold text-on-surface mb-2">{t("composer.discardTitle")}</h3>
+            <p className="text-[13.5px] text-on-surface-variant mb-6">
+              {milestones.length ? t("composer.discardBodyPlan") : t("composer.discardBodyText")}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
+              <button
+                onClick={() => setConfirmingClose(false)}
+                className="h-11 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90"
+              >
+                {t("composer.keepEditing")}
+              </button>
+              <button
+                onClick={() => { setConfirmingClose(false); onClose(); }}
+                className="h-11 px-6 rounded-full border border-border-crisp text-sm font-medium text-on-surface-variant hover:text-error hover:border-error transition-colors"
+              >
+                {t("composer.discard")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div
         className="w-full sm:max-w-xl bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto relative"
         onClick={e => e.stopPropagation()}
       >
-        {confirmingClose && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface-bright/95 backdrop-blur-sm rounded-t-3xl sm:rounded-3xl p-6">
-            <div className="max-w-[34ch] text-center">
-              <h3 className="text-[17px] font-semibold text-on-surface mb-2">{t("composer.discardTitle")}</h3>
-              <p className="text-[13.5px] text-on-surface-variant mb-6">
-                {milestones.length ? t("composer.discardBodyPlan") : t("composer.discardBodyText")}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
-                <button
-                  onClick={() => setConfirmingClose(false)}
-                  className="h-11 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90"
-                >
-                  {t("composer.keepEditing")}
-                </button>
-                <button
-                  onClick={() => { setConfirmingClose(false); onClose(); }}
-                  className="h-11 px-6 rounded-full border border-border-crisp text-sm font-medium text-on-surface-variant hover:text-error hover:border-error transition-colors"
-                >
-                  {t("composer.discard")}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
         {phase === "outcome" && (
           <>
             <div className="flex items-center justify-between mb-2">
@@ -451,11 +454,11 @@ export default function ProjectComposer({
         )}
 
         {phase === "reading" && (
-          <Spinner title="Reading your site" sub="Fetching the page to see what it's built on before we plan the work." />
+          <Spinner title={t("composer.readT")} lines={[t("composer.read1"), t("composer.read2"), t("composer.read3")]} />
         )}
 
         {phase === "classifying" && (
-          <Spinner title="Reading your request" sub="Working out what kind of project this is." />
+          <Spinner title={t("composer.classT")} lines={[t("composer.class1"), t("composer.class2"), t("composer.class3")]} />
         )}
 
         {phase === "confirm" && (
@@ -478,7 +481,7 @@ export default function ProjectComposer({
         )}
 
         {phase === "interrogate" && buildingQs && (
-          <Spinner title={t("composer.writingQuestions")} sub={t("composer.writingQuestionsSub")} />
+          <Spinner title={t("composer.writingQuestions")} lines={[t("composer.q1"), t("composer.q2"), t("composer.q3")]} />
         )}
 
         {phase === "interrogate" && !buildingQs && currentQ && (
@@ -540,7 +543,7 @@ export default function ProjectComposer({
         )}
 
         {phase === "scoping" && (
-          <Spinner title="Scoping your project" sub="Turning what you told us into a priced milestone plan." />
+          <Spinner title={t("composer.scopeT")} lines={[t("composer.scope1"), t("composer.scope2"), t("composer.scope3")]} />
         )}
 
         {phase === "review" && (
@@ -686,7 +689,7 @@ export default function ProjectComposer({
         )}
 
         {phase === "creating" && (
-          <Spinner title="Setting up your project" sub="Creating milestones and matching the first one." />
+          <Spinner title={t("composer.createT")} lines={[t("composer.create1"), t("composer.create2"), t("composer.create3")]} />
         )}
 
         {phase === "done" && (
@@ -722,12 +725,31 @@ export default function ProjectComposer({
   );
 }
 
-function Spinner({ title, sub }: { title: string; sub: string }) {
+// Waiting on a model is the one place the product goes quiet, and a frozen
+// line reads like a hang. Naming each thing being done in turn tells someone
+// the work is real and roughly how far along it is — which is the whole job of
+// a progress message. It stops on the last line rather than looping forever:
+// a message that keeps cycling past its welcome starts to look stuck too.
+function Spinner({ title, lines }: { title: string; lines: string[] }) {
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    setI(0);
+    if (lines.length < 2) return;
+    const id = setInterval(
+      () => setI(n => (n + 1 < lines.length ? n + 1 : n)),
+      2600,
+    );
+    return () => clearInterval(id);
+  }, [lines.join("|")]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="text-center py-10">
       <div className="w-10 h-10 border-[3px] border-electric-violet/25 border-t-electric-violet rounded-full animate-spin mx-auto mb-5" />
       <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface mb-2">{title}</h2>
-      <p className="text-sm text-on-surface-variant">{sub}</p>
+      <p key={i} className="text-sm text-on-surface-variant animate-[fadeIn_.4s_ease-out]">
+        {lines[i]}
+      </p>
     </div>
   );
 }

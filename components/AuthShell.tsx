@@ -1,4 +1,6 @@
+"use client";
 import { Suspense } from "react";
+import { useT } from "@/components/I18nProvider";
 import { HyrdeMark } from "@/components/Logo";
 import HeroBackdrop from "@/components/home/HeroBackdrop";
 
@@ -6,18 +8,18 @@ import HeroBackdrop from "@/components/home/HeroBackdrop";
 // Dark cinematic brand panel on the left (with the interactive grid), a clean
 // light form panel on the right. Matches the homepage hero language.
 export default function AuthShell({
-  eyebrow,
-  title,
-  subtitle,
-  bullets,
+  mode,
   children,
 }: {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  bullets: string[];
+  mode: "login" | "signup";
   children: React.ReactNode;
 }) {
+  // Copy is derived from the mode rather than passed in, so these two pages
+  // cannot drift out of the dictionary the way hardcoded props did.
+  const t = useT();
+  const k = (s: string) => t(`auth.${mode}${s}`);
+  const bullets = [k("B1"), k("B2"), k("B3")];
+
   return (
     <div className="grid lg:grid-cols-2 min-h-[calc(100vh-136px)]">
       {/* Left — dark brand panel */}
@@ -30,8 +32,8 @@ export default function AuthShell({
 
         <div className="relative">
           <h2 className="font-light text-white text-[clamp(30px,3.2vw,44px)] leading-[1.05] tracking-[-0.03em] max-w-[15ch]">
-            The proposal pile ends{" "}
-            <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-xl px-2.5 leading-[1.15] -rotate-1">here</span>.
+            {t("auth.panelPre")}{" "}
+            <span className="inline-block bg-[#ffffff] text-[#0A0A0B] rounded-xl px-2.5 leading-[1.15] -rotate-1">{t("auth.panelHere")}</span>
           </h2>
           <ul className="mt-8 space-y-3 max-w-[380px]">
             {bullets.map(b => (
@@ -44,18 +46,18 @@ export default function AuthShell({
         </div>
 
         <p className="relative text-[12px] text-white/35">
-          Free during early access · no card required
+          {t("auth.panelFoot")}
         </p>
       </div>
 
       {/* Right — form panel */}
       <div className="flex items-center justify-center px-6 py-16 md:py-20">
         <div className="w-full max-w-[400px]">
-          <p className="text-[13px] font-medium text-electric-violet mb-3">{eyebrow}</p>
+          <p className="text-[13px] font-medium text-electric-violet mb-3">{k("Eyebrow")}</p>
           <h1 className="text-[34px] md:text-[40px] font-light tracking-[-0.035em] text-on-surface leading-[1.05] mb-2.5">
-            {title}
+            {k("Title")}
           </h1>
-          <p className="text-[14px] text-on-surface-variant leading-relaxed mb-8">{subtitle}</p>
+          <p className="text-[14px] text-on-surface-variant leading-relaxed mb-8">{k("Sub")}</p>
           <Suspense>{children}</Suspense>
         </div>
       </div>

@@ -3,10 +3,11 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { useT } from "@/components/I18nProvider";
 
 // 0–4 score: length, upper+lower, digit, symbol. Length gates everything.
 function passwordStrength(pw: string): { score: number; label: string; tone: string } {
-  if (!pw) return { score: 0, label: "", tone: "" };
+  if (!pw) return { score: 0, label: "", tone: "" };  // label "" renders nothing
   let score = 0;
   if (pw.length >= 8) score++;
   if (pw.length >= 12) score++;
@@ -15,7 +16,7 @@ function passwordStrength(pw: string): { score: number; label: string; tone: str
   if (/[^A-Za-z0-9]/.test(pw)) score++;
   score = Math.min(4, score);
   if (pw.length < 6) score = Math.min(1, score);
-  const labels = ["Too short", "Weak", "Okay", "Good", "Strong"];
+  const labels = ["pw0", "pw1", "pw2", "pw3", "pw4"];  // t("auth.<key>") at render
   const tones = [
     "text-error", "text-error",
     "text-amber-600 dark:text-amber-400",
@@ -92,6 +93,7 @@ const isFreeEmail = (email: string) =>
 type Role = "client" | "pilot";
 
 export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
+  const t = useT();
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") || "/dashboard";
@@ -127,7 +129,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
     try {
       if (mode === "signup") {
         if (strength.score < 2) {
-          setError("Pick a stronger password. Use at least 8 characters, ideally with a number or symbol.");
+          setError(t("auth.errWeakPw"));
           setBusy(false);
           return;
         }
@@ -160,14 +162,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         router.refresh();
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Something went wrong. Try again.";
+      const msg = err instanceof Error ? err.message : t("auth.errGeneric");
       // A Google/GitHub/Apple-only account has no password, so signInWithPassword
       // returns "Invalid login credentials" — the exact same generic message as a
       // wrong password (Supabase deliberately won't reveal which, to prevent email
       // enumeration). Nudge toward social login on any failed email login so OAuth
       // users don't get stuck thinking they're locked out.
       if (mode === "login" && /invalid login credentials/i.test(msg)) {
-        setError("That email and password didn't match. If you signed up with Google, GitHub, or Apple, use one of the buttons above instead. Those accounts don't have a password.");
+        setError(t("auth.errNoMatch"));
       } else {
         setError(msg);
       }
@@ -201,7 +203,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
       // something the person signing up can understand or fix.
       setError(
         /provider is not enabled|unsupported provider/i.test(error.message)
-          ? "Microsoft sign-in isn't switched on yet. Use Google, GitHub, or your email for now."
+          ? t("auth.errMicrosoftOff")
           : error.message,
       );
       setBusy(false);
@@ -215,7 +217,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <span className="material-symbols-outlined text-electric-violet mb-4" style={{ fontSize: "44px" }}>
           mark_email_unread
         </span>
-        <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Check your email</h2>
+        <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">{t("auth.checkEmail")}</h2>
         <p className="text-sm text-on-surface-variant leading-relaxed">
           We sent a confirmation link to <strong className="text-on-surface">{email}</strong>.
           Click it and you&apos;ll land right in your dashboard.
@@ -233,14 +235,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
             {
               r: "client" as Role,
               icon: "business_center",
-              title: "I'm hiring",
-              body: "Post a task and the AI assigns the best vetted specialist. No proposals, no browsing.",
+              title: t("auth.roleClientTitle"),
+              body: t("auth.roleClientBody"),
             },
             {
               r: "pilot" as Role,
               icon: "rocket_launch",
-              title: "I want to work",
-              body: "Pass one AI skill interview, then matched work comes to you, with a deadline and pay.",
+              title: t("auth.rolePilotTitle"),
+              body: t("auth.rolePilotBody"),
             },
           ]
         ).map(o => (
@@ -265,8 +267,8 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </button>
         ))}
         <p className="text-sm text-on-surface-variant text-center mt-3">
-          Already have an account?{" "}
-          <Link href={`/login${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">Log in</Link>
+          {t("auth.haveAccount")}{" "}
+          <Link href={`/login${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">{t("auth.logIn")}</Link>
         </p>
       </div>
     );
@@ -279,14 +281,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <div className="flex items-center justify-between -mt-1 mb-1">
           <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full bg-on-surface text-inverse-on-surface text-[12px] font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-[#A99EE8]" aria-hidden="true" />
-            {role === "client" ? "Signing up to hire" : "Signing up to work"}
+            {t(role === "client" ? "auth.badgeHire" : "auth.badgeWork")}
           </span>
           <button
             type="button"
             onClick={() => { setRole(null); setPersonalOk(false); }}
             className="text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
           >
-            <span aria-hidden="true">↳</span> Change
+            <span aria-hidden="true">↳</span> {t("auth.change")}
           </button>
         </div>
       )}
@@ -295,10 +297,10 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <div className="flex flex-col gap-2.5">
         {(
           [
-            { p: "google" as const, icon: <GoogleIcon />, label: "Continue with Google", show: true },
-            { p: "github" as const, icon: <GithubIcon />, label: "Continue with GitHub", show: true },
-            { p: "azure" as const, icon: <MicrosoftIcon />, label: "Continue with Microsoft", show: true },
-            { p: "apple" as const, icon: <AppleIcon />, label: "Continue with Apple", show: APPLE_ENABLED },
+            { p: "google" as const, icon: <GoogleIcon />, label: t("auth.withGoogle"), show: true },
+            { p: "github" as const, icon: <GithubIcon />, label: t("auth.withGithub"), show: true },
+            { p: "azure" as const, icon: <MicrosoftIcon />, label: t("auth.withMicrosoft"), show: true },
+            { p: "apple" as const, icon: <AppleIcon />, label: t("auth.withApple"), show: APPLE_ENABLED },
           ]
         ).filter(b => b.show).map(b => (
           <button
@@ -313,25 +315,25 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
             ) : (
               b.icon
             )}
-            {oauthBusy === b.p ? "Redirecting…" : b.label}
+            {oauthBusy === b.p ? t("auth.redirecting") : b.label}
           </button>
         ))}
       </div>
 
       <div className="flex items-center gap-3 my-1" aria-hidden="true">
         <span className="h-px flex-1 bg-border-crisp" />
-        <span className="text-[12px] text-on-surface-variant">or continue with email</span>
+        <span className="text-[12px] text-on-surface-variant">{t("auth.orEmail")}</span>
         <span className="h-px flex-1 bg-border-crisp" />
       </div>
 
       {mode === "signup" && (
         <label className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-medium text-on-surface">Name</span>
+          <span className="text-[13px] font-medium text-on-surface">{t("auth.name")}</span>
           <input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
-            placeholder="Your name"
+            placeholder={t("auth.namePh")}
             autoComplete="name"
             className="border border-border-crisp rounded-lg px-4 py-3 text-sm text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/10"
           />
@@ -339,14 +341,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
       )}
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-on-surface">Email</span>
+        <span className="text-[13px] font-medium text-on-surface">{t("auth.email")}</span>
         <div className="relative">
           <input
             type="email"
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="you@company.com"
+            placeholder={t("auth.emailPh")}
             autoComplete="email"
             className="w-full border border-border-crisp rounded-lg px-4 py-3 pr-10 text-sm text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/10"
           />
@@ -367,9 +369,9 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         {mode === "signup" && role === "client" && emailValid && isFreeEmail(email) && (
           <div className="mt-1.5 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-4 py-3">
             <p className="text-[13px] text-on-surface leading-relaxed">
-              That looks like a personal email.{" "}
+              {t("auth.personalTitle")}{" "}
               <span className="text-on-surface-variant">
-                Specialists trust work emails faster. Briefs and payments feel legit from day one.
+                {t("auth.personalBody")}
               </span>
             </p>
             {!personalOk ? (
@@ -388,7 +390,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
       </label>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-on-surface">Password</span>
+        <span className="text-[13px] font-medium text-on-surface">{t("auth.password")}</span>
         <div className="relative">
           <input
             type={showPw ? "text" : "password"}
@@ -396,14 +398,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
             minLength={6}
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
+            placeholder={t(mode === "signup" ? "auth.passwordPhNew" : "auth.passwordPh")}
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             className="w-full border border-border-crisp rounded-lg px-4 py-3 pr-11 text-sm text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/10"
           />
           <button
             type="button"
             onClick={() => setShowPw(s => !s)}
-            aria-label={showPw ? "Hide password" : "Show password"}
+            aria-label={t(showPw ? "auth.hidePw" : "auth.showPw")}
             className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-md text-on-surface-variant hover:text-on-surface transition-colors"
           >
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
@@ -426,14 +428,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
               ))}
             </div>
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-medium ${strength.tone}`}>{strength.label}</span>
+              <span className={`text-xs font-medium ${strength.tone}`}>{strength.label ? t(`auth.${strength.label}`) : ""}</span>
               <span className="text-[11px] text-on-surface-variant">
                 {password.length < 8
-                  ? "8+ characters"
+                  ? t("auth.pwChars")
                   : !/\d/.test(password)
-                  ? "Add a number"
+                  ? t("auth.pwNumber")
                   : !/[^A-Za-z0-9]/.test(password) && strength.score < 4
-                  ? "Add a symbol for strong"
+                  ? t("auth.pwSymbol")
                   : " "}
               </span>
             </div>
@@ -455,17 +457,17 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         {busy && (
           <span className="inline-block h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" aria-hidden="true" />
         )}
-        {busy ? "One moment…" : mode === "signup" ? "Create account" : "Log in"}
+        {busy ? t("auth.submitting") : t(mode === "signup" ? "auth.createAccount" : "auth.logIn")}
       </button>
 
       <p className="text-sm text-on-surface-variant text-center mt-2">
         {mode === "signup" ? (
-          <>Already have an account?{" "}
-            <Link href={`/login${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">Log in</Link>
+          <>{t("auth.haveAccount")}{" "}
+            <Link href={`/login${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">{t("auth.logIn")}</Link>
           </>
         ) : (
-          <>New to Hyrde?{" "}
-            <Link href={`/signup${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">Create an account</Link>
+          <>{t("auth.newHere")}{" "}
+            <Link href={`/signup${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">{t("auth.createOne")}</Link>
           </>
         )}
       </p>

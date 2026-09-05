@@ -18,9 +18,9 @@ type Variant = "nav" | "hero";
 
 const TRIGGER: Record<Variant, string> = {
   // Outlined neutral pill — distinct from the filled Sign-up button, sits calmly in the pill nav.
-  nav: "inline-flex items-center h-8 px-3.5 rounded-full border border-border-crisp text-on-surface text-[13px] font-semibold hover:bg-surface-container transition-colors",
+  nav: "inline-flex items-center whitespace-nowrap h-8 px-3.5 rounded-full border border-border-crisp text-on-surface text-[13px] font-semibold hover:bg-surface-container transition-colors",
   // On the dark hero: a clear outlined-white CTA, prominent without a second solid pill next to it.
-  hero: "inline-flex items-center gap-2 h-[52px] px-7 rounded-full border border-white/30 text-white text-[15px] font-semibold hover:bg-white/10 transition-colors",
+  hero: "inline-flex items-center whitespace-nowrap gap-2 h-[52px] px-7 rounded-full border border-white/30 text-white text-[15px] font-semibold hover:bg-white/10 transition-colors",
 };
 
 const labelCls = "block text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-1.5 font-medium";

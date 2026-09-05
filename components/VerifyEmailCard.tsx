@@ -27,6 +27,7 @@ export default function VerifyEmailCard({ email, next }: { email: string; next: 
   // message in the reader's language, and re-translates it if they switch.
   const [noteKey, setNoteKey] = useState("");
   const [errorKey, setErrorKey] = useState("");
+  const [entering, setEntering] = useState(false);
   const asked = useRef(false);
 
   async function send(resend: boolean) {
@@ -49,7 +50,10 @@ export default function VerifyEmailCard({ email, next }: { email: string; next: 
   }
 
   // Strict Mode mounts twice in dev; the ref keeps that to one request.
+  // The dashboard is warmed at the same time, so entering the code is the last
+  // thing that has to happen — not the start of a fresh page load.
   useEffect(() => {
+    router.prefetch(next);
     if (asked.current) return;
     asked.current = true;
     void send(false);
@@ -72,12 +76,13 @@ export default function VerifyEmailCard({ email, next }: { email: string; next: 
         setErrorKey(why[data.reason] ?? "verify.errGeneric");
         return;
       }
-      // The gate reads the database, so the server has to see the new row.
+      // Swap to the confirmed state before navigating: the proxy has to re-read
+      // the row on the way in, and a card sitting there unchanged for that beat
+      // reads as a click that did nothing.
+      setEntering(true);
       router.replace(next);
-      router.refresh();
     } catch {
       setErrorKey("verify.errNet");
-    } finally {
       setBusy(false);
     }
   }
@@ -86,6 +91,16 @@ export default function VerifyEmailCard({ email, next }: { email: string; next: 
   async function signOut() {
     await supabaseBrowser().auth.signOut();
     router.push("/signup");
+  }
+
+  if (entering) {
+    return (
+      <div className="rounded-2xl border border-border-crisp bg-surface-bright p-6 md:p-8 text-center">
+        <span className="material-symbols-outlined text-emerald-600" style={{ fontSize: "30px", fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+        <p className="text-[15px] text-on-surface mt-3">{t("verify.done")}</p>
+        <div className="w-6 h-6 border-2 border-electric-violet/25 border-t-electric-violet rounded-full animate-spin mx-auto mt-4" />
+      </div>
+    );
   }
 
   return (

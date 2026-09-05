@@ -61,12 +61,12 @@ export default function Navbar() {
             <span className="text-[16px] font-semibold tracking-[-0.02em] leading-none select-none">hyrde</span>
           </Link>
 
-          <div className="hidden md:flex items-center">
+          <div className="nav-links hidden md:flex items-center">
             {NAV_LINKS.map(link => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap transition-colors ${
                   isActive(link.href)
                     ? "text-on-surface bg-surface-container"
                     : "text-on-surface-variant hover:text-on-surface"
@@ -85,7 +85,7 @@ export default function Navbar() {
           {user ? (
             <div className="hidden md:flex items-center gap-1.5">
               <Link href="/dashboard"
-                className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity">
+                className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
                 {t("nav.dashboard")}
               </Link>
               <Link href="/profile" title="Profile" aria-label="Profile"
@@ -102,11 +102,11 @@ export default function Navbar() {
           ) : (
             <div className="hidden md:flex items-center gap-1.5">
               <Link href="/login"
-                className="px-3 py-1.5 rounded-full text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+                className="px-3 py-1.5 rounded-full text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">
                 {t("nav.login")}
               </Link>
               <Link href="/signup"
-                className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity">
+                className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
                 {t("nav.signup")}
               </Link>
             </div>
