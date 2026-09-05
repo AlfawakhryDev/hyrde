@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 // Same detector the server uses, so the composer never skips a site read the
 // backend would have handled. lib/url has no node imports for exactly this.
@@ -8,7 +8,7 @@ import SpecialistShortlist, { type Specialist } from "@/components/dashboard/Spe
 import {
   treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags,
   answerFacts, isShopify, versionFor, CONFIDENCE_TARGET, DONT_KNOW,
-  type Question, type AnswerMap,
+  type Question, type AnswerMap, EXPERTISE_KEY,
 } from "@/lib/questiontree";
 
 // Mirrors lib/siteaudit's SiteContext. Declared locally because that module
@@ -85,6 +85,9 @@ export default function ProjectComposer({
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [askedKeys, setAskedKeys] = useState<Set<string>>(new Set());
   const [multiSel, setMultiSel] = useState<string[]>([]);
+  // Read at scope time; a ref because runScope can fire in the same tick the
+  // final answer is recorded, before state has flushed.
+  const expertiseRef = useRef<string>("");
 
   // Create/done state
   const [createdCount, setCreatedCount] = useState(0);
@@ -160,6 +163,7 @@ export default function ProjectComposer({
 
   function recordAndAdvance(q: Question, value: string | string[]) {
     const na: AnswerMap = { ...answers, [q.key]: value };
+    if (q.key === EXPERTISE_KEY) expertiseRef.current = String(value);
     const ak = new Set(askedKeys); ak.add(q.key);
     setAnswers(na); setAskedKeys(ak); setMultiSel([]);
     if (shouldStop(tree, na, ak.size)) finalizeInterrogation(na, ak);
@@ -209,7 +213,7 @@ export default function ProjectComposer({
     try {
       const res = await fetch("/api/scope-project", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ outcome: outcome.trim(), archetype: slug, facts, risks, siteContext: ctx ?? siteContext }),
+        body: JSON.stringify({ outcome: outcome.trim(), archetype: slug, facts, risks, siteContext: ctx ?? siteContext, expertise: expertiseRef.current }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Could not scope this."); setPhase("interrogate"); return; }
