@@ -211,79 +211,99 @@ export async function POST(req: NextRequest) {
   }
 
   // 3. Per milestone: structural row -> immutable estimate -> executable task.
+  //
+  // Batched, not looped. This used to run three sequential round-trips per
+  // milestone inside a for-loop, so a four-milestone project spent eighteen
+  // serial trips to Postgres before the client saw anything. Now it is three
+  // multi-row inserts regardless of milestone count.
+  //
+  // Rows are mapped back by `sequence`, not by array position: a multi-row
+  // INSERT ... RETURNING happens to come back in insertion order today, but
+  // nothing in the SQL standard promises that, and silently mismatching a
+  // milestone to another milestone's estimate would be invisible and awful.
   const start = Date.now();
-  let firstTaskId: string | null = null;
-  let created = 0;
 
-  for (let i = 0; i < milestones.length; i++) {
-    const m = milestones[i];
-    const band = bands[i];
+  const typed = milestones.map((m, i) => ({
+    m, i, band: bands[i],
     // Prefer the LLM's controlled classification (Call C); keyword-map otherwise.
-    const mapped = m.milestoneType
+    mapped: m.milestoneType
       ? { type: m.milestoneType as MilestoneType, matched: true, rawLabel: `llm:${m.category}: ${m.title}` }
-      : mapMilestoneType(m.title, m.brief, m.category);
+      : mapMilestoneType(m.title, m.brief, m.category),
+  }));
 
-    const { data: milestone, error: mErr } = await supabase
-      .from("milestones")
-      .insert({ scope_document_id: scopeId, sequence: i, milestone_type: mapped.type, title: m.title, description: m.brief })
-      .select("id")
-      .single();
-    if (mErr || !milestone) {
-      await rollback();
-      return NextResponse.json({ error: mErr?.message ?? "Could not write milestone." }, { status: 500 });
-    }
+  const { data: milestoneRows, error: mErr } = await supabase
+    .from("milestones")
+    .insert(typed.map(({ m, i, mapped }) => ({
+      scope_document_id: scopeId, sequence: i, milestone_type: mapped.type,
+      title: m.title, description: m.brief,
+    })))
+    .select("id, sequence");
+  if (mErr || !milestoneRows || milestoneRows.length !== typed.length) {
+    await rollback();
+    return NextResponse.json({ error: mErr?.message ?? "Could not write milestones." }, { status: 500 });
+  }
+  const milestoneIdBySeq = new Map<number, string>(
+    milestoneRows.map(r => [r.sequence as number, r.id as string]),
+  );
 
-    const { error: estErr } = await supabase.from("milestone_estimates").insert({
-      milestone_id: milestone.id,
+  const { error: estErr } = await supabase.from("milestone_estimates").insert(
+    typed.map(({ i, band }) => ({
+      milestone_id: milestoneIdBySeq.get(i)!,
       cost_low: band.cost_low, cost_high: band.cost_high,
       duration_days_low: band.duration_days_low, duration_days_high: band.duration_days_high,
       confidence: band.confidence, basis: band.basis, prior_sample_size: band.prior_sample_size,
-    });
-    if (estErr) {
-      await rollback();
-      return NextResponse.json({ error: estErr.message }, { status: 500 });
-    }
+    })),
+  );
+  if (estErr) {
+    await rollback();
+    return NextResponse.json({ error: estErr.message }, { status: 500 });
+  }
 
-    const { data: task, error: taskErr } = await supabase
-      .from("tasks")
-      .insert({
-        title: m.title,
-        brief: m.brief,
-        category: m.category,
-        origin: "human",
-        status: "open",
-        poster_id: user.id,
-        amount_cents: Math.round(m.budgetUsd * 100),
-        deadline: new Date(start + m.dueInDays * 864e5).toISOString(),
-        project_id: projectId,
-        milestone_index: i,
-        milestone_total: milestones.length,
-        milestone_id: milestone.id,
-      })
-      .select("id")
-      .single();
-    if (taskErr || !task) {
-      // Monthly task-limit trigger raises "TASK_LIMIT|tier|limit". Surface it as
-      // a quota error and roll the whole project back so nothing partial persists.
-      await rollback();
-      const msg = taskErr?.message ?? "";
-      if (msg.startsWith("TASK_LIMIT")) {
-        const [, tier, limit] = msg.split("|");
-        return NextResponse.json(
-          { error: `Your ${tier ?? "current"} plan allows ${limit ?? "a limited number of"} posts this month. Upgrade to create this project.`, code: "TASK_LIMIT" },
-          { status: 402 },
-        );
-      }
-      return NextResponse.json({ error: msg || "Could not create milestone task." }, { status: 500 });
+  // One statement, so the monthly task-limit trigger either admits the whole
+  // project or rejects it. That is stricter than the old row-by-row loop, which
+  // could create three tasks and then roll them back on the fourth.
+  const { data: taskRows, error: taskErr } = await supabase
+    .from("tasks")
+    .insert(typed.map(({ m, i }) => ({
+      title: m.title,
+      brief: m.brief,
+      category: m.category,
+      origin: "human",
+      status: "open",
+      poster_id: user.id,
+      amount_cents: Math.round(m.budgetUsd * 100),
+      deadline: new Date(start + m.dueInDays * 864e5).toISOString(),
+      project_id: projectId,
+      milestone_index: i,
+      milestone_total: milestones.length,
+      milestone_id: milestoneIdBySeq.get(i)!,
+    })))
+    .select("id, milestone_index");
+  if (taskErr || !taskRows) {
+    await rollback();
+    const msg = taskErr?.message ?? "";
+    if (msg.startsWith("TASK_LIMIT")) {
+      const [, tier, limit] = msg.split("|");
+      return NextResponse.json(
+        { error: `Your ${tier ?? "current"} plan allows ${limit ?? "a limited number of"} posts this month. Upgrade to create this project.`, code: "TASK_LIMIT" },
+        { status: 402 },
+      );
     }
+    return NextResponse.json({ error: msg || "Could not create milestone tasks." }, { status: 500 });
+  }
+  const taskIdByIndex = new Map<number, string>(
+    taskRows.map(r => [r.milestone_index as number, r.id as string]),
+  );
 
-    if (i === 0) firstTaskId = task.id;
-    created++;
+  const firstTaskId: string | null = taskIdByIndex.get(0) ?? null;
+  const created = taskRows.length;
+
+  for (const { i, mapped, band } of typed) {
     events.push({
       project_id: projectId,
       event_type: "milestone_estimated",
       payload: {
-        milestone_id: milestone.id, task_id: task.id, sequence: i,
+        milestone_id: milestoneIdBySeq.get(i), task_id: taskIdByIndex.get(i), sequence: i,
         milestone_type: mapped.type, type_matched: mapped.matched, raw_label: mapped.rawLabel,
         cost_low: band.cost_low, cost_high: band.cost_high, basis: band.basis,
       },
