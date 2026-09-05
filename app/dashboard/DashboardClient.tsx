@@ -572,7 +572,7 @@ function PayoutModal({ userId, profile, onClose, onSaved }: {
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-6" onClick={onClose}>
       <div
-        className="w-full sm:max-w-lg bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+        className="w-full sm:max-w-lg bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 app-sheet overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-2">
@@ -663,13 +663,13 @@ function EmptyState({ isPilot, matchable, onPost, onNewProject, onTemplate }: {
 
         <p className="text-[11px] uppercase tracking-[0.16em] text-on-surface-variant mb-2.5">{t("dash.startInOneTap")}</p>
         <div className="flex flex-wrap gap-2 mb-7">
-          {PROJECT_TEMPLATES.map(tpl => (
+          {PROJECT_TEMPLATES.map(id => (
             <button
-              key={tpl.label}
-              onClick={() => onTemplate?.(tpl.outcome)}
+              key={id}
+              onClick={() => onTemplate?.(t(`composer.tpl${id}Text`))}
               className="rounded-full border border-border-crisp px-3.5 py-2 text-[13px] font-medium text-on-surface hover:border-electric-violet hover:bg-electric-violet/[0.04] transition-colors"
             >
-              {tpl.label}
+              {t(`composer.tpl${id}`)}
             </button>
           ))}
         </div>
@@ -832,7 +832,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-6" onClick={onClose}>
       <div
-        className="w-full sm:max-w-lg bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+        className="w-full sm:max-w-lg bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 app-sheet overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         {phase === "done" ? (
