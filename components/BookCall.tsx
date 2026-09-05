@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { useT } from "./I18nProvider";
 import { SlotPicker, inZone } from "@/components/task/CallScheduler";
 
 // ── "Book a call with <freelancer>" ──────────────────────────────────────────
@@ -35,6 +36,26 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
   const [requestId, setRequestId] = useState<string | null>(null);
   /** Chosen in the form itself, so requesting a call and picking a time is one step. */
   const [picked, setPicked] = useState<string[]>([]);
+  // Prefilled from the signed-in account. They already told us who they are at
+  // signup; asking again on the way to a call is friction for no information.
+  const [me, setMe] = useState<{ name: string; email: string } | null>(null);
+  const t = useT();
+
+  useEffect(() => {
+    if (!open || me) return;
+    (async () => {
+      const supa = supabaseBrowser();
+      const { data: { user } } = await supa.auth.getUser();
+      if (!user) return;
+      const { data: prof } = await supa.from("profiles").select("display_name").eq("id", user.id).single();
+      setMe({
+        name: (prof?.display_name as string | undefined)?.trim()
+          || (user.user_metadata?.full_name as string | undefined)
+          || "",
+        email: user.email ?? "",
+      });
+    })();
+  }, [open, me]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -48,14 +69,14 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
     e.preventDefault();
     setError("");
     const fd = new FormData(e.currentTarget);
-    const name = String(fd.get("name") ?? "").trim();
-    const email = String(fd.get("email") ?? "").trim();
+    const name = (String(fd.get("name") ?? "").trim() || me?.name || "").trim();
+    const email = (String(fd.get("email") ?? "").trim() || me?.email || "").trim();
     if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError("Add your name and a valid email so we can send the invite.");
       return;
     }
     if (!picked.length) {
-      setError("Pick at least one time that works for you.");
+      setError(t("call.pickOne"));
       return;
     }
     setBusy(true);
@@ -111,7 +132,7 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
               invite. They get your plan beforehand, so you won&apos;t have to explain it.
             </p>
             <div className="text-left rounded-xl border border-border-crisp p-3.5 mb-2">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-2">Times you offered</p>
+              <p className="text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-2">{t("call.offered")}</p>
               <ul className="flex flex-col gap-1">
                 {picked.map(iso => (
                   <li key={iso} className="text-[13px] text-on-surface">
@@ -148,23 +169,36 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
             )}
 
             <div className="flex flex-col gap-4">
+              {me?.email ? (
+                <div className="rounded-xl border border-border-crisp bg-surface-container/40 p-3">
+                  <p className="text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-1">{t("call.inviteGoesTo")}</p>
+                  <p className="text-[13.5px] text-on-surface">
+                    {me.name ? `${me.name} · ` : ""}{me.email}
+                  </p>
+                  <input type="hidden" name="name" value={me.name} />
+                  <input type="hidden" name="email" value={me.email} />
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label htmlFor="bc-name" className={label}>{t("call.yourName")}</label>
+                    <input id="bc-name" name="name" required className={field} autoComplete="name" />
+                  </div>
+                  <div>
+                    <label htmlFor="bc-email" className={label}>{t("call.yourEmail")}</label>
+                    <input id="bc-email" name="email" type="email" required className={field} autoComplete="email" placeholder="you@company.com" />
+                  </div>
+                </>
+              )}
               <div>
-                <label htmlFor="bc-name" className={label}>Your name *</label>
-                <input id="bc-name" name="name" required className={field} autoComplete="name" />
-              </div>
-              <div>
-                <label htmlFor="bc-email" className={label}>Email for the invite *</label>
-                <input id="bc-email" name="email" type="email" required className={field} autoComplete="email" placeholder="you@company.com" />
-              </div>
-              <div>
-                <label htmlFor="bc-note" className={label}>Anything they should know?</label>
-                <textarea id="bc-note" name="note" rows={3} className={`${field} resize-y`} placeholder="Optional. Deadlines, must-haves, anything off limits." />
+                <label htmlFor="bc-note" className={label}>{t("call.anythingElse")}</label>
+                <textarea id="bc-note" name="note" rows={3} className={`${field} resize-y`} placeholder={t("call.anythingElsePh")} />
               </div>
 
               {/* Picking a time is part of asking for the call, not a second
                   step afterwards. Stored as UTC; rendered in each side's zone. */}
               <div>
-                <label className={label}>When suits you? *</label>
+                <label className={label}>{t("call.whenSuits")}</label>
                 <SlotPicker picked={picked} onChange={setPicked} />
               </div>
             </div>
@@ -176,7 +210,7 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
               disabled={busy}
               className="mt-6 w-full h-12 rounded-full bg-on-surface text-inverse-on-surface text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
             >
-              {busy ? "Sending…" : `Request the call`}
+              {busy ? t("call.sending") : t("call.request")}
             </button>
           </form>
         )}

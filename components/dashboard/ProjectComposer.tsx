@@ -1,9 +1,10 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 // Same detector the server uses, so the composer never skips a site read the
 // backend would have handled. lib/url has no node imports for exactly this.
 import { hasUrl } from "@/lib/url";
+import { useT, useLocale } from "@/components/I18nProvider";
 import SpecialistShortlist, { type Specialist } from "@/components/dashboard/SpecialistShortlist";
 import {
   treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags, EXPERTISE_Q,
@@ -54,6 +55,30 @@ export const PROJECT_TEMPLATES = [
   { label: "A mobile app", outcome: "I need a mobile app built for iOS and Android for my idea. " },
 ];
 
+function AutoTextarea({ value, onChange, className }: {
+  value: string; onChange: (v: string) => void; className: string;
+}) {
+  const ref = useRef<HTMLTextAreaElement | null>(null);
+  // Milestone briefs are bullet lists of varying length. A fixed rows={2}
+  // clipped them behind a scrollbar, so a client could not read their own plan
+  // without dragging inside a two-line box.
+  const fit = (el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  };
+  useEffect(() => { fit(ref.current); }, [value]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      rows={2}
+      onChange={e => { onChange(e.target.value); fit(e.target); }}
+      className={className}
+    />
+  );
+}
+
 export default function ProjectComposer({
   remainingPosts,
   onClose,
@@ -90,6 +115,8 @@ export default function ProjectComposer({
   const expertiseRef = useRef<string>("");
   /** Shown instead of closing when there is work that would be lost. */
   const [confirmingClose, setConfirmingClose] = useState(false);
+  const t = useT();
+  const locale = useLocale();
   // Questions written for THIS project, fetched once the expertise answer tells
   // us who we are asking. Null until then, so the expertise question renders
   // instantly from the static definition instead of waiting on a model call.
@@ -218,6 +245,7 @@ export default function ProjectComposer({
           archetype,
           expertise,
           siteContext,
+          locale,
         }),
       });
       const data = await res.json();
@@ -267,7 +295,7 @@ export default function ProjectComposer({
     try {
       const res = await fetch("/api/scope-project", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ outcome: outcome.trim(), archetype: slug, facts, risks, siteContext: ctx ?? siteContext, expertise: expertiseRef.current }),
+        body: JSON.stringify({ outcome: outcome.trim(), archetype: slug, facts, risks, siteContext: ctx ?? siteContext, expertise: expertiseRef.current, locale }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Could not scope this."); setPhase("interrogate"); return; }
@@ -357,24 +385,22 @@ export default function ProjectComposer({
         {confirmingClose && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface-bright/95 backdrop-blur-sm rounded-t-3xl sm:rounded-3xl p-6">
             <div className="max-w-[34ch] text-center">
-              <h3 className="text-[17px] font-semibold text-on-surface mb-2">Discard this project?</h3>
+              <h3 className="text-[17px] font-semibold text-on-surface mb-2">{t("composer.discardTitle")}</h3>
               <p className="text-[13.5px] text-on-surface-variant mb-6">
-                {milestones.length
-                  ? `Your plan and its ${milestones.length} milestone${milestones.length === 1 ? "" : "s"} will be lost. Nothing has been created yet.`
-                  : "What you have written so far will be lost."}
+                {milestones.length ? t("composer.discardBodyPlan") : t("composer.discardBodyText")}
               </p>
               <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
                 <button
                   onClick={() => setConfirmingClose(false)}
                   className="h-11 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90"
                 >
-                  Keep editing
+                  {t("composer.keepEditing")}
                 </button>
                 <button
                   onClick={() => { setConfirmingClose(false); onClose(); }}
                   className="h-11 px-6 rounded-full border border-border-crisp text-sm font-medium text-on-surface-variant hover:text-error hover:border-error transition-colors"
                 >
-                  Discard it
+                  {t("composer.discard")}
                 </button>
               </div>
             </div>
@@ -452,7 +478,7 @@ export default function ProjectComposer({
         )}
 
         {phase === "interrogate" && buildingQs && (
-          <Spinner title="Writing your questions" sub="A few things worth asking about this specific project." />
+          <Spinner title={t("composer.writingQuestions")} sub={t("composer.writingQuestionsSub")} />
         )}
 
         {phase === "interrogate" && !buildingQs && currentQ && (
@@ -569,11 +595,10 @@ export default function ProjectComposer({
                     onChange={e => updateMilestone(i, { title: e.target.value })}
                     className="w-full border border-border-crisp rounded-lg px-3 py-2 text-sm font-medium text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet mb-2"
                   />
-                  <textarea
+                  <AutoTextarea
                     value={m.brief}
-                    onChange={e => updateMilestone(i, { brief: e.target.value })}
-                    rows={2}
-                    className="w-full border border-border-crisp rounded-lg px-3 py-2 text-[13px] text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet resize-y mb-2"
+                    onChange={v => updateMilestone(i, { brief: v })}
+                    className="w-full border border-border-crisp rounded-lg px-3 py-2 text-[13px] text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet resize-none overflow-hidden mb-2 leading-relaxed"
                   />
                   {/* The one thing you look at to approve. Keeps the client out
                       of the work and in the decision. */}

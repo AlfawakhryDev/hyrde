@@ -9,7 +9,12 @@
 
 type Hit = { count: number; resetAt: number };
 
-const PER_IP_LIMIT = Number(process.env.AI_RATE_LIMIT ?? 8);   // requests
+// One project walkthrough legitimately spends five of these: site-audit,
+// classify, questions, scope-project, suggest-specialists. At 8/min a single
+// retry pushed a real client over the limit, and because /api/questions falls
+// back silently on failure the only visible symptom was "the questions are
+// still static". Budget for a few projects a minute, not one.
+const PER_IP_LIMIT = Number(process.env.AI_RATE_LIMIT ?? 30);  // requests
 const PER_IP_WINDOW_MS = 60_000;                               // per minute
 const GLOBAL_LIMIT = Number(process.env.AI_GLOBAL_LIMIT ?? 80); // requests / min across this instance
 
