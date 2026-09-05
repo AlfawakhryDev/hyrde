@@ -1,5 +1,4 @@
 "use client";
-import VerifyEmail from "@/components/VerifyEmail";
 import { useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -102,13 +101,6 @@ export default function ProfileClient({
           {emailVerified && <span className="ml-2 text-emerald-600">· verified</span>}
         </span>
       </div>
-
-      {/* Only shown until it's done. A verified account needs no nagging. */}
-      {!emailVerified && (
-        <div className="mb-6">
-          <VerifyEmail email={email} />
-        </div>
-      )}
 
       <Section title="Identity" sub="Public. Shown wherever your name appears.">
         <label className="flex flex-col gap-1.5">
