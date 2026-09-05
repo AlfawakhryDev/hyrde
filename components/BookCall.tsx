@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { supabaseBrowser } from "@/lib/supabase/client";
-import CallScheduler from "@/components/task/CallScheduler";
+import { SlotPicker, inZone } from "@/components/task/CallScheduler";
 
 // ── "Book a call with <freelancer>" ──────────────────────────────────────────
 // NOT BookDemo. A demo sells Hyrde; this books the client onto a call with the
@@ -33,6 +33,8 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
   const [done, setDone] = useState(false);
   /** Set once the request exists, so the client can pick times immediately. */
   const [requestId, setRequestId] = useState<string | null>(null);
+  /** Chosen in the form itself, so requesting a call and picking a time is one step. */
+  const [picked, setPicked] = useState<string[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -50,6 +52,10 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
     const email = String(fd.get("email") ?? "").trim();
     if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError("Add your name and a valid email so we can send the invite.");
+      return;
+    }
+    if (!picked.length) {
+      setError("Pick at least one time that works for you.");
       return;
     }
     setBusy(true);
@@ -72,7 +78,11 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
     }).select("id").single();
     setBusy(false);
     if (insErr || !created) { setError("Could not send that. Try again or email hello@hyrde.net."); return; }
-    setRequestId(created.id as string);
+    const id = created.id as string;
+    await supabase.from("call_slots").insert(
+      picked.map(iso => ({ call_request_id: id, starts_at: iso })),
+    );
+    setRequestId(id);
     setDone(true);
   }
 
@@ -94,25 +104,22 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
               <span className="material-symbols-outlined text-emerald-600" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
             </div>
             <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface mb-1.5">
-              When suits you for {target.freelancerName.split(" ")[0]}?
+              Sent. {target.freelancerName.split(" ")[0]} will confirm a time.
             </h2>
-            <p className="text-sm text-on-surface-variant max-w-[38ch] mx-auto mb-6">
-              Pick the times that suit you and we&apos;ll lock one in. They get your plan beforehand, so you
-              won&apos;t have to explain it.
+            <p className="text-sm text-on-surface-variant max-w-[38ch] mx-auto mb-4">
+              {target.freelancerName.split(" ")[0]} confirms one of your times and you&apos;ll both get the
+              invite. They get your plan beforehand, so you won&apos;t have to explain it.
             </p>
-            {requestId && (
-              <div className="text-left">
-                <CallScheduler
-                  callRequestId={requestId}
-                  slots={[]}
-                  freelancerName={target.freelancerName}
-                  freelancerTimezone={null}
-                  canPropose
-                  canConfirm={false}
-                  scheduledAt={null}
-                />
-              </div>
-            )}
+            <div className="text-left rounded-xl border border-border-crisp p-3.5 mb-2">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-2">Times you offered</p>
+              <ul className="flex flex-col gap-1">
+                {picked.map(iso => (
+                  <li key={iso} className="text-[13px] text-on-surface">
+                    {inZone(iso, Intl.DateTimeFormat().resolvedOptions().timeZone)}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <button onClick={() => setOpen(false)} className="mt-6 h-10 px-6 rounded-full border border-border-crisp text-on-surface text-sm font-medium hover:border-outline">
               Done
             </button>
@@ -152,6 +159,13 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
               <div>
                 <label htmlFor="bc-note" className={label}>Anything they should know?</label>
                 <textarea id="bc-note" name="note" rows={3} className={`${field} resize-y`} placeholder="Optional. Deadlines, must-haves, anything off limits." />
+              </div>
+
+              {/* Picking a time is part of asking for the call, not a second
+                  step afterwards. Stored as UTC; rendered in each side's zone. */}
+              <div>
+                <label className={label}>When suits you? *</label>
+                <SlotPicker picked={picked} onChange={setPicked} />
               </div>
             </div>
 

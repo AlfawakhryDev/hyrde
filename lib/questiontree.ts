@@ -27,8 +27,10 @@ export type Question = {
   // Fraction of total cost uncertainty this question resolves (0..1).
   variance_weight: number;
   affects_milestones: string[];
-  // Follow-up gating: only eligible once `gatedBy.key` is answered `equals`.
-  gatedBy?: { key: string; equals: string };
+  // Follow-up gating: eligible once `gatedBy.key` is answered with `equals`,
+  // or with any value in `oneOf`. oneOf exists so a question can be shown to
+  // several audiences (e.g. everyone except a non-technical client).
+  gatedBy?: { key: string; equals?: string; oneOf?: string[] };
   // What an unresolved answer means, and its cost multiplier band.
   unknown_risk: { description: string; cost_impact_multiplier: [number, number] };
 };
@@ -70,6 +72,7 @@ const SHOPIFY_TREE: Question[] = [
   },
   {
     key: "shopify.custom_apps_count",
+    gatedBy: { key: "meta.expertise", oneOf: ["hands_on"] },
     text: "Do you have any custom-built apps installed?",
     help: "Each custom app is its own migration risk with hard-to-bound cost.",
     type: "single_select",
@@ -108,6 +111,7 @@ const SHOPIFY_TREE: Question[] = [
   },
   {
     key: "shopify.current_theme_origin",
+    gatedBy: { key: "meta.expertise", oneOf: ["hands_on", "some"] },
     text: "Is your current storefront an off-the-shelf theme, or custom-coded?",
     type: "single_select",
     options: [
@@ -142,6 +146,7 @@ const SHOPIFY_TREE: Question[] = [
   },
   {
     key: "shopify.plus_tier",
+    gatedBy: { key: "meta.expertise", oneOf: ["hands_on", "some"] },
     text: "Are you on Shopify Plus, or a standard plan?",
     help: "Gates checkout customization, scripts, and API limits.",
     type: "single_select",
@@ -302,6 +307,7 @@ const GENERIC_TREE: Question[] = [
   },
   {
     key: "generic.integrations",
+    gatedBy: { key: "meta.expertise", oneOf: ["hands_on", "some"] },
     text: "Does it need to connect to other tools or systems?",
     help: "Each connection is its own piece of work.",
     type: "multi_select",
@@ -322,6 +328,7 @@ const GENERIC_TREE: Question[] = [
   },
   {
     key: "generic.platform",
+    gatedBy: { key: "meta.expertise", oneOf: ["hands_on", "some"] },
     text: "Any platform or technology it has to be built on?",
     type: "single_select",
     options: [
@@ -385,6 +392,50 @@ const GENERIC_TREE: Question[] = [
       cost_impact_multiplier: [1.0, 1.3],
     },
   },
+  // ── Plain-language equivalents ──
+  // Same information as generic.integrations and generic.platform, asked in
+  // terms of what the client's visitors do rather than what the system does.
+  // A hands-off client can answer these; they cannot answer "External APIs".
+  {
+    key: "generic.visitor_actions",
+    text: "What should someone be able to do on it?",
+    help: "Pick everything that applies. This tells us what has to be built behind the scenes.",
+    type: "multi_select",
+    options: [
+      { value: "read", label: "Read about us and get in touch" },
+      { value: "buy", label: "Buy or pay for something" },
+      { value: "account", label: "Sign in to their own account" },
+      { value: "book", label: "Book or request an appointment" },
+      { value: "download", label: "Download documents or reports" },
+      { value: "none", label: "None of these" },
+      { value: DONT_KNOW, label: "I'm not sure" },
+    ],
+    variance_weight: 0.7,
+    affects_milestones: ["build"],
+    gatedBy: { key: "meta.expertise", oneOf: ["hands_off"] },
+    unknown_risk: {
+      description: "What visitors need to do is unresolved, so the build scope could grow.",
+      cost_impact_multiplier: [1.0, 1.6],
+    },
+  },
+  {
+    key: "generic.tech_decision",
+    text: "Happy for us to choose how it's built?",
+    help: "Most clients say yes. Say no if your team already has something they maintain.",
+    type: "single_select",
+    options: [
+      { value: "we_choose", label: "Yes, pick whatever works best" },
+      { value: "keep_current", label: "No, keep what we already use" },
+      { value: DONT_KNOW, label: "I'd need to ask someone" },
+    ],
+    variance_weight: 0.5,
+    affects_milestones: ["build"],
+    gatedBy: { key: "meta.expertise", oneOf: ["hands_off"] },
+    unknown_risk: {
+      description: "Nobody has confirmed whether the current platform must be kept, which can force a migration mid-build.",
+      cost_impact_multiplier: [1.0, 1.5],
+    },
+  },
   {
     key: "generic.success_metric",
     text: "How will you judge it's done well?",
@@ -405,13 +456,49 @@ const GENERIC_TREE: Question[] = [
 
 // The tree for an archetype: Shopify gets its calibrated set, everything else
 // gets the generic set. Never returns empty, so interrogation always runs.
+// ── Who are we talking to? ───────────────────────────────────────────
+// Asked first, before anything else, because it decides which of the
+// questions below are even fair to ask. A family-office director does not know
+// whether she wants "checkout customization" or "a specific stack", and asking
+// costs us her confidence and gets a dont_know that becomes a risk flag for no
+// reason. Technical questions are gated on this; plain-language equivalents
+// are gated the other way, so both audiences answer the same number of
+// questions and we learn the same things.
+//
+// It carries a real variance weight rather than a token one: a client who
+// cannot arbitrate technical decisions genuinely widens the estimate, because
+// we have to decide on their behalf and write it down as an assumption.
+export const EXPERTISE_KEY = "meta.expertise";
+export const EXPERTISE_Q: Question = {
+  key: EXPERTISE_KEY,
+  text: "How close do you want to be to the technical side?",
+  help: "There is no wrong answer. It only changes what we ask you and what we decide for you.",
+  type: "single_select",
+  options: [
+    { value: "hands_on", label: "I'm technical, ask me the detail" },
+    { value: "some",     label: "I know the basics" },
+    { value: "hands_off", label: "I'd rather not deal with the tech at all" },
+  ],
+  variance_weight: 0.9,   // highest in either tree, so it is always asked first
+  affects_milestones: ["all"],
+  unknown_risk: {
+    description: "We do not know how much technical detail the client can arbitrate, so decisions may bounce back.",
+    cost_impact_multiplier: [1.0, 1.2],
+  },
+};
+
+/** Audiences that can meaningfully answer an implementation question. */
+export const TECHNICAL_AUDIENCE = ["hands_on", "some"];
+/** Audiences we ask about outcomes instead of implementation. */
+export const PLAIN_AUDIENCE = ["hands_off", "some"];
+
 export function treeFor(archetypeSlug: string | null | undefined): Question[] {
-  return isShopify(archetypeSlug) ? SHOPIFY_TREE : GENERIC_TREE;
+  return [EXPERTISE_Q, ...(isShopify(archetypeSlug) ? SHOPIFY_TREE : GENERIC_TREE)];
 }
 
 // Which question-set version was used, for attribution in the dataset.
 export function versionFor(archetypeSlug: string | null | undefined): string {
-  return isShopify(archetypeSlug) ? "shopify-v1" : "generic-v1";
+  return isShopify(archetypeSlug) ? "shopify-v2" : "generic-v2";
 }
 
 // Answers are keyed by question.key. single_select => string; multi_select =>
@@ -437,7 +524,9 @@ function isEligible(q: Question, answers: AnswerMap): boolean {
   if (isAnswered(answers[q.key])) return false;
   if (!q.gatedBy) return true;
   const parent = answers[q.gatedBy.key];
-  return parent === q.gatedBy.equals;
+  const val = Array.isArray(parent) ? parent[0] : parent;
+  if (q.gatedBy.oneOf) return typeof val === "string" && q.gatedBy.oneOf.includes(val);
+  return val === q.gatedBy.equals;
 }
 
 // Selection: argmax(variance_weight) over eligible (unanswered, gate-satisfied)
