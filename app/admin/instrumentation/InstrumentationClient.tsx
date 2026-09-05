@@ -53,16 +53,32 @@ export type DemoRequest = {
   status: string;
 };
 
+export type CallRequest = {
+  id: string;
+  created_at: string;
+  freelancer_name: string | null;
+  project_title: string | null;
+  milestone: string | null;
+  site_url: string | null;
+  budget_usd: number | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  note: string | null;
+  status: string;
+};
+
 export default function InstrumentationClient({
   metrics: m,
   requests = [],
   names = {},
   demos = [],
+  calls = [],
 }: {
   metrics: Metrics;
   requests?: TaskRequest[];
   names?: Record<string, string>;
   demos?: DemoRequest[];
+  calls?: CallRequest[];
 }) {
   const hasData = m.settled_projects > 0;
   const fmtReqDate = (iso: string) =>
@@ -86,6 +102,46 @@ export default function InstrumentationClient({
         Estimate versus actual, captured immutably on every project. Scope accuracy is the number that
         compounds as work closes. Nothing here is hand-entered.
       </p>
+
+      {/* CALL REQUESTS: the hottest signal we have. A scoped plan plus a named
+          specialist the client asked to speak to. Action these first. */}
+      <div className="rounded-3xl border-2 border-emerald-500/50 bg-emerald-500/[0.05] p-6 md:p-7 mb-6">
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-emerald-600">Call requests</div>
+          <span className="text-[12px] text-on-surface-variant tabular-nums">{calls.length} total</span>
+        </div>
+        <p className="text-[13px] text-on-surface-variant mb-5 max-w-[600px]">
+          A client asked to speak to a specific vetted specialist about a scoped plan. Introduce them and
+          brief the specialist first, so the client never has to explain the project.
+        </p>
+        {calls.length === 0 ? (
+          <p className="text-[13px] text-on-surface-variant">No call requests yet.</p>
+        ) : (
+          <div className="flex flex-col divide-y divide-border-crisp">
+            {calls.map(c => (
+              <div key={c.id} className="py-3 flex gap-3">
+                <span className="shrink-0 text-[11px] text-on-surface-variant tabular-nums w-[52px]">{fmtReqDate(c.created_at)}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-x-2">
+                    <span className="text-[14px] font-medium text-on-surface">{c.contact_name ?? "—"}</span>
+                    <span className="text-[12px] text-on-surface-variant">wants</span>
+                    <span className="text-[13px] font-semibold text-on-surface">{c.freelancer_name ?? "a specialist"}</span>
+                    {c.budget_usd ? <span className="text-[12px] text-on-surface-variant tabular-nums">· ${c.budget_usd.toLocaleString()}</span> : null}
+                  </div>
+                  {c.contact_email && (
+                    <a href={`mailto:${c.contact_email}`} className="text-[12.5px] text-emerald-700 hover:underline">{c.contact_email}</a>
+                  )}
+                  {c.project_title && <p className="text-[13px] text-on-surface mt-1">{c.project_title}</p>}
+                  {c.milestone && <p className="text-[12.5px] text-on-surface-variant">Starting with: {c.milestone}</p>}
+                  {c.site_url && <p className="text-[12px] text-on-surface-variant break-all">{c.site_url}</p>}
+                  {c.note && <p className="text-[13px] text-on-surface-variant leading-snug mt-1">{c.note}</p>}
+                </div>
+                <span className="shrink-0 text-[11px] uppercase tracking-wide text-on-surface-variant self-start">{c.status}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* DEMO REQUESTS: high-intent leads from the "Book a demo" button */}
       <div className="rounded-3xl border-2 border-electric-violet/40 bg-electric-violet/[0.04] p-6 md:p-7 mb-6">

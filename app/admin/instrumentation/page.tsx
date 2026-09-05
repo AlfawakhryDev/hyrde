@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
-import InstrumentationClient, { type Metrics, type TaskRequest, type DemoRequest } from "./InstrumentationClient";
+import InstrumentationClient, { type Metrics, type TaskRequest, type DemoRequest, type CallRequest } from "./InstrumentationClient";
 
 export const metadata: Metadata = {
   title: "Instrumentation",
@@ -48,5 +48,14 @@ export default async function InstrumentationPage() {
     .limit(50);
   const demos = (demoRows ?? []) as DemoRequest[];
 
-  return <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} demos={demos} />;
+  // Call requests — a client asking to speak to ONE matched specialist. These
+  // are the hottest signal on the platform: a scoped plan plus a named person.
+  const { data: callRows } = await supabase
+    .from("call_requests")
+    .select("id, created_at, freelancer_name, project_title, milestone, site_url, budget_usd, contact_name, contact_email, note, status")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const calls = (callRows ?? []) as CallRequest[];
+
+  return <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} demos={demos} calls={calls} />;
 }

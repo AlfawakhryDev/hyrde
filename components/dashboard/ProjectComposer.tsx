@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import BookDemo from "@/components/BookDemo";
+import BookCall from "@/components/BookCall";
 import {
   treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags,
   answerFacts, isShopify, versionFor, CONFIDENCE_TARGET, DONT_KNOW,
@@ -29,6 +29,8 @@ const HAS_URL = /\bhttps?:\/\/\S{4,}/i;
 type Milestone = {
   title: string;
   brief: string;
+  /** One sentence: the single artifact the client reviews to approve this. */
+  approval?: string;
   category: string;
   milestoneType?: string; // LLM-classified controlled type, passed through to create
   budgetUsd: number;
@@ -485,6 +487,14 @@ export default function ProjectComposer({
                     rows={2}
                     className="w-full border border-border-crisp rounded-lg px-3 py-2 text-[13px] text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet resize-y mb-2"
                   />
+                  {/* The one thing you look at to approve. Keeps the client out
+                      of the work and in the decision. */}
+                  {m.approval && (
+                    <p className="text-[12.5px] text-on-surface-variant mb-2 flex gap-2">
+                      <span className="material-symbols-outlined shrink-0 text-on-surface-variant" style={{ fontSize: "15px" }}>task_alt</span>
+                      <span>{m.approval}</span>
+                    </p>
+                  )}
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-on-surface-variant">$</span>
@@ -551,19 +561,26 @@ export default function ProjectComposer({
                             ))}
                           </div>
                         )}
+                        {/* The call is with THIS specialist, not a Hyrde sales demo. */}
+                        <div className="mt-3">
+                          <BookCall
+                            target={{
+                              freelancerId: sp.id,
+                              freelancerName: sp.name,
+                              milestone: sp.milestone,
+                              projectTitle,
+                              siteUrl: siteContext?.url,
+                              planSummary: callNote,
+                              budgetUsd: totalUsd,
+                            }}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <BookDemo
-                      variant="nav"
-                      label="Book a call with them"
-                      defaultNote={callNote}
-                    />
-                    <span className="text-[12px] text-on-surface-variant">
-                      Or create the project below and milestone 1 gets matched now.
-                    </span>
-                  </div>
+                  <p className="text-[12px] text-on-surface-variant">
+                    Or skip the call: create the project below and we brief milestone 1 to them for you.
+                  </p>
                 </>
               )}
 
@@ -572,11 +589,10 @@ export default function ProjectComposer({
                   <p className="text-[13px] text-on-surface font-medium mb-1.5">
                     No vetted specialist is a genuine fit for this yet.
                   </p>
-                  <p className="text-[12.5px] text-on-surface-variant leading-relaxed mb-3">
-                    We will not put an unrelated freelancer in front of you. Book a call and we will
-                    source and vet specialists specifically for this plan.
+                  <p className="text-[12.5px] text-on-surface-variant leading-relaxed">
+                    We will not put an unrelated freelancer in front of you. Create the project anyway and we
+                    will source and vet a specialist for it, then introduce you once they pass.
                   </p>
-                  <BookDemo variant="nav" label="Book a call" defaultNote={callNote} />
                 </div>
               )}
             </div>
