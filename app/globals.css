@@ -223,6 +223,10 @@ body {
    already has instead of re-tuning several hundred literal sizes.
    Breakpoints are CSS pixels: a 4K panel at 200% OS scaling reports 1920 and
    is left alone; only genuinely large viewports are scaled up. */
+/* The default has to come BEFORE the breakpoints: same specificity, so the
+   later rule wins, and declaring it afterwards silently reset every zoom back
+   to 1 while the body stayed zoomed. */
+:root { --app-zoom: 1 }
 @media (min-width: 1800px) { body { zoom: 1.12 } :root { --app-zoom: 1.12 } }
 @media (min-width: 2300px) { body { zoom: 1.28 } :root { --app-zoom: 1.28 } }
 @media (min-width: 3000px) { body { zoom: 1.5 }  :root { --app-zoom: 1.5 } }
@@ -232,7 +236,6 @@ body {
    own scroll end below the fold and no way to reach them. Dividing the zoom
    back out is what makes "scroll down to the Post button" work at all.
    Anything else sized against the viewport needs the same treatment. */
-:root { --app-zoom: 1 }
 .app-sheet { max-height: calc(90vh / var(--app-zoom)) }
 .min-h-screen { min-height: calc(100vh / var(--app-zoom)) }
 
