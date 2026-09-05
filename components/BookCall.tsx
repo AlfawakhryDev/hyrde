@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import CallScheduler from "@/components/task/CallScheduler";
 
 // ── "Book a call with <freelancer>" ──────────────────────────────────────────
 // NOT BookDemo. A demo sells Hyrde; this books the client onto a call with the
@@ -30,6 +31,8 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  /** Set once the request exists, so the client can pick times immediately. */
+  const [requestId, setRequestId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -52,7 +55,7 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
     setBusy(true);
     const supabase = supabaseBrowser();
     const { data: { user } } = await supabase.auth.getUser();
-    const { error: insErr } = await supabase.from("call_requests").insert({
+    const { data: created, error: insErr } = await supabase.from("call_requests").insert({
       client_id: user?.id ?? null,
       freelancer_id: target.freelancerId,
       freelancer_name: target.freelancerName,
@@ -64,9 +67,12 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
       contact_name: name,
       contact_email: email,
       note: String(fd.get("note") ?? "").trim() || null,
-    });
+      // Their IANA zone, so both sides can later see each other's local time.
+      client_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    }).select("id").single();
     setBusy(false);
-    if (insErr) { setError("Could not send that. Try again or email hello@hyrde.net."); return; }
+    if (insErr || !created) { setError("Could not send that. Try again or email hello@hyrde.net."); return; }
+    setRequestId(created.id as string);
     setDone(true);
   }
 
@@ -88,14 +94,27 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
               <span className="material-symbols-outlined text-emerald-600" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
             </div>
             <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface mb-1.5">
-              We&apos;re setting up your call with {target.freelancerName}.
+              When suits you for {target.freelancerName.split(" ")[0]}?
             </h2>
-            <p className="text-sm text-on-surface-variant max-w-[36ch] mx-auto">
-              You&apos;ll get an invite by email, usually within a day. We brief them on your plan first, so you
-              don&apos;t have to explain it.
+            <p className="text-sm text-on-surface-variant max-w-[38ch] mx-auto mb-6">
+              Pick the times that suit you and we&apos;ll lock one in. They get your plan beforehand, so you
+              won&apos;t have to explain it.
             </p>
-            <button onClick={() => setOpen(false)} className="mt-6 h-10 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90">
-              Close
+            {requestId && (
+              <div className="text-left">
+                <CallScheduler
+                  callRequestId={requestId}
+                  slots={[]}
+                  freelancerName={target.freelancerName}
+                  freelancerTimezone={null}
+                  canPropose
+                  canConfirm={false}
+                  scheduledAt={null}
+                />
+              </div>
+            )}
+            <button onClick={() => setOpen(false)} className="mt-6 h-10 px-6 rounded-full border border-border-crisp text-on-surface text-sm font-medium hover:border-outline">
+              Done
             </button>
           </div>
         ) : (

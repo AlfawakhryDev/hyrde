@@ -13,6 +13,7 @@ import {
   type Subscription,
 } from "@/lib/billing";
 import ProjectComposer, { PROJECT_TEMPLATES } from "@/components/dashboard/ProjectComposer";
+import { ProgressBar } from "@/components/task/MilestoneProgress";
 import { useT } from "@/components/I18nProvider";
 
 export default function DashboardClient({
@@ -33,6 +34,8 @@ export default function DashboardClient({
   const [subs, setSubs] = useState<Subscription[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  /** taskId -> newest progress report, for the milestone bars. */
+  const [progress, setProgress] = useState<Map<string, { percent: number; note: string | null; created_at: string }>>(new Map());
   const [search, setSearch] = useState("");
   const t = useT();
   const incomingBrief = params.get("brief") ?? "";
@@ -48,7 +51,7 @@ export default function DashboardClient({
   // ── Data ──────────────────────────────────────────────────────────────────
   const refetch = useCallback(async () => {
     const supabase = supabaseBrowser();
-    const [{ data }, { data: pays }, { data: subRows }, { data: projRows }] = await Promise.all([
+    const [{ data }, { data: pays }, { data: subRows }, { data: projRows }, { data: progRows }] = await Promise.all([
       // deliverable_text/agent_deliverable are column-locked at the DB level
       // (see get_task_full) — the dashboard list never renders them, so an
       // explicit column list avoids a 403 that select("*") would now hit.
@@ -60,6 +63,10 @@ export default function DashboardClient({
       // RLS: poster sees their own projects; freelancers see projects via a
       // milestone task matched to them (see migration 0010).
       supabase.from("projects").select("*").order("created_at", { ascending: false }),
+      // Latest-first; we keep only the newest row per task below. RLS already
+      // limits these to milestones this user posted or is working on.
+      supabase.from("milestone_progress").select("task_id, percent, note, created_at")
+        .order("created_at", { ascending: false }).limit(300),
     ]);
     // deliverable_text/agent_deliverable are never fetched here (see the
     // column-locked select above) — stub them so the shared ArenaTask type
@@ -68,6 +75,14 @@ export default function DashboardClient({
     if (pays) setPayments(pays as Payment[]);
     if (subRows) setSubs(subRows as Subscription[]);
     if (projRows) setProjects(projRows as Project[]);
+    if (progRows) {
+      // One entry per task: the first row wins because the query is newest-first.
+      const latest = new Map<string, { percent: number; note: string | null; created_at: string }>();
+      for (const r of progRows as { task_id: string; percent: number; note: string | null; created_at: string }[]) {
+        if (!latest.has(r.task_id)) latest.set(r.task_id, r);
+      }
+      setProgress(latest);
+    }
     setLoading(false);
   }, [userId]);
 
@@ -376,6 +391,17 @@ export default function DashboardClient({
                       <span>{milestones.length} milestone{milestones.length === 1 ? "" : "s"}</span>
                       <span aria-hidden="true">·</span>
                       <span>{doneCount}/{milestones.length} delivered</span>
+                      {(() => {
+                        // Average of reported progress across milestones, so the
+                        // client sees movement without opening anything.
+                        const reported = milestones.map(m => progress.get(m.id)?.percent ?? (
+                          m.status === "delivered" || m.payment_status === "paid" ? 100 : 0
+                        ));
+                        const avg = reported.length ? Math.round(reported.reduce((a, b) => a + b, 0) / reported.length) : 0;
+                        return avg > 0 && project?.status !== "cancelled"
+                          ? <><span aria-hidden="true">·</span><span className="tabular-nums">{avg}% done</span></>
+                          : null;
+                      })()}
                       {project?.status === "cancelled" ? (
                         <><span aria-hidden="true">·</span><span className="text-error font-medium">{t("dash.cancelled")}</span></>
                       ) : !isPilot && currentMilestone && !currentMilestone.claimed_by_user_id && (
@@ -398,6 +424,16 @@ export default function DashboardClient({
                       return (
                         <Link key={m.id} href={`/t/${m.id}`} className="group flex items-center gap-4 py-2.5 px-3 -mx-3 rounded-lg transition-colors hover:bg-surface-container-low">
                           <span className="text-[12px] text-on-surface-variant shrink-0 w-16">Milestone {(m.milestone_index ?? 0) + 1}</span>
+                          {(() => {
+                            const p = progress.get(m.id);
+                            if (!p) return null;
+                            return (
+                              <span className="shrink-0 w-24 flex items-center gap-2" title={p.note ?? undefined}>
+                                <ProgressBar percent={p.percent} className="flex-1" />
+                                <span className="text-[11px] text-on-surface-variant tabular-nums">{p.percent}%</span>
+                              </span>
+                            );
+                          })()}
                           <div className="flex-1 min-w-0">
                             <p className="text-[13.5px] font-medium text-on-surface truncate">{m.title}</p>
                             <p className="text-[12px] text-on-surface-variant mt-0.5 flex items-center gap-1.5">

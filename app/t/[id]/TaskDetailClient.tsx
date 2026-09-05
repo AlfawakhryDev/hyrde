@@ -2,6 +2,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import MilestoneFiles, { type Attachment } from "@/components/task/MilestoneFiles";
+import MilestoneProgress, { type ProgressEntry } from "@/components/task/MilestoneProgress";
 import {
   type ArenaTask, parseAiReview, taskState, formatAmount, timeAgo,
 } from "@/lib/arena";
@@ -13,11 +15,13 @@ export default function TaskDetailClient({
   userId,
   claimerBadges,
   attachments = [],
+  progress = [],
 }: {
   initialTask: ArenaTask;
   userId: string;
   claimerBadges: { category: string; band: string; score: number }[];
-  attachments?: { id: string; file_name: string; file_size: number | null; storage_path: string }[];
+  attachments?: Attachment[];
+  progress?: ProgressEntry[];
 }) {
   const [task, setTask] = useState<ArenaTask>(initialTask);
   const [busy, setBusy] = useState<string | null>(null);
@@ -435,27 +439,34 @@ export default function TaskDetailClient({
         </Section>
       )}
 
+      {/* ── Progress ──
+          Visible to both sides once someone is on the work, so the client can
+          answer "where is it" by looking instead of asking. */}
+      {isMatched && (isOwner || isMyClaim) && task.status !== "approved" && (
+        <Section label="Progress">
+          <MilestoneProgress
+            taskId={task.id}
+            userId={userId}
+            initial={progress}
+            canReport={isMyClaim}
+          />
+        </Section>
+      )}
+
       {/* ── Brief ── */}
       <Section label="Brief">
         <p className="text-[15px] text-on-surface leading-relaxed whitespace-pre-wrap max-w-[640px]">
           {task.brief}
         </p>
-        {attachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-6">
-            {attachments.map(a => (
-              <a
-                key={a.id}
-                href={`https://nwdkgtoepffnedspabkt.supabase.co/storage/v1/object/public/task-files/${a.storage_path}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 h-8 px-3.5 rounded-full border border-border-crisp text-[12.5px] font-medium text-on-surface hover:border-outline transition-colors"
-              >
-                {a.file_name}
-                {a.file_size ? <span className="text-on-surface-variant font-normal">{Math.round(a.file_size / 1024)} KB</span> : null}
-              </a>
-            ))}
-          </div>
-        )}
+        {/* Signed links, never the public bucket URL this used to hardcode. */}
+        <div className="mt-6">
+          <MilestoneFiles
+            taskId={task.id}
+            userId={userId}
+            initial={attachments}
+            canUpload={isOwner || isMyClaim}
+          />
+        </div>
       </Section>
 
       {/* ── Deliverable ── */}
