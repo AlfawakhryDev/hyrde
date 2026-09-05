@@ -59,6 +59,11 @@ export async function sendEmail(opts: {
   const content: { type: string; value: string }[] = [{ type: "text/plain", value: opts.text }];
   if (opts.html) content.push({ type: "text/html", value: opts.html });
 
+  const norm = (e: string) => e.trim().toLowerCase();
+  const to = norm(opts.to);
+  const cc = [...new Set((opts.cc ?? []).map(norm))]
+    .filter(e => e !== to && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+
   try {
     const res = await fetch(ENDPOINT, {
       method: "POST",
@@ -66,7 +71,11 @@ export async function sendEmail(opts: {
       body: JSON.stringify({
         personalizations: [{
           to: [{ email: opts.to }],
-          ...(opts.cc?.length ? { cc: opts.cc.filter(e => e && e !== opts.to).map(email => ({ email })) } : {}),
+          // SendGrid rejects the whole send if an address appears twice across
+          // to/cc/bcc, or if cc is present but empty. Both happen constantly
+          // here: the admin is often also the client, and on a small team the
+          // specialist and the client can be the same person while testing.
+          ...(cc.length ? { cc: cc.map(email => ({ email })) } : {}),
         }],
         from: { email: FROM_EMAIL, name: FROM_NAME },
         reply_to: { email: opts.replyTo ?? REPLY_TO },
