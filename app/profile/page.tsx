@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import ProfileClient from "./ProfileClient";
+import { isEmailVerified } from "@/lib/verified";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -28,7 +29,7 @@ export default async function ProfilePage() {
     <ProfileClient
       userId={user.id}
       email={user.email ?? ""}
-      emailVerified={!!profile?.email_verified_at}
+      emailVerified={isEmailVerified(user.app_metadata?.provider, profile?.email_verified_at)}
       initialProfile={{ ...profile, payout_method: null, payout_handle: null }}
       initialPrivate={priv ?? null}
     />
