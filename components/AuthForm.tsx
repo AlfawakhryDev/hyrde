@@ -70,12 +70,14 @@ function AppleIcon() {
 // Apple Developer Program; see Supabase dashboard → Auth → Providers → Apple).
 const APPLE_ENABLED = false;
 
-// Microsoft / Entra ID. Supabase calls the provider "azure". It stays hidden
-// until NEXT_PUBLIC_MICROSOFT_AUTH=1 is set, because the provider is only
-// usable once an Azure app registration exists and its client id + secret are
-// pasted into the Supabase Azure provider. Shipping the button before that
-// would just show users an "Unsupported provider" error.
-const MICROSOFT_ENABLED = process.env.NEXT_PUBLIC_MICROSOFT_AUTH === "1";
+// Microsoft / Entra ID sits alongside Google and GitHub as a first-class way
+// in: corporate clients live in Outlook, and a family office is far likelier
+// to have a Microsoft account than a GitHub one. Supabase calls it "azure".
+//
+// It only completes once an Azure app registration exists and its client id
+// and secret are set on the Supabase Azure provider. Until then Supabase
+// answers "Unsupported provider", so oauth() translates that into something a
+// person can act on rather than leaking the raw error.
 
 // Soft work-email nudge for clients: warn on free/personal domains, allow anyway.
 const FREE_EMAIL_DOMAINS = new Set([
@@ -194,7 +196,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
     });
     // On success the browser navigates to the provider — no need to unset busy.
     if (error) {
-      setError(error.message);
+      // Supabase says "Unsupported provider: provider is not enabled" when the
+      // provider has no credentials yet. That is our configuration problem, not
+      // something the person signing up can understand or fix.
+      setError(
+        /provider is not enabled|unsupported provider/i.test(error.message)
+          ? "Microsoft sign-in isn't switched on yet. Use Google, GitHub, or your email for now."
+          : error.message,
+      );
       setBusy(false);
       setOauthBusy(null);
     }
@@ -288,7 +297,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
           [
             { p: "google" as const, icon: <GoogleIcon />, label: "Continue with Google", show: true },
             { p: "github" as const, icon: <GithubIcon />, label: "Continue with GitHub", show: true },
-            { p: "azure" as const, icon: <MicrosoftIcon />, label: "Continue with Microsoft", show: MICROSOFT_ENABLED },
+            { p: "azure" as const, icon: <MicrosoftIcon />, label: "Continue with Microsoft", show: true },
             { p: "apple" as const, icon: <AppleIcon />, label: "Continue with Apple", show: APPLE_ENABLED },
           ]
         ).filter(b => b.show).map(b => (
