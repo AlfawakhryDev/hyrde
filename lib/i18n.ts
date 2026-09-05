@@ -22,6 +22,23 @@ export function isLocale(v: unknown): v is Locale {
   return v === "en" || v === "de" || v === "ar";
 }
 
+// Pages whose copy is rendered from the dictionary at runtime. Everywhere else
+// the URL is the language: /ar/* is Arabic, /de/* is German, and a bare path is
+// English prose. That distinction matters because `dir` follows the locale — an
+// Arabic cookie was flipping the English homepage to RTL, which put the full
+// stop on the wrong side of every sentence and broke the hero outright.
+const APP_PREFIXES = [
+  "/dashboard", "/onboarding", "/profile", "/billing", "/t/", "/vetting",
+  "/login", "/signup", "/verify", "/post-job", "/admin", "/welcome", "/jobs",
+];
+
+export function localeForPath(path: string, cookie: Locale): Locale {
+  if (/^\/ar(\/|$)/.test(path)) return "ar";
+  if (/^\/de(\/|$)/.test(path)) return "de";
+  const isApp = APP_PREFIXES.some(p => path === p.replace(/\/$/, "") || path.startsWith(p));
+  return isApp ? cookie : DEFAULT_LOCALE;
+}
+
 // hreflang alternates for Next metadata `alternates.languages`. Arabic uses the
 // ar-SA region tag (Saudi) as the primary Arabic signal for search engines.
 export function altLanguages(enPath: string, dePath: string, arPath: string) {

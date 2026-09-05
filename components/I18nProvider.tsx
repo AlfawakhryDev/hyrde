@@ -1,7 +1,8 @@
 "use client";
 import { createContext, useContext, useCallback, useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { messages } from "@/lib/messages";
-import { translate, isLocale, dirFor, DEFAULT_LOCALE, LOCALE_COOKIE, type Locale } from "@/lib/i18n";
+import { translate, isLocale, dirFor, localeForPath, DEFAULT_LOCALE, LOCALE_COOKIE, type Locale } from "@/lib/i18n";
 
 type Ctx = { locale: Locale; setLocale: (l: Locale) => void };
 const I18n = createContext<Ctx>({ locale: DEFAULT_LOCALE, setLocale: () => {} });
@@ -13,24 +14,27 @@ function readCookieLocale(): Locale {
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  // First paint is `en` to match SSR; the cookie is applied after mount (app UI
-  // only, so a brief flip on load is fine and there's no hydration mismatch).
-  const [locale, set] = useState<Locale>(DEFAULT_LOCALE);
+  const pathname = usePathname();
+  // First paint is `en` to match SSR; the cookie is read after mount, so there
+  // is no hydration mismatch and a brief flip on load is acceptable.
+  const [cookieLocale, setCookieLocale] = useState<Locale>(DEFAULT_LOCALE);
+  useEffect(() => { setCookieLocale(readCookieLocale()); }, []);
+
+  // Derived, not stored: recomputing on every navigation is what makes moving
+  // between /ar, the English marketing pages and the app land in the right
+  // language. The old version resolved once on mount and then went stale.
+  const locale = localeForPath(pathname, cookieLocale);
+
   useEffect(() => {
-    // On the /de and /ar marketing routes the URL wins, so a cold visitor (no
-    // cookie) still gets the right chrome; elsewhere the cookie decides.
-    const path = window.location.pathname;
-    const l: Locale = /^\/de(\/|$)/.test(path) ? "de" : /^\/ar(\/|$)/.test(path) ? "ar" : readCookieLocale();
-    set(l);
-    document.documentElement.lang = l;
-    document.documentElement.dir = dirFor(l); // rtl for Arabic — flips nav/footer too
-  }, []);
+    document.documentElement.lang = locale;
+    document.documentElement.dir = dirFor(locale); // rtl for Arabic — flips nav/footer too
+  }, [locale]);
+
   const setLocale = useCallback((l: Locale) => {
     document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
-    document.documentElement.lang = l;
-    document.documentElement.dir = dirFor(l);
-    set(l);
+    setCookieLocale(l);
   }, []);
+
   return <I18n.Provider value={{ locale, setLocale }}>{children}</I18n.Provider>;
 }
 

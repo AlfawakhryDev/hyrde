@@ -215,3 +215,38 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important }
 }
+
+/* ── Large displays ──────────────────────────────────────────────────
+   The type scale is written in px, so on a 27" or 32" panel at 100% the
+   whole app renders as a small ribbon in the middle of the screen. Zoom
+   scales layout and type together, which keeps every proportion the design
+   already has instead of re-tuning several hundred literal sizes.
+   Breakpoints are CSS pixels: a 4K panel at 200% OS scaling reports 1920 and
+   is left alone; only genuinely large viewports are scaled up. */
+@media (min-width: 1800px) { body { zoom: 1.12 } }
+@media (min-width: 2300px) { body { zoom: 1.28 } }
+@media (min-width: 3000px) { body { zoom: 1.5 } }
+
+/* ── Arabic typography ───────────────────────────────────────────────
+   Inter, Fraunces and Caveat carry no Arabic glyphs, so Arabic fell through
+   to whatever the browser had. Worse, the display headings set negative
+   letter-spacing, and letter-spacing severs the cursive joins that Arabic
+   script is built on — that is the "broken text", not the font alone.
+   Italic is meaningless in Arabic too, so it is dropped rather than faked. */
+[dir="rtl"] body,
+[dir="rtl"] .font-body { font-family: 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif }
+[dir="rtl"] .font-display { font-family: 'Noto Naskh Arabic', 'Times New Roman', serif }
+[dir="rtl"] .font-hand { font-family: 'Noto Naskh Arabic', cursive }
+
+/* Never letter-space Arabic. The joins break and words come apart. */
+[dir="rtl"] * { letter-spacing: normal !important }
+[dir="rtl"] em, [dir="rtl"] i { font-style: normal }
+/* Latin fragments inside Arabic (emails, URLs, code) keep their own direction. */
+[dir="rtl"] code, [dir="rtl"] .font-mono { direction: ltr; unicode-bidi: embed }
+
+/* Arabic labels run wider than their English counterparts, so the nav pill
+   overflows between the mobile breakpoint and about 1100px. Hold the inline
+   links back until there is room; the burger menu covers the gap. */
+@media (min-width: 768px) and (max-width: 1099px) {
+  [dir="rtl"] .nav-links { display: none }
+}

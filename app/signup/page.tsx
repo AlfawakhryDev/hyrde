@@ -10,16 +10,7 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <AuthShell
-      eyebrow="Join Hyrde"
-      title="Create your account"
-      subtitle="Pick your side next: hire vetted talent, or pass the interview and get matched to work."
-      bullets={[
-        "Hiring? The AI matches your task to the best vetted specialist.",
-        "Freelancing? Prove your skill once and let matched work come to you.",
-        "Keep 100%. No commission, no Connects, no pay-to-apply.",
-      ]}
-    >
+    <AuthShell mode="signup">
       <AuthForm mode="signup" />
     </AuthShell>
   );

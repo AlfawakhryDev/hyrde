@@ -92,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             dir=rtl for Arabic before paint so the layout never flips visibly. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var p=location.pathname,l;if(/^\\/ar(\\/|$)/.test(p))l='ar';else if(/^\\/de(\\/|$)/.test(p))l='de';else{var m=document.cookie.match(/(?:^|; )hyrde_locale=([^;]+)/);l=m?m[1]:'en';}document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}catch(e){}})();`,
+            __html: `(function(){try{var p=location.pathname,A=['/dashboard','/onboarding','/profile','/billing','/t/','/vetting','/login','/signup','/verify','/post-job','/admin','/welcome','/jobs'],l;if(/^\\/ar(\\/|$)/.test(p))l='ar';else if(/^\\/de(\\/|$)/.test(p))l='de';else if(A.some(function(a){return p===a.replace(/\\/$/,'')||p.indexOf(a)===0})){var m=document.cookie.match(/(?:^|; )hyrde_locale=([^;]+)/);l=m?m[1]:'en';}else l='en';document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}catch(e){}})();`,
           }}
         />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
@@ -112,6 +112,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap"
           rel="stylesheet"
+        />
+        {/* Arabic faces. Google serves these behind unicode-range, so the files
+            only download when Arabic glyphs are actually painted — English and
+            German visitors pay nothing for them. */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300..700&family=Noto+Naskh+Arabic:wght@400..700&display=swap"
         />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"

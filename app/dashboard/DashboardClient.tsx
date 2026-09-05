@@ -252,7 +252,7 @@ export default function DashboardClient({
                 <span className="text-on-surface-variant">Reference {pendingSubRow.reference}. We activate it as soon as the transfer lands.</span>
               </p>
               <Link href="/billing" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
-                <span aria-hidden="true">↳</span> Payment details
+                <span aria-hidden="true">↳</span> {t("dash.payDetails")}
               </Link>
             </div>
           )}
@@ -261,10 +261,10 @@ export default function DashboardClient({
               <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 You&apos;ve used all {monthlyLimit} posts on the {planLabel} plan this month.{" "}
-                <span className="text-on-surface-variant">Upgrade to keep hiring. From $20/mo.</span>
+                <span className="text-on-surface-variant">{t("dash.upgradeBody")}</span>
               </p>
               <Link href="/billing" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
-                <span aria-hidden="true">↳</span> Upgrade plan
+                <span aria-hidden="true">↳</span> {t("dash.upgradePlan")}
               </Link>
             </div>
           )}
@@ -273,10 +273,10 @@ export default function DashboardClient({
               <span className="w-1.5 h-1.5 rounded-full bg-electric-violet shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 Pass the AI skill interview so we can match you to work.{" "}
-                <span className="text-on-surface-variant">Graded like a senior practitioner. Clients see your score.</span>
+                <span className="text-on-surface-variant">{t("dash.vettedBody")}</span>
               </p>
               <Link href="/vetting" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
-                <span aria-hidden="true">↳</span> Get vetted
+                <span aria-hidden="true">↳</span> {t("dash.getVetted")}
               </Link>
             </div>
           )}
@@ -288,10 +288,10 @@ export default function DashboardClient({
                 {". "}
                 {vettedBadges.map(b => `${b.category} · ${b.band} ${b.score}`).join("  ·  ")}
                 {" · "}
-                <span>We email you the moment work is matched to you.</span>
+                <span>{t("dash.emailOnMatch")}</span>
               </p>
               <Link href="/vetting" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
-                <span aria-hidden="true">↳</span> Add a category
+                <span aria-hidden="true">↳</span> {t("dash.addCategory")}
               </Link>
             </div>
           )}
@@ -300,10 +300,10 @@ export default function DashboardClient({
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 Add payout details so clients can pay you.{" "}
-                <span className="text-on-surface-variant">Airtm, InstaPay, Vodafone Cash, USDT & more.</span>
+                <span className="text-on-surface-variant">{t("dash.payoutBody")}</span>
               </p>
               <button onClick={() => setPayoutOpen(true)} className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
-                <span aria-hidden="true">↳</span> Set up payouts
+                <span aria-hidden="true">↳</span> {t("dash.setupPayouts")}
               </button>
             </div>
           )}
@@ -312,7 +312,7 @@ export default function DashboardClient({
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 Money incoming. A client marked a payment as sent.{" "}
-                <span className="text-on-surface-variant">Open the task to confirm you received it.</span>
+                <span className="text-on-surface-variant">{t("dash.confirmReceived")}</span>
               </p>
             </div>
           )}
@@ -339,7 +339,7 @@ export default function DashboardClient({
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search…"
+              placeholder={t("dash.search")}
               className="w-full h-9 px-4 rounded-full bg-surface-container text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-1 focus:ring-outline-variant"
             />
           </div>
@@ -460,21 +460,21 @@ export default function DashboardClient({
               </div>
             );
           })}
-          {standaloneTasks.map(t => {
-            const state = taskState(t);
-            const amount = formatAmount(t.amount_cents);
+          {standaloneTasks.map(task => {
+            const state = taskState(task);
+            const amount = formatAmount(task.amount_cents);
             return (
-              <Link key={t.id} href={`/t/${t.id}`} className="group flex items-center gap-6 py-5 transition-colors hover:bg-surface-container-low -mx-3 px-3">
+              <Link key={task.id} href={`/t/${task.id}`} className="group flex items-center gap-6 py-5 transition-colors hover:bg-surface-container-low -mx-3 px-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-[15px] font-medium text-on-surface truncate">{t.title}</p>
+                  <p className="text-[15px] font-medium text-on-surface truncate">{task.title}</p>
                   <p className="text-[12.5px] text-on-surface-variant mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    {t.category && <><span>{t.category}</span><span aria-hidden="true">·</span></>}
+                    {task.category && <><span>{task.category}</span><span aria-hidden="true">·</span></>}
                     <span className="inline-flex items-center gap-1.5">
                       <span className={`w-1.5 h-1.5 rounded-full ${DOT[state.tone] ?? "bg-outline-variant"}`} aria-hidden="true" />
                       {state.label}
                     </span>
-                    {t.deadline && <><span aria-hidden="true">·</span><span>Due {fmtDeadline(t.deadline)}</span></>}
-                    {!isPilot && !t.claimed_by_user_id && <><span aria-hidden="true">·</span><span className="text-electric-violet">Finding a match…</span></>}
+                    {task.deadline && <><span aria-hidden="true">·</span><span>Due {fmtDeadline(task.deadline)}</span></>}
+                    {!isPilot && !task.claimed_by_user_id && <><span aria-hidden="true">·</span><span className="text-electric-violet">{t("dash.searchingMatch")}</span></>}
                   </p>
                 </div>
                 {amount && (
@@ -552,6 +552,7 @@ function PayoutModal({ userId, profile, onClose, onSaved }: {
   onClose: () => void;
   onSaved: (method: PayoutMethod, handle: string) => void;
 }) {
+  const t = useT();
   const [method, setMethod] = useState<PayoutMethod>(profile.payout_method ?? "airtm");
   const [handle, setHandle] = useState(profile.payout_handle ?? "");
   const [busy, setBusy] = useState(false);
@@ -575,13 +576,13 @@ function PayoutModal({ userId, profile, onClose, onSaved }: {
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">Payout details</h2>
+          <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">{t("dash.payoutTitle")}</h2>
           <button onClick={onClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
         <p className="text-sm font-body text-on-surface-variant mb-6">
-          Where clients send your money. Shown only to clients paying you for approved work.
+          {t("dash.payoutSub")}
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
@@ -643,7 +644,7 @@ function EmptyState({ isPilot, matchable, onPost, onNewProject, onTemplate }: {
             : "Pass the AI skill interview first. Once you're vetted, matching work comes to you automatically. You'll get an email the moment it happens."}
         </p>
         <Link href="/vetting" className="text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
-          {matchable ? "Add another category" : "Get vetted"}
+          {t(matchable ? "dash.addAnother" : "dash.getVetted")}
         </Link>
       </div>
     );
@@ -695,6 +696,7 @@ function EmptyState({ isPilot, matchable, onPost, onNewProject, onTemplate }: {
 function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
   userId: string; onClose: () => void; onPosted: () => void; initialBrief?: string;
 }) {
+  const t = useT();
   const [title, setTitle] = useState("");
   const [brief, setBrief] = useState(initialBrief);
   const [cat, setCat] = useState<string>(CATEGORIES[0]);
@@ -851,7 +853,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500/10 mb-4">
                   <span className="material-symbols-outlined text-amber-600 dark:text-amber-400" style={{ fontVariationSettings: "'FILL' 1" }}>hourglass_top</span>
                 </div>
-                <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Task posted. Finding your match</h2>
+                <h2 className="text-2xl font-semibold tracking-[-0.02em] text-on-surface mb-2">{t("dash.postedTitle")}</h2>
                 <p className="text-sm text-on-surface-variant mb-6 max-w-[380px] mx-auto">
                   No vetted specialist is available in this category just yet. We&apos;ll match
                   it as soon as one passes the interview. You&apos;ll see it update automatically.
@@ -859,19 +861,19 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
               </>
             )}
             <button onClick={onPosted} className="bg-on-surface text-inverse-on-surface text-sm font-medium px-6 py-3 rounded-full hover:opacity-90">
-              View my tasks
+              {t("dash.viewTasks")}
             </button>
           </div>
         ) : phase === "matching" ? (
           <div className="text-center py-10">
             <div className="w-10 h-10 border-[3px] border-electric-violet/25 border-t-electric-violet rounded-full animate-spin mx-auto mb-5" />
-            <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Matching you with a vetted specialist…</h2>
-            <p className="text-sm text-on-surface-variant">The AI is scoring vetted freelancers against your brief.</p>
+            <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface mb-2">{t("dash.matchingTitle")}</h2>
+            <p className="text-sm text-on-surface-variant">{t("dash.matchingSub")}</p>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">Post a task</h2>
+              <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">{t("dash.postTask")}</h2>
               <button onClick={onClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
@@ -881,14 +883,14 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
               <input
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder="Task title. E.g. Landing page copy for my coffee brand"
+                placeholder={t("dash.titlePh")}
                 className="border border-border-crisp rounded-xl px-4 py-3 text-sm font-body text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet"
               />
               <textarea
                 value={brief}
                 onChange={e => setBrief(e.target.value)}
                 rows={4}
-                placeholder="Describe the work. What's the goal, the audience, the deadline? The more context, the further the AI gets."
+                placeholder={t("dash.briefPh")}
                 className="border border-border-crisp rounded-xl px-4 py-3 text-sm font-body text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet resize-y"
               />
 
@@ -902,11 +904,11 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                   {polishing ? (
                     <>
                       <span className="w-3 h-3 border-2 border-electric-violet/30 border-t-electric-violet rounded-full animate-spin" />
-                      Structuring your brief…
+                      {t("dash.structuring")}
                     </>
                   ) : (
                     <>
-                      <span aria-hidden="true">↳</span> Polish with AI
+                      <span aria-hidden="true">↳</span> {t("dash.polish")}
                     </>
                   )}
                 </button>
@@ -918,8 +920,8 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
               {/* Attachments — brief context beats guesswork */}
               <div>
                 <label className="inline-flex items-center gap-1.5 text-[13px] font-medium text-on-surface-variant border border-border-crisp rounded-lg px-3.5 py-2 cursor-pointer hover:border-outline transition-colors">
-                  Attach files
-                  <span className="text-[11px] font-normal">PDF, images, docs, zip · 10MB max</span>
+                  {t("dash.attach")}
+                  <span className="text-[11px] font-normal">{t("dash.attachHint")}</span>
                   <input
                     type="file"
                     multiple
@@ -960,14 +962,14 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                   <input
                     value={budget}
                     onChange={e => setBudget(e.target.value.replace(/[^\d.]/g, ""))}
-                    placeholder="Budget"
+                    placeholder={t("dash.budgetPh")}
                     inputMode="decimal"
                     className="w-full border border-border-crisp rounded-xl pl-7 pr-4 py-3 text-sm font-body text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet"
                   />
                 </div>
               </div>
               <label className="flex flex-col gap-1.5">
-                <span className="text-[12px] font-medium text-on-surface-variant">Deadline (optional)</span>
+                <span className="text-[12px] font-medium text-on-surface-variant">{t("dash.deadlineOpt")}</span>
                 <input
                   type="date"
                   value={deadline}
@@ -982,7 +984,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                   {error}
                   {limitHit && (
                     <Link href="/billing" className="block mt-2 text-[13.5px] font-medium text-on-surface hover:text-electric-violet transition-colors">
-                      <span aria-hidden="true">↳</span> See plans &amp; upgrade
+                      <span aria-hidden="true">↳</span> {t("dash.seePlans")}
                     </Link>
                   )}
                 </div>
@@ -993,10 +995,10 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
                 className="mt-1 flex items-center justify-center gap-2 bg-on-surface text-inverse-on-surface text-sm font-medium px-6 py-3.5 rounded-full hover:opacity-90 transition"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: "17px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
-                Post & match
+                {t("dash.postMatch")}
               </button>
               <p className="text-[11px] font-body text-on-surface-variant text-center">
-                The AI matches your task to the best vetted specialist. No bidding, no browsing.
+                {t("dash.postMatchSub")}
               </p>
             </div>
           </>
