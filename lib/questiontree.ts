@@ -616,7 +616,7 @@ export function answerFacts(tree: Question[], answers: AnswerMap): string[] {
 // as-is: bounded counts, bounded lengths, safe keys, and a guaranteed
 // "I'm not sure" option, because dont_know is first-class in this flow and a
 // generated question that omits it would trap a client with no honest answer.
-const MAX_GENERATED = 6;
+const MAX_GENERATED = 8;
 const MAX_OPTIONS = 6;
 
 /** Trim to a length without slicing through the middle of a word. */
@@ -636,7 +636,14 @@ const clamp = (n: unknown, lo: number, hi: number, dflt: number) => {
   return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : dflt;
 };
 
-export function normalizeGenerated(raw: unknown): Question[] {
+/** The guaranteed escape hatch, in the client's language. */
+const DONT_KNOW_LABEL: Record<string, string> = {
+  en: "I'm not sure",
+  de: "Ich bin nicht sicher",
+  ar: "لست متأكداً",
+};
+
+export function normalizeGenerated(raw: unknown, locale = "en"): Question[] {
   if (!Array.isArray(raw)) return [];
   const seen = new Set<string>();
   const out: Question[] = [];
@@ -664,7 +671,7 @@ export function normalizeGenerated(raw: unknown): Question[] {
     // instead of a guess, and a generated question that drops it would force a
     // client to invent an answer we then price against.
     if (!options.some(o => o.value === DONT_KNOW)) {
-      options.push({ value: DONT_KNOW, label: type === "multi_select" ? "I'm not sure" : "I'm not sure" });
+      options.push({ value: DONT_KNOW, label: DONT_KNOW_LABEL[locale] ?? DONT_KNOW_LABEL.en });
     }
 
     out.push({
