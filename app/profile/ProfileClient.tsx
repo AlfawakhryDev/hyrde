@@ -1,4 +1,5 @@
 "use client";
+import VerifyEmail from "@/components/VerifyEmail";
 import { useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -11,11 +12,13 @@ type PrivateRow = { user_id: string; phone: string | null; notify_matches: boole
 export default function ProfileClient({
   userId,
   email,
+  emailVerified = false,
   initialProfile,
   initialPrivate,
 }: {
   userId: string;
   email: string;
+  emailVerified?: boolean;
   initialProfile: Profile & {
     headline?: string | null; company?: string | null; website?: string | null;
     country?: string | null; city?: string | null;
@@ -96,8 +99,16 @@ export default function ProfileClient({
         <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full border border-border-crisp text-xs font-medium text-on-surface-variant">
           <span className="w-1.5 h-1.5 rounded-full bg-electric-violet" aria-hidden="true" />
           {isPilot ? "Freelancer account" : "Client account"} · {email}
+          {emailVerified && <span className="ml-2 text-emerald-600">· verified</span>}
         </span>
       </div>
+
+      {/* Only shown until it's done. A verified account needs no nagging. */}
+      {!emailVerified && (
+        <div className="mb-6">
+          <VerifyEmail email={email} />
+        </div>
+      )}
 
       <Section title="Identity" sub="Public. Shown wherever your name appears.">
         <label className="flex flex-col gap-1.5">
