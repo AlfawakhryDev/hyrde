@@ -199,25 +199,31 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
 
       {/* ── Trust — an editorial statement, chips verify themselves ── */}
       <style>{`
+        /* :focus-visible, never :focus-within. Clicking a tabIndex={0} card
+           focuses it, and :focus-within then latches the whole reveal in its
+           finished state until you click elsewhere — every card on this page
+           looked frozen after a single click. :focus-visible only matches
+           keyboard focus, so tabbing still plays the animation. :is() is
+           forgiving, so :has() being unsupported drops that arm, not :hover. */
         .tr-alive { outline: none; }
         .tr-alive .tr-shield { transition: transform .45s cubic-bezier(.2,.9,.3,1.3); }
-        .tr-alive:is(:hover,:focus-within) .tr-shield { transform: translate(-50%,-50%) scale(1.06); }
+        .tr-alive:is(:hover,:focus-visible,:has(:focus-visible)) .tr-shield { transform: translate(-50%,-50%) scale(1.06); }
         .tr-alive .tr-ring { opacity: 0; }
-        .tr-alive:is(:hover,:focus-within) .tr-ring { animation: tr-ring 1.1s ease-out .1s; }
+        .tr-alive:is(:hover,:focus-visible,:has(:focus-visible)) .tr-ring { animation: tr-ring 1.1s ease-out .1s; }
         @keyframes tr-ring { 0% { opacity:.5; transform: translate(-50%,-50%) scale(.7) } 100% { opacity:0; transform: translate(-50%,-50%) scale(1.9) } }
         .tr-alive .tr-chip { transition: all .35s ease; }
         .tr-alive .tr-check { display:inline-block; max-width:0; overflow:hidden; vertical-align:bottom; transition: max-width .3s ease; }
         ${[0,1,2,3,4,5].map(i =>
-          `.tr-alive:is(:hover,:focus-within) .tr-chip-${i} { box-shadow: 0 6px 20px rgba(20,20,15,.10); color:#14140F; transform: translateY(-3px); transition-delay:${0.08+i*0.1}s; border-color:#14140F }
-           .tr-alive:is(:hover,:focus-within) .tr-chip-${i} .tr-check { max-width:20px; transition-delay:${0.16+i*0.1}s }`
+          `.tr-alive:is(:hover,:focus-visible,:has(:focus-visible)) .tr-chip-${i} { box-shadow: 0 6px 20px rgba(20,20,15,.10); color:#14140F; transform: translateY(-3px); transition-delay:${0.08+i*0.1}s; border-color:#14140F }
+           .tr-alive:is(:hover,:focus-visible,:has(:focus-visible)) .tr-chip-${i} .tr-check { max-width:20px; transition-delay:${0.16+i*0.1}s }`
         ).join("\n")}
         .vc-alive { outline: none; }
         .vc-alive .vc-q { transition: all .35s ease; }
-        .vc-alive:is(:hover,:focus-within) .vc-q { background:#fffdf8; box-shadow: 0 10px 32px rgba(20,20,15,.07); }
+        .vc-alive:is(:hover,:focus-visible,:has(:focus-visible)) .vc-q { background:#fffdf8; box-shadow: 0 10px 32px rgba(20,20,15,.07); }
         .vc-alive .vc-probe { background-image: linear-gradient(#14140F,#14140F); background-repeat:no-repeat; background-size: 0% 1.5px; background-position: 0 100%; transition: background-size .6s ease .15s; }
-        .vc-alive:is(:hover,:focus-within) .vc-probe { background-size: 100% 1.5px; }
+        .vc-alive:is(:hover,:focus-visible,:has(:focus-visible)) .vc-probe { background-size: 100% 1.5px; }
         .vc-alive .vc-stamp { opacity:.5; transform: scale(.94); transition: all .4s cubic-bezier(.2,.9,.3,1.3) .45s; }
-        .vc-alive:is(:hover,:focus-within) .vc-stamp { opacity:1; transform: scale(1.03) rotate(-2deg); }
+        .vc-alive:is(:hover,:focus-visible,:has(:focus-visible)) .vc-stamp { opacity:1; transform: scale(1.03) rotate(-2deg); }
         .duo-card { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease; }
         .duo-card:hover { transform: translateY(-4px); box-shadow: 0 22px 56px -24px rgba(20,20,15,.5); }
       `}</style>

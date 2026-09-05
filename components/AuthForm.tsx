@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -66,19 +66,35 @@ function AppleIcon() {
   );
 }
 
-// "Continue with Apple" is coded and ready — flip to true once the Apple
-// Developer Services ID + secret are configured in Supabase (needs the $99
-// Apple Developer Program; see Supabase dashboard → Auth → Providers → Apple).
-const APPLE_ENABLED = false;
-
-// Microsoft / Entra ID sits alongside Google and GitHub as a first-class way
-// in: corporate clients live in Outlook, and a family office is far likelier
-// to have a Microsoft account than a GitHub one. Supabase calls it "azure".
+// ── Which social buttons to show ─────────────────────────────────────
+// signInWithOAuth navigates the browser straight to Supabase's /authorize, so
+// a provider with no credentials answers with a raw 400 JSON page —
+// {"code":400,"error_code":"validation_failed","msg":"Unsupported provider"} —
+// which the client-side error branch never gets to catch. Microsoft did
+// exactly that.
 //
-// It only completes once an Azure app registration exists and its client id
-// and secret are set on the Supabase Azure provider. Until then Supabase
-// answers "Unsupported provider", so oauth() translates that into something a
-// person can act on rather than leaking the raw error.
+// Supabase publishes what is actually enabled at /auth/v1/settings, so ask it
+// and render only the buttons that can complete. Nothing to keep in sync: the
+// moment Azure or Apple is configured in the dashboard, its button appears.
+type Provider = "google" | "github" | "apple" | "azure";
+
+function useEnabledProviders(): Set<Provider> | null {
+  const [enabled, setEnabled] = useState<Set<Provider> | null>(null);
+  useEffect(() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return;
+    fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
+      .then(r => r.json())
+      .then((d: { external?: Record<string, boolean> }) =>
+        setEnabled(new Set((["google", "github", "apple", "azure"] as Provider[])
+          .filter(p => d.external?.[p]))))
+      // If the lookup fails, fall back to the two that have been live for
+      // months rather than showing an empty panel with no way in.
+      .catch(() => setEnabled(new Set<Provider>(["google", "github"])));
+  }, []);
+  return enabled;
+}
 
 // Soft work-email nudge for clients: warn on free/personal domains, allow anyway.
 const FREE_EMAIL_DOMAINS = new Set([
@@ -104,7 +120,8 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [oauthBusy, setOauthBusy] = useState<"google" | "github" | "apple" | "azure" | null>(null);
+  const [oauthBusy, setOauthBusy] = useState<Provider | null>(null);
+  const enabledProviders = useEnabledProviders();
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   // Signup picks a side first — client or freelancer — before anything else.
@@ -178,10 +195,26 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
     }
   }
 
+  // Leaving for a provider sets oauthBusy and never clears it, because the page
+  // is normally gone. Press Back and the bfcache restores that state verbatim,
+  // so the button sits on "Redirecting…" for good. Clear it when the page is
+  // shown again — persisted means it came from the bfcache.
+  useEffect(() => {
+    const revive = () => { setOauthBusy(null); setBusy(false); };
+    const onShow = (e: PageTransitionEvent) => { if (e.persisted) revive(); };
+    const onVisible = () => { if (document.visibilityState === "visible") revive(); };
+    window.addEventListener("pageshow", onShow);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("pageshow", onShow);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
   // Social login via Supabase's native OAuth — same session/profile/RLS as email
   // signup, no separate auth provider. On signup the chosen role rides along in
   // the callback URL; the callback persists it for first-time accounts.
-  async function oauth(provider: "google" | "github" | "apple" | "azure") {
+  async function oauth(provider: Provider) {
     setError("");
     setBusy(true);
     setOauthBusy(provider);
@@ -295,14 +328,18 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
       {/* Social auth — Supabase OAuth, same account system as email */}
       <div className="flex flex-col gap-2.5">
+        {enabledProviders === null &&
+          [0, 1].map(i => (
+            <div key={i} className="h-[46px] rounded-full border border-border-crisp bg-surface-container-low animate-pulse" aria-hidden="true" />
+          ))}
         {(
           [
-            { p: "google" as const, icon: <GoogleIcon />, label: t("auth.withGoogle"), show: true },
-            { p: "github" as const, icon: <GithubIcon />, label: t("auth.withGithub"), show: true },
-            { p: "azure" as const, icon: <MicrosoftIcon />, label: t("auth.withMicrosoft"), show: true },
-            { p: "apple" as const, icon: <AppleIcon />, label: t("auth.withApple"), show: APPLE_ENABLED },
+            { p: "google" as const, icon: <GoogleIcon />, label: t("auth.withGoogle") },
+            { p: "github" as const, icon: <GithubIcon />, label: t("auth.withGithub") },
+            { p: "azure" as const, icon: <MicrosoftIcon />, label: t("auth.withMicrosoft") },
+            { p: "apple" as const, icon: <AppleIcon />, label: t("auth.withApple") },
           ]
-        ).filter(b => b.show).map(b => (
+        ).filter(b => enabledProviders?.has(b.p)).map(b => (
           <button
             key={b.p}
             type="button"

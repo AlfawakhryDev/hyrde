@@ -11,17 +11,17 @@ const CSS = `
 .gp-band { outline: none; }
 .gp-band .gp-rail { transition: all .35s ease; }
 ${Array.from({ length: BRAND_RAILS.length + 1 }, (_, i) =>
-  `.gp-band:is(:hover,:focus-within) .gp-rail-${i} { border-color: rgba(247,245,240,.55); color: #fff; background: rgba(247,245,240,.08); transition-delay: ${0.06 + i * 0.09}s }`
+  `.gp-band:is(:hover,:focus-visible,:has(:focus-visible)) .gp-rail-${i} { border-color: rgba(247,245,240,.55); color: #fff; background: rgba(247,245,240,.08); transition-delay: ${0.06 + i * 0.09}s }`
 ).join("\n")}
 .gp-band .gp-step { opacity: .35; transition: opacity .3s ease; }
-.gp-band:is(:hover,:focus-within) .gp-step-1 { opacity: 1; transition-delay: .1s }
-.gp-band:is(:hover,:focus-within) .gp-step-2 { opacity: 1; transition-delay: .5s }
-.gp-band:is(:hover,:focus-within) .gp-step-3 { opacity: 1; transition-delay: .95s }
+.gp-band:is(:hover,:focus-visible,:has(:focus-visible)) .gp-step-1 { opacity: 1; transition-delay: .1s }
+.gp-band:is(:hover,:focus-visible,:has(:focus-visible)) .gp-step-2 { opacity: 1; transition-delay: .5s }
+.gp-band:is(:hover,:focus-visible,:has(:focus-visible)) .gp-step-3 { opacity: 1; transition-delay: .95s }
 .gp-band .gp-ok { opacity: 0; transform: scale(.6); }
-.gp-band:is(:hover,:focus-within) .gp-ok { animation: gp-ok .4s 1.15s cubic-bezier(.2,.9,.3,1.35) forwards; }
+.gp-band:is(:hover,:focus-visible,:has(:focus-visible)) .gp-ok { animation: gp-ok .4s 1.15s cubic-bezier(.2,.9,.3,1.35) forwards; }
 @keyframes gp-ok { to { opacity: 1; transform: scale(1) } }
 .gp-band .gp-glow { opacity: .45; transition: opacity .6s ease; }
-.gp-band:is(:hover,:focus-within) .gp-glow { opacity: 1; }
+.gp-band:is(:hover,:focus-visible,:has(:focus-visible)) .gp-glow { opacity: 1; }
 `;
 
 export default function GlobalPay({ locale = "en" }: { locale?: Locale }) {
