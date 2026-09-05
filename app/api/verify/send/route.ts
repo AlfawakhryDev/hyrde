@@ -8,18 +8,31 @@ export const dynamic = "force-dynamic";
 // Sends a verification code to the signed-in user's own address. The address
 // is taken from the session, never from the request body, so this cannot be
 // used to mail arbitrary people.
-export async function POST(_req: NextRequest) {
+export async function POST(req: NextRequest) {
   const supabase = await supabaseServer();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user?.email) return NextResponse.json({ error: "Log in first." }, { status: 401 });
 
+  // The banner asks for a code every time it mounts, so the default is "only
+  // if one is not already waiting" — otherwise a reload would invalidate the
+  // code someone is halfway through typing. Clicking "send a new code" forces.
+  const body = await req.json().catch(() => ({}));
+  const force = body?.resend === true;
+
   const code = generateCode();
-  const { error: rpcErr } = await supabase.rpc("issue_email_code", {
+  const { data: issued, error: rpcErr } = await supabase.rpc("issue_email_code", {
     p_code_hash: hashCode(code, user.id),
     p_email: user.email,
     p_ttl_minutes: CODE_TTL_MINUTES,
+    p_force: force,
   });
-  if (rpcErr) return NextResponse.json({ error: "Could not start verification." }, { status: 500 });
+  if (rpcErr) {
+    console.error("issue_email_code failed:", rpcErr);
+    return NextResponse.json({ error: "Could not start verification." }, { status: 500 });
+  }
+  if (issued === false) {
+    return NextResponse.json({ sent: false, pending: true, to: user.email, expiresInMinutes: CODE_TTL_MINUTES });
+  }
 
   const mail = verificationEmail(code);
   const sent = await sendEmail({ to: user.email, ...mail });
