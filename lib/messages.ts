@@ -800,7 +800,7 @@ export const messages = {
       email: "البريد الإلكتروني",
       emailPh: "you@company.com",
       password: "كلمة المرور",
-      passwordPhNew: "٣٨ أحرف على الأقل",
+      passwordPhNew: "٨ أحرف على الأقل",
       passwordPh: "كلمة مرورك",
       showPw: "إظهار كلمة المرور",
       hidePw: "إخفاء كلمة المرور",
