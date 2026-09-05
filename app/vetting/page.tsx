@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import VettingClient from "./VettingClient";
+import VerifyEmailBanner from "@/components/VerifyEmailBanner";
 
 export const metadata: Metadata = {
   title: "Get vetted — the AI skill interview",
@@ -62,7 +63,7 @@ export default async function VettingPage() {
   // Vetting is only for freelancer accounts. Clients hire; they don't get vetted.
   const { data: profile } = await supabase
     .from("profiles")
-    .select("mode")
+    .select("mode, email_verified_at")
     .eq("id", user.id)
     .single();
   if (!profile) redirect("/onboarding");
@@ -74,5 +75,16 @@ export default async function VettingPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  return <VettingClient existing={vettings ?? []} />;
+  // Freelancers land here straight from signup, not on the dashboard, so the
+  // confirm-your-email prompt has to live here too or they never see one.
+  return (
+    <>
+      {!profile.email_verified_at && (
+        <div className="mx-auto max-w-[720px] px-5 md:px-6 pt-8">
+          <VerifyEmailBanner email={user.email ?? ""} />
+        </div>
+      )}
+      <VettingClient existing={vettings ?? []} />
+    </>
+  );
 }

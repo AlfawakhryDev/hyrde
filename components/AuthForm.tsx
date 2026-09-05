@@ -150,11 +150,6 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
           p_mode: role,
           p_display_name: name || email.split("@")[0],
         });
-        // Send the verification code now, so it is already waiting when they
-        // reach the dashboard and see the banner asking them to confirm.
-        // Deliberately not awaited into the redirect path: a mail hiccup must
-        // not hold someone on a spinner after their account already exists.
-        void fetch("/api/verify/send", { method: "POST" }).catch(() => {});
         // Freelancers go straight to their activation moment: the interview.
         router.push(role === "pilot" && next === "/dashboard" ? "/vetting" : next);
         router.refresh();
