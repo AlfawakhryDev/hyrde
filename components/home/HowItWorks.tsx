@@ -5,28 +5,28 @@ import { tFor, type Locale } from "@/lib/i18n";
 
 const CSS = `
 .hw-card { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease; outline: none; }
-.hw-card:is(:hover,:focus-within) { transform: translateY(-4px); box-shadow: 0 18px 48px -18px rgba(10,10,15,.16); }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) { transform: translateY(-4px); box-shadow: 0 18px 48px -18px rgba(10,10,15,.16); }
 
 /* 1 — the brief writes itself, then the polish chip pops */
 .hw-card .hw-type { max-width: 0; overflow: hidden; white-space: nowrap; }
-.hw-card:is(:hover,:focus-within) .hw-type { animation: hw-type 1s steps(32) .1s forwards; }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) .hw-type { animation: hw-type 1s steps(32) .1s forwards; }
 @keyframes hw-type { to { max-width: 100% } }
 .hw-card .hw-chip { opacity: 0; transform: translateY(6px) scale(.9); transition: all .35s cubic-bezier(.2,.9,.3,1.3) 1.1s; }
-.hw-card:is(:hover,:focus-within) .hw-chip { opacity: 1; transform: none; }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) .hw-chip { opacity: 1; transform: none; }
 
 /* 2 — the connection draws, then the match pill pops */
 .hw-card .hw-line { transform: scaleX(0); transform-origin: left; transition: transform .7s cubic-bezier(.2,.7,.2,1) .15s; }
-.hw-card:is(:hover,:focus-within) .hw-line { transform: scaleX(1); }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) .hw-line { transform: scaleX(1); }
 .hw-card .hw-pill { opacity: 0; transform: translateY(6px) scale(.8); transition: all .4s cubic-bezier(.2,.9,.3,1.35) .8s; }
-.hw-card:is(:hover,:focus-within) .hw-pill { opacity: 1; transform: none; }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) .hw-pill { opacity: 1; transform: none; }
 .hw-card .hw-ava { transition: box-shadow .4s .8s, transform .4s .8s; }
-.hw-card:is(:hover,:focus-within) .hw-ava { box-shadow: 0 0 0 3px rgba(20,20,15,.28); transform: scale(1.06); }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) .hw-ava { box-shadow: 0 0 0 3px rgba(20,20,15,.28); transform: scale(1.06); }
 
 /* 3 — AI check appears, then PAID stamps */
 .hw-card .hw-check { opacity: 0; transform: translateX(-6px); transition: all .35s ease .15s; }
-.hw-card:is(:hover,:focus-within) .hw-check { opacity: 1; transform: none; }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) .hw-check { opacity: 1; transform: none; }
 .hw-card .hw-paid { opacity: 0; transform: scale(.55) rotate(8deg); }
-.hw-card:is(:hover,:focus-within) .hw-paid { animation: hw-paid .45s .7s cubic-bezier(.2,.9,.3,1.35) forwards; }
+.hw-card:is(:hover,:focus-visible,:has(:focus-visible)) .hw-paid { animation: hw-paid .45s .7s cubic-bezier(.2,.9,.3,1.35) forwards; }
 @keyframes hw-paid { to { opacity: 1; transform: scale(1) rotate(-3deg) } }
 `;
 

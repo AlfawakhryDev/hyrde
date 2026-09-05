@@ -6,42 +6,42 @@ import { tFor, type Locale } from "@/lib/i18n";
 
 const CSS = `
 .alive { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease; outline: none; }
-.alive:is(:hover,:focus-within) { transform: translateY(-4px); box-shadow: 0 18px 48px -18px rgba(10,10,15,.16); }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) { transform: translateY(-4px); box-shadow: 0 18px 48px -18px rgba(10,10,15,.16); }
 
 /* 1 — interview answer types, then the grade stamps */
 .alive .ag-type { max-width: 0; overflow: hidden; white-space: nowrap; }
-.alive:is(:hover,:focus-within) .ag-type { animation: ag-type 1.1s steps(36) .1s forwards; }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-type { animation: ag-type 1.1s steps(36) .1s forwards; }
 @keyframes ag-type { to { max-width: 100% } }
 .alive .ag-caret { animation: blink 1s step-end infinite; }
 .alive .ag-stamp { opacity: 0; transform: scale(.55) rotate(-8deg); }
-.alive:is(:hover,:focus-within) .ag-stamp { animation: ag-stamp .45s 1.25s cubic-bezier(.2,.9,.3,1.35) forwards; }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-stamp { animation: ag-stamp .45s 1.25s cubic-bezier(.2,.9,.3,1.35) forwards; }
 @keyframes ag-stamp { to { opacity: 1; transform: scale(1) rotate(-2deg) } }
 
 /* 2 — proposal spam sweeps out, the match pops in */
 .alive .ag-spam { transition: transform .45s ease, opacity .45s ease; }
-.alive:is(:hover,:focus-within) .ag-spam-1 { transform: translateX(28px); opacity: 0; transition-delay: .04s }
-.alive:is(:hover,:focus-within) .ag-spam-2 { transform: translateX(28px); opacity: 0; transition-delay: .16s }
-.alive:is(:hover,:focus-within) .ag-spam-3 { transform: translateX(28px); opacity: 0; transition-delay: .28s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-spam-1 { transform: translateX(28px); opacity: 0; transition-delay: .04s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-spam-2 { transform: translateX(28px); opacity: 0; transition-delay: .16s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-spam-3 { transform: translateX(28px); opacity: 0; transition-delay: .28s }
 .alive .ag-win { opacity: 0; transform: translateY(10px) scale(.97); transition: all .45s cubic-bezier(.2,.7,.2,1) .5s; }
-.alive:is(:hover,:focus-within) .ag-win { opacity: 1; transform: none; }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-win { opacity: 1; transform: none; }
 
 /* 3 — review bar fills, verdict flips */
 .alive .ag-bar { width: 7%; transition: width .85s cubic-bezier(.2,.7,.2,1) .15s; }
-.alive:is(:hover,:focus-within) .ag-bar { width: 92%; }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-bar { width: 92%; }
 .alive .ag-idle { transition: opacity .25s .55s } .alive .ag-done { opacity: 0; transition: opacity .25s .55s }
-.alive:is(:hover,:focus-within) .ag-idle { opacity: 0; transition-delay: .5s }
-.alive:is(:hover,:focus-within) .ag-done { opacity: 1; transition-delay: .55s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-idle { opacity: 0; transition-delay: .5s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-done { opacity: 1; transition-delay: .55s }
 
 /* 4 — the fees get struck through, 100% lights up */
 .alive .ag-strike { position: relative; transition: opacity .3s; }
 .alive .ag-strike::after { content: ""; position: absolute; left: 0; top: 50%; height: 1.5px; width: 100%;
   background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .32s ease; }
-.alive:is(:hover,:focus-within) .ag-strike { opacity: .45; }
-.alive:is(:hover,:focus-within) .ag-strike-1::after { transform: scaleX(1); transition-delay: .05s }
-.alive:is(:hover,:focus-within) .ag-strike-2::after { transform: scaleX(1); transition-delay: .2s }
-.alive:is(:hover,:focus-within) .ag-strike-3::after { transform: scaleX(1); transition-delay: .35s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-strike { opacity: .45; }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-strike-1::after { transform: scaleX(1); transition-delay: .05s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-strike-2::after { transform: scaleX(1); transition-delay: .2s }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-strike-3::after { transform: scaleX(1); transition-delay: .35s }
 .alive .ag-keep { opacity: .35; transform: scale(.94); transition: all .45s cubic-bezier(.2,.9,.3,1.2) .55s; }
-.alive:is(:hover,:focus-within) .ag-keep { opacity: 1; transform: scale(1.04); color: #14140F; }
+.alive:is(:hover,:focus-visible,:has(:focus-visible)) .ag-keep { opacity: 1; transform: scale(1.04); color: #14140F; }
 `;
 
 const card =
