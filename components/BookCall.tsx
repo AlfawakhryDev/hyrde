@@ -139,8 +139,7 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
               Sent. {target.freelancerName.split(" ")[0]} will confirm a time.
             </h2>
             <p className="text-sm text-on-surface-variant max-w-[38ch] mx-auto mb-4">
-              {target.freelancerName.split(" ")[0]} confirms one of your times and you&apos;ll both get the
-              invite. They get your plan beforehand, so you won&apos;t have to explain it.
+              {t("call.sentBody", { name: target.freelancerName.split(" ")[0] })}
             </p>
             <div className="text-left rounded-xl border border-border-crisp p-3.5 mb-2">
               <p className="text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-2">{t("call.offered")}</p>
