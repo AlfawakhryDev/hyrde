@@ -26,6 +26,11 @@ type Milestone = {
   brief: string;
   /** One sentence: the single artifact the client reviews to approve this. */
   approval?: string;
+  /** Computed server-side from effort x rate (lib/pricing), never invented by
+   *  the model. Shown so a client who asks "why this number" gets an answer. */
+  priceBasis?: string;
+  budgetLowUsd?: number;
+  budgetHighUsd?: number;
   category: string;
   milestoneType?: string; // LLM-classified controlled type, passed through to create
   budgetUsd: number;
@@ -484,6 +489,14 @@ export default function ProjectComposer({
                   />
                   {/* The one thing you look at to approve. Keeps the client out
                       of the work and in the decision. */}
+                  {m.priceBasis && (
+                    <p className="text-[12px] text-on-surface-variant mb-2">
+                      {m.priceBasis}
+                      {m.budgetLowUsd && m.budgetHighUsd
+                        ? ` Typically $${m.budgetLowUsd.toLocaleString()} to $${m.budgetHighUsd.toLocaleString()}.`
+                        : ""}
+                    </p>
+                  )}
                   {m.approval && (
                     <p className="text-[12.5px] text-on-surface-variant mb-2 flex gap-2">
                       <span className="material-symbols-outlined shrink-0 text-on-surface-variant" style={{ fontSize: "15px" }}>task_alt</span>

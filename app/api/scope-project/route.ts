@@ -4,6 +4,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { guardAi } from "@/lib/ratelimit";
 import { CATEGORIES } from "@/lib/arena";
 import { MILESTONE_TYPES } from "@/lib/instrumentation";
+import { priceMilestone, CATEGORY_RATE_USD } from "@/lib/pricing";
 import type { SiteContext } from "@/lib/siteaudit";
 import { contextToFacts } from "@/lib/siteaudit";
 
@@ -71,7 +72,9 @@ How this client works (assume it unless the brief says otherwise):
 Rules:
 - 2 to 5 milestones. If this is really a single piece of work, return exactly 1 milestone (the client will be told to use the regular single-task flow instead).
 - Each milestone must be independently completable by one freelancer and produce a concrete deliverable.
-- Each milestone: a short title (max 9 words), a 2-4 sentence brief written as if to the freelancer who'll do it (include what the prior milestone handed off, and any assumption we are making on the client's behalf), a category, a fair mid-market USD budget (integer), and suggested days-from-project-start it should be due by (integer, increasing).
+- Each milestone: a short title (max 9 words), a 2-4 sentence brief written as if to the freelancer who'll do it (include what the prior milestone handed off, and any assumption we are making on the client's behalf), a category, and suggested days-from-project-start it should be due by (integer, increasing).
+- Do NOT price anything. Estimate EFFORT instead and we compute the fee: "effortHours" is how many focused hours one competent specialist needs for this milestone (integer), and "seniority" is the level the work genuinely calls for, exactly one of junior, mid, senior. Reserve senior for work where a mistake is expensive or the judgment is the deliverable; routine production work is mid; mechanical work is junior.
+- Be honest about hours. A one-page audit is not 40 hours. A full multi-page site build is not 15. Think about what a competent freelancer would actually bill.
 - Each milestone also needs "approval": one plain sentence naming the single artifact the client reviews to approve it, written to the client. For example "You get a one page audit and pick re-theme or rebuild." Keep it concrete and reviewable without a meeting.
 - category must be exactly one of: ${CATEGORIES.join(", ")}.
 - milestoneType classifies the KIND of work for cost tracking. It must be exactly one of: ${MILESTONE_TYPES.join(", ")}. Pick the single closest one to each milestone's actual work.
@@ -80,7 +83,7 @@ Rules:
 Write all titles and descriptions in plain language. Never use the em-dash character (—).
 
 Return ONLY valid JSON:
-{"projectTitle": "...", "milestones": [{"title": "...", "brief": "...", "approval": "...", "category": "...", "milestoneType": "...", "budgetUsd": <integer>, "dueInDays": <integer>}], "note": "<one short sentence to the client about how you split this>"}`;
+{"projectTitle": "...", "milestones": [{"title": "...", "brief": "...", "approval": "...", "category": "...", "milestoneType": "...", "effortHours": <integer>, "seniority": "junior|mid|senior", "dueInDays": <integer>}], "note": "<one short sentence to the client about how you split this>"}`;
 
   try {
     const msg = await anthropic.messages.create({
@@ -105,8 +108,21 @@ Return ONLY valid JSON:
         // LLM-classified controlled milestone type (Call C). Empty when the model
         // returns an off-vocabulary value; create-project keyword-maps the fallback.
         milestoneType: types.has(String(m.milestoneType)) ? String(m.milestoneType) : "",
-        budgetUsd: Math.max(0, Math.min(50000, Math.round(Number(m.budgetUsd) || 0))),
         dueInDays: Math.max(1, Math.min(365, Math.round(Number(m.dueInDays) || 7))),
+        // Money is computed, never taken from the model. See lib/pricing.ts.
+        ...(() => {
+          const category = cats.has(String(m.category)) ? String(m.category) : "Other";
+          const p = priceMilestone(category, Number(m.effortHours) || 0, String(m.seniority ?? "mid"));
+          return {
+            budgetUsd: p.midUsd,
+            budgetLowUsd: p.lowUsd,
+            budgetHighUsd: p.highUsd,
+            effortHours: p.hours,
+            seniority: p.seniority,
+            rateUsd: p.rateUsd,
+            priceBasis: p.basis,
+          };
+        })(),
       }))
       .filter((m: { title: string; brief: string }) => m.title && m.brief);
 
