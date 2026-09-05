@@ -41,13 +41,23 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
   const [me, setMe] = useState<{ name: string; email: string } | null>(null);
   const t = useT();
 
+  // Loaded on MOUNT, not when the modal opens. Fetching on open meant the
+  // required name/email fields rendered first and only disappeared once the
+  // request came back, so the client still saw a form asking for details we
+  // already had. By the time they click, this is resolved.
   useEffect(() => {
-    if (!open || me) return;
+    let cancelled = false;
+    // Never trap someone behind a spinner: if the lookup is slow or fails,
+    // fall back to asking rather than showing a skeleton forever.
+    const giveUp = setTimeout(() => { if (!cancelled) setMe(m => m ?? { name: "", email: "" }); }, 3000);
     (async () => {
       const supa = supabaseBrowser();
       const { data: { user } } = await supa.auth.getUser();
-      if (!user) return;
-      const { data: prof } = await supa.from("profiles").select("display_name").eq("id", user.id).single();
+      if (!user) { if (!cancelled) { clearTimeout(giveUp); setMe({ name: "", email: "" }); } return; }
+      const { data: prof } = await supa
+        .from("profiles").select("display_name").eq("id", user.id).maybeSingle();
+      if (cancelled) return;
+      clearTimeout(giveUp);
       setMe({
         name: (prof?.display_name as string | undefined)?.trim()
           || (user.user_metadata?.full_name as string | undefined)
@@ -55,7 +65,8 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
         email: user.email ?? "",
       });
     })();
-  }, [open, me]);
+    return () => { cancelled = true; clearTimeout(giveUp); };
+  }, []);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -169,14 +180,23 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
             )}
 
             <div className="flex flex-col gap-4">
-              {me?.email ? (
+              {me === null ? (
+                <div className="rounded-xl border border-border-crisp bg-surface-container/40 p-3">
+                  <div className="h-3 w-24 rounded bg-surface-container animate-pulse mb-2" />
+                  <div className="h-3.5 w-48 rounded bg-surface-container animate-pulse" />
+                </div>
+              ) : me.email ? (
                 <div className="rounded-xl border border-border-crisp bg-surface-container/40 p-3">
                   <p className="text-[11px] uppercase tracking-[0.12em] text-on-surface-variant mb-1">{t("call.inviteGoesTo")}</p>
                   <p className="text-[13.5px] text-on-surface">
                     {me.name ? `${me.name} · ` : ""}{me.email}
                   </p>
-                  <input type="hidden" name="name" value={me.name} />
                   <input type="hidden" name="email" value={me.email} />
+                  {/* Only one input may carry `name`, or FormData reads the
+                      first and we would submit an empty string. */}
+                  {me.name
+                    ? <input type="hidden" name="name" value={me.name} />
+                    : <input name="name" required className={`${field} mt-2`} autoComplete="name" placeholder={t("call.yourName")} />}
                 </div>
               ) : (
                 <>
