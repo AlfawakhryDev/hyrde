@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
   const archetype = String(body?.archetype ?? "other").slice(0, 60);
   const expertise = String(body?.expertise ?? "some");
   const site: SiteContext | null = body?.siteContext ?? null;
+  // Arabic clients get Arabic questions, not translated chrome around English.
+  const locale = String(body?.locale ?? "en");
 
   const fallback = () =>
     NextResponse.json({
@@ -70,17 +72,18 @@ WHO YOU ARE ASKING:
 ${audience}
 
 Rules:
-- 3 to 5 questions. Fewer good ones beats more.
+- Up to 8 questions, and fewer is better. Ask 4 if 4 will do. Never pad to reach 8.
+- Keep every question SHORT. One sentence, under 90 characters where you can. The help line is optional and one short sentence at most.
 - Ask ONLY what would change the milestones or the price. If you would not act differently on the answer, do not ask it.
 - Never ask something the site read above already tells you. Ask what it cannot: intent, ownership, constraints, appetite.
 - Every question is answered by TAPPING an option, never by typing. Give 3 to 5 concrete, mutually distinct options that a real person would recognise as their situation. No "Other".
-- Option labels are buttons, so keep each under about 60 characters. Put any nuance in the question's help line instead.
+- Option labels are buttons: keep each under about 55 characters. Put nuance in the help line, not the label.
 - Options must be specific to this project. "Yes / No / Maybe" is a wasted question.
 - variance_weight (0.1-0.85) is how much of the cost uncertainty this resolves. Weight the one that most moves the estimate highest.
 - unknown_risk describes what goes wrong if they answer "I'm not sure", with a cost multiplier band.
 - Never use the em-dash character.
 
-Return ONLY valid JSON:
+${locale === "ar" ? "LANGUAGE: write every question, help line and option label in Arabic, including an \"لست متأكداً\" option on every question. The client reads Arabic, so do not write English and expect it to be translated later.\n\n" : ""}Return ONLY valid JSON:
 {"questions":[{"key":"short_snake_case","text":"...","help":"one short clarifying line, optional","type":"single_select|multi_select","options":[{"value":"snake_case","label":"..."}],"variance_weight":0.6,"affects_milestones":["design"],"unknown_risk":{"description":"...","cost_impact_multiplier":[1.0,1.5]}}]}`;
 
   try {
@@ -93,7 +96,7 @@ Return ONLY valid JSON:
     });
     const raw = (msg.content[0] as { type: string; text: string }).text.trim();
     const parsed = JSON.parse(raw.replace(/^```json\n?/, "").replace(/\n?```$/, "").trim());
-    const questions = normalizeGenerated(parsed.questions);
+    const questions = normalizeGenerated(parsed.questions, locale);
     if (questions.length < 2) return fallback();
     return NextResponse.json({ questions, source: "generated" });
   } catch (err) {
