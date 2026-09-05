@@ -88,11 +88,26 @@ export default function ProjectComposer({
   // Read at scope time; a ref because runScope can fire in the same tick the
   // final answer is recorded, before state has flushed.
   const expertiseRef = useRef<string>("");
+  /** Shown instead of closing when there is work that would be lost. */
+  const [confirmingClose, setConfirmingClose] = useState(false);
 
   // Create/done state
   const [createdCount, setCreatedCount] = useState(0);
   const [createdProjectId, setCreatedProjectId] = useState("");
   const [firstMatch, setFirstMatch] = useState<{ matched: boolean; freelancer?: { name: string }; reason?: string } | null>(null);
+
+  // Anything worth losing? A typed outcome, answered questions, or a drafted
+  // plan. The backdrop used to call onClose directly, so a stray click outside
+  // the dialog silently threw away a whole scoped project. Nobody types a
+  // brief twice.
+  const hasWork =
+    outcome.trim().length > 0 || milestones.length > 0 || Object.keys(answers).length > 0;
+
+  function requestClose() {
+    if (phase === "creating") return;          // never interrupt a write
+    if (phase === "done" || !hasWork) { onClose(); return; }
+    setConfirmingClose(true);
+  }
 
   const totalUsd = milestones.reduce((s, m) => s + m.budgetUsd, 0);
   // Prefills the call request so the captured lead carries the actual deal.
@@ -295,16 +310,42 @@ export default function ProjectComposer({
     "w-full border border-border-crisp rounded-xl px-4 py-3 text-sm font-body text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet resize-y";
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-6" onClick={onClose}>
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-6" onClick={requestClose}>
       <div
-        className="w-full sm:max-w-xl bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+        className="w-full sm:max-w-xl bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto relative"
         onClick={e => e.stopPropagation()}
       >
+        {confirmingClose && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface-bright/95 backdrop-blur-sm rounded-t-3xl sm:rounded-3xl p-6">
+            <div className="max-w-[34ch] text-center">
+              <h3 className="text-[17px] font-semibold text-on-surface mb-2">Discard this project?</h3>
+              <p className="text-[13.5px] text-on-surface-variant mb-6">
+                {milestones.length
+                  ? `Your plan and its ${milestones.length} milestone${milestones.length === 1 ? "" : "s"} will be lost. Nothing has been created yet.`
+                  : "What you have written so far will be lost."}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
+                <button
+                  onClick={() => setConfirmingClose(false)}
+                  className="h-11 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90"
+                >
+                  Keep editing
+                </button>
+                <button
+                  onClick={() => { setConfirmingClose(false); onClose(); }}
+                  className="h-11 px-6 rounded-full border border-border-crisp text-sm font-medium text-on-surface-variant hover:text-error hover:border-error transition-colors"
+                >
+                  Discard it
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {phase === "outcome" && (
           <>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">Describe a bigger outcome</h2>
-              <button onClick={onClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
+              <button onClick={requestClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -375,7 +416,7 @@ export default function ProjectComposer({
           <>
             <div className="flex items-center justify-between mb-4">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-electric-violet">Scoping questions</span>
-              <button onClick={onClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
+              <button onClick={requestClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -437,7 +478,7 @@ export default function ProjectComposer({
           <>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">{projectTitle}</h2>
-              <button onClick={onClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
+              <button onClick={requestClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
