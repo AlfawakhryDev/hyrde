@@ -30,7 +30,7 @@ export default async function TaskPage({
   if (!task) notFound();
 
   // Badges for the specialist the AI matched to this task (shown to both sides).
-  const [{ data: claimerVettings }, { data: attachments }] = await Promise.all([
+  const [{ data: claimerVettings }, { data: attachments }, { data: progress }] = await Promise.all([
     task.claimed_by_user_id
       ? supabase
           .from("vettings")
@@ -43,6 +43,12 @@ export default async function TaskPage({
       .select("id, file_name, file_size, storage_path")
       .eq("task_id", task.id)
       .order("created_at"),
+    supabase
+      .from("milestone_progress")
+      .select("id, percent, note, created_at")
+      .eq("task_id", id)
+      .order("created_at", { ascending: false })
+      .limit(20),
   ]);
 
   return (
@@ -51,6 +57,7 @@ export default async function TaskPage({
       userId={user.id}
       claimerBadges={claimerVettings ?? []}
       attachments={attachments ?? []}
+      progress={progress ?? []}
     />
   );
 }
