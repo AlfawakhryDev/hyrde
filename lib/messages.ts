@@ -307,7 +307,7 @@ export const messages = {
       waiting: "Waiting for a vetted Pilot",
     },
     call: {
-      inviteGoesTo: "Invite goes to",
+      inviteGoesTo: "Booking as",
       yourName: "Your name *",
       yourEmail: "Email for the invite *",
       whenSuits: "When suits you? *",
@@ -318,6 +318,7 @@ export const messages = {
       pickOne: "Pick at least one time that works for you.",
       offered: "Times you offered",
       confirmPending: "will confirm a time.",
+      sentBody: "We emailed {name} your plan and the times you offered. When they confirm one, you both get a calendar invite.",
     },
     composer: {
       outcomeTitle: "Describe a bigger outcome",
@@ -739,7 +740,7 @@ export const messages = {
       waiting: "Wartet auf einen geprüften Pilot",
     },
     call: {
-      inviteGoesTo: "Einladung geht an",
+      inviteGoesTo: "Gebucht als",
       yourName: "Dein Name *",
       yourEmail: "E-Mail für die Einladung *",
       whenSuits: "Wann passt es dir? *",
@@ -750,6 +751,7 @@ export const messages = {
       pickOne: "Wähle mindestens eine Zeit, die dir passt.",
       offered: "Von dir vorgeschlagene Zeiten",
       confirmPending: "bestätigt einen Termin.",
+      sentBody: "Wir haben {name} deinen Plan und deine Zeitvorschl\u00e4ge geschickt. Sobald eine best\u00e4tigt ist, bekommt ihr beide eine Kalendereinladung.",
     },
     composer: {
       outcomeTitle: "Beschreibe ein gr\u00f6\u00dferes Ergebnis",
@@ -1172,7 +1174,7 @@ export const messages = {
       waiting: "بانتظار مختصّ موثّق",
     },
     call: {
-      inviteGoesTo: "تُرسل الدعوة إلى",
+      inviteGoesTo: "الحجز باسم",
       yourName: "اسمك *",
       yourEmail: "البريد لإرسال الدعوة *",
       whenSuits: "ما الوقت المناسب لك؟ *",
@@ -1183,6 +1185,7 @@ export const messages = {
       pickOne: "اختر وقتًا واحدًا على الأقل يناسبك.",
       offered: "الأوقات التي اقترحتها",
       confirmPending: "سيؤكّد أحد المواعيد.",
+      sentBody: "أرسلنا إلى {name} خطتك والمواعيد التي اقترحتها. وحين يؤكّد أحدها تصلكما دعوة تقويم.",
     },
     composer: {
       outcomeTitle: "صِف نتيجة أكبر",

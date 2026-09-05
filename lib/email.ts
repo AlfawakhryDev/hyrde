@@ -41,6 +41,10 @@ export async function sendEmail(opts: {
   /** Optional. SendGrid wants text/plain before text/html, and we always send both. */
   html?: string;
   replyTo?: string;
+  /** Everyone who should see the thread — a call invite is not a private note. */
+  cc?: string[];
+  /** Calendar invites ride along as .ics so Outlook and Apple Calendar work too. */
+  attachments?: { filename: string; type: string; content: string }[];
 }): Promise<SendResult> {
   const key = process.env.SENDGRID_API_KEY;
   if (!key) {
@@ -60,11 +64,22 @@ export async function sendEmail(opts: {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: opts.to }] }],
+        personalizations: [{
+          to: [{ email: opts.to }],
+          ...(opts.cc?.length ? { cc: opts.cc.filter(e => e && e !== opts.to).map(email => ({ email })) } : {}),
+        }],
         from: { email: FROM_EMAIL, name: FROM_NAME },
         reply_to: { email: opts.replyTo ?? REPLY_TO },
         subject: opts.subject,
         content,
+        ...(opts.attachments?.length ? {
+          attachments: opts.attachments.map(a => ({
+            filename: a.filename,
+            type: a.type,
+            disposition: "attachment",
+            content: Buffer.from(a.content, "utf8").toString("base64"),
+          })),
+        } : {}),
       }),
       signal: AbortSignal.timeout(10_000),
     });
