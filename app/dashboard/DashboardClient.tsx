@@ -14,16 +14,19 @@ import {
 } from "@/lib/billing";
 import ProjectComposer, { PROJECT_TEMPLATES } from "@/components/dashboard/ProjectComposer";
 import { ProgressBar } from "@/components/task/MilestoneProgress";
+import VerifyEmailBanner from "@/components/VerifyEmailBanner";
 import { useT } from "@/components/I18nProvider";
 
 export default function DashboardClient({
   userId,
   email,
+  emailVerified = false,
   initialProfile,
   vettedBadges = [],
 }: {
   userId: string;
   email: string;
+  emailVerified?: boolean;
   initialProfile: Profile;
   vettedBadges?: { category: string; band: string; score: number }[];
 }) {
@@ -188,6 +191,8 @@ export default function DashboardClient({
 
   return (
     <div className="mx-auto max-w-[1080px] px-5 md:px-8 py-12">
+
+      {!emailVerified && <VerifyEmailBanner email={email} />}
 
       {/* ── Header ── */}
       <div className="flex flex-wrap items-end justify-between gap-6 mb-10">

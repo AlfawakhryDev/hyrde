@@ -18,7 +18,7 @@ This is the real product, open-sourced. It runs live at [hyrde.net](https://hyrd
 - **Supabase** — Postgres + Auth + Row Level Security + Realtime + Storage
 - **Anthropic Claude** — matching, project scoping/interrogation, deliverable review, vetting interviews
 - **Vercel** — hosting
-- Optional: ElevenLabs / OpenAI (voice interview TTS), Resend (match emails, via Supabase Vault)
+- Optional: ElevenLabs / OpenAI (voice interview TTS). Email goes through SendGrid (`SENDGRID_API_KEY`).
 
 ## Quick start
 
