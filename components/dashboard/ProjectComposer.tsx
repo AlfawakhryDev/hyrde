@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+// Same detector the server uses, so the composer never skips a site read the
+// backend would have handled. lib/url has no node imports for exactly this.
+import { hasUrl } from "@/lib/url";
 import SpecialistShortlist, { type Specialist } from "@/components/dashboard/SpecialistShortlist";
 import {
   treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags,
@@ -17,10 +20,6 @@ type SiteContext = {
   languages: string[]; findings: string[];
 };
 
-
-// Cheap client-side check for "does this brief contain a site to read?".
-// The server re-parses properly (lib/siteaudit findUrl) before fetching.
-const HAS_URL = /\bhttps?:\/\/\S{4,}/i;
 
 type Milestone = {
   title: string;
@@ -107,7 +106,7 @@ export default function ProjectComposer({
     // instead of guessed from one sentence. Never blocks: if the fetch fails we
     // carry on and scope from the text alone.
     let ctx: SiteContext | null = null;
-    if (HAS_URL.test(outcome)) {
+    if (hasUrl(outcome)) {
       setPhase("reading");
       try {
         const r = await fetch("/api/site-audit", {

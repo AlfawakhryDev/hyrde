@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { guardAi } from "@/lib/ratelimit";
-import { auditSite, findUrl } from "@/lib/siteaudit";
+import { auditSite } from "@/lib/siteaudit";
+import { findUrl } from "@/lib/url";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -24,7 +25,9 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const raw = String(body?.url ?? "").trim();
-  const target = raw.startsWith("http") ? raw : findUrl(raw);
+  // Always parse. `raw` is the client's whole sentence, so a naive
+  // startsWith("http") would hand new URL() the trailing prose as well.
+  const target = findUrl(raw);
   if (!target) return NextResponse.json({ error: "No URL found in that." }, { status: 400 });
 
   try {

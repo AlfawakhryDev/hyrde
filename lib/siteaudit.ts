@@ -13,6 +13,7 @@
 // a check done only on the original URL.
 import { lookup } from "node:dns/promises";
 import net from "node:net";
+import { findUrl } from "./url";
 
 export interface SiteContext {
   url: string;              // final URL after redirects
@@ -178,15 +179,6 @@ export function extractContext(html: string, finalUrl: string, requestedUrl: str
   };
 }
 
-/** Extract the first http(s) URL in a free-text brief. */
-export function findUrl(text: string): string | null {
-  const m = text.match(/\bhttps?:\/\/[^\s<>"')]+/i);
-  if (m) return m[0].replace(/[.,;:]+$/, "");
-  // Also catch a bare domain like "rzm.com.sa/ar" typed without a scheme.
-  const bare = text.match(/\b(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+){1,3}\.[a-z]{2,}(?:\/[^\s<>"')]*)?/i);
-  return bare ? `https://${bare[0].replace(/[.,;:]+$/, "")}` : null;
-}
-
 export async function auditSite(rawUrl: string): Promise<SiteContext> {
   const { res, finalUrl } = await safeFetch(rawUrl);
   const reader = res.body?.getReader();
@@ -208,6 +200,8 @@ export async function auditSite(rawUrl: string): Promise<SiteContext> {
 }
 
 /** Compact facts for the scoping prompt. */
+export { findUrl };
+
 export function contextToFacts(c: SiteContext): string[] {
   const f: string[] = [`The site to work on is ${c.url}${c.title ? ` ("${c.title}")` : ""}.`];
   if (c.platform) f.push(`It is built on ${c.platform}${c.theme ? ` using the "${c.theme}" theme` : ""}.`);
