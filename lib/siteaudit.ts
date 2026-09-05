@@ -180,7 +180,11 @@ export function extractContext(html: string, finalUrl: string, requestedUrl: str
 }
 
 export async function auditSite(rawUrl: string): Promise<SiteContext> {
-  const { res, finalUrl } = await safeFetch(rawUrl);
+  // Normalize here too, so a caller that hands us "rzm.com.sa" (or a whole
+  // sentence) gets the same result as one that pre-parsed. Callers forgetting
+  // findUrl is exactly how the bare-domain case broke in the first place.
+  const target = findUrl(rawUrl) ?? rawUrl;
+  const { res, finalUrl } = await safeFetch(target);
   const reader = res.body?.getReader();
   let received = 0;
   const chunks: Uint8Array[] = [];
