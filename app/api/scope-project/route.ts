@@ -62,10 +62,17 @@ CLIENT'S OUTCOME:
 ${rough.slice(0, 2000)}
 """${siteBlock}${contextBlock}
 
+How this client works (assume it unless the brief says otherwise):
+- They are hands-off. They post the outcome, approve deliverables, and get updates. They do NOT want to manage a freelancer, sit in working sessions, or answer a stream of questions. Hyrde runs the freelancer; the client only makes decisions.
+- So every milestone must end in ONE thing the client can look at and approve or reject in a couple of minutes. If approving a milestone would require a meeting, the milestone is wrong: split it or move the ambiguity into milestone 1.
+- Milestone 1 is a small paid trial that de-risks the hire: the cheapest, fastest piece of real work that proves this specialist can do the rest. Cap it at roughly 10 percent of the total and a few days. It must be genuinely useful work, never a spec exercise or a throwaway test.
+- Anything you would normally solve with "we'll ask the client" must instead become an explicit assumption written into the brief, so work never blocks on a reply.
+
 Rules:
 - 2 to 5 milestones. If this is really a single piece of work, return exactly 1 milestone (the client will be told to use the regular single-task flow instead).
 - Each milestone must be independently completable by one freelancer and produce a concrete deliverable.
-- Each milestone: a short title (max 9 words), a 2-4 sentence brief written as if to the freelancer who'll do it (include what the prior milestone handed off, if any), a category, a fair mid-market USD budget (integer), and suggested days-from-project-start it should be due by (integer, increasing).
+- Each milestone: a short title (max 9 words), a 2-4 sentence brief written as if to the freelancer who'll do it (include what the prior milestone handed off, and any assumption we are making on the client's behalf), a category, a fair mid-market USD budget (integer), and suggested days-from-project-start it should be due by (integer, increasing).
+- Each milestone also needs "approval": one plain sentence naming the single artifact the client reviews to approve it, written to the client. For example "You get a one page audit and pick re-theme or rebuild." Keep it concrete and reviewable without a meeting.
 - category must be exactly one of: ${CATEGORIES.join(", ")}.
 - milestoneType classifies the KIND of work for cost tracking. It must be exactly one of: ${MILESTONE_TYPES.join(", ")}. Pick the single closest one to each milestone's actual work.
 - projectTitle: max 8 words, describes the whole outcome. Write it entirely in ONE script: if the client's site or brand name is in Arabic, either transliterate it to Latin letters or write the whole title in Arabic. Never mix Arabic and Latin characters inside a single word.
@@ -73,7 +80,7 @@ Rules:
 Write all titles and descriptions in plain language. Never use the em-dash character (—).
 
 Return ONLY valid JSON:
-{"projectTitle": "...", "milestones": [{"title": "...", "brief": "...", "category": "...", "milestoneType": "...", "budgetUsd": <integer>, "dueInDays": <integer>}], "note": "<one short sentence to the client about how you split this>"}`;
+{"projectTitle": "...", "milestones": [{"title": "...", "brief": "...", "approval": "...", "category": "...", "milestoneType": "...", "budgetUsd": <integer>, "dueInDays": <integer>}], "note": "<one short sentence to the client about how you split this>"}`;
 
   try {
     const msg = await anthropic.messages.create({
@@ -91,6 +98,9 @@ Return ONLY valid JSON:
       .map((m: Record<string, unknown>) => ({
         title: String(m.title ?? "").slice(0, 90),
         brief: String(m.brief ?? "").slice(0, 2000),
+        // What the client looks at to approve. Surfaced in the composer and
+        // folded into the freelancer's brief as the acceptance criterion.
+        approval: String(m.approval ?? "").slice(0, 300),
         category: cats.has(String(m.category)) ? String(m.category) : "Other",
         // LLM-classified controlled milestone type (Call C). Empty when the model
         // returns an off-vocabulary value; create-project keyword-maps the fallback.

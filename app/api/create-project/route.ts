@@ -61,7 +61,14 @@ export async function POST(req: NextRequest) {
     .slice(0, 5)
     .map((m: Record<string, unknown>): MilestoneInput => ({
       title: String(m.title ?? "").slice(0, 90),
-      brief: String(m.brief ?? "").slice(0, 2000),
+      // Fold the client-facing approval artifact into the freelancer's brief as
+      // an explicit acceptance criterion. The client should never have to
+      // explain what "done" means on a call — it ships with the task.
+      brief: (() => {
+        const b = String(m.brief ?? "").slice(0, 1800);
+        const a = String((m as Record<string, unknown>).approval ?? "").slice(0, 300).trim();
+        return a ? `${b}\n\nAccepted when: ${a}` : b;
+      })(),
       category: cats.has(String(m.category)) ? String(m.category) : "Other",
       milestoneType: (MILESTONE_TYPES as readonly string[]).includes(String(m.milestoneType)) ? String(m.milestoneType) : "",
       budgetUsd: Math.max(0, Math.min(50000, Math.round(Number(m.budgetUsd) || 0))),
