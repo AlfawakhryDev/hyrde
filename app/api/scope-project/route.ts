@@ -52,6 +52,17 @@ export async function POST(req: NextRequest) {
     ? `\n\nWHAT WE READ FROM THE CLIENT'S ACTUAL SITE (fetched live just now, treat as ground truth):\n${contextToFacts(site).map(f => `- ${f}`).join("\n")}\n\nGround every milestone in these observations. Name the real platform, language and constraints in the briefs. Do not propose work that contradicts them, and do not invent pages or features you did not see.`
     : "";
 
+  // How technical the client is changes how the plan should be written, not
+  // just which questions we asked. A hands-off client cannot arbitrate an
+  // implementation choice, so we make it for them and write it down.
+  const expertise = String(body?.expertise ?? "");
+  const audienceBlock =
+    expertise === "hands_off"
+      ? `\n\nWHO YOU ARE WRITING FOR: this client is NOT technical and has said so. Write every title and client-facing line in plain business language: no stack names, no framework names, no jargon, in anything they read. Describe each milestone by what they will be able to see or do when it is done. Where a technical choice is needed, make it yourself and record it in the brief as an explicit assumption rather than raising it as a question. The freelancer-facing brief can still be precise and technical.`
+      : expertise === "hands_on"
+        ? `\n\nWHO YOU ARE WRITING FOR: this client is technical and wants the detail. Name the actual platform, stack and integration decisions in the briefs, and flag genuine technical trade-offs rather than deciding silently.`
+        : "";
+
   const contextBlock = facts.length
     ? `\n\nWHAT WE LEARNED IN SCOPING (use these as hard constraints, they are confirmed by the client):\n${facts.map(f => `- ${f}`).join("\n")}${risks.length ? `\n\nOPEN UNKNOWNS (the client did not know; account for them with a milestone or a wider brief where relevant, do not ignore them):\n${risks.map(r => `- ${r}`).join("\n")}` : ""}`
     : "";
@@ -61,7 +72,7 @@ export async function POST(req: NextRequest) {
 CLIENT'S OUTCOME:
 """
 ${rough.slice(0, 2000)}
-"""${siteBlock}${contextBlock}
+"""${siteBlock}${audienceBlock}${contextBlock}
 
 How this client works (assume it unless the brief says otherwise):
 - They are hands-off. They post the outcome, approve deliverables, and get updates. They do NOT want to manage a freelancer, sit in working sessions, or answer a stream of questions. Hyrde runs the freelancer; the client only makes decisions.

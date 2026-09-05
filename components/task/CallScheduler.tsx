@@ -27,6 +27,70 @@ export function inZone(iso: string, zone: string) {
 }
 const zoneAbbr = (zone: string) => zone.split("/").pop()?.replace(/_/g, " ") ?? zone;
 
+/** Just the grid. Selection lives with the caller, so this can be embedded in
+ *  a form that submits times together with the rest of the request. */
+export function SlotPicker({
+  picked, onChange, days = 6,
+}: { picked: string[]; onChange: (next: string[]) => void; days?: number }) {
+  const me = localZone();
+  const options = useMemo(() => {
+    const out: { iso: string; day: string }[] = [];
+    const now = new Date();
+    for (let d = 1; d <= DAYS_AHEAD && out.length < 40; d++) {
+      const day = new Date(now);
+      day.setDate(now.getDate() + d);
+      if (day.getDay() === 5 || day.getDay() === 6) continue;  // Gulf weekend
+      for (const h of HOURS) {
+        const slot = new Date(day);
+        slot.setHours(h, 0, 0, 0);
+        out.push({
+          iso: slot.toISOString(),
+          day: new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short" }).format(slot),
+        });
+      }
+    }
+    return out;
+  }, []);
+  const byDay = useMemo(() => {
+    const m = new Map<string, { iso: string; day: string }[]>();
+    for (const o of options) m.set(o.day, [...(m.get(o.day) ?? []), o]);
+    return [...m.entries()].slice(0, days);
+  }, [options, days]);
+
+  return (
+    <div>
+      <p className="text-[12px] text-on-surface-variant mb-2">
+        Times are in your timezone ({zoneAbbr(me)}). They will see them in theirs.
+      </p>
+      <div className="flex flex-col gap-2.5 max-h-[210px] overflow-y-auto pr-1">
+        {byDay.map(([day, times]) => (
+          <div key={day}>
+            <p className="text-[10.5px] uppercase tracking-[0.12em] text-on-surface-variant mb-1">{day}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {times.map(t => {
+                const on = picked.includes(t.iso);
+                return (
+                  <button
+                    key={t.iso}
+                    type="button"
+                    onClick={() => onChange(on ? picked.filter(x => x !== t.iso) : [...picked, t.iso])}
+                    className={`h-8 px-3 rounded-full text-[12.5px] font-medium transition-colors ${
+                      on ? "bg-on-surface text-inverse-on-surface"
+                         : "border border-border-crisp text-on-surface-variant hover:text-on-surface"
+                    }`}
+                  >
+                    {new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date(t.iso))}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function CallScheduler({
   callRequestId, slots: initial, freelancerName, freelancerTimezone, canPropose, canConfirm, scheduledAt,
 }: {
