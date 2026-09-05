@@ -1,5 +1,6 @@
 "use client";
 import BookCall from "@/components/BookCall";
+import { useT } from "@/components/I18nProvider";
 
 // ── Who would work on this ──────────────────────────────────────────
 // Lifted out of ProjectComposer, which had reached 675 lines by absorbing this
@@ -27,14 +28,15 @@ export default function SpecialistShortlist({
   planSummary: string;
   budgetUsd: number;
 }) {
+  const t = useT();
   return (
     <div className="border-t border-border-crisp pt-4 mb-2">
       <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-3">
-        Who would work on this
+        {t("shortlist.title")}
       </p>
 
       {loading && (
-        <p className="text-[13px] text-on-surface-variant">Matching vetted specialists to this plan…</p>
+        <p className="text-[13px] text-on-surface-variant">{t("shortlist.loading")}</p>
       )}
 
       {!loading && specialists && specialists.length > 0 && (
@@ -79,7 +81,7 @@ export default function SpecialistShortlist({
             ))}
           </div>
           <p className="text-[12px] text-on-surface-variant">
-            Or skip the call: create the project below and we brief milestone 1 to them for you.
+            {t("shortlist.skipCall")}
           </p>
         </>
       )}
@@ -87,7 +89,7 @@ export default function SpecialistShortlist({
       {!loading && specialists && specialists.length === 0 && (
         <div className="rounded-xl border border-border-crisp p-4">
           <p className="text-[13px] text-on-surface font-medium mb-1.5">
-            No vetted specialist is a genuine fit for this yet.
+            {t("shortlist.none")}
           </p>
           <p className="text-[12.5px] text-on-surface-variant leading-relaxed">
             We will not put an unrelated freelancer in front of you. Create the project anyway and we
