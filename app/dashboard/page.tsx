@@ -17,7 +17,7 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, mode, display_name, bio, avatar_url")
+    .select("id, mode, display_name, bio, avatar_url, email_verified_at")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -37,6 +37,7 @@ export default async function DashboardPage() {
     <DashboardClient
       userId={user.id}
       email={user.email ?? ""}
+      emailVerified={!!profile?.email_verified_at}
       initialProfile={{
         ...profile,
         payout_method: payout?.payout_method ?? null,
