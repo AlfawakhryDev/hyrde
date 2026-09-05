@@ -59,3 +59,21 @@ begin
   return new;
 end;
 $$;
+
+-- A booked call had no notification at all: the dispatcher knew how to compose
+-- one, but nothing ever asked it to.
+create or replace function public.notify_on_call()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  perform public.notify_dispatch('call', jsonb_build_object(
+    'contact_name', new.contact_name, 'contact_email', new.contact_email,
+    'freelancer_name', new.freelancer_name, 'project_title', new.project_title,
+    'milestone', new.milestone, 'site_url', new.site_url,
+    'scheduled_at', new.scheduled_at::text, 'client_timezone', new.client_timezone));
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_call on public.call_requests;
+create trigger trg_notify_on_call after insert on public.call_requests
+  for each row execute function public.notify_on_call();
