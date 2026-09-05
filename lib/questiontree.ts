@@ -602,3 +602,93 @@ export function answerFacts(tree: Question[], answers: AnswerMap): string[] {
   }
   return facts;
 }
+
+// ── Generated questions ──────────────────────────────────────────────
+// The trees above are fixed: every WordPress rebuild got the same questions
+// whether the site was a two-page brochure or a bilingual investment portfolio.
+// They stay as the fallback and as the shape everything else depends on, but
+// the questions a client actually sees are now generated per project from
+// their brief, what we read off their live site, and how technical they said
+// they are (see /api/questions).
+//
+// Anything a model produces is untrusted input on its way into the UI and into
+// the immutable scope record, so it is clamped hard here rather than rendered
+// as-is: bounded counts, bounded lengths, safe keys, and a guaranteed
+// "I'm not sure" option, because dont_know is first-class in this flow and a
+// generated question that omits it would trap a client with no honest answer.
+const MAX_GENERATED = 6;
+const MAX_OPTIONS = 6;
+
+/** Trim to a length without slicing through the middle of a word. */
+function tidy(text: string, max: number): string {
+  const t = text.trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[,;:.\s]+$/, "") + "…";
+}
+
+const slug = (v: string, i: number) =>
+  (v || `opt_${i}`).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40) || `opt_${i}`;
+
+const clamp = (n: unknown, lo: number, hi: number, dflt: number) => {
+  const v = Number(n);
+  return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : dflt;
+};
+
+export function normalizeGenerated(raw: unknown): Question[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const out: Question[] = [];
+
+  for (const item of raw.slice(0, MAX_GENERATED)) {
+    const q = item as Record<string, unknown>;
+    const text = tidy(String(q.text ?? ""), 160);
+    if (!text) continue;
+
+    const key = `dyn.${slug(String(q.key ?? text), out.length)}`;
+    if (seen.has(key)) continue;
+
+    const type: QuestionType = q.type === "multi_select" ? "multi_select" : "single_select";
+
+    const options = (Array.isArray(q.options) ? q.options : [])
+      .slice(0, MAX_OPTIONS)
+      .map((o, i) => {
+        const opt = o as Record<string, unknown>;
+        return { value: slug(String(opt.value ?? opt.label ?? ""), i), label: tidy(String(opt.label ?? ""), 95) };
+      })
+      .filter(o => o.label);
+    if (options.length < 2) continue;   // a question with one answer is not a question
+
+    // "I'm not sure" must always be available: it is what produces a risk flag
+    // instead of a guess, and a generated question that drops it would force a
+    // client to invent an answer we then price against.
+    if (!options.some(o => o.value === DONT_KNOW)) {
+      options.push({ value: DONT_KNOW, label: type === "multi_select" ? "I'm not sure" : "I'm not sure" });
+    }
+
+    out.push({
+      key,
+      text,
+      help: q.help ? tidy(String(q.help), 200) : undefined,
+      type,
+      options,
+      variance_weight: clamp(q.variance_weight, 0.1, 0.85, 0.5),
+      affects_milestones: (Array.isArray(q.affects_milestones) ? q.affects_milestones : ["all"])
+        .slice(0, 4).map(m => String(m).slice(0, 40)),
+      unknown_risk: {
+        description: String(
+          (q.unknown_risk as Record<string, unknown> | undefined)?.description ?? `"${text}" was left unresolved.`,
+        ).slice(0, 240),
+        cost_impact_multiplier: [
+          clamp((q.unknown_risk as Record<string, unknown> | undefined)?.cost_impact_multiplier
+            ? (q.unknown_risk as { cost_impact_multiplier?: number[] }).cost_impact_multiplier?.[0] : 1.0, 1.0, 1.5, 1.0),
+          clamp((q.unknown_risk as Record<string, unknown> | undefined)?.cost_impact_multiplier
+            ? (q.unknown_risk as { cost_impact_multiplier?: number[] }).cost_impact_multiplier?.[1] : 1.4, 1.0, 3.0, 1.4),
+        ] as [number, number],
+      },
+    });
+    seen.add(key);
+  }
+  return out;
+}
