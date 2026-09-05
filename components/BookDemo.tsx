@@ -79,7 +79,7 @@ export default function BookDemo({ variant = "nav", label, defaultNote = "" }: {
       aria-label="Book a demo"
     >
       <div
-        className="w-full sm:max-w-md bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[92vh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 app-sheet overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {done ? (

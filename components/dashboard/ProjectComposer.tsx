@@ -46,14 +46,7 @@ type Milestone = {
 // to naive decomposition (we only interrogate where we have calibrated
 // questions). Only the first milestone is auto-matched here.
 // One-tap starting points so a new client never faces a blank box.
-export const PROJECT_TEMPLATES = [
-  { label: "An MVP for my idea", outcome: "I need an MVP built for my product idea. It should let users sign up and use the core feature. " },
-  { label: "A landing page", outcome: "I need a high-converting landing page for my product, with copy and design. " },
-  { label: "A Shopify store", outcome: "I need my Shopify store set up and designed, ready to sell. " },
-  { label: "A brand identity", outcome: "I need a brand identity: a logo, colour palette, and simple brand guidelines. " },
-  { label: "Social content", outcome: "I need a month of social media content and a posting plan for my brand. " },
-  { label: "A mobile app", outcome: "I need a mobile app built for iOS and Android for my idea. " },
-];
+export const PROJECT_TEMPLATES = ["Mvp", "Landing", "Shopify", "Brand", "Social", "App"] as const;
 
 function AutoTextarea({ value, onChange, className }: {
   value: string; onChange: (v: string) => void; className: string;
@@ -153,7 +146,7 @@ export default function ProjectComposer({
 
   // ── Step 1: classify ──
   async function submitOutcome() {
-    if (outcome.trim().length < 10) { setError("Describe the outcome in a sentence or two first."); return; }
+    if (outcome.trim().length < 10) { setError(t("composer.errOutcome")); return; }
     setError("");
 
     // "redo our website: https://example.com" — read the real site first so the
@@ -307,7 +300,7 @@ export default function ProjectComposer({
       // sees who would actually do the work while reviewing it.
       loadSpecialists(data.projectTitle, data.milestones, ctx ?? siteContext);
     } catch {
-      setError("The assistant is unavailable. Try again.");
+      setError(t("composer.errAssistant"));
       setPhase("outcome");
     }
   }
@@ -339,8 +332,8 @@ export default function ProjectComposer({
 
   // ── Step 4: commit ──
   async function create() {
-    if (milestones.length === 0) { setError("Add at least one milestone."); return; }
-    if (overQuota) { setError("You don't have enough posts left this month for all these milestones."); return; }
+    if (milestones.length === 0) { setError(t("composer.errNoMilestones")); return; }
+    if (overQuota) { setError(t("composer.errQuota")); return; }
     setError(""); setPhase("creating");
 
     let firstTaskId: string | null = null;
@@ -355,7 +348,7 @@ export default function ProjectComposer({
       setCreatedCount(data.createdCount);
       firstTaskId = data.firstTaskId ?? null;
     } catch {
-      setError("Could not reach the server. Try again."); setPhase("review"); return;
+      setError(t("composer.errNetwork")); setPhase("review"); return;
     }
 
     if (firstTaskId) {
@@ -406,39 +399,38 @@ export default function ProjectComposer({
         </div>
       )}
       <div
-        className="w-full sm:max-w-xl bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto relative"
+        className="w-full sm:max-w-xl bg-surface-bright border border-border-crisp rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 app-sheet overflow-y-auto relative"
         onClick={e => e.stopPropagation()}
       >
         {phase === "outcome" && (
           <>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">Describe a bigger outcome</h2>
-              <button onClick={requestClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
+              <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">{t("composer.outcomeTitle")}</h2>
+              <button onClick={requestClose} aria-label={t("composer.close")} className="text-on-surface-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             <p className="text-[13px] text-on-surface-variant mb-5">
-              &ldquo;I need an MVP&rdquo; or &ldquo;I need my Shopify store replatformed&rdquo;. We ask a few sharp questions,
-              then split it into an ordered milestone plan. Each milestone is matched to one vetted specialist.
+              {t("composer.outcomeSub")}
             </p>
             <textarea
               value={outcome}
               onChange={e => setOutcome(e.target.value)}
               rows={4}
-              placeholder="What's the outcome you want?"
+              placeholder={t("composer.outcomePh")}
               className={input}
             />
             {/* One-tap starters, so there's never a blank page */}
             <div className="mt-3">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">Start from an example</p>
+              <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">{t("composer.startFrom")}</p>
               <div className="flex flex-wrap gap-2">
-                {PROJECT_TEMPLATES.map(t => (
+                {PROJECT_TEMPLATES.map(id => (
                   <button
-                    key={t.label}
-                    onClick={() => setOutcome(t.outcome)}
+                    key={id}
+                    onClick={() => setOutcome(t(`composer.tpl${id}Text`))}
                     className="rounded-full border border-border-crisp px-3 py-1.5 text-[12.5px] font-medium text-on-surface-variant hover:border-electric-violet hover:text-on-surface transition-colors"
                   >
-                    {t.label}
+                    {t(`composer.tpl${id}`)}
                   </button>
                 ))}
               </div>
@@ -448,7 +440,7 @@ export default function ProjectComposer({
               onClick={submitOutcome}
               className="mt-4 flex items-center justify-center gap-2 bg-on-surface text-inverse-on-surface text-sm font-medium px-6 py-3.5 rounded-full hover:opacity-90 transition disabled:opacity-60 w-full"
             >
-              Continue
+              {t("composer.continue")}
             </button>
           </>
         )}
@@ -463,18 +455,18 @@ export default function ProjectComposer({
 
         {phase === "confirm" && (
           <>
-            <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface mb-2">Quick check</h2>
+            <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface mb-2">{t("composer.quickTitle")}</h2>
             <p className="text-[13px] text-on-surface-variant mb-5">
-              {disambiguation[0] ?? "Is this a Shopify store project?"} Knowing this loads the right questions.
+              {disambiguation[0] ?? t("composer.quickFallback")} {t("composer.quickTail")}
             </p>
             <div className="flex flex-col gap-2.5">
               <button onClick={() => beginInterrogation("shopify")}
                 className="text-left rounded-xl border border-border-crisp px-4 py-3.5 text-sm font-medium text-on-surface hover:border-electric-violet transition">
-                Yes, it&apos;s a Shopify store
+                {t("composer.quickYes")}
               </button>
               <button onClick={() => beginInterrogation("other")}
                 className="text-left rounded-xl border border-border-crisp px-4 py-3.5 text-sm font-medium text-on-surface hover:border-electric-violet transition">
-                No, something else
+                {t("composer.quickNo")}
               </button>
             </div>
           </>
@@ -487,8 +479,8 @@ export default function ProjectComposer({
         {phase === "interrogate" && !buildingQs && currentQ && (
           <>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-electric-violet">Scoping questions</span>
-              <button onClick={requestClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-electric-violet">{t("composer.scopingQs")}</span>
+              <button onClick={requestClose} aria-label={t("composer.close")} className="text-on-surface-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -537,7 +529,7 @@ export default function ProjectComposer({
 
             <button onClick={() => finalizeInterrogation(answers, askedKeys)}
               className="mt-5 text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition">
-              Skip the rest and scope now
+              {t("composer.skipRest")}
             </button>
           </>
         )}
@@ -550,7 +542,7 @@ export default function ProjectComposer({
           <>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-semibold tracking-[-0.02em] text-on-surface">{projectTitle}</h2>
-              <button onClick={requestClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface">
+              <button onClick={requestClose} aria-label={t("composer.close")} className="text-on-surface-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -561,15 +553,15 @@ export default function ProjectComposer({
             {siteContext && (
               <div className="rounded-xl border border-border-crisp bg-surface-container/40 p-4 mb-4">
                 <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">
-                  We read your site
+                  {t("composer.readSite")}
                 </p>
                 <p className="text-[13px] font-medium text-on-surface break-all mb-1">{siteContext.url}</p>
                 <p className="text-[12.5px] text-on-surface-variant mb-2">
                   {[
-                    siteContext.platform && `Built on ${siteContext.platform}`,
-                    siteContext.theme && `${siteContext.theme} theme`,
-                    siteContext.lang && `lang ${siteContext.lang}${siteContext.dir ? `/${siteContext.dir}` : ""}`,
-                    siteContext.internalLinks ? `~${siteContext.internalLinks} internal links` : "",
+                    siteContext.platform && t("composer.builtOn", { platform: siteContext.platform }),
+                    siteContext.theme && t("composer.themeSuffix", { theme: siteContext.theme }),
+                    siteContext.lang && `${siteContext.lang}${siteContext.dir ? `/${siteContext.dir}` : ""}`,
+                    siteContext.internalLinks ? t("composer.internalLinks", { n: siteContext.internalLinks }) : "",
                   ].filter(Boolean).join(" · ")}
                 </p>
                 {siteContext.findings.length > 0 && (
@@ -645,7 +637,7 @@ export default function ProjectComposer({
             </div>
 
             <div className="flex items-center justify-between py-3 border-t border-border-crisp mb-1">
-              <span className="text-[13px] text-on-surface-variant">Total across {milestones.length} milestone{milestones.length === 1 ? "" : "s"}</span>
+              <span className="text-[13px] text-on-surface-variant">{milestones.length === 1 ? t("composer.totalAcrossOne") : t("composer.totalAcross", { n: milestones.length })}</span>
               <span className="text-[16px] font-semibold text-on-surface">${totalUsd.toLocaleString()}</span>
             </div>
 
@@ -660,11 +652,11 @@ export default function ProjectComposer({
 
             {remainingPosts !== null && (
               <p className={`text-[12px] mb-3 ${overQuota ? "text-error" : "text-on-surface-variant"}`}>
-                This uses {milestones.length} of your {remainingPosts} remaining post{remainingPosts === 1 ? "" : "s"} this month.
+                {t("composer.usesPosts", { n: milestones.length, left: remainingPosts })}
                 {overQuota && (
                   <>
-                    {" "}Not enough left.{" "}
-                    <Link href="/billing" className="font-medium text-on-surface hover:text-electric-violet transition-colors">Upgrade your plan</Link>.
+                    {" "}{t("composer.notEnough")}{" "}
+                    <Link href="/billing" className="font-medium text-on-surface hover:text-electric-violet transition-colors">{t("composer.upgrade")}</Link>.
                   </>
                 )}
               </p>
@@ -674,7 +666,7 @@ export default function ProjectComposer({
 
             <div className="flex gap-3">
               <button onClick={() => setPhase("outcome")} className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors px-2">
-                Back
+                {t("composer.back")}
               </button>
               <button
                 onClick={create}
@@ -682,7 +674,7 @@ export default function ProjectComposer({
                 className="flex-1 flex items-center justify-center gap-2 bg-on-surface text-inverse-on-surface text-sm font-medium px-6 py-3.5 rounded-full hover:opacity-90 transition disabled:opacity-60"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: "17px", fontVariationSettings: "'FILL' 1" }}>bolt</span>
-                Create project &amp; match milestone 1
+                {t("composer.createMatch")}
               </button>
             </div>
           </>
@@ -702,21 +694,21 @@ export default function ProjectComposer({
             </h2>
             {firstMatch?.matched ? (
               <p className="text-sm text-on-surface-variant mb-2 max-w-[380px] mx-auto">
-                Milestone 1 matched to <strong className="text-on-surface">{firstMatch.freelancer?.name}</strong>. {firstMatch.reason}
+                {t("composer.matchedTo")} <strong className="text-on-surface">{firstMatch.freelancer?.name}</strong>. {firstMatch.reason}
               </p>
             ) : (
               <p className="text-sm text-on-surface-variant mb-2 max-w-[380px] mx-auto">
-                Milestone 1 is posted. We&apos;ll match it as soon as a vetted specialist is available.
+                {t("composer.postedWaiting")}
               </p>
             )}
             <p className="text-[12px] text-on-surface-variant mb-6 max-w-[380px] mx-auto">
-              The rest match automatically as each milestone gets approved. No need to juggle multiple freelancers up front.
+              {t("composer.restAuto")}
             </p>
             <button
               onClick={() => onCreated(createdProjectId)}
               className="bg-on-surface text-inverse-on-surface text-sm font-medium px-6 py-3 rounded-full hover:opacity-90"
             >
-              View my project
+              {t("composer.viewProject")}
             </button>
           </div>
         )}
