@@ -6,7 +6,7 @@ import Link from "next/link";
 import { hasUrl } from "@/lib/url";
 import SpecialistShortlist, { type Specialist } from "@/components/dashboard/SpecialistShortlist";
 import {
-  treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags,
+  treeFor, selectNextQuestion, scopeConfidence, shouldStop, deriveRiskFlags, EXPERTISE_Q,
   answerFacts, isShopify, versionFor, CONFIDENCE_TARGET, DONT_KNOW,
   type Question, type AnswerMap, EXPERTISE_KEY,
 } from "@/lib/questiontree";
@@ -90,6 +90,11 @@ export default function ProjectComposer({
   const expertiseRef = useRef<string>("");
   /** Shown instead of closing when there is work that would be lost. */
   const [confirmingClose, setConfirmingClose] = useState(false);
+  // Questions written for THIS project, fetched once the expertise answer tells
+  // us who we are asking. Null until then, so the expertise question renders
+  // instantly from the static definition instead of waiting on a model call.
+  const [dynamicQs, setDynamicQs] = useState<Question[] | null>(null);
+  const [buildingQs, setBuildingQs] = useState(false);
 
   // Create/done state
   const [createdCount, setCreatedCount] = useState(0);
@@ -171,14 +176,21 @@ export default function ProjectComposer({
   }
 
   // ── Step 2: interrogate ──
-  const tree = treeFor(archetype);
+  // Expertise is always first and always static: it routes everything after it,
+  // and it must appear the moment the phase starts.
+  const tree: Question[] = dynamicQs
+    ? [EXPERTISE_Q, ...dynamicQs]
+    : treeFor(archetype);
   const currentQ: Question | null = phase === "interrogate" ? selectNextQuestion(tree, answers) : null;
   const confidence = scopeConfidence(tree, answers);
   const progress = Math.min(1, confidence / CONFIDENCE_TARGET);
 
   function recordAndAdvance(q: Question, value: string | string[]) {
     const na: AnswerMap = { ...answers, [q.key]: value };
-    if (q.key === EXPERTISE_KEY) expertiseRef.current = String(value);
+    if (q.key === EXPERTISE_KEY) {
+      expertiseRef.current = String(value);
+      void loadQuestions(String(value), na);
+    }
     const ak = new Set(askedKeys); ak.add(q.key);
     setAnswers(na); setAskedKeys(ak); setMultiSel([]);
     if (shouldStop(tree, na, ak.size)) finalizeInterrogation(na, ak);
@@ -191,6 +203,33 @@ export default function ProjectComposer({
       const without = sel.filter(v => v !== "none" && v !== DONT_KNOW);
       return without.includes(value) ? without.filter(v => v !== value) : [...without, value];
     });
+  }
+
+  // Generate the qualifying questions for this specific project. Never blocks
+  // the flow: on any failure we keep the static tree, because an interrogation
+  // that cannot start is worse than a generic one.
+  async function loadQuestions(expertise: string, na: AnswerMap) {
+    setBuildingQs(true);
+    try {
+      const res = await fetch("/api/questions", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          outcome: outcome.trim(),
+          archetype,
+          expertise,
+          siteContext,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.questions) && data.questions.length) {
+        setDynamicQs(data.questions as Question[]);
+      }
+    } catch {
+      /* keep the static tree */
+    } finally {
+      setBuildingQs(false);
+    }
+    void na;
   }
 
   async function finalizeInterrogation(na: AnswerMap, ak: Set<string>) {
@@ -412,7 +451,11 @@ export default function ProjectComposer({
           </>
         )}
 
-        {phase === "interrogate" && currentQ && (
+        {phase === "interrogate" && buildingQs && (
+          <Spinner title="Writing your questions" sub="A few things worth asking about this specific project." />
+        )}
+
+        {phase === "interrogate" && !buildingQs && currentQ && (
           <>
             <div className="flex items-center justify-between mb-4">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-electric-violet">Scoping questions</span>
