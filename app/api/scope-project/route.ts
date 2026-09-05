@@ -65,7 +65,7 @@ ${rough.slice(0, 2000)}
 How this client works (assume it unless the brief says otherwise):
 - They are hands-off. They post the outcome, approve deliverables, and get updates. They do NOT want to manage a freelancer, sit in working sessions, or answer a stream of questions. Hyrde runs the freelancer; the client only makes decisions.
 - So every milestone must end in ONE thing the client can look at and approve or reject in a couple of minutes. If approving a milestone would require a meeting, the milestone is wrong: split it or move the ambiguity into milestone 1.
-- Milestone 1 is a small paid trial that de-risks the hire: the cheapest, fastest piece of real work that proves this specialist can do the rest. Cap it at roughly 10 percent of the total and a few days. It must be genuinely useful work, never a spec exercise or a throwaway test.
+- Milestone 1 is the smallest piece of real work that puts something in front of the client fast, ideally within a week. It exists so they see progress and can course-correct early, not as a test or a trial. Size the later milestones normally.
 - Anything you would normally solve with "we'll ask the client" must instead become an explicit assumption written into the brief, so work never blocks on a reply.
 
 Rules:
