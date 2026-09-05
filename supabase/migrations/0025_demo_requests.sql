@@ -1,6 +1,6 @@
 -- "Book a demo" capture. Public can submit (no login needed); only admins read.
 -- notify_on_demo emails the founder on each request (mirrors notify_on_lead:
--- reads the Resend key from Vault, no-ops until it's set, never blocks insert).
+-- see 0030: dispatches through the app's SendGrid sender, never blocks insert).
 create table if not exists public.demo_requests (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -27,4 +27,4 @@ create index if not exists demo_requests_created_idx on public.demo_requests (cr
 
 -- notify_on_demo() + trigger applied via the Supabase MCP; see notify_on_lead
 -- (migration 0024 on the pivot line) for the identical pattern. Recipient
--- abdelrahman@hyrde.net; requires `resend_api_key` in Vault to actually send.
+-- abdelrahman@hyrde.net; requires `notify_webhook_secret` in Vault (see 0030).

@@ -19,7 +19,8 @@ create policy profile_private_owner on public.profile_private
 
 create extension if not exists pg_net;
 
--- notify_on_match(): trigger fn — emails the matched freelancer via Resend
--- (key in Vault as 'resend_api_key'; silent no-op if absent). Full definition
+-- notify_on_match(): trigger fn — emails the matched freelancer.
+-- SUPERSEDED by 0030: it now calls notify_dispatch() (SendGrid via the app),
+-- not Resend. Full definition
 -- lives in the remote migration `profile_details_and_match_email`; see
 -- supabase/README.md. Never breaks matching (exception-wrapped).

@@ -38,7 +38,7 @@ feat/x ──PR──▶ develop ──PR──▶ main ──▶ hyrde.net
 ## Secrets
 
 - `.env*` is gitignored. Never commit keys. Local setup needs `.env.local` with `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY` — ask the team lead.
-- The Resend key lives in Supabase Vault, not in the repo or env.
+- Email runs on SendGrid. `SENDGRID_API_KEY` lives in the Vercel env only; Supabase Vault holds just `notify_webhook_secret`, the shared secret its triggers use to call `/api/notify/dispatch`.
 
 ## Before you push
 
