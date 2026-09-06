@@ -81,6 +81,16 @@ export async function sendEmail(opts: {
         reply_to: { email: opts.replyTo ?? REPLY_TO },
         subject: opts.subject,
         content,
+        // SendGrid rewrites every link through url####.hyrde.net/ls/click?upn=...
+        // by default. On a transactional mail that turns a plain "here is your
+        // site" line into an unreadable redirector that reads exactly like
+        // phishing — the first real call invite looked like a scam because of
+        // it. We do not use the click data for anything.
+        tracking_settings: {
+          click_tracking: { enable: false, enable_text: false },
+          open_tracking: { enable: false },
+          subscription_tracking: { enable: false },
+        },
         ...(opts.attachments?.length ? {
           attachments: opts.attachments.map(a => ({
             filename: a.filename,
