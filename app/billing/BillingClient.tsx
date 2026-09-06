@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import {
-  AIRTM_LINK, TIERS, FREE_TASKS_PER_MONTH, newReference, activeSub, pendingSub,
+  AIRTM_LINK, TIERS, FREE_PROJECTS, newReference, activeSub, pendingSub,
   type Subscription,
 } from "@/lib/billing";
 
@@ -57,8 +57,9 @@ export default function BillingClient({
         Plans &amp; billing
       </h1>
       <p className="text-[14px] text-on-surface-variant mt-3 max-w-[520px]">
-        Free gets you {FREE_TASKS_PER_MONTH}{" "}task posts a month. Upgrade when you&apos;re hiring for real.
-        The AI matching works the same on every plan.
+        Your first {FREE_PROJECTS} projects are on us — no Hyrde fee, you just pay the
+        specialist. After that, pick a plan. However many milestones a project has, it
+        counts as one, and the AI matching works the same on every plan.
       </p>
 
       {/* Current state */}

@@ -436,11 +436,13 @@ const PRICING_TIERS: PricingTier[] = [
   {
     id: "starter",
     name: "Starter",
-    audience: "Trying Hyrde out",
+    audience: "Your first three projects",
     price: "Free",
-    priceNote: "3 task posts / month",
+    priceNote: "First 3 projects, no fee",
     features: [
-      "3 task posts per month",
+      "Your first 3 projects, no Hyrde fee at all",
+      "You pay the specialist, nothing else",
+      "However many milestones, a project counts as one",
       "Full AI matching to vetted specialists",
       "AI-polished briefs",
       "AI delivery review before you pay",
@@ -454,11 +456,11 @@ const PRICING_TIERS: PricingTier[] = [
     name: "Pro",
     audience: "Teams hiring every week",
     price: "$20/mo",
-    priceNote: "50 task posts / month",
+    priceNote: "50 projects / month",
     highlight: true,
     badge: "Most popular",
     features: [
-      "50 task posts per month",
+      "50 projects per month",
       "Everything in Starter",
       "Re-match on demand",
       "Priority email support",
@@ -473,12 +475,12 @@ export const PRICING = {
   meta: {
     title: "Pricing",
     description:
-      "Freelancers are free forever. Clients start free (3 posts/month) and upgrade to Pro at $20/month for 50 posts. No commissions, no proposal spam.",
+      "Your first 3 projects carry no Hyrde fee \u2014 you pay the specialist and nothing else. After that, Pro is $20/month. Freelancers are free forever. No commissions, no proposal spam.",
   },
   eyebrow: "Pricing",
   heading: "Fair by design. No surprises, ever.",
   subheading:
-    "Freelancers never pay. They keep 100%. Clients start free with 3 task posts a month and upgrade only when they're hiring for real.",
+    "Your first three projects are on us: no Hyrde fee, you just pay the specialist. Freelancers never pay at all, and keep 100%.",
   tiers: PRICING_TIERS,
 
   enterpriseCallout: {
@@ -495,7 +497,7 @@ export const PRICING = {
     },
     {
       q: "Is hiring free?",
-      a: "Starting out, yes. Every client gets 3 task posts a month free, with full AI matching and delivery review. Pro is $20/month for 50 posts; Scale is $200/month for unlimited.",
+      a: "Your first three projects are completely free of any Hyrde fee \u2014 you pay the specialist their price and nothing else, with full AI matching and delivery review. A project counts as one however many milestones it has. After that, Pro is $20/month for 50 projects; Scale is $200/month for unlimited.",
     },
     {
       q: "How do I pay from anywhere?",

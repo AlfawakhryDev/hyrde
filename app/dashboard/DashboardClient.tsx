@@ -9,7 +9,7 @@ import {
 import Link from "next/link";
 import Tour, { type TourStep } from "@/components/Tour";
 import {
-  parseTaskLimitError, activeSub, pendingSub, FREE_TASKS_PER_MONTH,
+  parseTaskLimitError, activeSub, pendingSub, FREE_PROJECTS,
   type Subscription,
 } from "@/lib/billing";
 import ProjectComposer, { PROJECT_TEMPLATES } from "@/components/dashboard/ProjectComposer";
@@ -166,16 +166,24 @@ export default function DashboardClient({
   const firstName = (profile.display_name || email.split("@")[0]).split(" ")[0];
   const notMatchable = isPilot && vettedBadges.length === 0;
 
-  // Billing (clients only). Free = FREE_TASKS_PER_MONTH posts/mo; DB trigger
-  // enforces the real cap, this is just the visible usage meter.
+  // Billing (clients only). The first FREE_PROJECTS projects are free for all
+  // time; paid tiers are a monthly quota. enforce_task_limit() is the real
+  // enforcement — this is only the visible meter, and it has to count the same
+  // way or the number on screen disagrees with the error people hit.
   const currentSub = !isPilot ? activeSub(subs) : null;
   const pendingSubRow = !isPilot ? pendingSub(subs) : null;
-  const postedThisMonth = useMemo(() => {
+  const onFree = !currentSub;
+  const used = useMemo(() => {
     if (isPilot) return 0;
     const start = new Date(); start.setDate(1); start.setHours(0, 0, 0, 0);
-    return tasks.filter(t => t.poster_id === userId && new Date(t.created_at) >= start).length;
-  }, [tasks, isPilot, userId]);
-  const monthlyLimit = currentSub?.tier === "scale" ? null : currentSub?.tier === "pro" ? 50 : FREE_TASKS_PER_MONTH;
+    const mine = tasks.filter(t =>
+      t.poster_id === userId && (onFree || new Date(t.created_at) >= start));
+    // One unit per project, however many milestones it has, plus each
+    // standalone task.
+    const projects = new Set(mine.filter(t => t.project_id).map(t => t.project_id));
+    return projects.size + mine.filter(t => !t.project_id).length;
+  }, [tasks, isPilot, userId, onFree]);
+  const monthlyLimit = currentSub?.tier === "scale" ? null : currentSub?.tier === "pro" ? 50 : FREE_PROJECTS;
   const planLabel = currentSub?.tier === "scale" ? "Scale" : currentSub?.tier === "pro" ? "Pro" : "Free";
   const fmtExpiry = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 
@@ -220,7 +228,7 @@ export default function DashboardClient({
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${planLabel === "Free" ? "bg-outline-variant" : "bg-electric-violet"}`} aria-hidden="true" />
                 {planLabel} plan
-                {monthlyLimit !== null && <span className="text-on-surface-variant/70">· {postedThisMonth}/{monthlyLimit}</span>}
+                {monthlyLimit !== null && <span className="text-on-surface-variant/70">· {used}/{monthlyLimit}</span>}
               </Link>
               <button
                 data-tour="post"
@@ -242,7 +250,7 @@ export default function DashboardClient({
       </div>
 
       {/* ── Notices — hairline rows ── */}
-      {(isPilot || payments.some(p => p.payee_id === userId && p.status === "payment_sent") || (!isPilot && (pendingSubRow || (monthlyLimit !== null && postedThisMonth >= monthlyLimit)))) && (
+      {(isPilot || payments.some(p => p.payee_id === userId && p.status === "payment_sent") || (!isPilot && (pendingSubRow || (monthlyLimit !== null && used >= monthlyLimit)))) && (
         <div className="border-y border-border-crisp divide-y divide-border-crisp mb-10">
           {!isPilot && pendingSubRow && (
             <div className="flex flex-wrap items-center gap-3 py-3.5">
@@ -256,11 +264,13 @@ export default function DashboardClient({
               </Link>
             </div>
           )}
-          {!isPilot && !pendingSubRow && monthlyLimit !== null && postedThisMonth >= monthlyLimit && (
+          {!isPilot && !pendingSubRow && monthlyLimit !== null && used >= monthlyLimit && (
             <div className="flex flex-wrap items-center gap-3 py-3.5">
               <span className="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
-                You&apos;ve used all {monthlyLimit} posts on the {planLabel} plan this month.{" "}
+                {onFree
+                  ? `You've used your ${monthlyLimit} free projects. From here it's $20/mo.`
+                  : `You've used all ${monthlyLimit} projects on the ${planLabel} plan this month.`}{" "}
                 <span className="text-on-surface-variant">{t("dash.upgradeBody")}</span>
               </p>
               <Link href="/billing" className="text-[13px] font-medium text-on-surface hover:text-electric-violet transition-colors shrink-0">
@@ -517,7 +527,7 @@ export default function DashboardClient({
 
       {projectComposerOpen && (
         <ProjectComposer
-          remainingPosts={monthlyLimit === null ? null : Math.max(0, monthlyLimit - postedThisMonth)}
+          remainingPosts={monthlyLimit === null ? null : Math.max(0, monthlyLimit - used)}
           initialOutcome={projectSeed}
           onClose={() => { setProjectComposerOpen(false); setProjectSeed(""); }}
           onCreated={(projectId) => {
@@ -785,7 +795,7 @@ function Composer({ userId, onClose, onPosted, initialBrief = "" }: {
       setError(
         limit
           ? limit.tier === "free"
-            ? `You've used your ${limit.limit} free task posts this month. Upgrade to keep hiring. From $20/mo.`
+            ? `You've used your ${limit.limit} free projects. Upgrade to keep hiring. From $20/mo.`
             : `You've hit your plan's ${limit.limit} posts this month. Upgrade to Scale for unlimited posting.`
           : insErr?.message ?? "Could not post the task."
       );
