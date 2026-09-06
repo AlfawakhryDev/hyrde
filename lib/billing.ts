@@ -20,10 +20,10 @@ export const TIERS: {
     id: "pro",
     name: "Pro",
     usd: 20,
-    tasksPerMonth: "50 tasks / month",
+    tasksPerMonth: "50 projects / month",
     blurb: "For teams hiring every week.",
     perks: [
-      "50 task posts per month",
+      "50 projects per month",
       "AI matching + AI delivery review",
       "Re-match on demand",
       "Priority email support",
@@ -33,10 +33,10 @@ export const TIERS: {
     id: "scale",
     name: "Scale",
     usd: 200,
-    tasksPerMonth: "Unlimited tasks",
+    tasksPerMonth: "Unlimited projects",
     blurb: "For agencies and heavy pipelines.",
     perks: [
-      "Unlimited task posts",
+      "Unlimited projects",
       "Everything in Pro",
       "Direct founder line",
       "Early access to new features",
@@ -44,7 +44,16 @@ export const TIERS: {
   },
 ];
 
-export const FREE_TASKS_PER_MONTH = 3;
+// The first three projects carry no Hyrde fee at all — the client pays the
+// specialist and nothing else. Lifetime, not monthly: it is an onboarding
+// offer, not an allowance that refills.
+//
+// The unit is a PROJECT, not a task. A project fans out into one task per
+// milestone, so counting tasks meant a five-milestone plan blew a three-task
+// cap partway through creating itself — a free client could not post a single
+// project. enforce_task_limit() counts distinct project_id (plus standalone
+// tasks) and is the real enforcement; everything here only explains it.
+export const FREE_PROJECTS = 3;
 
 export type Subscription = {
   id: string;
@@ -77,7 +86,8 @@ export function pendingSub(subs: Subscription[]): Subscription | null {
   return subs.find(s => s.status === "pending_payment") ?? null;
 }
 
-// The DB trigger raises 'TASK_LIMIT|<tier>|<limit>' when the monthly cap is hit.
+// The DB trigger raises 'TASK_LIMIT|<tier>|<limit>' when the cap is hit —
+// lifetime on free, per month on paid.
 export function parseTaskLimitError(message: string): { tier: string; limit: number } | null {
   const m = message.match(/TASK_LIMIT\|(\w+)\|(\d+)/);
   return m ? { tier: m[1], limit: Number(m[2]) } : null;

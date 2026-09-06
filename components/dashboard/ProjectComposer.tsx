@@ -142,7 +142,10 @@ export default function ProjectComposer({
     milestones.length ? `Plan: ${milestones.map(m => m.title).join(" / ")}` : "",
     totalUsd ? `Indicative budget: $${totalUsd.toLocaleString()}` : "",
   ].filter(Boolean).join("\n");
-  const overQuota = remainingPosts !== null && milestones.length > remainingPosts;
+  // A project is one unit however many milestones it has, so the only way to
+  // be over is to have nothing left at all. This used to charge per milestone,
+  // which is why a plan could be refused before it was ever created.
+  const overQuota = remainingPosts !== null && remainingPosts < 1;
 
   // ── Step 1: classify ──
   async function submitOutcome() {
@@ -652,7 +655,7 @@ export default function ProjectComposer({
 
             {remainingPosts !== null && (
               <p className={`text-[12px] mb-3 ${overQuota ? "text-error" : "text-on-surface-variant"}`}>
-                {t("composer.usesPosts", { n: milestones.length, left: remainingPosts })}
+                {t("composer.usesPosts", { left: remainingPosts })}
                 {overQuota && (
                   <>
                     {" "}{t("composer.notEnough")}{" "}
