@@ -20,7 +20,7 @@ const EN: Faq[] = [
   },
   {
     q: "How much does Hyrde cost?",
-    a: "Hiring on Hyrde is free during early access. Paid client plans are Pro at $20 per month (50 posts) and Scale at $200 per month (unlimited). Freelancers keep 100% of what they earn, with no connects or bid fees.",
+    a: "Your first three projects carry no Hyrde fee at all — you pay the specialist their price and nothing else. A project counts as one however many milestones it has. After that, Pro is $20 per month (50 projects) and Scale is $200 per month (unlimited). Freelancers keep 100% of what they earn, with no connects or bid fees.",
   },
   {
     q: "How are freelancers vetted on Hyrde?",
