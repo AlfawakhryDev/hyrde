@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const FAQS: { q: string; a: string }[] = [
   {
     q: "What is Hyrde?",
-    a: "Hyrde is an AI-native freelance platform where you describe an outcome or task and the AI matches it to a single interview-vetted specialist. There is no bidding and no proposal spam, and hiring is free during early access.",
+    a: "Hyrde is an AI-native freelance platform where you describe an outcome or task and the AI matches it to a single interview-vetted specialist. There is no bidding and no proposal spam, and your first three projects carry no Hyrde fee.",
   },
   {
     q: "How does Hyrde work?",

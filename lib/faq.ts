@@ -12,7 +12,7 @@ export interface Faq {
 const EN: Faq[] = [
   {
     q: "What is Hyrde?",
-    a: "Hyrde is an AI-native freelance platform where you describe an outcome or task and the AI matches it to a single interview-vetted specialist. There is no bidding and no proposal spam, and hiring is free during early access.",
+    a: "Hyrde is an AI-native freelance platform where you describe an outcome or task and the AI matches it to a single interview-vetted specialist. There is no bidding and no proposal spam, and your first three projects carry no Hyrde fee at all.",
   },
   {
     q: "How does Hyrde work?",
@@ -51,7 +51,7 @@ const EN: Faq[] = [
 const DE: Faq[] = [
   {
     q: "Was ist Hyrde?",
-    a: "Hyrde ist eine KI-native Freelance-Plattform. Du beschreibst ein Ergebnis oder eine Aufgabe, und die KI vermittelt dir einen einzelnen, im Interview geprüften Spezialisten. Es gibt keine Ausschreibungen und keinen Angebots-Spam, und das Beauftragen ist im Early Access kostenlos.",
+    a: "Hyrde ist eine KI-native Freelance-Plattform. Du beschreibst ein Ergebnis oder eine Aufgabe, und die KI vermittelt dir einen einzelnen, im Interview geprüften Spezialisten. Es gibt keine Ausschreibungen und keinen Angebots-Spam, und deine ersten drei Projekte kosten keine Hyrde-Gebühr.",
   },
   {
     q: "Wie funktioniert Hyrde?",
@@ -59,7 +59,7 @@ const DE: Faq[] = [
   },
   {
     q: "Was kostet Hyrde?",
-    a: "Das Beauftragen ist im Early Access kostenlos. Bezahlte Kundentarife sind Pro für 20 USD pro Monat (50 Aufträge) und Scale für 200 USD pro Monat (unbegrenzt). Freelancer behalten 100 Prozent, ohne Gebühren fürs Bewerben oder Bieten.",
+    a: "Deine ersten drei Projekte kosten keine Hyrde-Gebühr — du zahlst nur den Spezialisten und sonst nichts. Ein Projekt zählt als eins, egal wie viele Meilensteine es hat. Danach kostet Pro 20 USD pro Monat (50 Projekte) und Scale 200 USD pro Monat (unbegrenzt). Freelancer behalten 100 Prozent, ohne Gebühren fürs Bewerben oder Bieten.",
   },
   {
     q: "Wie werden Freelancer bei Hyrde geprüft?",
@@ -86,7 +86,7 @@ const DE: Faq[] = [
 const AR: Faq[] = [
   {
     q: "ما هو Hyrde؟",
-    a: "Hyrde منصّة عمل حر مبنيّة على الذكاء الاصطناعي، تصف فيها نتيجة أو مهمة فيوفّق لها الذكاء الاصطناعي مختصًّا واحدًا موثّقًا بالمقابلة. لا مزايدات ولا رسائل عروض مزعجة، والتوظيف مجاني خلال الوصول المبكر.",
+    a: "Hyrde منصّة عمل حر مبنيّة على الذكاء الاصطناعي، تصف فيها نتيجة أو مهمة فيوفّق لها الذكاء الاصطناعي مختصًّا واحدًا موثّقًا بالمقابلة. لا مزايدات ولا رسائل عروض مزعجة، وأول ثلاثة مشاريع لك بلا أي رسوم من Hyrde.",
   },
   {
     q: "كيف يعمل Hyrde؟",
@@ -94,7 +94,7 @@ const AR: Faq[] = [
   },
   {
     q: "كم تكلفة Hyrde؟",
-    a: "التوظيف على Hyrde مجاني خلال الوصول المبكر. الخطط المدفوعة للعملاء هي Pro بـ20 دولارًا شهريًا (50 مهمة) وScale بـ200 دولار شهريًا (بلا حدود). يحتفظ المستقلّون بـ100٪ مما يكسبون، دون رسوم تقديم أو مزايدة.",
+    a: "أول ثلاثة مشاريع لك بلا أي رسوم من Hyrde — تدفع للمختصّ سعره فقط ولا شيء غير ذلك. ويُحتسب المشروع واحدًا مهما بلغ عدد مراحله. بعد ذلك، Pro بـ20 دولارًا شهريًا (50 مشروعًا) وScale بـ200 دولار شهريًا (بلا حدود). يحتفظ المستقلّون بـ100٪ مما يكسبون، دون رسوم تقديم أو مزايدة.",
   },
   {
     q: "كيف يُوثَّق المستقلّون على Hyrde؟",

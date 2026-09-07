@@ -34,7 +34,7 @@ const FAQS = [
   },
   {
     q: "Is the estimator free?",
-    a: "Yes, and no signup is required. If you want the project actually built, you can post it on Hyrde and the AI matches each milestone to one interview-vetted specialist. Hiring is free during early access.",
+    a: "Yes, and no signup is required. If you want the project actually built, you can post it on Hyrde and the AI matches each milestone to one interview-vetted specialist. Your first three projects carry no Hyrde fee.",
   },
 ];
 
@@ -109,7 +109,7 @@ export default function CostEstimatorPage() {
           <p className="font-display text-[22px] text-on-surface tracking-[-0.01em] mb-2">Ready to get it built?</p>
           <p className="text-[14px] text-on-surface-variant max-w-[440px] mx-auto mb-5">
             Post your project on Hyrde and the AI matches each milestone to one interview-vetted specialist.
-            No bidding, no proposal spam. Free during early access.
+            No bidding, no proposal spam. First 3 projects, no Hyrde fee.
           </p>
           <Link href="/signup" className="inline-flex items-center h-11 px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition">
             Start on Hyrde

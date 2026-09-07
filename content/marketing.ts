@@ -175,7 +175,7 @@ const CONTRAST_STATS: ContrastStat[] = [
   { id: "h-matches",   value: 5,  suffix: "",  label: "Curated matches. Not 500 applications" },
   { id: "h-speed",     value: 60, suffix: "s", label: "To a ranked, AI-vetted shortlist" },
   { id: "h-proposals", value: 0,  suffix: "",  label: "Proposals a freelancer ever pays for" },
-  { id: "h-fee",       value: 0,  suffix: "",  label: "Platform fee. Free in early access" },
+  { id: "h-fee",       value: 0,  suffix: "",  label: "Platform fee. $0 on your first 3 projects" },
 ];
 
 export const COST_OF_HIRING = {
@@ -318,7 +318,7 @@ export const ABOUT = {
       },
       fix: {
         headline: "A vetted shortlist of ~5 in under 60 seconds",
-        detail: "Describe the work in plain language. Hyrde's AI scopes the role, scans the talent pool, and returns a ranked, blind-first shortlist of ~5 vetted candidates in under 60 seconds. Free to hire during early access.",
+        detail: "Describe the work in plain language. Hyrde's AI scopes the role, scans the talent pool, and returns a ranked, blind-first shortlist of ~5 vetted candidates in under 60 seconds. First 3 projects, no Hyrde fee.",
         stat: "60s",
         statLabel: "to a ranked, AI-vetted shortlist",
       },
@@ -363,7 +363,7 @@ export const ABOUT = {
       {
         n: "04",
         title: "Get matched, get paid",
-        body: "Browsing and shortlisting are free. During early access, hiring is completely free. No platform fee right now. Paid plans come later (early users get locked-in perks). Freelancers always keep 100%.",
+        body: "Browsing and shortlisting are free. Your first three projects carry no Hyrde fee at all — you pay the specialist and nothing else. After that, Pro is $20/month. Freelancers always keep 100%.",
       },
     ],
   },
@@ -379,7 +379,7 @@ export const ABOUT = {
       {
         icon: "rocket_launch",
         title: "For companies",
-        body: "Founders and teams who need the right person fast — without sifting 500 proposals. Describe the work, get a vetted shortlist — free to hire during early access.",
+        body: "Founders and teams who need the right person fast — without sifting 500 proposals. Describe the work, get a vetted shortlist — free of Hyrde fees on your first three projects.",
         cta: CTA.findTalent,
       },
     ],
@@ -679,7 +679,7 @@ export const HOME = {
     heading: "Get matched. Get paid.",
     headingAccent: "No bidding, ever.",
     sub:
-      "Open at the door, curated at the match. Anyone with real skill joins free and gets matched by AI. Companies get a vetted shortlist in 60 seconds. And during early access, hiring is free.",
+      "Open at the door, curated at the match. Anyone with real skill joins free and gets matched by AI. Companies get a vetted shortlist in 60 seconds. And your first three projects carry no Hyrde fee.",
   },
   // Top-line proof stats for the hero band.
   proof: [
