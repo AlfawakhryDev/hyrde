@@ -7,7 +7,7 @@ import { I18nProvider } from "@/components/I18nProvider";
 export const metadata: Metadata = {
   metadataBase: new URL("https://hyrde.net"),
   title: { default: "Hyrde. AI-native freelance platform", template: "%s | Hyrde" },
-  description: "Hyrde is the AI-native freelance platform. Describe an outcome or a task and the AI matches it to the one best interview-vetted specialist. No bidding, no proposal spam. Freelancers keep 100%, and hiring is free during early access.",
+  description: "Hyrde is the AI-native freelance platform. Describe an outcome or a task and the AI matches it to the one best interview-vetted specialist. No bidding, no proposal spam. Freelancers keep 100%, and your first three projects carry no Hyrde fee.",
   keywords: [
     "hire freelancers", "AI freelance platform", "hire an outcome", "Upwork alternative",
     "Fiverr alternative", "vetted freelancers", "interview vetted freelancers", "hire developers",
@@ -45,7 +45,7 @@ const organizationJsonLd = {
   logo: "https://hyrde.net/hyrde-lockup-dark.svg",
   image: "https://hyrde.net/og.png",
   description:
-    "Hyrde is an AI-native freelance platform. Clients describe an outcome or task and the AI matches it to one interview-vetted specialist. No bidding, no proposal spam. Freelancers keep 100%. Free to hire during early access.",
+    "Hyrde is an AI-native freelance platform. Clients describe an outcome or task and the AI matches it to one interview-vetted specialist. No bidding, no proposal spam. Freelancers keep 100%. Your first three projects carry no Hyrde fee.",
   email: "abdelrahman@hyrde.net",
   slogan: "Don't hire a freelancer. Hire an outcome.",
   foundingDate: "2026",

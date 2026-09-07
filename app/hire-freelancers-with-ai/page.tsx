@@ -4,7 +4,7 @@ import Link from "next/link";
 const CANONICAL = "/hire-freelancers-with-ai";
 const TITLE = "Hire Freelancers with AI. Vetted Matches in 60 Seconds | Hyrde";
 const DESCRIPTION =
-  "Hire freelancers with AI on Hyrde. Describe your project in plain language and AI returns the top 5 pre-vetted freelancers, ranked and explained, in 60 seconds. No bidding, no proposal spam. Free to hire during early access.";
+  "Hire freelancers with AI on Hyrde. Describe your project in plain language and AI returns the top 5 pre-vetted freelancers, ranked and explained, in 60 seconds. No bidding, no proposal spam. First 3 projects, no Hyrde fee.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -42,8 +42,8 @@ const STEPS = [
   },
   {
     icon: "handshake",
-    title: "4. Pick, hire. Free during early access",
-    body: "Choose who you like and start the work. Hiring is free during early access. No platform fee right now.",
+    title: "4. Pick, hire. First 3 projects, no Hyrde fee",
+    body: "Choose who you like and start the work. Your first three projects carry no Hyrde fee. You pay the specialist, nothing else.",
   },
 ];
 
@@ -51,7 +51,7 @@ const COMPARE = [
   { dim: "Finding talent", old: "Post a job, wait, sift 50–500 proposals", ai: "AI returns the top 5 matches in 60 seconds" },
   { dim: "Quality", old: '"Top Rated" badges that can be gamed', ai: "Every freelancer pre-vetted before you see them" },
   { dim: "Selection", old: "Read proposals, guess who is real", ai: "Ranked, with AI explanations for each match" },
-  { dim: "Fees", old: "Effective 22–34% all-in take rate", ai: "$0. Free during early access" },
+  { dim: "Fees", old: "Effective 22–34% all-in take rate", ai: "$0. First 3 projects, no Hyrde fee" },
   { dim: "Effort", old: "Hours of screening per role", ai: "Minutes. The AI does the screening" },
 ];
 
@@ -66,7 +66,7 @@ const FAQS = [
   },
   {
     q: "How is hiring freelancers with AI better than Upwork or Fiverr?",
-    a: "On traditional marketplaces you post a job and wait for dozens of proposals, then guess who is genuine. With Hyrde’s AI matching there is no bidding: talent is pre-vetted, you get a ranked top-5 with explanations, and it's free to hire during early access. Versus the 22–34% effective take rate clients report elsewhere.",
+    a: "On traditional marketplaces you post a job and wait for dozens of proposals, then guess who is genuine. With Hyrde’s AI matching there is no bidding: talent is pre-vetted, you get a ranked top-5 with explanations, and it's free of Hyrde fees on your first three projects. Versus the 22–34% effective take rate clients report elsewhere.",
   },
   {
     q: "Is it safe to hire freelancers with AI?",
@@ -74,7 +74,7 @@ const FAQS = [
   },
   {
     q: "What does it cost to hire freelancers with AI on Hyrde?",
-    a: "Right now, during early access, hiring on Hyrde is completely free. Posting, AI matching, shortlisting, and the hire itself. Freelancers pay nothing either. We plan to introduce paid plans later, and early users get locked-in perks.",
+    a: "Your first three projects carry no Hyrde fee at all: posting, AI matching, shortlisting and the hire itself. You pay the specialist their price and nothing else, and a project counts as one however many milestones it has. After that, Pro is $20/month. Freelancers pay nothing, ever.",
   },
   {
     q: "What kinds of freelancers can I hire with AI?",
@@ -109,7 +109,7 @@ export default function HireFreelancersWithAIPage() {
     areaServed: "Worldwide",
     description:
       "AI-native hiring: describe a project in plain language and get the top 5 pre-vetted freelancers, ranked and explained, in 60 seconds.",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to post, match, and hire during early access." },
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "First three projects free of any Hyrde fee. You pay the specialist only." },
   };
 
   return (
@@ -142,7 +142,7 @@ export default function HireFreelancersWithAIPage() {
             Stop sifting hundreds of proposals. Describe your project in plain language and Hyrde’s AI
             returns the <strong className="text-on-surface font-semibold">top 5 pre-vetted freelancers</strong>,
             ranked and explained. In about a minute. Free to post.{" "}
-            <strong className="text-on-surface font-semibold">Free to hire during early access.</strong>
+            <strong className="text-on-surface font-semibold">First 3 projects, no Hyrde fee.</strong>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 max-w-xl">
@@ -245,7 +245,7 @@ export default function HireFreelancersWithAIPage() {
             Ready to hire freelancers with AI?
           </h2>
           <p className="font-body text-white/70 max-w-xl mx-auto mb-8 relative">
-            Describe your project and get your top 5 vetted matches in 60 seconds. Free to post and hire during early access.
+            Describe your project and get your top 5 vetted matches in 60 seconds. Your first 3 projects carry no Hyrde fee.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center relative">
             <Link href="/get-started"
