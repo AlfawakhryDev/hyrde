@@ -4,7 +4,7 @@ import AuthForm from "@/components/AuthForm";
 
 export const metadata: Metadata = {
   title: "Create your account",
-  description: "Join Hyrde to hire vetted talent, or get vetted and find work. Free during early access.",
+  description: "Join Hyrde to hire vetted talent, or get vetted and find work. First 3 projects, no Hyrde fee.",
   robots: { index: false },
 };
 

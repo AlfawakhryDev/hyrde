@@ -78,11 +78,48 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
     description:
       locale === "de"
         ? "Beschreibe ein Ergebnis oder eine Aufgabe; die KI vermittelt einen im Interview geprüften Spezialisten. Kein Bieten, kein Angebots-Spam."
+        : locale === "ar"
+        ? "صِف نتيجة أو مهمة، فيوفّق الذكاء الاصطناعي مختصًّا واحدًا موثّقًا بالمقابلة. بلا مزايدات ولا رسائل عروض مزعجة."
         : "Describe an outcome or task; the AI matches one interview-vetted specialist. No bidding, no proposal spam.",
+    // Answer engines quote the offer, not the marketing line, so the terms have
+    // to be here in full: what is free, how many, and that it does not recur.
+    // A bare {name, price} tells them nothing they can repeat accurately.
     offers: [
-      { "@type": "Offer", name: "Early access", price: "0", priceCurrency: "USD" },
-      { "@type": "Offer", name: "Pro", price: "20", priceCurrency: "USD" },
-      { "@type": "Offer", name: "Scale", price: "200", priceCurrency: "USD" },
+      {
+        "@type": "Offer",
+        name: "First 3 projects",
+        price: "0",
+        priceCurrency: "USD",
+        description:
+          "Your first three projects carry no Hyrde fee. You pay the specialist their price and nothing else. A project counts as one however many milestones it has. One-time per account, not monthly.",
+        eligibleQuantity: { "@type": "QuantitativeValue", value: 3, unitText: "projects" },
+      },
+      {
+        "@type": "Offer",
+        name: "Pro",
+        priceCurrency: "USD",
+        description: "50 projects per month, AI matching and AI delivery review, re-match on demand.",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: "20",
+          priceCurrency: "USD",
+          billingIncrement: 1,
+          unitText: "month",
+        },
+      },
+      {
+        "@type": "Offer",
+        name: "Scale",
+        priceCurrency: "USD",
+        description: "Unlimited projects, everything in Pro, direct founder line.",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: "200",
+          priceCurrency: "USD",
+          billingIncrement: 1,
+          unitText: "month",
+        },
+      },
     ],
   };
   return (

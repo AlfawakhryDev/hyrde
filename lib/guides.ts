@@ -102,7 +102,7 @@ export const GUIDES: Record<string, Guide> = {
       {
         h2: "How Hyrde is built to remove these risks",
         body: [
-          "Hyrde's model is the opposite of an open bidding pool. Every freelancer is pre-vetted before they ever reach you, our AI matches a short shortlist to your brief in about 60 seconds instead of flooding your inbox, and it's free to hire during early access rather than the effective 22–34% take rate that pushes the volume-over-quality dynamic in the first place.",
+          "Hyrde's model is the opposite of an open bidding pool. Every freelancer is pre-vetted before they ever reach you, our AI matches a short shortlist to your brief in about 60 seconds instead of flooding your inbox, and it's free of Hyrde fees on your first three projects rather than the effective 22–34% take rate that pushes the volume-over-quality dynamic in the first place.",
           "That doesn't make due diligence optional — always run a trial task — but it removes the structural reasons most of these scams exist.",
         ],
       },
@@ -123,7 +123,7 @@ export const GUIDES: Record<string, Guide> = {
     ],
     cta: {
       heading: "Hire pre-vetted talent without the scam roulette",
-      body: "Every freelancer on Hyrde is screened before you see them. Post a brief and get an AI-matched shortlist in 60 seconds — free to hire during early access.",
+      body: "Every freelancer on Hyrde is screened before you see them. Post a brief and get an AI-matched shortlist in 60 seconds — free of Hyrde fees on your first three projects.",
       label: "Find vetted talent",
       href: "/get-started",
     },
@@ -180,7 +180,7 @@ export const GUIDES: Record<string, Guide> = {
         h2: "The fee that doubles your real cost",
         body: [
           "This is the line item clients miss. The hourly rate is what the freelancer sees — but the platform's take rate is what inflates your bill. On the major marketplaces in 2026, clients report an effective 22–34% in combined service fees, contract-initiation charges, and payment markups.",
-          "On a $95/hr fullstack developer working 160 hours a month, a 25% effective take adds roughly $3,800/month in pure platform overhead. Hyrde charges no platform fee during early access — that entire ~$3,800/month of overhead disappears for identical work.",
+          "On a $95/hr fullstack developer working 160 hours a month, a 25% effective take adds roughly $3,800/month in pure platform overhead. Hyrde charges no platform fee on your first three projects — that entire ~$3,800/month of overhead disappears for identical work.",
         ],
       },
       {
@@ -198,7 +198,7 @@ export const GUIDES: Record<string, Guide> = {
       },
       {
         q: "Why is my freelancer bill higher than their hourly rate?",
-        a: "Platform fees. On major marketplaces in 2026, clients report an effective 22–34% in combined service fees, contract-initiation charges, and payment markups on top of the freelancer's rate. Hyrde is free to hire during early access (paid plans planned for later).",
+        a: "Platform fees. On major marketplaces in 2026, clients report an effective 22–34% in combined service fees, contract-initiation charges, and payment markups on top of the freelancer's rate. Hyrde is free of Hyrde fees on your first three projects (paid plans apply after that).",
       },
       {
         q: "Is it cheaper to hire a freelancer or a full-time developer?",
@@ -207,7 +207,7 @@ export const GUIDES: Record<string, Guide> = {
     ],
     cta: {
       heading: "See real local rates before you budget",
-      body: "Browse live market rates by skill and city, then post a brief and get matched in 60 seconds — free to hire during early access instead of 22–34%.",
+      body: "Browse live market rates by skill and city, then post a brief and get matched in 60 seconds — free of Hyrde fees on your first three projects instead of 22–34%.",
       label: "Browse rates & hire",
       href: "/rates",
     },
@@ -255,7 +255,7 @@ export const GUIDES: Record<string, Guide> = {
       {
         h2: "Hyrde — vetted talent without the premium tax",
         body: [
-          "Hyrde aims for the middle that's missing: pre-vetted talent like Toptal, AI-matched to your brief in about 60 seconds, free to hire during early access instead of a 22–34% effective take. No Connects to buy, no bidding wars, no inbox flood — a short shortlist of screened candidates instead of an open auction.",
+          "Hyrde aims for the middle that's missing: pre-vetted talent like Toptal, AI-matched to your brief in about 60 seconds, free of Hyrde fees on your first three projects instead of a 22–34% effective take. No Connects to buy, no bidding wars, no inbox flood — a short shortlist of screened candidates instead of an open auction.",
           "Best for: clients who want vetting and speed without paying premium-tier prices or doing the filtering themselves.",
         ],
       },
@@ -269,7 +269,7 @@ export const GUIDES: Record<string, Guide> = {
     faqs: [
       {
         q: "What's the cheapest way to hire a freelancer?",
-        a: "On rates alone, an open marketplace can look cheapest, but platform fees of 22–34% often erase the difference. A platform like Hyrde — free to hire during early access — is dramatically cheaper all-in for ongoing work, before you even factor in the cost of a bad hire.",
+        a: "On rates alone, an open marketplace can look cheapest, but platform fees of 22–34% often erase the difference. A platform like Hyrde — free of Hyrde fees on your first three projects — is dramatically cheaper all-in for ongoing work, before you even factor in the cost of a bad hire.",
       },
       {
         q: "Is Toptal worth the premium over Upwork?",
@@ -507,7 +507,7 @@ export const GUIDES: Record<string, Guide> = {
         bullets: [
           "No open applications — spam is structurally impossible, not just filtered.",
           "Five matches with explanations beats fifty letters with none.",
-          "Free to post and free to hire during early access.",
+          "Free to post and free of Hyrde fees on your first three projects.",
         ],
       },
     ],
@@ -531,7 +531,7 @@ export const GUIDES: Record<string, Guide> = {
     ],
     cta: {
       heading: "Skip the proposal pile entirely",
-      body: "Describe your project once. Get the top five vetted matches with reasons in about 60 seconds — no bidding, no spam, free during early access.",
+      body: "Describe your project once. Get the top five vetted matches with reasons in about 60 seconds — no bidding, no spam, free of Hyrde fees on your first three projects.",
       label: "Get matched now",
       href: "/get-started",
     },
@@ -583,7 +583,7 @@ export const GUIDES: Record<string, Guide> = {
         bullets: [
           "Upwork client cost: 5% + initiation fees + inflated quotes.",
           "Premium networks: no visible fee, 30–80% marked-up rates.",
-          "Hyrde early access: $0 platform fees on both sides.",
+          "Hyrde, first 3 projects: $0 platform fees on both sides.",
         ],
       },
     ],
@@ -602,7 +602,7 @@ export const GUIDES: Record<string, Guide> = {
       },
       {
         q: "Is there a way to hire vetted freelancers without platform fees?",
-        a: "Hyrde is free for clients during early access: $0 to post, $0 marketplace fee, and freelancers keep 100% of what you pay, so quotes aren't padded. Tasks are claimable only by freelancers vetted in that category.",
+        a: "Your first three projects are free of any Hyrde fee: $0 to post, $0 marketplace fee, and freelancers keep 100% of what you pay, so quotes aren't padded. Tasks are claimable only by freelancers vetted in that category.",
       },
     ],
     cta: {

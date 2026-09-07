@@ -1,8 +1,8 @@
 # Hyrde
 
-> Hyrde is an AI-native freelance platform. You describe an outcome or a task, and the AI matches it to one interview-vetted specialist — no bidding, no proposal spam. Freelancers keep 100%. Free to hire during early access.
+> Hyrde is an AI-native freelance platform. You describe an outcome or a task, and the AI matches it to one interview-vetted specialist — no bidding, no proposal spam. Your first three projects carry no Hyrde fee at all: you pay the specialist their price and nothing else. Freelancers keep 100%.
 
-Last updated: 2026-09-01
+Last updated: 2026-09-07
 
 ## What it is
 - You describe a task, or a whole outcome like "I need an MVP" — the AI scopes it into ordered milestones, prices each step, and matches a vetted specialist to each.
@@ -16,8 +16,9 @@ Last updated: 2026-09-01
 3. An AI checks the deliverable against your brief, then you pay the freelancer directly. They keep 100%.
 
 ## Pricing
-- Free to hire during early access.
-- Client plans: Pro at 20 USD per month (50 posts), Scale at 200 USD per month (unlimited posts).
+- Your first three projects are free of any Hyrde fee. You pay the specialist their price and nothing else. This is a one-time allowance per account, not a monthly one.
+- A project counts as one however many milestones it contains.
+- After the first three: Pro at 20 USD per month (50 projects), Scale at 200 USD per month (unlimited projects).
 - Freelancers keep 100 percent — no bid fees, no connect fees, no commission.
 - Freelancers are paid on their own rails: InstaPay, Airtm, PayPal, or USDT.
 
@@ -25,7 +26,7 @@ Last updated: 2026-09-01
 - Q: How is Hyrde different from Upwork or Fiverr? A: There is no bidding and no proposals. Instead of flooding you with applicants, the AI assigns one interview-vetted specialist. Freelancers keep 100% with no connect or bid fees.
 - Q: How are freelancers vetted? A: Each one passes an adaptive AI interview — a scenario, a probing follow-up, a live work sample, and a shipped-project deep dive — graded out of 100 against a strict rubric. Generic answers are detected and capped.
 - Q: Do I pay before I see the work? A: No. An impartial AI reviews the deliverable against your brief first; you approve, then pay the freelancer directly.
-- Q: What does it cost? A: Hiring is free during early access. Paid client plans are Pro (20 USD/mo) and Scale (200 USD/mo). Freelancers pay nothing.
+- Q: What does it cost? A: Your first three projects carry no Hyrde fee at all — you pay the specialist their price and nothing else. A project counts as one however many milestones it has. After that, Pro is 20 USD/month for 50 projects and Scale is 200 USD/month for unlimited. Freelancers pay nothing, ever.
 - Q: Can I hire a whole outcome, not just a task? A: Yes. Describe the result; the AI decomposes it into ordered milestones and matches a specialist to each, approving and matching the next as you go.
 - Q: Is it available in German / the DACH region? A: Yes — a German-language site is at https://hyrde.net/de.
 - Q: Is it available in Arabic / for Saudi Arabia and the GCC? A: Yes — an Arabic (right-to-left) site is at https://hyrde.net/ar, with Arabic hiring guides at https://hyrde.net/ar/guides.

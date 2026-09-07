@@ -104,7 +104,7 @@ export default function EstimatorClient() {
 
           <div className="mt-7 rounded-xl bg-surface-container p-5 flex flex-wrap items-center justify-between gap-3">
             <p className="text-[13.5px] text-on-surface max-w-[420px] leading-snug">
-              Want this actually built? Post it on Hyrde and the AI matches each milestone to one interview-vetted specialist. Free to hire during early access.
+              Want this actually built? Post it on Hyrde and the AI matches each milestone to one interview-vetted specialist. First 3 projects, no Hyrde fee.
             </p>
             <Link href="/signup" className="shrink-0 inline-flex items-center h-10 px-5 rounded-full bg-electric-violet text-white text-sm font-medium hover:opacity-90 transition">
               Get it built on Hyrde

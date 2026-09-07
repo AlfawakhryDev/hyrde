@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const c = getArCity(city);
   if (!c) return {};
   const canonical = `/ar/hire/${city}`;
-  const title = `توظيف مستقلين في ${c.name} — أسعار 2026 ومختصّون موثّقون | Hyrde`;
+  const title = `توظيف مستقلين في ${c.name} — أسعار 2026 ومختصّون موثّقون`;
   const description = `كيف توظّف مستقلاً موثوقاً في ${c.name}: أسعار الساعة الحالية بالـ${c.currency} لكل تخصّص، وما الذي يرفع التكلفة، وكيف تتحقق من المهارة قبل أن تدفع. بلا مزايدات ولا عمولة على المستقل.`;
   return {
     title: { absolute: title },

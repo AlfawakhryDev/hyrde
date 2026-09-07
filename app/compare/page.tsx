@@ -3,7 +3,7 @@ import Link from "next/link";
 import { COMPETITORS, COMPETITOR_SLUGS } from "@/lib/compare";
 
 export const metadata: Metadata = {
-  title: "Compare Hyrde to Upwork, Fiverr & Toptal | Hyrde",
+  title: "Compare Hyrde to Upwork, Fiverr & Toptal",
   description:
     "How Hyrde compares to Upwork, Fiverr, and Toptal for clients. Fees, vetting, matching speed, and protection. Honest, side-by-side breakdowns.",
   alternates: { canonical: "/compare" },
@@ -57,7 +57,7 @@ export default function CompareHubPage() {
 
         <div className="mt-12 bg-tech-blue-deep rounded-2xl p-8 text-center">
           <h2 className="text-xl md:text-2xl font-bold font-headline text-white mb-2">
-            Vetted talent, 60-second matches, free to hire (early access)
+            Vetted talent, 60-second matches, no Hyrde fee on your first 3 projects
           </h2>
           <p className="font-body text-white/75 text-sm max-w-lg mx-auto mb-6">
             Skip the comparison paralysis. Post a brief and see why clients switch to Hyrde.
