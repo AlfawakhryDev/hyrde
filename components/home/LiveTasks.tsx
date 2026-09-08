@@ -18,11 +18,12 @@ export default function LiveTasks({ locale = "en" }: { locale?: Locale }) {
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
+    // Through an RPC, not the table. Reading tasks directly required anon to
+    // hold SELECT on the whole row — brief, budget, poster — to render a
+    // ticker that shows a title and a category. The function returns those
+    // five columns and nothing else.
     supabaseBrowser()
-      .from("tasks")
-      .select("id, title, category, agent_completion, claimed_by_user_id")
-      .order("created_at", { ascending: false })
-      .limit(6)
+      .rpc("recent_open_tasks")
       .then(({ data }) => { if (data) setRows(data as Row[]); });
   }, []);
 
