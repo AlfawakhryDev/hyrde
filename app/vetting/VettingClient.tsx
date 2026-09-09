@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/arena";
+import StartHere from "@/components/vetting/StartHere";
 import { VETTING_QUESTIONS, BAND_STYLES, type VettingAssessment } from "@/lib/vetting";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import VideoAnswer, { videoInterviewSupported } from "@/components/vetting/VideoAnswer";
@@ -24,6 +25,9 @@ interface ChatMsg { role: "interviewer" | "you"; text: string }
 
 export default function VettingClient({ existing }: { existing: ExistingVetting[] }) {
   const [phase, setPhase] = useState<Phase>("pick");
+  // A first-timer gets walked through it; anyone with a history has already
+  // seen this and just wants the picker.
+  const [showStart, setShowStart] = useState(existing.length === 0);
   const [category, setCategory] = useState<string | null>(null);
   const [vettingId, setVettingId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
@@ -447,6 +451,12 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
   // ── Category picker ────────────────────────────────────────────────────────
   return (
     <div className="mx-auto max-w-[720px] px-5 md:px-6 py-14">
+      {showStart && phase === "pick" && (
+        <StartHere
+          onClose={() => setShowStart(false)}
+          onPick={cat => { setShowStart(false); setCategory(cat); setPhase("mode"); }}
+        />
+      )}
       <div className="inline-flex items-center gap-2 h-7 px-3 rounded-full border border-border-crisp text-xs font-medium text-on-surface-variant mb-6">
         <span className="w-1.5 h-1.5 rounded-full bg-electric-violet" />
         The AI skill interview

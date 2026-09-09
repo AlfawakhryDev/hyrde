@@ -157,12 +157,27 @@ export function makePaymentReference(): string {
 export const CATEGORIES = [
   "Development",
   "Design",
+  "Social media",
   "Copywriting",
   "Marketing",
   "Data",
   "Technical writing",
   "Other",
 ] as const;
+
+// What a person calls the work, versus what the system files it under. The
+// interview and matching key off CATEGORIES; nobody describes themselves as
+// "a Development".
+export const CATEGORY_JOB_TITLE: Record<string, string> = {
+  "Development":       "Software engineer",
+  "Social media":      "Social media manager",
+  "Design":            "Designer",
+  "Copywriting":       "Copywriter",
+  "Marketing":         "Marketer",
+  "Data":              "Data specialist",
+  "Technical writing": "Technical writer",
+  "Other":             "Something else",
+};
 
 export function parseMountPoints(raw: string | null): MountPoint[] {
   if (!raw) return [];
