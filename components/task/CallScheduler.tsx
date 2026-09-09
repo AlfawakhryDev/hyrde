@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { useT } from "@/components/I18nProvider";
 
 // ── Picking a time across timezones ──────────────────────────────────
 // Riyadh is UTC+3 and our specialists are not, so "3pm Tuesday" is the single
@@ -103,6 +104,7 @@ export default function CallScheduler({
   canConfirm: boolean;   // the specialist
   scheduledAt: string | null;
 }) {
+  const t = useT();
   const [slots, setSlots] = useState<Slot[]>(initial);
   const [picked, setPicked] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -168,7 +170,7 @@ export default function CallScheduler({
   if (confirmed) {
     return (
       <div className="rounded-xl border border-border-crisp p-4">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">Call confirmed</p>
+        <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">{t("cal.callConfirmed")}</p>
         <p className="text-[15px] font-semibold text-on-surface">{inZone(confirmed, me)}</p>
         <p className="text-[12.5px] text-on-surface-variant mt-1">Your time ({zoneAbbr(me)})</p>
         {freelancerTimezone && freelancerTimezone !== me && (
@@ -184,7 +186,7 @@ export default function CallScheduler({
   if (canConfirm && slots.length > 0) {
     return (
       <div className="rounded-xl border border-border-crisp p-4">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-1">Pick a time</p>
+        <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-1">{t("cal.pickTime")}</p>
         <p className="text-[12.5px] text-on-surface-variant mb-3">
           Shown in your timezone ({zoneAbbr(me)}). Confirming books it for both of you.
         </p>

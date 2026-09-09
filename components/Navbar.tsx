@@ -55,7 +55,7 @@ export default function Navbar() {
       {/* Floating pill nav */}
       <div className="flex justify-center px-4 pt-3">
         <nav className="flex items-center gap-1 h-12 pl-4 pr-2 rounded-full bg-surface-bright/85 backdrop-blur-xl border border-border-crisp shadow-[0_4px_24px_rgba(10,10,15,0.08)]">
-          <Link href="/" onClick={() => setOpen(false)} aria-label="Hyrde home"
+          <Link href="/" onClick={() => setOpen(false)} aria-label={t("nav.home")}
             className="flex items-center gap-1.5 text-on-surface pr-2">
             <HyrdeMark size={15} />
             <span className="text-[16px] font-semibold tracking-[-0.02em] leading-none select-none">hyrde</span>
@@ -88,13 +88,13 @@ export default function Navbar() {
                 className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
                 {t("nav.dashboard")}
               </Link>
-              <Link href="/profile" title="Profile" aria-label="Profile"
+              <Link href="/profile" title={t("nav.profile")} aria-label={t("nav.profile")}
                 className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
                   isActive("/profile") ? "text-on-surface bg-surface-container" : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container"
                 }`}>
                 <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>person</span>
               </Link>
-              <button onClick={signOut} title="Sign out" aria-label="Sign out"
+              <button onClick={signOut} title={t("nav.signOut")} aria-label={t("nav.signOut")}
                 className="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
                 <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>logout</span>
               </button>

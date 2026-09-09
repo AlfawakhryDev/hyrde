@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { SKILLS } from "@/lib/data";
 import type { Job } from "@/lib/types";
+import { useT } from "@/components/I18nProvider";
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -40,6 +41,7 @@ const defaultPitch: PitchState = {
 };
 
 export default function JobBoard({ jobs }: { jobs: Job[] }) {
+  const t = useT();
   const [pitches, setPitches] = useState<Record<string, PitchState>>({});
   const readerRefs = useRef<Record<string, ReadableStreamDefaultReader>>({});
 
@@ -105,12 +107,10 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
         <span className="material-symbols-outlined text-electric-violet mb-4" style={{ fontSize: "48px" }}>
           work_outline
         </span>
-        <h2 className="text-2xl font-bold font-headline text-on-surface mb-2">No jobs posted yet</h2>
-        <p className="font-body text-on-surface-variant mb-6">Be the first client to post a project.</p>
+        <h2 className="text-2xl font-bold font-headline text-on-surface mb-2">{t("jobs.emptyTitle")}</h2>
+        <p className="font-body text-on-surface-variant mb-6">{t("jobs.emptyBody")}</p>
         <Link href="/post-job"
-          className="bg-electric-violet text-white font-semibold font-body px-7 py-3 rounded-full hover:scale-[1.02] transition-transform text-sm">
-          Post a project
-        </Link>
+          className="bg-electric-violet text-white font-semibold font-body px-7 py-3 rounded-full hover:scale-[1.02] transition-transform text-sm">{t("jobs.postProject")}</Link>
       </div>
     );
   }
@@ -125,15 +125,13 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
               <span className="material-symbols-outlined" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>
                 fiber_manual_record
               </span>
-              {jobs.filter(j => j.status === "open").length} live projects
+              {jobs.filter(j => j.status === "open").length} {t("jobs.liveProjects")}
             </span>
-            <h1 className="text-4xl font-bold font-headline text-on-surface">Open projects</h1>
-            <p className="font-body text-on-surface-variant mt-1">Write an AI proposal in seconds. No connects, no fees to apply.</p>
+            <h1 className="text-4xl font-bold font-headline text-on-surface">{t("jobs.openProjects")}</h1>
+            <p className="font-body text-on-surface-variant mt-1">{t("jobs.openBody")}</p>
           </div>
           <Link href="/post-job"
-            className="bg-tech-blue-deep text-white font-semibold font-body px-6 py-3 rounded-full text-sm hover:scale-[0.97] transition-transform whitespace-nowrap">
-            Post a project
-          </Link>
+            className="bg-tech-blue-deep text-white font-semibold font-body px-6 py-3 rounded-full text-sm hover:scale-[0.97] transition-transform whitespace-nowrap">{t("jobs.postProject")}</Link>
         </div>
 
         {/* Job list */}
@@ -159,7 +157,7 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
                           ? "bg-electric-violet text-white border-electric-violet"
                           : "border-electric-violet text-electric-violet hover:bg-electric-violet/5"
                       }`}>
-                      {p.open ? "Close" : "Write a pitch"}
+                      {p.open ? t("composer.close") : t("jobs.writePitch")}
                     </button>
                   </div>
 
@@ -179,7 +177,7 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
                     {job.matchCount > 0 && (
                       <span className="text-xs font-body text-on-surface-variant flex items-center gap-1">
                         <span className="material-symbols-outlined" style={{ fontSize: "13px", fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                        {job.matchCount} AI matches
+                        {job.matchCount} {t("jobs.aiMatches")}
                       </span>
                     )}
                   </div>
@@ -188,18 +186,14 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
                 {/* Pitch writer panel */}
                 {p.open && (
                   <div className="border-t border-border-crisp bg-surface-gray/50 p-5">
-                    <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-4">
-                      AI Proposal Writer
-                    </p>
+                    <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-4">{t("jobs.proposalWriter")}</p>
 
                     <div className="grid sm:grid-cols-3 gap-3 mb-4">
                       <div>
-                        <label className="block text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-1.5">
-                          Your name *
-                        </label>
+                        <label className="block text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-1.5">{t("jobs.yourName")}</label>
                         <input
                           type="text"
-                          placeholder="Sara Rahman"
+                          placeholder={t("jobs.namePh")}
                           value={p.name}
                           onChange={e => setPitch(job.id, { name: e.target.value })}
                           className="w-full border border-border-crisp rounded-lg px-3 py-2 text-sm font-body focus:outline-none focus:border-electric-violet bg-white"
@@ -213,7 +207,7 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
                           value={p.skill}
                           onChange={e => setPitch(job.id, { skill: e.target.value })}
                           className="w-full border border-border-crisp rounded-lg px-3 py-2 text-sm font-body focus:outline-none focus:border-electric-violet bg-white">
-                          <option value="">Select skill...</option>
+                          <option value="">{t("jobs.selectSkill")}</option>
                           {Object.entries(SKILLS).map(([slug, s]) => (
                             <option key={slug} value={slug}>{s.label}</option>
                           ))}
@@ -292,14 +286,12 @@ export default function JobBoard({ jobs }: { jobs: Job[] }) {
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
         <div className="bg-tech-blue-deep rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-2xl font-bold font-headline text-white mb-1">Are you a client?</h2>
-            <p className="font-body text-on-primary-container text-sm">Post your project and get 5 AI-matched candidates in 60 seconds.</p>
+            <h2 className="text-2xl font-bold font-headline text-white mb-1">{t("jobs.clientCta")}</h2>
+            <p className="font-body text-on-primary-container text-sm">{t("jobs.clientBody")}</p>
           </div>
           <div className="flex gap-3 shrink-0">
             <Link href="/post-job"
-              className="px-7 py-3 bg-electric-violet text-white rounded-full text-sm font-semibold font-body hover:scale-[1.02] transition-transform whitespace-nowrap">
-              Post a project
-            </Link>
+              className="px-7 py-3 bg-electric-violet text-white rounded-full text-sm font-semibold font-body hover:scale-[1.02] transition-transform whitespace-nowrap">{t("jobs.postProject")}</Link>
             <Link href="/hire"
               className="px-7 py-3 border border-white/30 text-white rounded-full text-sm font-semibold font-body hover:bg-white/10 transition-colors whitespace-nowrap">
               Browse talent
