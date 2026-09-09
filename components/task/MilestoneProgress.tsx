@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { useT } from "@/components/I18nProvider";
 
 // ── Progress the client can watch without asking ─────────────────────
 // The specialist posts where they are; the client sees it on the milestone and
@@ -42,6 +43,7 @@ export default function MilestoneProgress({
   /** Only the matched specialist reports. The client reads. */
   canReport: boolean;
 }) {
+  const t = useT();
   const [entries, setEntries] = useState<ProgressEntry[]>(initial);
   const [note, setNote] = useState("");
   const [pct, setPct] = useState<number>(initial[0]?.percent ?? 10);
@@ -127,7 +129,7 @@ export default function MilestoneProgress({
             onChange={e => setNote(e.target.value)}
             rows={2}
             maxLength={300}
-            placeholder="One line on what's done and what's next. Optional."
+            placeholder={t("liveUi.progressPh")}
             className="w-full border border-border-crisp rounded-lg px-3 py-2 text-[13px] text-on-surface bg-surface-bright focus:outline-none focus:border-on-surface resize-y"
           />
           <button

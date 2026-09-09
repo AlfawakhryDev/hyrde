@@ -9,6 +9,7 @@ import {
 } from "@/lib/arena";
 import PaymentFlow from "@/components/arena/PaymentFlow";
 import TaskChat from "@/components/arena/TaskChat";
+import { useT } from "@/components/I18nProvider";
 
 export default function TaskDetailClient({
   initialTask,
@@ -23,6 +24,7 @@ export default function TaskDetailClient({
   attachments?: Attachment[];
   progress?: ProgressEntry[];
 }) {
+  const t = useT();
   const [task, setTask] = useState<ArenaTask>(initialTask);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -199,7 +201,7 @@ export default function TaskDetailClient({
 
       {/* ── Header ── */}
       <Link href="/dashboard" className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
-        <span aria-hidden="true">←</span> Back to dashboard
+        <span aria-hidden="true">←</span> {t("task.backToDash")}
       </Link>
 
       {task.project_id && task.milestone_index !== null && (
@@ -213,8 +215,8 @@ export default function TaskDetailClient({
         {task.category && <span>{task.category}</span>}
         {task.category && <span aria-hidden="true">·</span>}
         <span>{timeAgo(task.created_at)}</span>
-        {isOwner && <><span aria-hidden="true">·</span><span>Yours</span></>}
-        {isMyClaim && <><span aria-hidden="true">·</span><span>Matched to you</span></>}
+        {isOwner && <><span aria-hidden="true">·</span><span>{t("task.yours")}</span></>}
+        {isMyClaim && <><span aria-hidden="true">·</span><span>{t("task.matchedToYou")}</span></>}
       </p>
 
       <h1 className="text-[36px] md:text-[46px] font-light tracking-[-0.035em] text-on-surface leading-[1.05]">
@@ -228,14 +230,14 @@ export default function TaskDetailClient({
           <dd className="text-[24px] font-semibold tracking-[-0.02em] text-on-surface">{amount ?? "—"}</dd>
         </div>
         <div>
-          <dt className="text-[13px] text-on-surface-variant mb-1">Status</dt>
+          <dt className="text-[13px] text-on-surface-variant mb-1">{t("task.status")}</dt>
           <dd className="text-[15px] font-medium text-on-surface flex items-center gap-2 mt-2">
             <span className={`w-2 h-2 rounded-full ${DOT[state.tone] ?? "bg-outline-variant"}`} aria-hidden="true" />
             {state.label}
           </dd>
         </div>
         <div>
-          <dt className="text-[13px] text-on-surface-variant mb-1">Deadline</dt>
+          <dt className="text-[13px] text-on-surface-variant mb-1">{t("task.deadline")}</dt>
           <dd className="text-[15px] font-medium text-on-surface mt-2">
             {task.deadline
               ? new Date(task.deadline).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
@@ -243,7 +245,7 @@ export default function TaskDetailClient({
           </dd>
         </div>
         <div>
-          <dt className="text-[13px] text-on-surface-variant mb-1">Matched specialist</dt>
+          <dt className="text-[13px] text-on-surface-variant mb-1">{t("task.matchedSpecialist")}</dt>
           <dd className="text-[15px] font-medium text-on-surface mt-2">
             {isMatched
               ? claimerBadges.length > 0
@@ -287,7 +289,7 @@ export default function TaskDetailClient({
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" aria-hidden="true" />
               <p className="text-[13.5px] text-on-surface flex-1 min-w-[240px]">
                 This match has gone 72h+ without a delivery.{" "}
-                <span className="text-on-surface-variant">Reassign it and the AI matches someone else.</span>
+                <span className="text-on-surface-variant">{t("task.reassign")}</span>
               </p>
               <button onClick={releaseClaim} disabled={busy !== null}
                 className="text-[13px] font-medium text-on-surface hover:text-error transition-colors shrink-0 disabled:opacity-60">
@@ -315,7 +317,7 @@ export default function TaskDetailClient({
           <div className="bg-surface-container-low rounded-2xl p-6">
             {canRematch && (
               <>
-                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">Finding your match</h3>
+                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">{t("task.findingMatch")}</h3>
                 <p className="text-[13.5px] text-on-surface-variant mb-5">
                   The AI assigns the best vetted specialist for this task automatically. If none was available when you posted, run it again. The pool grows as more people get vetted.
                 </p>
@@ -331,7 +333,7 @@ export default function TaskDetailClient({
 
             {canDeliver && !showDeliver && (
               <>
-                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">You own this task</h3>
+                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">{t("task.youOwn")}</h3>
                 <p className="text-[13.5px] text-on-surface-variant mb-5">
                   When you&apos;re done, submit your deliverable to the client.
                 </p>
@@ -346,12 +348,12 @@ export default function TaskDetailClient({
 
             {canDeliver && showDeliver && (
               <>
-                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-4">Your deliverable</h3>
+                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-4">{t("task.yourDeliverable")}</h3>
                 <textarea
                   value={deliverText}
                   onChange={e => setDeliverText(e.target.value)}
                   rows={6}
-                  placeholder="Paste the final work, links to files, or a summary of what you completed…"
+                  placeholder={t("task.deliverablePh")}
                   className="w-full rounded-xl px-4 py-3 text-sm text-on-surface bg-surface-bright focus:outline-none focus:ring-1 focus:ring-outline-variant resize-y mb-4"
                 />
                 <div className="flex items-center gap-4">
@@ -371,7 +373,7 @@ export default function TaskDetailClient({
 
             {canApprove && (
               <>
-                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">Deliverable is in</h3>
+                <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-on-surface mb-1.5">{t("task.deliverableIn")}</h3>
                 <p className="text-[13.5px] text-on-surface-variant mb-5">
                   Review the Pilot&apos;s work below. Or let the AI check it against your brief first.
                 </p>
@@ -391,12 +393,12 @@ export default function TaskDetailClient({
                     <p className="text-[13.5px] text-on-surface-variant leading-relaxed mb-2">{aiReview.summary}</p>
                     {aiReview.strengths.length > 0 && (
                       <p className="text-[13px] text-on-surface-variant">
-                        <span className="text-on-surface font-medium">Strong</span>. {aiReview.strengths.join(" · ")}
+                        <span className="text-on-surface font-medium">{t("task.strong")}</span>. {aiReview.strengths.join(" · ")}
                       </p>
                     )}
                     {aiReview.gaps.length > 0 && (
                       <p className="text-[13px] text-on-surface-variant mt-1">
-                        <span className="text-on-surface font-medium">Gaps</span>. {aiReview.gaps.join(" · ")}
+                        <span className="text-on-surface font-medium">{t("task.gaps")}</span>. {aiReview.gaps.join(" · ")}
                       </p>
                     )}
                   </div>

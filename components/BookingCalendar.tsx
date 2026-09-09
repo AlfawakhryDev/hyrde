@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useT } from "@/components/I18nProvider";
 
 export interface CalendarSlot {
   id: string;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function BookingCalendar({ slots, brief = "", onBooked, compact = false }: Props) {
+  const t = useT();
   const [selected, setSelected] = useState<CalendarSlot | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,9 +45,9 @@ export default function BookingCalendar({ slots, brief = "", onBooked, compact =
         <div className="w-14 h-14 ai-match-gradient rounded-2xl flex items-center justify-center mx-auto mb-3">
           <span className="material-symbols-outlined text-white" style={{ fontSize: "26px", fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
         </div>
-        <p className="font-bold font-headline text-on-surface text-lg mb-1">Call booked!</p>
+        <p className="font-bold font-headline text-on-surface text-lg mb-1">{t("cal.booked")}</p>
         <p className="text-sm text-on-surface-variant font-body mb-0.5">{selected?.label}</p>
-        <p className="text-xs text-on-surface-variant font-body">Confirmation sent to <strong>{email}</strong></p>
+        <p className="text-xs text-on-surface-variant font-body">{t("cal.confirmationTo")} <strong>{email}</strong></p>
       </div>
     );
   }
@@ -84,12 +86,12 @@ export default function BookingCalendar({ slots, brief = "", onBooked, compact =
         <div className="space-y-2 mb-4 animate-fadeup">
           <input
             value={name} onChange={e => setName(e.target.value)}
-            placeholder="Your name"
+            placeholder={t("cal.namePh")}
             className="w-full border border-border-crisp rounded-lg px-3 py-2.5 text-sm font-body focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/10"
           />
           <input
             value={email} onChange={e => setEmail(e.target.value)}
-            type="email" placeholder="Work email"
+            type="email" placeholder={t("cal.emailPh")}
             className="w-full border border-border-crisp rounded-lg px-3 py-2.5 text-sm font-body focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/10"
           />
         </div>
@@ -101,8 +103,8 @@ export default function BookingCalendar({ slots, brief = "", onBooked, compact =
         className="w-full bg-electric-violet text-white font-semibold font-body py-3 rounded-full text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {loading
-          ? <><span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />Confirming…</>
-          : <><span className="material-symbols-outlined" style={{ fontSize: "16px" }}>check</span>Confirm booking</>}
+          ? <><span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />{t("cal.confirming")}</>
+          : <><span className="material-symbols-outlined" style={{ fontSize: "16px" }}>check</span>{t("cal.confirm")}</>}
       </button>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   AIRTM_LINK, TIERS, FREE_PROJECTS, newReference, activeSub, pendingSub,
   type Subscription,
 } from "@/lib/billing";
+import { useT } from "@/components/I18nProvider";
 
 // Airtm has no webhooks — the flow is: pick a tier → get a reference code →
 // pay the Airtm link with the code in the note → founder confirms in /admin →
@@ -17,6 +18,7 @@ export default function BillingClient({
   userId: string;
   initialSubs: Subscription[];
 }) {
+  const t = useT();
   const [subs, setSubs] = useState<Subscription[]>(initialSubs);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -50,7 +52,7 @@ export default function BillingClient({
   return (
     <div className="mx-auto max-w-[880px] px-5 md:px-8 py-12">
       <Link href="/dashboard" className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
-        <span aria-hidden="true">←</span> Back to dashboard
+        <span aria-hidden="true">←</span> {t("task.backToDash")}
       </Link>
 
       <h1 className="text-[40px] md:text-[48px] font-light tracking-[-0.035em] leading-none text-on-surface mt-8">
@@ -132,12 +134,12 @@ export default function BillingClient({
       {/* Payment instructions — appear once a request exists */}
       {pending && (
         <div className="rounded-2xl bg-surface-container-low p-7 mt-8">
-          <h3 className="text-[17px] font-semibold text-on-surface mb-4">How to pay. 2 minutes</h3>
+          <h3 className="text-[17px] font-semibold text-on-surface mb-4">{t("billing.howTo")}</h3>
           <ol className="space-y-3.5">
             {[
               <>Open <a href={AIRTM_LINK} target="_blank" rel="noopener noreferrer" className="font-medium text-electric-violet hover:opacity-80">airtm.me/alfawakhry</a>. Pay by bank transfer, card, stablecoins, or 500+ wallets.</>,
               <>Send <strong className="text-on-surface">${(pending.amount_cents / 100).toFixed(0)} USD</strong> and put{" "}
-                <strong className="font-mono text-on-surface">{pending.reference}</strong> in the payment note.</>,
+                <strong className="font-mono text-on-surface">{pending.reference}</strong> {t("billing.inNote")}</>,
               <>Done. We confirm receipt and your plan activates. You&apos;ll see it here and on your dashboard.</>,
             ].map((step, i) => (
               <li key={i} className="flex gap-3.5 items-start text-[14px] text-on-surface-variant leading-relaxed">
