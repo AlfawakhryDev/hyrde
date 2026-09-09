@@ -15,15 +15,18 @@ import {
 import ProjectComposer, { PROJECT_TEMPLATES } from "@/components/dashboard/ProjectComposer";
 import { ProgressBar } from "@/components/task/MilestoneProgress";
 import { useT } from "@/components/I18nProvider";
+import WhereAreYou from "@/components/WhereAreYou";
 
 export default function DashboardClient({
   userId,
   email,
+  country = null,
   initialProfile,
   vettedBadges = [],
 }: {
   userId: string;
   email: string;
+  country?: string | null;
   initialProfile: Profile;
   vettedBadges?: { category: string; band: string; score: number }[];
 }) {
@@ -196,6 +199,8 @@ export default function DashboardClient({
 
   return (
     <div className="mx-auto max-w-[1080px] px-5 md:px-8 py-12">
+
+      <WhereAreYou initialCountry={country} />
 
       {/* ── Header ── */}
       <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
