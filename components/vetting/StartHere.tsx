@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORIES, CATEGORY_JOB_TITLE } from "@/lib/arena";
+import { useT } from "@/components/I18nProvider";
 import CvUpload from "@/components/vetting/CvUpload";
 
 // ── First run for a new freelancer ───────────────────────────────────
@@ -25,6 +26,7 @@ export default function StartHere({
   onPick: (category: string) => void;
   onClose: () => void;
 }) {
+  const t = useT();
   const [step, setStep] = useState<"role" | "cv">("role");
   const [picked, setPicked] = useState<string | null>(null);
   // The portal cannot exist during SSR, so render nothing on the first pass on
@@ -46,9 +48,9 @@ export default function StartHere({
       >
         <div className="flex items-start justify-between gap-4 mb-1">
           <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant">
-            {step === "role" ? "Step 1 of 2" : "Step 2 of 2"}
+            {t(step === "role" ? "start.step1" : "start.step2")}
           </p>
-          <button onClick={onClose} aria-label="Close" className="text-on-surface-variant hover:text-on-surface -mt-1">
+          <button onClick={onClose} aria-label={t("composer.close")} className="text-on-surface-variant hover:text-on-surface -mt-1">
             <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>close</span>
           </button>
         </div>
@@ -56,11 +58,10 @@ export default function StartHere({
         {step === "role" ? (
           <>
             <h2 className="text-[24px] font-light tracking-[-0.03em] text-on-surface mb-1.5">
-              What do you do?
+              {t("start.whatDoYouDo")}
             </h2>
             <p className="text-[13.5px] text-on-surface-variant leading-relaxed mb-5">
-              Pick the work you want matched to you. You can get vetted in more than one
-              later — this is just where you start.
+              {t("start.whatBody")}
             </p>
 
             <div className="flex flex-col gap-2.5 mb-4">
@@ -76,7 +77,7 @@ export default function StartHere({
                         {CATEGORY_JOB_TITLE[cat]}
                       </span>
                       <span className="block text-[12.5px] text-on-surface-variant mt-0.5">
-                        Clients are hiring for this now
+                        {t("start.hiringNow")}
                       </span>
                     </div>
                     <span className="text-on-surface-variant/50 group-hover:text-on-surface group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
@@ -86,7 +87,7 @@ export default function StartHere({
             </div>
 
             <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-2">
-              Or something else
+              {t("start.orElse")}
             </p>
             <div className="flex flex-wrap gap-2">
               {rest.map(cat => (
@@ -103,11 +104,10 @@ export default function StartHere({
         ) : (
           <>
             <h2 className="text-[24px] font-light tracking-[-0.03em] text-on-surface mb-1.5">
-              Anything to show us?
+              {t("start.showUs")}
             </h2>
             <p className="text-[13.5px] text-on-surface-variant leading-relaxed mb-5">
-              Optional. The interview is what decides whether you pass — a CV just adds
-              the context it cannot cover in ten minutes.
+              {t("start.showBody")}
             </p>
 
             <CvUpload />
@@ -117,17 +117,17 @@ export default function StartHere({
                 onClick={() => picked && onPick(picked)}
                 className="h-11 flex-1 min-w-[180px] rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition"
               >
-                Start the {CATEGORY_JOB_TITLE[picked ?? ""] ?? picked} interview
+                {t("start.startInterview", { role: CATEGORY_JOB_TITLE[picked ?? ""] ?? picked ?? "" })}
               </button>
               <button
                 onClick={() => setStep("role")}
                 className="h-11 px-4 text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
               >
-                Back
+                {t("vet.back")}
               </button>
             </div>
             <p className="text-[12px] text-on-surface-variant mt-3">
-              ~10 minutes, four questions. You can leave and come back.
+              {t("start.duration")}
             </p>
           </>
         )}

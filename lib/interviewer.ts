@@ -3,6 +3,24 @@ import { VETTING_QUESTIONS, PASS_THRESHOLD, bandFor, type TranscriptTurn, type V
 
 const anthropic = new Anthropic();
 
+// ── Interviewing in the candidate's language ─────────────────────────
+// A skill interview in a second language measures the second language. Saudi
+// Arabia is a fifth of the traffic, and asking someone to describe the hardest
+// bug they ever shipped in English tests their English, not their work.
+//
+// Technical vocabulary deliberately stays English inside the Arabic: nobody
+// working in the Gulf says "واجهة برمجة التطبيقات" out loud, they say API, and
+// forcing the translation would read as a machine wrote it.
+const LANGUAGE: Record<string, string> = {
+  ar: `LANGUAGE: Write everything in Modern Standard Arabic, the way an experienced Gulf professional actually speaks it. Keep technical terms in English where practitioners genuinely use them (API, React, SEO, Figma, deploy, sprint). Do not translate tool or product names. Do not mix in English sentences.`,
+  de: `LANGUAGE: Write everything in natural German, the way an experienced practitioner speaks. Keep technical terms in English where German practitioners actually use them (Deployment, Sprint, API). Use "du", not "Sie".`,
+  en: "",
+};
+
+function languageRule(locale: string): string {
+  return LANGUAGE[locale] ?? "";
+}
+
 // Question arc: scenario judgment → adaptive probe → live work sample → war story.
 const QUESTION_PLAN = [
   "a realistic scenario/judgment question specific to the category — a situation with a trade-off where the answer reveals whether they've actually done this work",
@@ -13,11 +31,17 @@ const QUESTION_PLAN = [
 
 // A warm, human opener spoken aloud before the first question (voice mode).
 // Static so it's instant and free; still feels like a real person saying hi.
-export function interviewIntro(category: string): string {
+export function interviewIntro(category: string, locale = "en"): string {
+  if (locale === "ar") {
+    return `أهلًا بك، سعيد بلقائك. أنا المحاور هنا في Hyrde، وهذه ببساطة محادثة هادئة عن عملك في ${category}. أربعة أسئلة، نحو عشر دقائق، وبلا أسئلة تعجيزية. أريد أن أسمع كيف تفكّر فعلًا. خذ وقتك، وكن محدّدًا، وابدأ متى شئت.`;
+  }
+  if (locale === "de") {
+    return `Hallo, schön dass du da bist. Ich bin dein Interviewer hier bei Hyrde, und das ist einfach ein entspanntes Gespräch über deine Arbeit im Bereich ${category}. Vier Fragen, etwa zehn Minuten, keine Fangfragen. Ich will hören, wie du wirklich denkst. Lass dir Zeit, werde konkret, und dann legen wir los.`;
+  }
   return `Hey, thanks for hopping on, good to meet you. I'm your interviewer here at Hyrde, and honestly this is just a relaxed conversation about your ${category} work. It's four questions, about ten minutes, and there's no trick stuff. I just want to hear how you actually think through things. So take your time, get specific, and whenever you're ready, let's get into it.`;
 }
 
-export async function nextQuestion(category: string, transcript: TranscriptTurn[]): Promise<string> {
+export async function nextQuestion(category: string, transcript: TranscriptTurn[], locale = "en"): Promise<string> {
   const idx = transcript.length; // 0-based index of the question being generated
   const history = transcript
     .map((t, i) => `Q${i + 1}: ${t.q}\nA${i + 1}: ${t.a ?? "(not answered)"}`)
@@ -40,6 +64,7 @@ ${idx > 0
 - Stay hard to bluff: demand specifics, real decisions, trade-offs, actual work. Never a question a generic AI answer could ace.
 - No numbering, no "question 3 of 4", no meta narration.
 - Write the way a person actually talks. NEVER use the em-dash character (—); use a period, comma, or "so"/"and" instead.
+${languageRule(locale)}
 
 Return ONLY the exact words you'd say out loud.`,
     }],
@@ -80,7 +105,7 @@ export async function gradeDialogue(
   return gradeInterview(category, [{ q: "(live voice interview — full transcript below)", a: dialogue, askedAt: "" } as TranscriptTurn], "video");
 }
 
-export async function gradeInterview(category: string, transcript: TranscriptTurn[], mode: "text" | "video" = "text"): Promise<VettingAssessment> {
+export async function gradeInterview(category: string, transcript: TranscriptTurn[], mode: "text" | "video" = "text", locale = "en"): Promise<VettingAssessment> {
   const history = transcript
     .map((t, i) => `Q${i + 1}: ${t.q}\nA${i + 1}: ${t.a ?? "(no answer)"}`)
     .join("\n\n");
@@ -108,6 +133,8 @@ Hard rules:
 - ${PASS_THRESHOLD}+ passes. 75+ is Strong. 88+ is Exceptional — reserve it for answers that would impress a senior practitioner.
 
 Write all text in plain, natural language. NEVER use the em-dash character (—); use periods, commas, or parentheses.
+${languageRule(locale)}
+${locale !== "en" ? "The candidate answered in their own language. Grade the substance, never the fluency, and never penalise them for the language they wrote in. Write every string in the JSON in that same language." : ""}
 
 Return ONLY valid JSON:
 {

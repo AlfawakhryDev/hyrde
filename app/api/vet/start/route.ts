@@ -17,8 +17,11 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Log in to get vetted." }, { status: 401 });
 
-  const { category, mode } = await req.json();
+  const { category, mode, locale } = await req.json();
   const interviewMode = mode === "video" ? "video" : "text";
+  // Fixed for the whole interview. See migration: the grader must not read a
+  // different language from the one they answered in.
+  const lang = locale === "ar" || locale === "de" ? locale : "en";
   if (!CATEGORIES.includes(category)) {
     return NextResponse.json({ error: "Pick a valid category." }, { status: 400 });
   }
@@ -78,7 +81,7 @@ export async function POST(req: NextRequest) {
 
   let q1: string;
   try {
-    q1 = await nextQuestion(category, []);
+    q1 = await nextQuestion(category, [], lang);
   } catch (err) {
     console.error("vet/start question generation failed:", err);
     return NextResponse.json({ error: "The interviewer is busy — try again in a moment." }, { status: 500 });
@@ -91,6 +94,7 @@ export async function POST(req: NextRequest) {
       category,
       status: "in_progress",
       mode: interviewMode,
+      locale: lang,
       transcript: [{ q: q1, askedAt: new Date().toISOString() }],
     })
     .select("id")
@@ -104,7 +108,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     vettingId: created.id,
     question: q1,
-    intro: interviewIntro(category),
+    intro: interviewIntro(category, lang),
     index: 1,
     total: VETTING_QUESTIONS,
     mode: interviewMode,
