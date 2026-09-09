@@ -96,13 +96,14 @@ How to behave:
 export async function gradeDialogue(
   category: string,
   turns: { role: "agent" | "candidate"; text: string }[],
+  locale = "en",
 ): Promise<VettingAssessment> {
   const dialogue = turns
     .map(t => `${t.role === "agent" ? "INTERVIEWER" : "CANDIDATE"}: ${t.text}`)
     .join("\n");
   // Reuse gradeInterview's rubric by handing it a single synthetic turn that
   // carries the whole dialogue — the grader prompt reads it the same way.
-  return gradeInterview(category, [{ q: "(live voice interview — full transcript below)", a: dialogue, askedAt: "" } as TranscriptTurn], "video");
+  return gradeInterview(category, [{ q: "(live voice interview — full transcript below)", a: dialogue, askedAt: "" } as TranscriptTurn], "video", locale);
 }
 
 export async function gradeInterview(category: string, transcript: TranscriptTurn[], mode: "text" | "video" = "text", locale = "en"): Promise<VettingAssessment> {
