@@ -34,7 +34,7 @@ export default async function VerifyPage({
   // Already done, or signed in through a provider that vouched for the address.
   // On a failed lookup the card is still the safe thing to show: confirming
   // again is harmless, being stranded on a page you cannot leave is not.
-  if (!error && isEmailVerified(user.app_metadata?.provider, profile?.email_verified_at)) redirect(dest);
+  if (!error && isEmailVerified(user, profile?.email_verified_at)) redirect(dest);
 
   return (
     <div className="mx-auto max-w-[440px] px-5 py-20">
