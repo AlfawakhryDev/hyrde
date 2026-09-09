@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { CATEGORIES, CATEGORY_JOB_TITLE } from "@/lib/arena";
+import { CATEGORIES, CATEGORY_JOB_KEY } from "@/lib/arena";
 import { useT } from "@/components/I18nProvider";
 import CvUpload from "@/components/vetting/CvUpload";
 
@@ -74,7 +74,7 @@ export default function StartHere({
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <span className="text-[15px] font-semibold text-on-surface">
-                        {CATEGORY_JOB_TITLE[cat]}
+                        {t(`job.${CATEGORY_JOB_KEY[cat]}`)}
                       </span>
                       <span className="block text-[12.5px] text-on-surface-variant mt-0.5">
                         {t("start.hiringNow")}
@@ -96,7 +96,7 @@ export default function StartHere({
                   onClick={() => { setPicked(cat); setStep("cv"); }}
                   className="h-8 px-3.5 rounded-full border border-border-crisp text-[12.5px] font-medium text-on-surface-variant hover:border-electric-violet hover:text-on-surface transition-colors"
                 >
-                  {CATEGORY_JOB_TITLE[cat] ?? cat}
+                  {t(`job.${CATEGORY_JOB_KEY[cat]}`)}
                 </button>
               ))}
             </div>
@@ -117,7 +117,7 @@ export default function StartHere({
                 onClick={() => picked && onPick(picked)}
                 className="h-11 flex-1 min-w-[180px] rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition"
               >
-                {t("start.startInterview", { role: CATEGORY_JOB_TITLE[picked ?? ""] ?? picked ?? "" })}
+                {t("start.startInterview", { role: picked ? t(`job.${CATEGORY_JOB_KEY[picked]}`) : "" })}
               </button>
               <button
                 onClick={() => setStep("role")}

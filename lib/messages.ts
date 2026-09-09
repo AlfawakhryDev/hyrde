@@ -3,6 +3,16 @@
 // as more components are wired to useT().
 export const messages = {
   en: {
+    job: {
+      development: "Software engineer",
+      socialMedia: "Social media manager",
+      design: "Designer",
+      copywriting: "Copywriter",
+      marketing: "Marketer",
+      data: "Data specialist",
+      technicalWriting: "Technical writer",
+      other: "Something else",
+    },
     vet: {
       kicker: "The AI skill interview",
       title: "Get vetted. Let work find you.",
@@ -512,6 +522,16 @@ export const messages = {
     },
   },
   de: {
+    job: {
+      development: "Softwareentwickler",
+      socialMedia: "Social-Media-Manager",
+      design: "Designer",
+      copywriting: "Texter",
+      marketing: "Marketer",
+      data: "Datenspezialist",
+      technicalWriting: "Technischer Redakteur",
+      other: "Etwas anderes",
+    },
     vet: {
       kicker: "Das KI-Skill-Interview",
       title: "Lass dich pr\u00fcfen. Die Arbeit findet dich.",
@@ -1022,6 +1042,16 @@ export const messages = {
   },
   // Arabic (Saudi audience) — natural, polished MSA. Renders RTL via <html dir>.
   ar: {
+    job: {
+      development: "مهندس برمجيات",
+      socialMedia: "مدير وسائل تواصل",
+      design: "مصمّم",
+      copywriting: "كاتب محتوى",
+      marketing: "مسوّق",
+      data: "مختصّ بيانات",
+      technicalWriting: "كاتب تقني",
+      other: "شيء آخر",
+    },
     vet: {
       kicker: "مقابلة المهارات بالذكاء الاصطناعي",
       title: "وثّق مهارتك، ودع العمل يأتي إليك.",
