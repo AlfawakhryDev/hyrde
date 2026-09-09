@@ -8,7 +8,16 @@
 //    coverage grows as the dictionary fills.
 export const LOCALES = ["en", "de", "ar"] as const;
 export type Locale = (typeof LOCALES)[number];
-export const DEFAULT_LOCALE: Locale = "en";
+// Saudi Arabic is the product's default. Roughly half of all traffic is
+// Arabic-speaking (Egypt and Saudi alone are 46%), and the GCC is the market
+// being sold into, so a signed-in person with no stated preference gets Arabic.
+export const DEFAULT_LOCALE: Locale = "ar";
+
+// What an English-URL marketing page renders. Separate from DEFAULT_LOCALE on
+// purpose: /pricing IS the English page, and making it follow the app default
+// would paint Arabic chrome onto English prose. The URL is authoritative for
+// marketing; the cookie only governs the app.
+export const MARKETING_LOCALE: Locale = "en";
 export const LOCALE_COOKIE = "hyrde_locale";
 
 // Right-to-left locales. Arabic renders RTL; everything below the <html dir>
@@ -36,13 +45,25 @@ export function localeForPath(path: string, cookie: Locale): Locale {
   if (/^\/ar(\/|$)/.test(path)) return "ar";
   if (/^\/de(\/|$)/.test(path)) return "de";
   const isApp = APP_PREFIXES.some(p => path === p.replace(/\/$/, "") || path.startsWith(p));
-  return isApp ? cookie : DEFAULT_LOCALE;
+  return isApp ? cookie : MARKETING_LOCALE;
 }
 
 // hreflang alternates for Next metadata `alternates.languages`. Arabic uses the
 // ar-SA region tag (Saudi) as the primary Arabic signal for search engines.
+// The Arabic pages serve the whole Gulf, not just Saudi. Google matches
+// hreflang on language AND region, so a single ar-SA tag leaves a searcher in
+// Dubai or Manama being offered the English page. Several regional tags may
+// point at the same URL; that is exactly what this is for.
+const GCC = ["SA", "AE", "QA", "BH", "KW", "OM"] as const;
+
 export function altLanguages(enPath: string, dePath: string, arPath: string) {
-  return { en: enPath, de: dePath, "ar-SA": arPath, "x-default": enPath };
+  return {
+    en: enPath,
+    de: dePath,
+    ar: arPath,
+    ...Object.fromEntries(GCC.map(cc => [`ar-${cc}`, arPath])),
+    "x-default": enPath,
+  };
 }
 
 // A translator bound to an explicit locale (works in server + client render, no
