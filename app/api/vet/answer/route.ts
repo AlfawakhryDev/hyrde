@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   const { data: vetting, error: fetchErr } = await supabase
     .from("vettings")
-    .select("id, user_id, category, status, mode")
+    .select("id, user_id, category, status, mode, locale")
     .eq("id", vettingId)
     .eq("user_id", user.id)
     .single();
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   if (transcript.length < VETTING_QUESTIONS) {
     let q: string;
     try {
-      q = await nextQuestion(vetting.category, transcript);
+      q = await nextQuestion(vetting.category, transcript, vetting.locale ?? "en");
     } catch (err) {
       console.error("vet/answer question generation failed:", err);
       return NextResponse.json({ error: "The interviewer hiccuped — resubmit your answer." }, { status: 500 });
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
   // ── Final answer → grade the whole interview ────────────────────────────
   let assessment;
   try {
-    assessment = await gradeInterview(vetting.category, transcript, (vetting.mode as "text" | "video") ?? "text");
+    assessment = await gradeInterview(vetting.category, transcript, (vetting.mode as "text" | "video") ?? "text", vetting.locale ?? "en");
   } catch (err) {
     console.error("vet/answer grading failed:", err);
     return NextResponse.json({ error: "Grading hiccuped — resubmit your answer." }, { status: 500 });

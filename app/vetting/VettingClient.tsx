@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/arena";
 import StartHere from "@/components/vetting/StartHere";
+import { useLocale, useT } from "@/components/I18nProvider";
 import { VETTING_QUESTIONS, BAND_STYLES, type VettingAssessment } from "@/lib/vetting";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import VideoAnswer, { videoInterviewSupported } from "@/components/vetting/VideoAnswer";
@@ -24,6 +25,8 @@ type Phase = "pick" | "mode" | "interview" | "live" | "verdict";
 interface ChatMsg { role: "interviewer" | "you"; text: string }
 
 export default function VettingClient({ existing }: { existing: ExistingVetting[] }) {
+  const locale = useLocale();
+  const t = useT();
   const [phase, setPhase] = useState<Phase>("pick");
   // A first-timer gets walked through it; anyone with a history has already
   // seen this and just wants the picker.
@@ -57,16 +60,16 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       const res = await fetch("/api/vet/live-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category: cat }),
+        body: JSON.stringify({ category: cat, locale }),
       });
       const data = await res.json();
       if (res.status === 501) { setBusy(false); start(cat, "video"); return; } // not configured yet
-      if (!res.ok) { setError(data.error ?? "Couldn't start the live interview."); setBusy(false); return; }
+      if (!res.ok) { setError(data.error ?? t("vet.errLive")); setBusy(false); return; }
       setLive({ signedUrl: data.signedUrl, vettingId: data.vettingId });
       setVettingId(data.vettingId);
       setPhase("live");
     } catch {
-      setError("Couldn't reach the interviewer. Try again.");
+      setError(t("vet.errReach"));
     }
     setBusy(false);
   }
@@ -126,11 +129,11 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       const res = await fetch("/api/vet/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category: cat, mode: chosenMode }),
+        body: JSON.stringify({ category: cat, mode: chosenMode, locale }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Could not start.");
+        setError(data.error ?? t("vet.errStart"));
         setPhase("pick");
         return;
       }
@@ -140,7 +143,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       if (data.intro) setIntro(data.intro);
       setMessages([{ role: "interviewer", text: data.question }]);
     } catch {
-      setError("Could not reach the interviewer. Try again.");
+      setError(t("vet.errReach"));
       setPhase("pick");
     } finally {
       setBusy(false);
@@ -149,7 +152,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
 
   async function submitAnswer(mine: string, recording?: Blob | null, mime?: string) {
     if (mine.length < 25 || !vettingId) {
-      setError("A couple of sentences minimum. Specifics beat polish.");
+      setError(t("vet.errShort"));
       return;
     }
     setMessages(m => [...m, { role: "you", text: mine }]);
@@ -181,7 +184,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong. Resubmit.");
+        setError(data.error ?? t("vet.errResubmit"));
         // Give the answer back so they can retry.
         setMessages(m => m.slice(0, -1));
         setAnswer(mine);
@@ -195,7 +198,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
         setMessages(m => [...m, { role: "interviewer", text: data.question }]);
       }
     } catch {
-      setError("Connection hiccup. Resubmit your answer.");
+      setError(t("vet.errConnection"));
       setMessages(m => m.slice(0, -1));
       setAnswer(mine);
     } finally {
@@ -229,21 +232,20 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
             className="text-left rounded-2xl bg-surface-container-low p-6 hover:bg-surface-container transition-colors disabled:opacity-60"
           >
             <p className="flex items-center gap-2 text-[15px] font-semibold text-on-surface mb-1.5">
-              Live voice interview
-              <span className="text-[10.5px] font-medium text-electric-violet bg-electric-violet/10 px-2 py-0.5 rounded-full">Recommended</span>
+              {t("vet.liveTitle")}
+              <span className="text-[10.5px] font-medium text-electric-violet bg-electric-violet/10 px-2 py-0.5 rounded-full">{t("vet.liveRecommended")}</span>
             </p>
             <p className="text-[13px] text-on-surface-variant leading-relaxed">
-              {busy ? "Connecting…" : <>A real-time conversation. The interviewer <span className="text-on-surface">talks with you out loud</span>,
-              listens as you speak, and you can jump in any time. ~7 minutes, four questions, graded on the spot.</>}
+              {busy ? t("vet.connecting") : t("vet.liveBody")}
             </p>
           </button>
           <button
             onClick={() => start(category, "text")}
             className="text-left rounded-2xl bg-surface-container-low p-6 hover:bg-surface-container transition-colors"
           >
-            <p className="text-[15px] font-semibold text-on-surface mb-1.5">Text interview</p>
+            <p className="text-[15px] font-semibold text-on-surface mb-1.5">{t("vet.textTitle")}</p>
             <p className="text-[13px] text-on-surface-variant leading-relaxed">
-              Type your answers. Works everywhere. No camera or microphone needed.
+              {t("vet.textBody")}
             </p>
           </button>
         </div>
@@ -269,19 +271,19 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           <p className="text-sm text-on-surface-variant max-w-[440px] mx-auto leading-relaxed">
             {verdict.passed
               ? `Clients now see a ${a.band} badge in ${category} next to your name. The AI will match ${category} tasks to you automatically. No bidding.`
-              : "You can retake the interview in 24 hours. The feedback below is your prep list."}
+              : t("vet.retake")}
           </p>
         </div>
 
         <div className="bg-surface-container-lowest border border-border-crisp rounded-xl p-6 mb-4">
-          <h2 className="text-[13px] font-medium text-on-surface mb-2">Assessment</h2>
+          <h2 className="text-[13px] font-medium text-on-surface mb-2">{t("vet.assessment")}</h2>
           <p className="text-sm text-on-surface-variant leading-relaxed">{a.summary}</p>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4 mb-8">
           <div className="bg-surface-container-lowest border border-border-crisp rounded-xl p-5">
             <h3 className="text-[13px] font-medium text-emerald-600 dark:text-emerald-400 mb-2">
-              {verdict.passed ? "Verified skills" : "What worked"}
+              {verdict.passed ? t("vet.verifiedSkills") : t("vet.whatWorked")}
             </h3>
             <ul className="space-y-1.5">
               {(verdict.passed ? a.verifiedSkills : a.strengths).map(s => (
@@ -290,7 +292,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
             </ul>
           </div>
           <div className="bg-surface-container-lowest border border-border-crisp rounded-xl p-5">
-            <h3 className="text-[13px] font-medium text-amber-600 dark:text-amber-400 mb-2">Growth areas</h3>
+            <h3 className="text-[13px] font-medium text-amber-600 dark:text-amber-400 mb-2">{t("vet.growthAreas")}</h3>
             <ul className="space-y-1.5">
               {a.growthAreas.map(s => (
                 <li key={s} className="text-[13px] text-on-surface-variant">· {s}</li>
@@ -301,11 +303,11 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
 
         <div className="flex gap-3 justify-center">
           <Link href="/dashboard" className="h-10 inline-flex items-center px-6 rounded-full bg-on-surface text-inverse-on-surface text-sm font-medium hover:opacity-90 transition-opacity">
-            {verdict.passed ? "Claim your first task" : "Back to dashboard"}
+            {verdict.passed ? t("vet.claimFirst") : t("vet.backToDash")}
           </Link>
           {!verdict.passed && (
             <button onClick={() => { setPhase("pick"); setVerdict(null); }} className="h-10 inline-flex items-center px-6 rounded-full border border-border-crisp text-sm font-medium text-on-surface hover:bg-surface-container transition-colors">
-              Pick another category
+              {t("vet.pickAnother")}
             </button>
           )}
         </div>
@@ -313,13 +315,13 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
     );
   }
 
-  // ── Live voice interview ────────────────────────────────────────────────────
+  // ── {t("vet.liveTitle")} ────────────────────────────────────────────────────
   if (phase === "live" && live && category) {
     return (
       <div className="mx-auto max-w-[720px] px-5 md:px-8 py-12">
         <div className="mb-8">
           <p className="text-[13px] font-medium text-on-surface">{category} interview · live</p>
-          <p className="text-[12.5px] text-on-surface-variant mt-0.5">A real conversation. Speak naturally.</p>
+          <p className="text-[12.5px] text-on-surface-variant mt-0.5">{t("vet.speakNaturally")}</p>
         </div>
         {error && <p className="text-[13px] text-error mb-4">{error}</p>}
         <LiveInterview
@@ -348,7 +350,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           <div>
             <p className="text-[13px] font-medium text-on-surface">{category} interview</p>
             <p className="text-[12.5px] text-on-surface-variant mt-0.5">
-              {mode === "video" ? "Answer out loud. Specifics beat polish." : "Type your answer. Specifics beat polish."}
+              {mode === "video" ? t("vet.answerHintVoice") : t("vet.answerHintText")}
             </p>
           </div>
           <div className="flex gap-1.5" aria-hidden="true">
@@ -364,7 +366,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
             Question {qNum} of {VETTING_QUESTIONS}
           </p>
           <p className={`text-[20px] md:text-[24px] font-light tracking-[-0.02em] leading-[1.4] ${loadingFirst ? "text-on-surface-variant" : "text-on-surface"}`}>
-            {loadingFirst ? "Preparing your first question…" : currentQuestion}
+            {loadingFirst ? t("vet.preparing") : currentQuestion}
           </p>
           {mode === "video" && currentQuestion && !waitingNext && !grading && (
             <div className="flex items-center gap-2.5 mt-4">
@@ -375,7 +377,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
                     <span className="w-0.5 bg-electric-violet rounded-full animate-[vbar_0.9s_ease-in-out_0.15s_infinite] h-3.5" />
                     <span className="w-0.5 bg-electric-violet rounded-full animate-[vbar_0.9s_ease-in-out_0.3s_infinite] h-2.5" />
                   </span>
-                  Interviewer is speaking…
+                  {t("vet.speaking")}
                 </span>
               ) : (
                 <button
@@ -383,7 +385,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
                   className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
                 >
                   <span className="material-symbols-outlined text-[16px]" style={{ fontSize: "16px" }}>volume_up</span>
-                  Replay question
+                  {t("vet.replay")}
                 </button>
               )}
             </div>
@@ -394,7 +396,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
               <span className="w-1.5 h-1.5 rounded-full bg-on-surface-variant/60 animate-pulse [animation-delay:150ms]" />
               <span className="w-1.5 h-1.5 rounded-full bg-on-surface-variant/60 animate-pulse [animation-delay:300ms]" />
               <span className="text-[12.5px] text-on-surface-variant ml-1.5">
-                {grading ? "Grading your interview…" : "Interviewer is thinking…"}
+                {grading ? t("vet.grading") : t("vet.thinking")}
               </span>
             </div>
           )}
@@ -425,19 +427,19 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
               onChange={e => setAnswer(e.target.value)}
               rows={5}
               disabled={busy}
-              placeholder="Your answer. Name real tools, real decisions, real numbers…"
+              placeholder={t("vet.answerPh")}
               className="w-full bg-transparent text-[14px] text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none resize-none disabled:opacity-50"
             />
             <div className="flex items-center justify-between mt-2">
               <span className="text-[11.5px] text-on-surface-variant">
-                {answer.trim().length < 25 ? `${Math.max(0, 25 - answer.trim().length)} more characters` : "Ready"}
+                {answer.trim().length < 25 ? t("vet.moreChars", { n: Math.max(0, 25 - answer.trim().length) }) : t("vet.ready")}
               </span>
               <button
                 onClick={submit}
                 disabled={busy || answer.trim().length < 25}
                 className="h-10 px-6 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition disabled:opacity-40"
               >
-                {index >= VETTING_QUESTIONS ? "Submit final answer" : "Submit answer"}
+                {index >= VETTING_QUESTIONS ? t("vet.submitFinal") : t("vet.submit")}
               </button>
             </div>
           </div>
@@ -459,10 +461,10 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       )}
       <div className="inline-flex items-center gap-2 h-7 px-3 rounded-full border border-border-crisp text-xs font-medium text-on-surface-variant mb-6">
         <span className="w-1.5 h-1.5 rounded-full bg-electric-violet" />
-        The AI skill interview
+        {t("vet.kicker")}
       </div>
       <h1 className="text-[36px] md:text-[46px] font-light text-on-surface leading-[1.05] tracking-[-0.035em] mb-4">
-        Get vetted. Let work find you.
+        {t("vet.title")}
       </h1>
       <p className="text-[15px] text-on-surface-variant leading-relaxed mb-3 max-w-[560px]">
         Four questions, ~10 minutes. On camera or in text: a scenario, a probing follow-up
@@ -475,7 +477,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       </p>
 
       <div className="pt-8 mt-8 border-t border-border-crisp">
-        <h2 className="text-[13px] font-medium text-on-surface-variant mb-5">Choose a category</h2>
+        <h2 className="text-[13px] font-medium text-on-surface-variant mb-5">{t("vet.chooseCategory")}</h2>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
         {CATEGORIES.map(cat => {
@@ -502,7 +504,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
                 )}
               </div>
               <p className="text-[13px] text-on-surface-variant">
-                {passed ? "Vetted. Badge live on your profile" : "4 questions · ~10 minutes"}
+                {passed ? t("vet.badgeLive") : t("vet.fourQ")}
               </p>
             </button>
           );
