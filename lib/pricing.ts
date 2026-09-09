@@ -30,6 +30,7 @@ export const CATEGORY_RATE_USD: Record<string, number> = {
   Data:                50,
   Design:              40,
   Marketing:           32,
+  "Social media":      30,
   Copywriting:         30,
   "Technical writing": 40,
   Other:               38,
