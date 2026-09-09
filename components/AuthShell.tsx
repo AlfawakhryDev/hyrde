@@ -51,13 +51,13 @@ export default function AuthShell({
       </div>
 
       {/* Right — form panel */}
-      <div className="flex items-center justify-center px-6 py-16 md:py-20">
+      <div className="flex items-center justify-center px-6 py-8 md:py-20">
         <div className="w-full max-w-[400px]">
           <p className="text-[13px] font-medium text-electric-violet mb-3">{k("Eyebrow")}</p>
-          <h1 className="text-[34px] md:text-[40px] font-light tracking-[-0.035em] text-on-surface leading-[1.05] mb-2.5">
+          <h1 className="text-[28px] md:text-[40px] font-light tracking-[-0.035em] text-on-surface leading-[1.05] mb-2">
             {k("Title")}
           </h1>
-          <p className="text-[14px] text-on-surface-variant leading-relaxed mb-8">{k("Sub")}</p>
+          <p className="text-[14px] text-on-surface-variant leading-relaxed mb-6">{k("Sub")}</p>
           <Suspense>{children}</Suspense>
         </div>
       </div>

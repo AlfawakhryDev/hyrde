@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AuthShell from "@/components/AuthShell";
 import AuthForm from "@/components/AuthForm";
+import { enabledProviders } from "@/lib/providers";
 
 export const metadata: Metadata = {
   title: "Log in",
@@ -8,10 +9,11 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const providers = await enabledProviders();
   return (
     <AuthShell mode="login">
-      <AuthForm mode="login" />
+      <AuthForm mode="login" providers={providers} />
     </AuthShell>
   );
 }

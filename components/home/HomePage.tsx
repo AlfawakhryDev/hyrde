@@ -158,13 +158,15 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
               </div>
 
               <div className="flex flex-wrap items-center gap-4 mt-9">
-                <BookDemo variant="hero" />
+                {/* Signing up first, demo second. A demo is a form and then a
+                    wait for a human; signing up is one tap and they are in. */}
                 <Link
                   href="/signup"
                   className="h-11 inline-flex items-center gap-2 px-6 rounded-full bg-[#F7F5F0] text-[#100F0B] text-sm font-medium hover:bg-white transition-colors"
                 >
                   {t("home.heroCta1")}
                 </Link>
+                <BookDemo variant="hero" />
                 <Link
                   href="/signup?next=%2Fvetting"
                   className="text-sm font-medium text-white/70 hover:text-white underline decoration-white/25 underline-offset-[5px] hover:decoration-white/60 transition-colors"
