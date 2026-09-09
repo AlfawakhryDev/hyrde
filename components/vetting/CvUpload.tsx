@@ -77,11 +77,6 @@ export default function CvUpload() {
       <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant mb-1.5">
         CV or résumé · optional
       </p>
-      <p className="text-[13px] text-on-surface-variant leading-relaxed mb-3">
-        The interview decides whether you pass. A CV just adds the context it cannot
-        cover in ten minutes — where you have worked, and for how long.
-      </p>
-
       {existing ? (
         <div className="flex flex-wrap items-center gap-2.5">
           <span className="material-symbols-outlined text-emerald-600" style={{ fontSize: "18px" }}>description</span>
