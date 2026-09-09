@@ -112,6 +112,18 @@ export default function Navbar() {
             </div>
           )}
 
+          {/* Sign up stays visible on mobile rather than hiding behind the
+              hamburger. Half the traffic is on a phone, and burying the one
+              action we want made it a two-tap discovery problem. */}
+          {!user && (
+            <Link
+              href="/signup"
+              className="md:hidden h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium whitespace-nowrap"
+            >
+              {t("nav.signup")}
+            </Link>
+          )}
+
           {/* Mobile toggle */}
           <button
             onClick={() => setOpen(o => !o)}

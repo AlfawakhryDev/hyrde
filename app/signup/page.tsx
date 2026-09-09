@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AuthShell from "@/components/AuthShell";
 import AuthForm from "@/components/AuthForm";
+import { enabledProviders } from "@/lib/providers";
 
 export const metadata: Metadata = {
   title: "Create your account",
@@ -8,10 +9,11 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function SignupPage() {
+export default async function SignupPage() {
+  const providers = await enabledProviders();
   return (
     <AuthShell mode="signup">
-      <AuthForm mode="signup" />
+      <AuthForm mode="signup" providers={providers} />
     </AuthShell>
   );
 }

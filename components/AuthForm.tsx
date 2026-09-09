@@ -84,25 +84,7 @@ function AppleIcon() {
 // Supabase publishes what is actually enabled at /auth/v1/settings, so ask it
 // and render only the buttons that can complete. Nothing to keep in sync: the
 // moment Azure or Apple is configured in the dashboard, its button appears.
-type Provider = "google" | "github" | "apple" | "azure" | "linkedin_oidc";
-
-function useEnabledProviders(): Set<Provider> | null {
-  const [enabled, setEnabled] = useState<Set<Provider> | null>(null);
-  useEffect(() => {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url || !key) return;
-    fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
-      .then(r => r.json())
-      .then((d: { external?: Record<string, boolean> }) =>
-        setEnabled(new Set((["google", "github", "apple", "azure", "linkedin_oidc"] as Provider[])
-          .filter(p => d.external?.[p]))))
-      // If the lookup fails, fall back to the two that have been live for
-      // months rather than showing an empty panel with no way in.
-      .catch(() => setEnabled(new Set<Provider>(["google", "github"])));
-  }, []);
-  return enabled;
-}
+import type { Provider } from "@/lib/providers";
 
 // Soft work-email nudge for clients: warn on free/personal domains, allow anyway.
 const FREE_EMAIL_DOMAINS = new Set([
@@ -116,7 +98,11 @@ const isFreeEmail = (email: string) =>
 
 type Role = "client" | "pilot";
 
-export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
+export default function AuthForm({ mode, providers }: {
+  mode: "login" | "signup";
+  /** Resolved on the server so the buttons are in the first paint. */
+  providers: Provider[];
+}) {
   const t = useT();
   const router = useRouter();
   const params = useSearchParams();
@@ -129,7 +115,6 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
   const [oauthBusy, setOauthBusy] = useState<Provider | null>(null);
-  const enabledProviders = useEnabledProviders();
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   // Signup picks a side first — client or freelancer — before anything else.
@@ -271,88 +256,47 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
     );
   }
 
-  // ── Signup, step 1: pick a side. Account types are fixed — client OR freelancer.
-  if (mode === "signup" && role === null) {
-    return (
-      <div className="flex flex-col gap-3">
-        {(
-          [
-            {
-              r: "client" as Role,
-              icon: "business_center",
-              title: t("auth.roleClientTitle"),
-              body: t("auth.roleClientBody"),
-            },
-            {
-              r: "pilot" as Role,
-              icon: "rocket_launch",
-              title: t("auth.rolePilotTitle"),
-              body: t("auth.rolePilotBody"),
-            },
-          ]
-        ).map(o => (
-          <button
-            key={o.r}
-            type="button"
-            onClick={() => setRole(o.r)}
-            className="group text-left border border-border-crisp rounded-2xl p-5 hover:border-electric-violet/60 hover:bg-surface-container-low transition-all"
-          >
-            <div className="flex items-start gap-4">
-              <span className="material-symbols-outlined text-electric-violet mt-0.5" style={{ fontSize: "26px", fontVariationSettings: "'FILL' 1" }}>
-                {o.icon}
-              </span>
-              <div className="flex-1 min-w-0">
-                <span className="flex items-center justify-between gap-3">
-                  <span className="text-[16px] font-semibold tracking-[-0.01em] text-on-surface">{o.title}</span>
-                  <span className="text-on-surface-variant/50 group-hover:text-on-surface group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
-                </span>
-                <span className="block text-[13px] text-on-surface-variant leading-relaxed mt-1">{o.body}</span>
-              </div>
-            </div>
-          </button>
-        ))}
-        <p className="text-sm text-on-surface-variant text-center mt-3">
-          {t("auth.haveAccount")}{" "}
-          <Link href={`/login${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">{t("auth.logIn")}</Link>
-        </p>
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       {/* Chosen side — one account type per account, changeable until submit */}
-      {mode === "signup" && role !== null && (
-        <div className="flex items-center justify-between -mt-1 mb-1">
-          <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full bg-on-surface text-inverse-on-surface text-[12px] font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#A99EE8]" aria-hidden="true" />
-            {t(role === "client" ? "auth.badgeHire" : "auth.badgeWork")}
-          </span>
-          <button
-            type="button"
-            onClick={() => { setRole(null); setPersonalOk(false); }}
-            className="text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
-          >
-            <span aria-hidden="true">↳</span> {t("auth.change")}
-          </button>
+      {/* Was a full screen of its own, with no way to sign up on it: everyone
+          arriving from LinkedIn had to categorise themselves before they were
+          shown a single button. It is two chips now, and skipping them is fine
+          — /auth/callback sends anyone without a side to /onboarding. */}
+      {mode === "signup" && (
+        <div className="flex items-center gap-1.5 -mt-1 mb-1" role="group" aria-label={t("auth.iAm")}>
+          <span className="text-[12.5px] text-on-surface-variant mr-0.5">{t("auth.iAm")}</span>
+          {(["client", "pilot"] as Role[]).map(r => (
+            <button
+              key={r}
+              type="button"
+              onClick={() => { setRole(role === r ? null : r); setPersonalOk(false); }}
+              aria-pressed={role === r}
+              className={`h-7 px-3 rounded-full text-[12.5px] font-medium transition-colors ${
+                role === r
+                  ? "bg-on-surface text-inverse-on-surface"
+                  : "border border-border-crisp text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              {t(r === "client" ? "auth.chipHiring" : "auth.chipWorking")}
+            </button>
+          ))}
         </div>
       )}
 
       {/* Social auth — Supabase OAuth, same account system as email */}
       <div className="flex flex-col gap-2.5">
-        {enabledProviders === null &&
-          [0, 1].map(i => (
-            <div key={i} className="h-[46px] rounded-full border border-border-crisp bg-surface-container-low animate-pulse" aria-hidden="true" />
-          ))}
         {(
           [
+            // LinkedIn first: 62% of arrivals come from it, so it is the
+            // account the visitor is already signed into on this device.
+            { p: "linkedin_oidc" as const, icon: <LinkedInIcon />, label: t("auth.withLinkedIn") },
             { p: "google" as const, icon: <GoogleIcon />, label: t("auth.withGoogle") },
             { p: "github" as const, icon: <GithubIcon />, label: t("auth.withGithub") },
             { p: "azure" as const, icon: <MicrosoftIcon />, label: t("auth.withMicrosoft") },
-            { p: "linkedin_oidc" as const, icon: <LinkedInIcon />, label: t("auth.withLinkedIn") },
             { p: "apple" as const, icon: <AppleIcon />, label: t("auth.withApple") },
           ]
-        ).filter(b => enabledProviders?.has(b.p)).map(b => (
+        ).filter(b => providers.includes(b.p)).map(b => (
           <button
             key={b.p}
             type="button"
