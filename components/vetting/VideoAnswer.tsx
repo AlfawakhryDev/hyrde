@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useT } from "@/components/I18nProvider";
 
 // ── Video answer recorder ─────────────────────────────────────────────────────
 // Records the candidate on camera while transcribing their speech live in the
@@ -45,6 +46,7 @@ export default function VideoAnswer({
   onSubmit: (transcript: string, recording: Blob | null, mime: string) => void;
   onUnsupported: (reason: string) => void;
 }) {
+  const t = useT();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -238,7 +240,7 @@ export default function VideoAnswer({
         />
         {!ready && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-[13px] text-white/70">Waiting for camera access…</p>
+            <p className="text-[13px] text-white/70">{t("liveUi.waitingCamera")}</p>
           </div>
         )}
         {recording && (
@@ -255,7 +257,7 @@ export default function VideoAnswer({
                 <span className="w-0.5 bg-white rounded-full animate-[vbar_0.9s_ease-in-out_0.15s_infinite] h-3.5" />
                 <span className="w-0.5 bg-white rounded-full animate-[vbar_0.9s_ease-in-out_0.3s_infinite] h-2.5" />
               </span>
-              <span className="text-[12.5px] font-medium text-white">Interviewer is speaking. Listen, then answer</span>
+              <span className="text-[12.5px] font-medium text-white">{t("liveUi.listenThenAnswer")}</span>
             </div>
           </div>
         )}

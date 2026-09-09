@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/arena";
+import { useT } from "@/components/I18nProvider";
 
 type PrivateRow = { user_id: string; phone: string | null; notify_matches: boolean } | null;
 
@@ -24,6 +25,7 @@ export default function ProfileClient({
   };
   initialPrivate: PrivateRow;
 }) {
+  const t = useT();
   const isPilot = initialProfile.mode === "pilot";
 
   const [name, setName] = useState(initialProfile.display_name ?? "");
@@ -83,7 +85,7 @@ export default function ProfileClient({
   return (
     <div className="mx-auto max-w-[880px] px-5 md:px-8 py-12">
       <Link href="/dashboard" className="text-[13px] font-medium text-on-surface-variant hover:text-on-surface transition-colors">
-        <span aria-hidden="true">←</span> Back to dashboard
+        <span aria-hidden="true">←</span> {t("task.backToDash")}
       </Link>
 
       <div className="flex flex-wrap items-end justify-between gap-4 mt-8">
@@ -102,21 +104,21 @@ export default function ProfileClient({
         </span>
       </div>
 
-      <Section title="Identity" sub="Public. Shown wherever your name appears.">
+      <Section title={t("prof.identity")} sub="Public. Shown wherever your name appears.">
         <label className="flex flex-col gap-1.5">
-          <span className={label}>Display name</span>
-          <input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" className={input} />
+          <span className={label}>{t("prof.displayName")}</span>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder={t("prof.namePh")} className={input} />
         </label>
         {isPilot ? (
           <label className="flex flex-col gap-1.5">
-            <span className={label}>Headline</span>
-            <input value={headline} onChange={e => setHeadline(e.target.value)} placeholder="e.g. Conversion copywriter. Fintech & SaaS" className={input} />
-            <span className={hint}>One line clients see next to your vetting badge.</span>
+            <span className={label}>{t("prof.headline")}</span>
+            <input value={headline} onChange={e => setHeadline(e.target.value)} placeholder={t("prof.headlinePh")} className={input} />
+            <span className={hint}>{t("prof.headlineHelp")}</span>
           </label>
         ) : (
           <label className="flex flex-col gap-1.5">
-            <span className={label}>Company</span>
-            <input value={company} onChange={e => setCompany(e.target.value)} placeholder="Company or team name" className={input} />
+            <span className={label}>{t("prof.company")}</span>
+            <input value={company} onChange={e => setCompany(e.target.value)} placeholder={t("prof.companyPh")} className={input} />
           </label>
         )}
         <label className="flex flex-col gap-1.5">
@@ -124,35 +126,35 @@ export default function ProfileClient({
           <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3}
             placeholder={isPilot ? "A few sentences about the work you do best. The AI also uses this to match you." : "A few sentences about what you're building."}
             className={`${input} resize-y`} />
-          {isPilot && <span className={hint}>The matching engine reads this. Specifics get you better-fit work.</span>}
+          {isPilot && <span className={hint}>{t("prof.bioHelp")}</span>}
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className={label}>Website</span>
+          <span className={label}>{t("prof.website")}</span>
           <input value={website} onChange={e => setWebsite(e.target.value)} placeholder="https://…" className={input} />
         </label>
       </Section>
 
-      <Section title="Location" sub="Public. Helps with timezone expectations.">
+      <Section title={t("prof.location")} sub="Public. Helps with timezone expectations.">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1.5">
-            <span className={label}>Country</span>
-            <input value={country} onChange={e => setCountry(e.target.value)} placeholder="Egypt" className={input} />
+            <span className={label}>{t("prof.country")}</span>
+            <input value={country} onChange={e => setCountry(e.target.value)} placeholder={t("prof.countryPh")} className={input} />
           </label>
           <label className="flex flex-col gap-1.5">
             <span className={label}>City</span>
-            <input value={city} onChange={e => setCity(e.target.value)} placeholder="Cairo" className={input} />
+            <input value={city} onChange={e => setCity(e.target.value)} placeholder={t("prof.cityPh")} className={input} />
           </label>
         </div>
       </Section>
 
-      <Section title="Contact" sub="Private. Only you can see this. Never shown publicly.">
+      <Section title={t("prof.contact")} sub="Private. Only you can see this. Never shown publicly.">
         <label className="flex flex-col gap-1.5">
-          <span className={label}>Phone <span className="ml-1.5 rounded-full bg-surface-container px-2 py-0.5 text-[10.5px] font-semibold text-on-surface-variant uppercase tracking-wide">Private</span></span>
+          <span className={label}>{t("prof.phone")} <span className="ml-1.5 rounded-full bg-surface-container px-2 py-0.5 text-[10.5px] font-semibold text-on-surface-variant uppercase tracking-wide">{t("prof.private")}</span></span>
           <input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="+20 1x xxx xxxx" className={input} autoComplete="tel" />
         </label>
       </Section>
 
-      <Section title="Notifications" sub="So you never miss work.">
+      <Section title={t("prof.notifications")} sub="So you never miss work.">
         <button
           type="button"
           role="switch"
@@ -161,7 +163,7 @@ export default function ProfileClient({
           className="flex items-center justify-between gap-4 rounded-xl border border-border-crisp px-4 py-3.5 text-left hover:border-outline transition-colors"
         >
           <span>
-            <span className="block text-[14px] font-medium text-on-surface">Email me when work is matched to me</span>
+            <span className="block text-[14px] font-medium text-on-surface">{t("prof.notifyMatches")}</span>
             <span className="block text-[12.5px] text-on-surface-variant mt-0.5">
               The moment the AI assigns {isPilot ? "you a task" : "your task"}, you get an email with the pay, deadline, and link.
             </span>

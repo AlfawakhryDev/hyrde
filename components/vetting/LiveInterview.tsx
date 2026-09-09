@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ConversationProvider, useConversation } from "@elevenlabs/react";
 import { liveContextUpdate } from "@/lib/livecontext";
 import type { VettingAssessment } from "@/lib/vetting";
+import { useT } from "@/components/I18nProvider";
 
 type Turn = { role: "agent" | "candidate"; text: string };
 type Verdict = { passed: boolean; assessment: VettingAssessment };
@@ -27,6 +28,7 @@ function LiveInner({
   onComplete: (v: Verdict) => void;
   onError: (reason: string) => void;
 }) {
+  const t = useT();
   const turnsRef = useRef<Turn[]>([]);
   const finishingRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -125,7 +127,7 @@ function LiveInner({
         <div className="mx-auto w-20 h-20 rounded-full bg-electric-violet/10 flex items-center justify-center mb-5">
           <span className="material-symbols-outlined text-electric-violet" style={{ fontSize: "34px" }}>graphic_eq</span>
         </div>
-        <h3 className="text-[19px] font-semibold text-on-surface mb-1.5">Live voice interview</h3>
+        <h3 className="text-[19px] font-semibold text-on-surface mb-1.5">{t("liveUi.title")}</h3>
         <p className="text-[13.5px] text-on-surface-variant leading-relaxed max-w-[420px] mx-auto mb-6">
           A real conversation. The interviewer talks with you, listens as you speak, and you can
           jump in any time. Four questions, ~7 minutes. Find a quiet spot.
@@ -148,8 +150,8 @@ function LiveInner({
             <span key={i} className="w-2 h-2 rounded-full bg-electric-violet animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
           ))}
         </div>
-        <p className="text-[15px] font-medium text-on-surface">Scoring your interview…</p>
-        <p className="text-[13px] text-on-surface-variant mt-1">Reading the whole conversation against the rubric.</p>
+        <p className="text-[15px] font-medium text-on-surface">{t("liveUi.scoring")}</p>
+        <p className="text-[13px] text-on-surface-variant mt-1">{t("liveUi.scoringBody")}</p>
       </div>
     );
   }
@@ -191,7 +193,7 @@ function LiveInner({
             End &amp; get my result
           </button>
         </div>
-        <p className="text-[11.5px] text-white/35 mt-4">You can talk over the interviewer any time. It&apos;ll stop and listen.</p>
+        <p className="text-[11.5px] text-white/35 mt-4">{t("liveUi.interrupt")}</p>
       </div>
     </div>
   );
