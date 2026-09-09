@@ -256,31 +256,75 @@ export default function AuthForm({ mode, providers }: {
     );
   }
 
+  // ── Signup, step 1: pick a side ──────────────────────────────────
+  // Briefly replaced by two inline chips to save a tap. It read as ambiguous:
+  // "I'm hiring / here to work" next to a row of provider buttons does not
+  // make clear that this is the one irreversible choice on the page. Account
+  // types are fixed — client OR freelancer — so the choice is worth its own
+  // screen, and each side gets a different first run afterwards.
+  if (mode === "signup" && role === null) {
+    return (
+      <div className="flex flex-col gap-3">
+        {(
+          [
+            {
+              r: "client" as Role,
+              icon: "business_center",
+              title: t("auth.roleClientTitle"),
+              body: t("auth.roleClientBody"),
+            },
+            {
+              r: "pilot" as Role,
+              icon: "rocket_launch",
+              title: t("auth.rolePilotTitle"),
+              body: t("auth.rolePilotBody"),
+            },
+          ]
+        ).map(o => (
+          <button
+            key={o.r}
+            type="button"
+            onClick={() => setRole(o.r)}
+            className="group text-left border border-border-crisp rounded-2xl p-5 hover:border-electric-violet/60 hover:bg-surface-container-low transition-all"
+          >
+            <div className="flex items-start gap-4">
+              <span className="material-symbols-outlined text-electric-violet mt-0.5" style={{ fontSize: "26px", fontVariationSettings: "'FILL' 1" }}>
+                {o.icon}
+              </span>
+              <div className="flex-1 min-w-0">
+                <span className="flex items-center justify-between gap-3">
+                  <span className="text-[16px] font-semibold tracking-[-0.01em] text-on-surface">{o.title}</span>
+                  <span className="text-on-surface-variant/50 group-hover:text-on-surface group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
+                </span>
+                <span className="block text-[13px] text-on-surface-variant leading-relaxed mt-1">{o.body}</span>
+              </div>
+            </div>
+          </button>
+        ))}
+        <p className="text-sm text-on-surface-variant text-center mt-3">
+          {t("auth.haveAccount")}{" "}
+          <Link href={`/login${nextQS}`} className="text-electric-violet font-medium hover:opacity-80">{t("auth.logIn")}</Link>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       {/* Chosen side — one account type per account, changeable until submit */}
-      {/* Was a full screen of its own, with no way to sign up on it: everyone
-          arriving from LinkedIn had to categorise themselves before they were
-          shown a single button. It is two chips now, and skipping them is fine
-          — /auth/callback sends anyone without a side to /onboarding. */}
-      {mode === "signup" && (
-        <div className="flex items-center gap-1.5 -mt-1 mb-1" role="group" aria-label={t("auth.iAm")}>
-          <span className="text-[12.5px] text-on-surface-variant mr-0.5">{t("auth.iAm")}</span>
-          {(["client", "pilot"] as Role[]).map(r => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => { setRole(role === r ? null : r); setPersonalOk(false); }}
-              aria-pressed={role === r}
-              className={`h-7 px-3 rounded-full text-[12.5px] font-medium transition-colors ${
-                role === r
-                  ? "bg-on-surface text-inverse-on-surface"
-                  : "border border-border-crisp text-on-surface-variant hover:text-on-surface"
-              }`}
-            >
-              {t(r === "client" ? "auth.chipHiring" : "auth.chipWorking")}
-            </button>
-          ))}
+      {mode === "signup" && role !== null && (
+        <div className="flex items-center justify-between -mt-1 mb-1">
+          <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full bg-on-surface text-inverse-on-surface text-[12px] font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#A99EE8]" aria-hidden="true" />
+            {t(role === "client" ? "auth.badgeHire" : "auth.badgeWork")}
+          </span>
+          <button
+            type="button"
+            onClick={() => { setRole(null); setPersonalOk(false); }}
+            className="text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
+          >
+            <span aria-hidden="true">↳</span> {t("auth.change")}
+          </button>
         </div>
       )}
 

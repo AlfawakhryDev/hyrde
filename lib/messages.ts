@@ -3,6 +3,14 @@
 // as more components are wired to useT().
 export const messages = {
   en: {
+    startClient: {
+      eyebrow: "Let's start with one thing",
+      title: "What do you need done?",
+      body: "Describe the outcome and the AI splits it into milestones, prices each one, and matches a vetted specialist to each step. Your first 3 projects carry no Hyrde fee.",
+      orElse: "Or something else",
+      describe: "Describe it myself",
+      later: "I'm just looking",
+    },
     where: {
       title: "Where are you based?",
       body: "So calls land in your timezone, and a specialist can reach you. Phone is optional and never shown to other users.",
@@ -31,7 +39,7 @@ export const messages = {
       loginB3: "AI reviews the deliverable against your brief before you pay.",
       signupEyebrow: "Join Hyrde",
       signupTitle: "Create your account",
-      signupSub: "One tap. Your first 3 projects carry no Hyrde fee.",
+      signupSub: "First, which side are you on? Your first 3 projects carry no Hyrde fee.",
       signupB1: "Hiring? The AI matches your task to the best vetted specialist.",
       signupB2: "Freelancing? Prove your skill once and let matched work come to you.",
       signupB3: "Keep 100%. No commission, no Connects, no pay-to-apply.",
@@ -43,9 +51,6 @@ export const messages = {
       rolePilotTitle: "I want to work",
       rolePilotBody: "Pass one AI skill interview, then matched work comes to you, with a deadline and pay.",
       badgeHire: "Signing up to hire",
-      iAm: "I'm",
-      chipHiring: "hiring",
-      chipWorking: "here to work",
       badgeWork: "Signing up to work",
       change: "Change",
       withGoogle: "Continue with Google",
@@ -453,6 +458,14 @@ export const messages = {
     },
   },
   de: {
+    startClient: {
+      eyebrow: "Fang mit einer Sache an",
+      title: "Was soll erledigt werden?",
+      body: "Beschreibe das Ergebnis, und die KI zerlegt es in Meilensteine, bepreist jeden und vermittelt f\u00fcr jeden Schritt einen gepr\u00fcften Spezialisten. Deine ersten 3 Projekte kosten keine Hyrde-Geb\u00fchr.",
+      orElse: "Oder etwas anderes",
+      describe: "Selbst beschreiben",
+      later: "Ich schaue mich nur um",
+    },
     where: {
       title: "Wo bist du ans\u00e4ssig?",
       body: "Damit Termine in deiner Zeitzone landen und ein Spezialist dich erreichen kann. Die Nummer ist optional und f\u00fcr andere Nutzer nie sichtbar.",
@@ -481,7 +494,7 @@ export const messages = {
       loginB3: "Die KI pr\u00fcft das Ergebnis gegen dein Briefing, bevor du zahlst.",
       signupEyebrow: "Zu Hyrde",
       signupTitle: "Konto erstellen",
-      signupSub: "Ein Tipp. Deine ersten 3 Projekte kosten keine Hyrde-Geb\u00fchr.",
+      signupSub: "Zuerst: auf welcher Seite stehst du? Deine ersten 3 Projekte kosten keine Hyrde-Geb\u00fchr.",
       signupB1: "Du beauftragst? Die KI vermittelt deine Aufgabe an den besten gepr\u00fcften Spezialisten.",
       signupB2: "Du arbeitest freiberuflich? Beweise dein K\u00f6nnen einmal, dann kommt die Arbeit zu dir.",
       signupB3: "Behalte 100 %. Keine Provision, keine Connects, kein Pay-to-apply.",
@@ -493,9 +506,6 @@ export const messages = {
       rolePilotTitle: "Ich m\u00f6chte arbeiten",
       rolePilotBody: "Bestehe ein KI-Skill-Interview, danach kommt vermittelte Arbeit zu dir \u2014 mit Frist und Verg\u00fctung.",
       badgeHire: "Anmeldung zum Beauftragen",
-      iAm: "Ich",
-      chipHiring: "beauftrage",
-      chipWorking: "arbeite",
       badgeWork: "Anmeldung zum Arbeiten",
       change: "\u00c4ndern",
       withGoogle: "Weiter mit Google",
@@ -904,6 +914,14 @@ export const messages = {
   },
   // Arabic (Saudi audience) — natural, polished MSA. Renders RTL via <html dir>.
   ar: {
+    startClient: {
+      eyebrow: "لنبدأ بشيء واحد",
+      title: "ما الذي تريد إنجازه؟",
+      body: "صِف النتيجة، فيقسّمها الذكاء الاصطناعي إلى مراحل، ويسعّر كل مرحلة، ويوفّق لكل خطوة مختصًّا موثّقًا. أول ٣ مشاريع لك بلا أي رسوم من Hyrde.",
+      orElse: "أو شيء آخر",
+      describe: "سأصفه بنفسي",
+      later: "أتصفّح فقط",
+    },
     where: {
       title: "أين مقرّك؟",
       body: "لتصل المكالمات بتوقيتك، وليتمكّن المختصّ من الوصول إليك. رقم الهاتف اختياري ولا يظهر للمستخدمين الآخرين إطلاقًا.",
@@ -932,7 +950,7 @@ export const messages = {
       loginB3: "يراجع الذكاء الاصطناعي التسليم مقابل موجزك قبل أن تدفع.",
       signupEyebrow: "انضمّ إلى Hyrde",
       signupTitle: "أنشئ حسابك",
-      signupSub: "نقرة واحدة. أول ٣ مشاريع لك بلا أي رسوم من Hyrde.",
+      signupSub: "أولًا، أي جانب أنت؟ أول ٣ مشاريع لك بلا أي رسوم من Hyrde.",
       signupB1: "توظّف؟ الذكاء الاصطناعي يوفّق مهمتك مع أفضل مختصّ موثّق.",
       signupB2: "تعمل مستقلًّا؟ أثبت مهارتك مرة واحدة ودع العمل يأتي إليك.",
       signupB3: "احتفظ بـ١٠٠٪. بلا عمولة، وبلا رسوم تقديم.",
@@ -944,9 +962,6 @@ export const messages = {
       rolePilotTitle: "أريد العمل",
       rolePilotBody: "اجتز مقابلة مهارات واحدة، ثم يأتيك العمل المُوفَّق بموعد وأجر واضحين.",
       badgeHire: "تسجيل للتوظيف",
-      iAm: "أنا",
-      chipHiring: "أوظّف",
-      chipWorking: "أعمل",
       badgeWork: "تسجيل للعمل",
       change: "تغيير",
       withGoogle: "المتابعة بـ Google",

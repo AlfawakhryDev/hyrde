@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import {
@@ -16,6 +16,7 @@ import ProjectComposer, { PROJECT_TEMPLATES } from "@/components/dashboard/Proje
 import { ProgressBar } from "@/components/task/MilestoneProgress";
 import { useT } from "@/components/I18nProvider";
 import WhereAreYou from "@/components/WhereAreYou";
+import StartHereClient from "@/components/dashboard/StartHereClient";
 
 export default function DashboardClient({
   userId,
@@ -44,12 +45,25 @@ export default function DashboardClient({
   const incomingBrief = params.get("brief") ?? "";
   const [composerOpen, setComposerOpen] = useState(!!incomingBrief);
   const [projectComposerOpen, setProjectComposerOpen] = useState(false);
+  // A client's counterpart to the freelancer's StartHere. Only on a genuinely
+  // empty account: someone with work in flight does not need to be told what
+  // this page is for.
+  const [showStart, setShowStart] = useState(false);
   const [projectSeed, setProjectSeed] = useState("");
   const openProject = (seed = "") => { setProjectSeed(seed); setProjectComposerOpen(true); };
   const [payoutOpen, setPayoutOpen] = useState(params.get("payout") === "1");
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
 
   const isPilot = profile.mode === "pilot";
+
+  // Decided once, after the first load resolves — testing an empty tasks array
+  // before the fetch returns would flash this at every existing client.
+  const startDecided = useRef(false);
+  useEffect(() => {
+    if (startDecided.current || loading || isPilot) return;
+    startDecided.current = true;
+    if (!tasks.some(t => t.poster_id === userId)) setShowStart(true);
+  }, [loading, isPilot, tasks, userId]);
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const refetch = useCallback(async () => {
@@ -201,6 +215,13 @@ export default function DashboardClient({
     <div className="mx-auto max-w-[1080px] px-5 md:px-8 py-12">
 
       <WhereAreYou initialCountry={country} />
+
+      {showStart && !isPilot && (
+        <StartHereClient
+          onClose={() => setShowStart(false)}
+          onPick={seed => { setShowStart(false); openProject(seed); }}
+        />
+      )}
 
       {/* ── Header ── */}
       <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
