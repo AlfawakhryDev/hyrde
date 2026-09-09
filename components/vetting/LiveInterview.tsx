@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ConversationProvider, useConversation } from "@elevenlabs/react";
+import { liveContextUpdate } from "@/lib/livecontext";
 import type { VettingAssessment } from "@/lib/vetting";
 
 type Turn = { role: "agent" | "candidate"; text: string };
@@ -14,12 +15,15 @@ function LiveInner({
   signedUrl,
   vettingId,
   category,
+  locale = "en",
   onComplete,
   onError,
 }: {
   signedUrl: string;
   vettingId: string;
   category: string;
+  /** Fixed when the session opened, so the agent and the grader agree. */
+  locale?: string;
   onComplete: (v: Verdict) => void;
   onError: (reason: string) => void;
 }) {
@@ -37,9 +41,7 @@ function LiveInner({
       setPhase("live");
       // Tell the agent which category to interview on (no dashboard vars needed).
       try {
-        conversation.sendContextualUpdate(
-          `This candidate is being vetted for the "${category}" category. Tailor every question specifically to ${category}. Begin the interview now.`,
-        );
+        conversation.sendContextualUpdate(liveContextUpdate(category, locale));
       } catch { /* ignore */ }
     },
     onMessage: ({ message, source }: { message: string; source: "user" | "ai" }) => {
@@ -199,6 +201,8 @@ export default function LiveInterview(props: {
   signedUrl: string;
   vettingId: string;
   category: string;
+  /** Fixed when the session opened, so the agent and the grader agree. */
+  locale?: string;
   onComplete: (v: Verdict) => void;
   onError: (reason: string) => void;
 }) {

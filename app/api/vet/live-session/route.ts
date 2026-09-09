@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Log in to get vetted." }, { status: 401 });
 
-  const { category } = await req.json();
+  const { category, locale } = await req.json();
+  const lang = locale === "ar" || locale === "de" ? locale : "en";
   if (!CATEGORIES.includes(category)) {
     return NextResponse.json({ error: "Pick a valid category." }, { status: 400 });
   }
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
 
   const { data: created, error: insErr } = await supabase
     .from("vettings")
-    .insert({ user_id: user.id, category, status: "in_progress", mode: "video", transcript: [] })
+    .insert({ user_id: user.id, category, status: "in_progress", mode: "video", locale: lang, transcript: [] })
     .select("id")
     .single();
   if (insErr || !created) {
@@ -75,5 +76,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not start the interview." }, { status: 500 });
   }
 
-  return NextResponse.json({ signedUrl, vettingId: created.id, category });
+  return NextResponse.json({ signedUrl, vettingId: created.id, category, locale: lang });
 }
