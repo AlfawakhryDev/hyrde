@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import VettingClient from "./VettingClient";
+import CvUpload from "@/components/vetting/CvUpload";
+import WhereAreYou from "@/components/WhereAreYou";
 
 export const metadata: Metadata = {
   title: "Get vetted — the AI skill interview",
@@ -62,7 +64,7 @@ export default async function VettingPage() {
   // Vetting is only for freelancer accounts. Clients hire; they don't get vetted.
   const { data: profile } = await supabase
     .from("profiles")
-    .select("mode")
+    .select("mode, country")
     .eq("id", user.id)
     .single();
   if (!profile) redirect("/onboarding");
@@ -74,5 +76,15 @@ export default async function VettingPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  return <VettingClient existing={vettings ?? []} />;
+  // Freelancers arrive here straight from signup and never touch the dashboard,
+  // so the two things we want from every candidate live here too.
+  return (
+    <>
+      <div className="mx-auto max-w-[720px] px-5 md:px-6 pt-8 space-y-4">
+        <WhereAreYou initialCountry={profile.country ?? null} />
+        <CvUpload />
+      </div>
+      <VettingClient existing={vettings ?? []} />
+    </>
+  );
 }
