@@ -3,6 +3,19 @@
 // as more components are wired to useT().
 export const messages = {
   en: {
+    where: {
+      title: "Where are you based?",
+      body: "So calls land in your timezone, and a specialist can reach you. Phone is optional and never shown to other users.",
+      country: "Country",
+      countryPh: "Country",
+      phone: "Phone",
+      phonePh: "Phone (optional)",
+      save: "Save",
+      saving: "Saving\u2026",
+      later: "Not now",
+      errCountry: "Add your country first.",
+      errAuth: "Log in first.",
+    },
     shortlist: {
       title: "Who would work on this",
       loading: "Matching vetted specialists to this plan\u2026",
@@ -436,6 +449,19 @@ export const messages = {
     },
   },
   de: {
+    where: {
+      title: "Wo bist du ans\u00e4ssig?",
+      body: "Damit Termine in deiner Zeitzone landen und ein Spezialist dich erreichen kann. Die Nummer ist optional und f\u00fcr andere Nutzer nie sichtbar.",
+      country: "Land",
+      countryPh: "Land",
+      phone: "Telefon",
+      phonePh: "Telefon (optional)",
+      save: "Speichern",
+      saving: "Wird gespeichert\u2026",
+      later: "Sp\u00e4ter",
+      errCountry: "Bitte gib zuerst dein Land an.",
+      errAuth: "Bitte melde dich an.",
+    },
     shortlist: {
       title: "Wer daran arbeiten w\u00fcrde",
       loading: "Wir suchen gepr\u00fcfte Spezialisten f\u00fcr diesen Plan\u2026",
@@ -870,6 +896,19 @@ export const messages = {
   },
   // Arabic (Saudi audience) — natural, polished MSA. Renders RTL via <html dir>.
   ar: {
+    where: {
+      title: "أين مقرّك؟",
+      body: "لتصل المكالمات بتوقيتك، وليتمكّن المختصّ من الوصول إليك. رقم الهاتف اختياري ولا يظهر للمستخدمين الآخرين إطلاقًا.",
+      country: "الدولة",
+      countryPh: "الدولة",
+      phone: "الهاتف",
+      phonePh: "الهاتف (اختياري)",
+      save: "حفظ",
+      saving: "جارٍ الحفظ…",
+      later: "لاحقًا",
+      errCountry: "أضف دولتك أولًا.",
+      errAuth: "سجّل الدخول أولًا.",
+    },
     shortlist: {
       title: "من سيعمل على هذا",
       loading: "نوفّق مختصّين موثّقين مع هذه الخطة…",
