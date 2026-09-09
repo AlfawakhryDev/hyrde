@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
   const { data: vetting } = await supabase
     .from("vettings")
-    .select("id, user_id, category, status")
+    .select("id, user_id, category, status, locale")
     .eq("id", vettingId)
     .eq("user_id", user.id)
     .single();
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   let assessment;
   try {
-    assessment = await gradeDialogue(vetting.category, clean);
+    assessment = await gradeDialogue(vetting.category, clean, vetting.locale ?? "en");
   } catch (err) {
     console.error("live grade failed:", err);
     return NextResponse.json({ error: "Grading hiccup — your interview was saved; try grading again." }, { status: 500 });

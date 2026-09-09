@@ -328,6 +328,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           signedUrl={live.signedUrl}
           vettingId={live.vettingId}
           category={category}
+          locale={locale}
           onComplete={v => { setVerdict(v); setPhase("verdict"); }}
           onError={reason => { setError(reason); setLive(null); setPhase("mode"); }}
         />
