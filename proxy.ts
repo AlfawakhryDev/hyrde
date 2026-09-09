@@ -68,7 +68,7 @@ export async function proxy(request: NextRequest) {
     // know, and locking someone out of their own account on a null we cannot
     // explain is exactly how the missing 0029 grant bounced every user to
     // /onboarding for an hour. Fail open, and let the page decide.
-    if (!error && !isEmailVerified(user.app_metadata?.provider, profile?.email_verified_at)) {
+    if (!error && !isEmailVerified(user, profile?.email_verified_at)) {
       const url = request.nextUrl.clone();
       url.pathname = "/verify";
       url.search = "";
