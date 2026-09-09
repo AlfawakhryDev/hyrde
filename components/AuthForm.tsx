@@ -235,9 +235,10 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         // Entra returns no email address unless these are asked for explicitly,
         // and an account with no email breaks profile creation downstream.
         ...(provider === "azure" ? { scopes: "openid email profile" } : {}),
-        // Without these LinkedIn returns no address, and a profile with no
-        // email breaks everything downstream.
-        ...(provider === "linkedin_oidc" ? { scopes: "openid profile email" } : {}),
+        // No scopes for linkedin_oidc: Supabase already sends
+        // "openid email profile" for it, and passing them again produced
+        // "openid email profile openid profile email" in the authorize URL.
+        // Azure is different — Entra returns no address unless asked.
       },
     });
     // On success the browser navigates to the provider — no need to unset busy.
