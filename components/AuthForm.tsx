@@ -58,6 +58,14 @@ function MicrosoftIcon() {
   );
 }
 
+function LinkedInIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/>
+    </svg>
+  );
+}
+
 function AppleIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -76,7 +84,7 @@ function AppleIcon() {
 // Supabase publishes what is actually enabled at /auth/v1/settings, so ask it
 // and render only the buttons that can complete. Nothing to keep in sync: the
 // moment Azure or Apple is configured in the dashboard, its button appears.
-type Provider = "google" | "github" | "apple" | "azure";
+type Provider = "google" | "github" | "apple" | "azure" | "linkedin_oidc";
 
 function useEnabledProviders(): Set<Provider> | null {
   const [enabled, setEnabled] = useState<Set<Provider> | null>(null);
@@ -87,7 +95,7 @@ function useEnabledProviders(): Set<Provider> | null {
     fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
       .then(r => r.json())
       .then((d: { external?: Record<string, boolean> }) =>
-        setEnabled(new Set((["google", "github", "apple", "azure"] as Provider[])
+        setEnabled(new Set((["google", "github", "apple", "azure", "linkedin_oidc"] as Provider[])
           .filter(p => d.external?.[p]))))
       // If the lookup fails, fall back to the two that have been live for
       // months rather than showing an empty panel with no way in.
@@ -227,6 +235,9 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         // Entra returns no email address unless these are asked for explicitly,
         // and an account with no email breaks profile creation downstream.
         ...(provider === "azure" ? { scopes: "openid email profile" } : {}),
+        // Without these LinkedIn returns no address, and a profile with no
+        // email breaks everything downstream.
+        ...(provider === "linkedin_oidc" ? { scopes: "openid profile email" } : {}),
       },
     });
     // On success the browser navigates to the provider — no need to unset busy.
@@ -337,6 +348,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
             { p: "google" as const, icon: <GoogleIcon />, label: t("auth.withGoogle") },
             { p: "github" as const, icon: <GithubIcon />, label: t("auth.withGithub") },
             { p: "azure" as const, icon: <MicrosoftIcon />, label: t("auth.withMicrosoft") },
+            { p: "linkedin_oidc" as const, icon: <LinkedInIcon />, label: t("auth.withLinkedIn") },
             { p: "apple" as const, icon: <AppleIcon />, label: t("auth.withApple") },
           ]
         ).filter(b => enabledProviders?.has(b.p)).map(b => (
