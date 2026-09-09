@@ -168,15 +168,19 @@ export const CATEGORIES = [
 // What a person calls the work, versus what the system files it under. The
 // interview and matching key off CATEGORIES; nobody describes themselves as
 // "a Development".
-export const CATEGORY_JOB_TITLE: Record<string, string> = {
-  "Development":       "Software engineer",
-  "Social media":      "Social media manager",
-  "Design":            "Designer",
-  "Copywriting":       "Copywriter",
-  "Marketing":         "Marketer",
-  "Data":              "Data specialist",
-  "Technical writing": "Technical writer",
-  "Other":             "Something else",
+//
+// These are dictionary KEYS, not labels — the English map used to be inlined
+// here, which left "Social media manager" sitting in English inside the Arabic
+// modal. Render with t(`job.${CATEGORY_JOB_KEY[cat]}`).
+export const CATEGORY_JOB_KEY: Record<string, string> = {
+  "Development":       "development",
+  "Social media":      "socialMedia",
+  "Design":            "design",
+  "Copywriting":       "copywriting",
+  "Marketing":         "marketing",
+  "Data":              "data",
+  "Technical writing": "technicalWriting",
+  "Other":             "other",
 };
 
 export function parseMountPoints(raw: string | null): MountPoint[] {
