@@ -17,13 +17,14 @@ export default function ImpersonatePanel({
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [link, setLink] = useState<{ url: string; who: string } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   async function start(targetId: string, label: string) {
     if (purpose.trim().length < 8) {
       setError("Say what the session is for first. It goes in the log.");
       return;
     }
-    setBusy(targetId); setError(""); setLink(null);
+    setBusy(targetId); setError(""); setLink(null); setCopied(false);
     try {
       const res = await fetch("/api/admin/impersonate", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -83,17 +84,49 @@ export default function ImpersonatePanel({
         <div className="mt-4 rounded-xl border border-border-crisp bg-surface-bright p-3.5">
           <p className="text-[12.5px] text-on-surface mb-2">
             One-time link for <strong>{link.who}</strong>. It signs you in as them and
-            expires quickly. Open it in a private window so your own session survives.
+            expires quickly. Copy it into a private window — opening it here replaces
+            your own session, and you would have to sign back in to end the support one.
           </p>
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full border border-border-crisp text-[12.5px] font-medium text-on-surface hover:border-on-surface"
-          >
-            Open the session
-            <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>open_in_new</span>
-          </a>
+          {/* The link itself, not just a button wrapping it. Opening it in this
+              window signs you out of your own account, which is exactly what
+              you do not want while supporting someone — so copying it into a
+              private window is the normal path, and gets the primary button. */}
+          <input
+            readOnly
+            value={link.url}
+            onFocus={e => e.currentTarget.select()}
+            className="w-full mb-2 border border-border-crisp rounded-lg px-3 py-2 text-[12px] font-mono text-on-surface-variant bg-surface truncate focus:outline-none focus:border-on-surface"
+          />
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(link.url);
+                  setCopied(true);
+                } catch {
+                  // Clipboard refused (permissions, or an insecure origin).
+                  // The field above is selectable, so say so rather than
+                  // pretending the copy worked.
+                  setError("Could not copy. Select the link above and copy it.");
+                }
+              }}
+              className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-on-surface text-inverse-on-surface text-[12.5px] font-medium hover:opacity-90"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>
+                {copied ? "check" : "content_copy"}
+              </span>
+              {copied ? "Copied — paste in a private window" : "Copy link"}
+            </button>
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full border border-border-crisp text-[12.5px] font-medium text-on-surface hover:border-on-surface"
+            >
+              Open here instead
+              <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>open_in_new</span>
+            </a>
+          </div>
         </div>
       )}
     </section>
