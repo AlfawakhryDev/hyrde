@@ -13,8 +13,14 @@ import { useT } from "@/components/I18nProvider";
 // except how a shortlist looks, including when it is legitimately empty.
 
 export type Specialist = {
-  id: string; name: string; band: string; score: number; headline: string;
-  country: string; verifiedSkills: string[]; fit: number; milestone: string; reason: string;
+  id: string; name: string; headline: string; country: string;
+  fit: number; milestone: string; reason: string;
+  /** Absent while the pilot lock is on: the pinned specialist is assigned by
+   *  decision, not by an interview, so there is no band or score to show and
+   *  claiming one would be a lie on the one screen a client trusts most. */
+  band?: string | null; score?: number | null;
+  verifiedSkills?: string[];
+  pilotLocked?: boolean;
 };
 
 export default function SpecialistShortlist({
@@ -47,16 +53,17 @@ export default function SpecialistShortlist({
                 <div className="flex items-center justify-between gap-3 mb-1">
                   <span className="text-[14px] font-semibold text-on-surface">{sp.name}</span>
                   <span className="shrink-0 text-[11px] font-medium text-on-surface-variant">
-                    {sp.band} · {sp.score}{sp.country ? ` · ${sp.country}` : ""}
+                    {[sp.band && sp.score != null ? `${sp.band} · ${sp.score}` : null, sp.country || null]
+                      .filter(Boolean).join(" · ")}
                   </span>
                 </div>
                 {sp.milestone && (
                   <p className="text-[12px] text-on-surface-variant mb-1">For: {sp.milestone}</p>
                 )}
                 <p className="text-[12.5px] text-on-surface leading-snug">{sp.reason}</p>
-                {sp.verifiedSkills.length > 0 && (
+                {!!sp.verifiedSkills?.length && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
-                    {sp.verifiedSkills.slice(0, 3).map(k => (
+                    {sp.verifiedSkills!.slice(0, 3).map(k => (
                       <span key={k} className="rounded-full bg-surface-container px-2.5 py-1 text-[11px] text-on-surface-variant">
                         {k.length > 46 ? k.slice(0, 46) + "…" : k}
                       </span>
