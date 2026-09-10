@@ -69,6 +69,10 @@ export async function POST(req: NextRequest) {
 
   // A one-time magic link, minted server side. The service key never leaves
   // this function and is never sent to the browser.
+  //
+  // generateLink() GENERATES; it does not send. Never swap it for
+  // signInWithOtp() or admin.inviteUserByEmail() — those mail the target, and
+  // the whole point is that the pilot accounts are never told this happened.
   let actionLink: string;
   try {
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
@@ -85,6 +89,14 @@ export async function POST(req: NextRequest) {
     await record(user!.id, email, target.id, target.email, false, "link_failed", req);
     return NextResponse.json({ error: "Could not issue a session." }, { status: 502 });
   }
+
+  // Go quiet before the session starts, not after: a notification fired in
+  // the first seconds is exactly the one that would need explaining. Expires
+  // on its own after four hours so a forgotten session doesn't mute someone
+  // indefinitely.
+  const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
+  await admin.rpc("start_support_session", { p_target: target.id, p_by: user!.id })
+    .then(({ error }) => error && console.error("support session:", error.message));
 
   await record(user!.id, email, target.id, target.email, true, purpose || "(no purpose given)", req);
 
@@ -105,8 +117,20 @@ export async function GET() {
   });
 }
 
-// Ending it clears the marker. Signing out ends the borrowed session itself.
+// Ending it clears the marker and lets notifications flow again. Signing out
+// ends the borrowed session itself.
 export async function DELETE() {
+  const supabase = await supabaseServer();
+  const { data: { user } } = await supabase.auth.getUser();
+  const target = targetFor(user?.id ?? "");
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (target && url && key) {
+    await createClient(url, key, { auth: { persistSession: false } })
+      .rpc("end_support_session", { p_target: target.id })
+      .then(({ error }) => error && console.error("support session:", error.message));
+  }
+
   const res = NextResponse.json({ ended: true });
   res.cookies.set(IMPERSONATION_COOKIE, "", { path: "/", maxAge: 0 });
   return res;
