@@ -7,6 +7,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 import { HyrdeMark } from "./Logo";
 import { useT } from "./I18nProvider";
 import LangSwitcher from "./LangSwitcher";
+import Notifications from "./Notifications";
 import BookDemo from "./BookDemo";
 
 const NAV_LINKS = [
@@ -84,6 +85,7 @@ export default function Navbar() {
 
           {user ? (
             <div className="hidden md:flex items-center gap-1.5">
+              <Notifications />
               <Link href="/dashboard"
                 className="h-8 flex items-center px-3.5 rounded-full bg-on-surface text-inverse-on-surface text-[13px] font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
                 {t("nav.dashboard")}
