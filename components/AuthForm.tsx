@@ -86,15 +86,30 @@ function AppleIcon() {
 // moment Azure or Apple is configured in the dashboard, its button appears.
 import type { Provider } from "@/lib/providers";
 
-// Soft work-email nudge for clients: warn on free/personal domains, allow anyway.
+// Soft work-email nudge for clients. This is an OFFER, not a warning: a work
+// address is worth something to us (it is the start of a real sales
+// conversation), so we pay for it with a scoping call rather than nagging.
+// Nobody is ever blocked — one extra click proceeds with any address.
 const FREE_EMAIL_DOMAINS = new Set([
   "gmail.com", "googlemail.com", "yahoo.com", "ymail.com", "outlook.com",
   "hotmail.com", "live.com", "msn.com", "icloud.com", "me.com", "mac.com",
   "aol.com", "proton.me", "protonmail.com", "mail.com", "gmx.com", "gmx.net",
   "zoho.com", "yandex.com", "yandex.ru", "inbox.com", "fastmail.com",
 ]);
+
+// Throwaway inbox services. Four of the five clients who signed up, submitted a
+// demand signal and never returned came in on one of these — they are not
+// personal addresses, they are addresses nobody intends to read again.
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "crybio.com", "airhemp.com", "bowlfuel.com", "mailinator.com", "guerrillamail.com",
+  "10minutemail.com", "tempmail.com", "temp-mail.org", "throwawaymail.com",
+  "yopmail.com", "sharklasers.com", "getnada.com", "trashmail.com", "maildrop.cc",
+  "dispostable.com", "fakeinbox.com", "mohmal.com", "emailondeck.com",
+]);
+
+const domainOf = (email: string) => email.split("@")[1]?.toLowerCase().trim() ?? "";
 const isFreeEmail = (email: string) =>
-  FREE_EMAIL_DOMAINS.has(email.split("@")[1]?.toLowerCase().trim() ?? "");
+  FREE_EMAIL_DOMAINS.has(domainOf(email)) || DISPOSABLE_EMAIL_DOMAINS.has(domainOf(email));
 
 type Role = "client" | "pilot";
 
@@ -403,14 +418,17 @@ export default function AuthForm({ mode, providers }: {
           )}
         </div>
 
-        {/* Soft work-email nudge — clients can proceed, but must say so */}
+        {/* Work-email offer — an incentive, never a block. Violet, not amber:
+            amber reads as "you did something wrong", and nobody did. */}
         {mode === "signup" && role === "client" && emailValid && isFreeEmail(email) && (
-          <div className="mt-1.5 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-4 py-3">
+          <div className="mt-1.5 rounded-xl border border-electric-violet/30 bg-electric-violet/[0.06] px-4 py-3">
             <p className="text-[13px] text-on-surface leading-relaxed">
-              {t("auth.personalTitle")}{" "}
-              <span className="text-on-surface-variant">
-                {t("auth.personalBody")}
+              <span className="material-symbols-outlined align-middle me-1 text-electric-violet"
+                    style={{ fontSize: "16px" }} aria-hidden="true">
+                redeem
               </span>
+              <span className="font-medium">{t("auth.personalTitle")}</span>{" "}
+              <span className="text-on-surface-variant">{t("auth.personalBody")}</span>
             </p>
             {!personalOk ? (
               <button
@@ -418,10 +436,10 @@ export default function AuthForm({ mode, providers }: {
                 onClick={() => setPersonalOk(true)}
                 className="mt-2 text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
               >
-                <span aria-hidden="true">↳</span> Continue with this email anyway
+                <span aria-hidden="true">↳</span> {t("auth.personalAnyway")}
               </button>
             ) : (
-              <p className="mt-1.5 text-[12px] text-on-surface-variant">Okay, continuing with a personal email.</p>
+              <p className="mt-1.5 text-[12px] text-on-surface-variant">{t("auth.personalOk")}</p>
             )}
           </div>
         )}
