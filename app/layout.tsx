@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SiteShell from "@/components/SiteShell";
+import ThemeSync from "@/components/ThemeSync";
 import { Analytics } from "@vercel/analytics/next";
 import { I18nProvider } from "@/components/I18nProvider";
 import ImpersonationBanner from "@/components/ImpersonationBanner";
@@ -81,12 +82,19 @@ const websiteJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    // No className here on purpose. When RootLayout declared `dark`, React
+    // reconciled the attribute back to it during hydration and silently undid
+    // whatever the no-flash script below had decided — the theme was set
+    // correctly before paint and then reverted milliseconds later. The script
+    // owns this class; React must not have an opinion about it.
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* No-flash theme: dark by default, honor a saved light choice before paint */}
+        {/* No-flash theme, resolved before paint. A saved choice always wins;
+            with none, app pages open light and marketing keeps its dark art
+            direction. The APP list must stay in step with ThemeToggle.tsx. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');document.documentElement.classList.toggle('dark',t!=='light');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');var p=location.pathname,A=['/dashboard','/onboarding','/profile','/billing','/t/','/vetting','/login','/signup','/verify','/post-job','/admin','/welcome','/jobs'];var isApp=A.some(function(a){return p===a.replace(/\/$/,'')||p.indexOf(a)===0});var dark=t?t==='dark':!isApp;document.documentElement.classList.toggle('dark',dark);}catch(e){}})();`,
           }}
         />
         {/* No-flash locale/dir: URL wins on /ar and /de, else the cookie. Sets
@@ -127,6 +135,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-body">
+        <ThemeSync />
         <ImpersonationBanner />
         <I18nProvider>
           <SiteShell>{children}</SiteShell>

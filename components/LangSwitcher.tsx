@@ -17,7 +17,9 @@ function enBase(path: string): string {
   return path.replace(/^\/(de|ar)(?=\/)/, "") || "/";
 }
 
-const LABEL: Record<Locale, string> = { en: "EN", de: "DE", ar: "AR" };
+// Each language named in itself — the one label a speaker of it can always
+// read. "AR" told an Arabic speaker nothing; "العربية" needs no translating.
+const LABEL: Record<Locale, string> = { en: "English", de: "Deutsch", ar: "العربية" };
 
 export default function LangSwitcher({ className = "" }: { className?: string }) {
   const active = useLocale();
@@ -37,24 +39,35 @@ export default function LangSwitcher({ className = "" }: { className?: string })
     }
   }
 
+  // A native select rather than three pills: it shows the language you are
+  // actually in, spelled out, in the width of one word — and it is keyboard
+  // and screen-reader correct without any of the code a custom menu needs.
   return (
-    <div
-      className={`inline-flex items-center rounded-full border border-border-crisp bg-surface-container p-0.5 text-[12px] font-semibold ${className}`}
-      role="group"
-      aria-label="Language"
-    >
-      {(["en", "de", "ar"] as const).map(loc => (
-        <button
-          key={loc}
-          onClick={() => switchTo(loc)}
-          aria-pressed={active === loc}
-          className={`px-2.5 h-6 rounded-full transition-colors ${
-            active === loc ? "bg-on-surface text-inverse-on-surface" : "text-on-surface-variant hover:text-on-surface"
-          }`}
-        >
-          {LABEL[loc]}
-        </button>
-      ))}
-    </div>
+    <span className={`relative inline-flex items-center ${className}`}>
+      <span
+        className="material-symbols-outlined absolute left-2.5 pointer-events-none text-on-surface-variant"
+        style={{ fontSize: "16px" }}
+        aria-hidden="true"
+      >
+        language
+      </span>
+      <select
+        value={active}
+        onChange={e => switchTo(e.target.value as Locale)}
+        aria-label={LABEL[active]}
+        className="appearance-none h-8 ps-8 pe-7 rounded-full border border-border-crisp bg-surface-container text-[12.5px] font-medium text-on-surface hover:border-on-surface transition-colors focus:outline-none focus:border-on-surface cursor-pointer"
+      >
+        {(["en", "de", "ar"] as const).map(loc => (
+          <option key={loc} value={loc}>{LABEL[loc]}</option>
+        ))}
+      </select>
+      <span
+        className="material-symbols-outlined absolute end-1.5 pointer-events-none text-on-surface-variant"
+        style={{ fontSize: "16px" }}
+        aria-hidden="true"
+      >
+        expand_more
+      </span>
+    </span>
   );
 }
