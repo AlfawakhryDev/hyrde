@@ -3,6 +3,10 @@
 // as more components are wired to useT().
 export const messages = {
   en: {
+    theme: {
+      toLight: "Light",
+      toDark: "Dark",
+    },
     notif: {
       aria: "Notifications",
       title: "Notifications",
@@ -632,6 +636,10 @@ export const messages = {
     },
   },
   de: {
+    theme: {
+      toLight: "Hell",
+      toDark: "Dunkel",
+    },
     notif: {
       aria: "Benachrichtigungen",
       title: "Benachrichtigungen",
@@ -1262,6 +1270,10 @@ export const messages = {
   },
   // Arabic (Saudi audience) — natural, polished MSA. Renders RTL via <html dir>.
   ar: {
+    theme: {
+      toLight: "الوضع الفاتح",
+      toDark: "الوضع الداكن",
+    },
     notif: {
       aria: "الإشعارات",
       title: "الإشعارات",
