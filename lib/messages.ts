@@ -3,6 +3,27 @@
 // as more components are wired to useT().
 export const messages = {
   en: {
+    notif: {
+      aria: "Notifications",
+      title: "Notifications",
+      empty: "Nothing yet. Matches and messages land here.",
+      now: "just now",
+      mAgo: "{n}m ago",
+      hAgo: "{n}h ago",
+      dAgo: "{n}d ago",
+    },
+    chat: {
+      title: "Messages",
+      sub: "Private to you and the specialist on this task.",
+      subClient: "Private to you and the client on this task.",
+      empty: "No messages yet. Say hello, or ask the first question.",
+      placeholder: "Write a message\u2026",
+      send: "Send",
+      sending: "Sending\u2026",
+      you: "You",
+      errSend: "That did not send. Try again.",
+      waiting: "You can message once someone is matched to this task.",
+    },
     prof: {
       title: "Profile",
       identity: "Identity",
@@ -611,6 +632,27 @@ export const messages = {
     },
   },
   de: {
+    notif: {
+      aria: "Benachrichtigungen",
+      title: "Benachrichtigungen",
+      empty: "Noch nichts. Vermittlungen und Nachrichten landen hier.",
+      now: "gerade eben",
+      mAgo: "vor {n} Min.",
+      hAgo: "vor {n} Std.",
+      dAgo: "vor {n} T.",
+    },
+    chat: {
+      title: "Nachrichten",
+      sub: "Privat zwischen dir und dem Spezialisten dieser Aufgabe.",
+      subClient: "Privat zwischen dir und dem Kunden dieser Aufgabe.",
+      empty: "Noch keine Nachrichten. Sag Hallo oder stell die erste Frage.",
+      placeholder: "Nachricht schreiben\u2026",
+      send: "Senden",
+      sending: "Wird gesendet\u2026",
+      you: "Du",
+      errSend: "Das wurde nicht gesendet. Versuche es erneut.",
+      waiting: "Du kannst schreiben, sobald jemand dieser Aufgabe zugeordnet ist.",
+    },
     prof: {
       title: "Profil",
       identity: "Identit\u00e4t",
@@ -1220,6 +1262,27 @@ export const messages = {
   },
   // Arabic (Saudi audience) — natural, polished MSA. Renders RTL via <html dir>.
   ar: {
+    notif: {
+      aria: "الإشعارات",
+      title: "الإشعارات",
+      empty: "لا شيء بعد. ستصل هنا التوفيقات والرسائل.",
+      now: "الآن",
+      mAgo: "قبل {n} دقيقة",
+      hAgo: "قبل {n} ساعة",
+      dAgo: "قبل {n} يوم",
+    },
+    chat: {
+      title: "الرسائل",
+      sub: "خاصة بينك وبين المختصّ في هذه المهمة.",
+      subClient: "خاصة بينك وبين العميل في هذه المهمة.",
+      empty: "لا رسائل بعد. ابدأ بتحية أو بأول سؤال.",
+      placeholder: "اكتب رسالة…",
+      send: "إرسال",
+      sending: "جارٍ الإرسال…",
+      you: "أنت",
+      errSend: "لم تُرسل. حاول مرة أخرى.",
+      waiting: "يمكنك المراسلة بمجرّد توفيق شخص لهذه المهمة.",
+    },
     prof: {
       title: "الملف الشخصي",
       identity: "الهوية",
