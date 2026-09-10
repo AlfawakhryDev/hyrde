@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
 import { guardAi } from "@/lib/ratelimit";
+import { PILOT_SPECIALIST_ID, pilotLocked } from "@/lib/pilot";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -39,6 +40,43 @@ export async function POST(req: NextRequest) {
   }
   if (task.claimed_by_user_id) {
     return NextResponse.json({ error: "This task is already matched." }, { status: 409 });
+  }
+
+  // Pilot lock: while it is on, every milestone goes to the same specialist.
+  // Placed before the pool query so the vetting filter cannot exclude them —
+  // the pinned person is a business decision, not a match result, and the
+  // reason recorded on the task says exactly that rather than inventing a
+  // score the matcher never computed.
+  if (pilotLocked()) {
+    const { data: locked } = await supabase
+      .from("profiles").select("id, display_name")
+      .eq("id", PILOT_SPECIALIST_ID).maybeSingle();
+    if (!locked) {
+      console.error("Pilot specialist not found:", PILOT_SPECIALIST_ID);
+      return NextResponse.json({ matched: false, reason: "no_candidates" });
+    }
+    const { data: done, error: lockErr } = await supabase
+      .from("tasks")
+      .update({
+        claimed_by_user_id: locked.id,
+        claimed_at: new Date().toISOString(),
+        matched_at: new Date().toISOString(),
+        match_reason: "Assigned for the pilot: all work in this phase goes to one specialist.",
+        match_score: null,
+        status: "mounted",
+      })
+      .eq("id", task.id)
+      .is("claimed_by_user_id", null)
+      .select("id");
+    if (lockErr || !done?.length) {
+      return NextResponse.json({ matched: false, reason: "assign_failed" });
+    }
+    return NextResponse.json({
+      matched: true,
+      pilotLocked: true,
+      freelancer: { name: locked.display_name ?? "Specialist", band: null, score: null },
+      reason: "Assigned for the pilot: all work in this phase goes to one specialist.",
+    });
   }
 
   // Candidate pool comes from get_match_pool(): a SECURITY DEFINER RPC that

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
 import { guardAi } from "@/lib/ratelimit";
+import { PILOT_SPECIALIST_ID, pilotLocked } from "@/lib/pilot";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -46,6 +47,32 @@ export async function POST(req: NextRequest) {
 
   if (!milestones.length) {
     return NextResponse.json({ error: "No milestones to match against." }, { status: 400 });
+  }
+
+  // Pilot lock: one specialist, every client, until the delivery flow is
+  // proven. Short-circuits before the model runs — there is nothing to choose
+  // between, and spending a call to "pick" from a list of one is theatre.
+  if (pilotLocked()) {
+    const { data: only } = await supabase
+      .from("profiles")
+      .select("id, display_name, headline, bio, country")
+      .eq("id", PILOT_SPECIALIST_ID)
+      .maybeSingle();
+    if (!only) {
+      console.error("Pilot specialist not found:", PILOT_SPECIALIST_ID);
+      return NextResponse.json({ suggestions: [], reason: "no_vetted_specialists" });
+    }
+    return NextResponse.json({
+      suggestions: [{
+        id: only.id,
+        name: only.display_name ?? "Specialist",
+        headline: only.headline ?? "",
+        country: only.country ?? "",
+        fit: 100,
+        why: "Assigned for the pilot: every project in this phase goes to the same specialist.",
+        pilotLocked: true,
+      }],
+    });
   }
 
   // Pool: every passed vetting, read through the admin-safe view of profiles.
