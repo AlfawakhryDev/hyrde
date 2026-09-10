@@ -8,7 +8,7 @@ import {
   type ArenaTask, parseAiReview, taskState, formatAmount, timeAgo,
 } from "@/lib/arena";
 import PaymentFlow from "@/components/arena/PaymentFlow";
-import TaskChat from "@/components/arena/TaskChat";
+import TaskChat from "@/components/task/TaskChat";
 import { useT } from "@/components/I18nProvider";
 
 export default function TaskDetailClient({
@@ -501,7 +501,12 @@ export default function TaskDetailClient({
 
       {/* ── Messages ── */}
       {task.claimed_by_user_id && (isOwner || isMyClaim) && (
-        <TaskChat taskId={task.id} userId={userId} posterId={task.poster_id} />
+        <TaskChat
+          taskId={task.id}
+          userId={userId}
+          posterId={task.poster_id}
+          counterpartId={userId === task.poster_id ? task.claimed_by_user_id : task.poster_id}
+        />
       )}
 
     </div>
