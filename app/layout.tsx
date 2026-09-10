@@ -3,6 +3,7 @@ import "./globals.css";
 import SiteShell from "@/components/SiteShell";
 import { Analytics } from "@vercel/analytics/next";
 import { I18nProvider } from "@/components/I18nProvider";
+import ImpersonationBanner from "@/components/ImpersonationBanner";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hyrde.net"),
@@ -126,6 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-body">
+        <ImpersonationBanner />
         <I18nProvider>
           <SiteShell>{children}</SiteShell>
         </I18nProvider>

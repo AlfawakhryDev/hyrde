@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import InstrumentationClient, { type Metrics, type TaskRequest, type DemoRequest, type CallRequest } from "./InstrumentationClient";
+import ImpersonatePanel from "@/components/admin/ImpersonatePanel";
+import { IMPERSONATION_OPERATOR, IMPERSONATION_TARGETS, IMPERSONATION_ENABLED } from "@/lib/impersonation";
 
 export const metadata: Metadata = {
   title: "Instrumentation",
@@ -21,6 +23,11 @@ export default async function InstrumentationPage() {
 
   const { data: isAdmin } = await supabase.rpc("am_i_admin");
   if (!isAdmin) redirect("/dashboard");
+
+  // Being an admin is not enough. The panel appears for one named account,
+  // and the route re-checks the same condition — neither is trusted alone.
+  const canImpersonate =
+    IMPERSONATION_ENABLED && (user.email ?? "").toLowerCase() === IMPERSONATION_OPERATOR;
 
   const { data, error } = await supabase.rpc("instrumentation_metrics");
   if (error) redirect("/dashboard");
@@ -57,5 +64,14 @@ export default async function InstrumentationPage() {
     .limit(50);
   const calls = (callRows ?? []) as CallRequest[];
 
-  return <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} demos={demos} calls={calls} />;
+  return (
+    <>
+      <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} demos={demos} calls={calls} />
+      {canImpersonate && (
+        <div className="mx-auto max-w-[1080px] px-5 md:px-8 pb-16">
+          <ImpersonatePanel targets={IMPERSONATION_TARGETS.map(t => ({ id: t.id, label: t.label }))} />
+        </div>
+      )}
+    </>
+  );
 }
