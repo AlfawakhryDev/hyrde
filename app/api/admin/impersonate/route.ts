@@ -1,0 +1,113 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { supabaseServer } from "@/lib/supabase/server";
+import {
+  IMPERSONATION_TARGETS, IMPERSONATION_COOKIE,
+  checkOperator, checkTarget, targetFor, DENIAL_MESSAGE, type Denial,
+} from "@/lib/impersonation";
+
+export const dynamic = "force-dynamic";
+
+// ── Issue a support session as the consented pilot account ───────────
+// Identity comes from the caller's own session, never from the request body:
+// a route that trusts a posted operator id is a route anyone can call.
+//
+// The refusal path logs too. A record that only contains successes cannot
+// answer the question you actually ask it later, which is whether anyone tried.
+
+async function record(
+  operatorId: string | null, operatorEmail: string,
+  targetId: string, targetEmail: string,
+  allowed: boolean, reason: string, req: NextRequest,
+) {
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) return;                 // nothing to log with; never throw
+    await createClient(url, key, { auth: { persistSession: false } })
+      .rpc("log_impersonation", {
+        p_operator: operatorId,
+        p_operator_email: operatorEmail,
+        p_target: targetId,
+        p_target_email: targetEmail,
+        p_allowed: allowed,
+        p_reason: reason.slice(0, 300),
+        p_ip: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
+        p_ua: req.headers.get("user-agent")?.slice(0, 300) ?? null,
+      });
+  } catch (err) {
+    console.error("impersonation log failed:", err);
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const supabase = await supabaseServer();
+  const { data: { user } } = await supabase.auth.getUser();
+  const email = user?.email ?? "";
+
+  const body = await req.json().catch(() => ({}));
+  const targetId = String(body?.targetId ?? "");
+  const purpose = String(body?.purpose ?? "").slice(0, 300);
+
+  const denial: Denial | null = checkOperator(email) ?? checkTarget(targetId);
+  if (denial) {
+    const t = targetFor(targetId);
+    await record(user?.id ?? null, email || "(anonymous)",
+                 t?.id ?? targetId, t?.email ?? "(not on the list)", false, denial, req);
+    // Deliberately the same status for every refusal: telling an attacker
+    // which of the two conditions they failed is telling them something.
+    return NextResponse.json({ error: DENIAL_MESSAGE[denial] }, { status: 403 });
+  }
+
+  const target = targetFor(targetId)!;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) {
+    await record(user!.id, email, target.id, target.email, false, "not_configured", req);
+    return NextResponse.json({ error: DENIAL_MESSAGE.not_configured }, { status: 501 });
+  }
+
+  // A one-time magic link, minted server side. The service key never leaves
+  // this function and is never sent to the browser.
+  let actionLink: string;
+  try {
+    const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
+    const { data, error } = await admin.auth.admin.generateLink({
+      type: "magiclink",
+      email: target.email,
+    });
+    if (error || !data?.properties?.action_link) {
+      throw new Error(error?.message ?? "no action_link returned");
+    }
+    actionLink = data.properties.action_link;
+  } catch (err) {
+    console.error("impersonation link failed:", err);
+    await record(user!.id, email, target.id, target.email, false, "link_failed", req);
+    return NextResponse.json({ error: "Could not issue a session." }, { status: 502 });
+  }
+
+  await record(user!.id, email, target.id, target.email, true, purpose || "(no purpose given)", req);
+
+  const res = NextResponse.json({ actionLink, target: target.email });
+  // Marks the session that follows as borrowed, so the banner shows. Not
+  // httpOnly on purpose: the banner is client-rendered and this carries no
+  // authority — the session cookie is what actually grants anything.
+  res.cookies.set(IMPERSONATION_COOKIE, target.email, {
+    path: "/", sameSite: "lax", maxAge: 60 * 60 * 4, httpOnly: false,
+  });
+  return res;
+}
+
+export async function GET() {
+  // The admin page asks what it may offer; it never decides that itself.
+  return NextResponse.json({
+    targets: IMPERSONATION_TARGETS.map(t => ({ id: t.id, label: t.label })),
+  });
+}
+
+// Ending it clears the marker. Signing out ends the borrowed session itself.
+export async function DELETE() {
+  const res = NextResponse.json({ ended: true });
+  res.cookies.set(IMPERSONATION_COOKIE, "", { path: "/", maxAge: 0 });
+  return res;
+}
