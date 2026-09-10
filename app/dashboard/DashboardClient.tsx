@@ -17,6 +17,7 @@ import { ProgressBar } from "@/components/task/MilestoneProgress";
 import { useT } from "@/components/I18nProvider";
 import WhereAreYou from "@/components/WhereAreYou";
 import StartHereClient from "@/components/dashboard/StartHereClient";
+import MessageDock from "@/components/task/MessageDock";
 
 export default function DashboardClient({
   userId,
@@ -49,6 +50,9 @@ export default function DashboardClient({
   // empty account: someone with work in flight does not need to be told what
   // this page is for.
   const [showStart, setShowStart] = useState(false);
+  /** taskId -> unread messages. One query, so a project card can show a count
+   *  without each row asking the database on its own. */
+  const [unread, setUnread] = useState<Map<string, number>>(new Map());
   const [projectSeed, setProjectSeed] = useState("");
   const openProject = (seed = "") => { setProjectSeed(seed); setProjectComposerOpen(true); };
   const [payoutOpen, setPayoutOpen] = useState(params.get("payout") === "1");
@@ -68,7 +72,7 @@ export default function DashboardClient({
   // ── Data ──────────────────────────────────────────────────────────────────
   const refetch = useCallback(async () => {
     const supabase = supabaseBrowser();
-    const [{ data }, { data: pays }, { data: subRows }, { data: projRows }, { data: progRows }] = await Promise.all([
+    const [{ data }, { data: pays }, { data: subRows }, { data: projRows }, { data: progRows }, { data: unreadRows }] = await Promise.all([
       // deliverable_text/agent_deliverable are column-locked at the DB level
       // (see get_task_full) — the dashboard list never renders them, so an
       // explicit column list avoids a 403 that select("*") would now hit.
@@ -84,6 +88,10 @@ export default function DashboardClient({
       // limits these to milestones this user posted or is working on.
       supabase.from("milestone_progress").select("task_id, percent, note, created_at")
         .order("created_at", { ascending: false }).limit(300),
+      // Unread message notifications, so a client sees a count without opening
+      // anything. RLS already limits these to the signed-in person.
+      supabase.from("notifications").select("task_id")
+        .eq("kind", "message").is("read_at", null).limit(500),
     ]);
     // deliverable_text/agent_deliverable are never fetched here (see the
     // column-locked select above) — stub them so the shared ArenaTask type
@@ -92,6 +100,11 @@ export default function DashboardClient({
     if (pays) setPayments(pays as Payment[]);
     if (subRows) setSubs(subRows as Subscription[]);
     if (projRows) setProjects(projRows as Project[]);
+    const u = new Map<string, number>();
+    for (const r of unreadRows ?? []) {
+      if (r.task_id) u.set(r.task_id, (u.get(r.task_id) ?? 0) + 1);
+    }
+    setUnread(u);
     if (progRows) {
       // One entry per task: the first row wins because the query is newest-first.
       const latest = new Map<string, { percent: number; note: string | null; created_at: string }>();
@@ -445,6 +458,20 @@ export default function DashboardClient({
                       )}
                     </p>
                   </div>
+                  {/* A client thinks "message my specialist about this
+                      project", not "about milestone 3", so the button opens
+                      the milestone currently being worked and carries the
+                      whole project's unread count. */}
+                  {currentMilestone?.claimed_by_user_id && (
+                    <MessageDock
+                      taskId={currentMilestone.id}
+                      userId={userId}
+                      posterId={currentMilestone.poster_id}
+                      counterpartId={isPilot ? currentMilestone.poster_id : currentMilestone.claimed_by_user_id}
+                      unread={milestones.reduce((n, m) => n + (unread.get(m.id) ?? 0), 0)}
+                      subtitle={project?.title ?? currentMilestone.title}
+                    />
+                  )}
                   {totalAmount > 0 && (
                     <span className="text-[15px] font-semibold tracking-[-0.01em] text-on-surface shrink-0">{formatAmount(totalAmount)}</span>
                   )}

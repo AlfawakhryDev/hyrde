@@ -8,7 +8,7 @@ import {
   type ArenaTask, parseAiReview, taskState, formatAmount, timeAgo,
 } from "@/lib/arena";
 import PaymentFlow from "@/components/arena/PaymentFlow";
-import TaskChat from "@/components/task/TaskChat";
+import MessageDock from "@/components/task/MessageDock";
 import { useT } from "@/components/I18nProvider";
 
 export default function TaskDetailClient({
@@ -500,12 +500,17 @@ export default function TaskDetailClient({
       <PaymentFlow task={task} userId={userId} isOwner={isOwner} isMyClaim={isMyClaim} onPaid={refetch} />
 
       {/* ── Messages ── */}
+      {/* Docked, not buried. This used to be a section below the payment
+          block, which meant nobody found it without scrolling past everything
+          that mattered less. */}
       {task.claimed_by_user_id && (isOwner || isMyClaim) && (
-        <TaskChat
+        <MessageDock
+          variant="floating"
           taskId={task.id}
           userId={userId}
           posterId={task.poster_id}
           counterpartId={userId === task.poster_id ? task.claimed_by_user_id : task.poster_id}
+          subtitle={task.title}
         />
       )}
 
