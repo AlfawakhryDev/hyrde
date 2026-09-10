@@ -161,6 +161,12 @@ body {
 @keyframes dotFlash { 0%,80%,100% { opacity: .25 } 40% { opacity: 1 } }
 @keyframes vbar { 0%,100% { transform: scaleY(0.35) } 50% { transform: scaleY(1) } }
 @keyframes slideInRight { from { transform: translateX(100%) } to { transform: translateX(0) } }
+/* The slide-over docks to the inline end, which is the LEFT in Arabic. Sliding
+   it in from the right there makes it cross the whole screen the wrong way. */
+@keyframes slideInStart { from { transform: translateX(-100%) } to { transform: translateX(0) } }
+[dir="rtl"] .animate-\[slideInRight_\.22s_cubic-bezier\(\.2\,\.7\,\.2\,1\)\] {
+  animation-name: slideInStart;
+}
 @keyframes hyrde-breathe { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 @keyframes hyrde-sweep { 0% { left: -35% } 100% { left: 100% } }
 

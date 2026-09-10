@@ -20,13 +20,15 @@ type Message = {
 const MAX = 4000;
 
 export default function TaskChat({
-  taskId, userId, posterId, counterpartId,
+  taskId, userId, posterId, counterpartId, bare = false,
 }: {
   taskId: string;
   userId: string;
   posterId: string | null;
   /** The other party. Null means nobody is matched yet. */
   counterpartId?: string | null;
+  /** Drop the heading and outer border — the dock draws its own. */
+  bare?: boolean;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -107,15 +109,11 @@ export default function TaskChat({
   const day = (iso: string) =>
     new Date(iso).toLocaleDateString(locale === "ar" ? "ar-SA" : locale, { day: "numeric", month: "short" });
 
-  return (
-    <section className="pt-10 mt-10 border-t border-border-crisp">
-      <h2 className="text-[15px] font-semibold text-on-surface">{t("chat.title")}</h2>
-      <p className="text-[12.5px] text-on-surface-variant mt-0.5 mb-4">
-        {t(isClient ? "chat.sub" : "chat.subClient")}
-      </p>
-
-      <div className="rounded-2xl border border-border-crisp overflow-hidden bg-surface-container-low">
-        <div className="max-h-[420px] min-h-[140px] overflow-y-auto p-4 flex flex-col gap-2">
+  const thread = (
+    <>
+      <div className={bare
+        ? "flex-1 overflow-y-auto p-4 flex flex-col gap-2"
+        : "max-h-[420px] min-h-[140px] overflow-y-auto p-4 flex flex-col gap-2"}>
           {loaded && messages.length === 0 && (
             <p className="text-[13px] text-on-surface-variant text-center py-8">{t("chat.empty")}</p>
           )}
@@ -150,10 +148,10 @@ export default function TaskChat({
               </div>
             );
           })}
-          <div ref={endRef} />
-        </div>
+        <div ref={endRef} />
+      </div>
 
-        <div className="border-t border-border-crisp bg-surface-bright p-2.5 flex items-end gap-2">
+      <div className="border-t border-border-crisp bg-surface-bright p-2.5 flex items-end gap-2">
           <textarea
             ref={boxRef}
             value={draft}
@@ -171,17 +169,29 @@ export default function TaskChat({
             aria-label={t("chat.placeholder")}
             className="flex-1 resize-none bg-transparent px-2 py-2 text-[13.5px] text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none max-h-[140px]"
           />
-          <button
-            onClick={send}
-            disabled={sending || !draft.trim()}
-            className="h-9 px-4 rounded-full bg-on-surface text-inverse-on-surface text-[12.5px] font-medium hover:opacity-90 disabled:opacity-40 shrink-0"
-          >
-            {sending ? t("chat.sending") : t("chat.send")}
-          </button>
-        </div>
+        <button
+          onClick={send}
+          disabled={sending || !draft.trim()}
+          className="h-9 px-4 rounded-full bg-on-surface text-inverse-on-surface text-[12.5px] font-medium hover:opacity-90 disabled:opacity-40 shrink-0"
+        >
+          {sending ? t("chat.sending") : t("chat.send")}
+        </button>
       </div>
+      {error && <p className="text-[12.5px] text-error px-4 pb-2">{error}</p>}
+    </>
+  );
 
-      {error && <p className="text-[12.5px] text-error mt-2">{error}</p>}
+  if (bare) return thread;
+
+  return (
+    <section className="pt-10 mt-10 border-t border-border-crisp">
+      <h2 className="text-[15px] font-semibold text-on-surface">{t("chat.title")}</h2>
+      <p className="text-[12.5px] text-on-surface-variant mt-0.5 mb-4">
+        {t(isClient ? "chat.sub" : "chat.subClient")}
+      </p>
+      <div className="rounded-2xl border border-border-crisp overflow-hidden bg-surface-container-low">
+        {thread}
+      </div>
     </section>
   );
 }
