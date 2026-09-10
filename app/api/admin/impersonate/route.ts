@@ -80,10 +80,24 @@ export async function POST(req: NextRequest) {
       type: "magiclink",
       email: target.email,
     });
-    if (error || !data?.properties?.action_link) {
-      throw new Error(error?.message ?? "no action_link returned");
+    if (error || !data?.properties?.hashed_token) {
+      throw new Error(error?.message ?? "no hashed_token returned");
     }
-    actionLink = data.properties.action_link;
+    // NOT data.properties.action_link. That points at Supabase's own verify
+    // endpoint, which comes back as ?code= — a PKCE code that can only be
+    // exchanged by the browser that STARTED the flow. Nothing started this
+    // one, and a private window has no verifier, so following it signs you in
+    // nowhere and dumps you on /login?error=auth.
+    //
+    // The hashed token has no such requirement: our callback verifies it
+    // server-side and sets the session cookie on whichever window opens it.
+    const q = new URLSearchParams({
+      token_hash: data.properties.hashed_token,
+      type: "magiclink",
+      next: "/dashboard",
+      support: "1",          // tells the callback to raise the banner
+    });
+    actionLink = `${req.nextUrl.origin}/auth/callback?${q}`;
   } catch (err) {
     console.error("impersonation link failed:", err);
     await record(user!.id, email, target.id, target.email, false, "link_failed", req);
