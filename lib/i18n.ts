@@ -36,7 +36,7 @@ export function isLocale(v: unknown): v is Locale {
 // English prose. That distinction matters because `dir` follows the locale — an
 // Arabic cookie was flipping the English homepage to RTL, which put the full
 // stop on the wrong side of every sentence and broke the hero outright.
-const APP_PREFIXES = [
+export const APP_PREFIXES = [
   "/dashboard", "/onboarding", "/profile", "/billing", "/t/", "/vetting",
   "/login", "/signup", "/verify", "/post-job", "/admin", "/welcome", "/jobs",
 ];

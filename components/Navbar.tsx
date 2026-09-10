@@ -7,6 +7,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 import { HyrdeMark } from "./Logo";
 import { useT } from "./I18nProvider";
 import LangSwitcher from "./LangSwitcher";
+import ThemeToggle from "./ThemeToggle";
 import Notifications from "./Notifications";
 import BookDemo from "./BookDemo";
 
@@ -80,6 +81,7 @@ export default function Navbar() {
 
           <span className="hidden md:block w-px h-4 bg-border-crisp mx-1.5" aria-hidden="true" />
           <LangSwitcher className="hidden md:inline-flex mr-1" />
+          <ThemeToggle className="hidden md:inline-flex mr-1" />
 
           <span className="hidden md:inline-flex mr-1.5"><BookDemo variant="nav" /></span>
 
@@ -158,6 +160,7 @@ export default function Navbar() {
             <div className="flex items-center justify-between px-3 py-2.5">
               <span className="text-[13px] text-on-surface-variant">{t("common.language")}</span>
               <LangSwitcher />
+              <ThemeToggle />
             </div>
             <div className="flex gap-2 pt-2 mt-1 border-t border-border-crisp">
               {user ? (
