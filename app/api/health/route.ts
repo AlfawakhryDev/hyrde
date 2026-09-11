@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { appRelease } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function GET() {
   }
   const ok = db === "up";
   return NextResponse.json(
-    { ok, db, commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local" },
+    { ok, db, commit: appRelease?.slice(0, 7) ?? "local" },
     { status: ok ? 200 : 503, headers: { "Cache-Control": "no-store" } },
   );
 }
