@@ -82,7 +82,7 @@ defaults to Arabic.
 - Browser errors: `instrumentation-client.ts`. Root-layout crashes: `app/global-error.tsx`.
 - Sentry reports only from deployed builds (`lib/sentry.ts`), never local development or CI, and attaches no PII.
 - Liveness: `GET /api/health`.
-- Backups: a nightly encrypted dump (`.github/workflows/db-backup.yml`). Restore steps are in the RUNBOOK.
+- Backups: **none right now.** The nightly encrypted dump (`.github/workflows/db-backup.yml`) is paused until its secrets are set. The RUNBOOK has how to resume it and the restore steps.
 
 ## Moving off Vercel
 
