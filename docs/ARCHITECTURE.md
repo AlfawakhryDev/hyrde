@@ -38,8 +38,9 @@ insert → trigger (notify_on_message, notify_on_match, …)
        → notify_dispatch() → pg_net → /api/notify/dispatch (shared secret) → SendGrid
 ```
 
-`pg_net` is transactional: a rolled-back insert sends nothing. Delivery is
-fire-and-forget, with no retries yet. `notify_dispatch` strips recipients who
+`pg_net` is transactional: a rolled-back insert sends nothing. Delivery is at-least-once: every
+notification goes through `notification_outbox`, is retried with backoff for about
+three hours by a pg_cron job, and emails the admin if it finally fails. `notify_dispatch` strips recipients who
 are in a support session, so the admin copy survives and the pilot accounts
 hear nothing.
 
@@ -76,7 +77,29 @@ defaults to Arabic.
 
 ## Observability
 
-- Caught failures: `reportError()` in `lib/observe.ts`, one JSON line each.
-- Uncaught server errors: `instrumentation.ts` → `onRequestError`.
+- Caught failures: `reportError()` in `lib/observe.ts`. One JSON line in the logs, plus a Sentry event (org `hyrde`).
+- Uncaught server errors: `instrumentation.ts` → `onRequestError`, to the log and to Sentry.
+- Browser errors: `instrumentation-client.ts`. Root-layout crashes: `app/global-error.tsx`.
+- Sentry reports only from deployed builds (`lib/sentry.ts`), never local development or CI, and attaches no PII.
 - Liveness: `GET /api/health`.
 - Backups: a nightly encrypted dump (`.github/workflows/db-backup.yml`). Restore steps are in the RUNBOOK.
+
+## Moving off Vercel
+
+The plan is to move to AWS at scale. What is tied to Vercel today, and what
+replaces it:
+
+| Piece | Today, on Vercel | On AWS |
+|---|---|---|
+| Deploys | Git integration: `main` is production, every branch a preview | OpenNext (SST) on Lambda and CloudFront, or containers on ECS (`output: "standalone"`), deployed from CI on merge to `main` |
+| Which environment am I? | `VERCEL_ENV`, `VERCEL_GIT_COMMIT_SHA` | `APP_ENV` / `APP_RELEASE` (and `NEXT_PUBLIC_` twins). `lib/env.ts` already reads either |
+| Secrets | Vercel environment variables | Secrets Manager or SSM Parameter Store |
+| Scheduled SEO ping | `vercel.json` cron | EventBridge Scheduler calling `/api/seo/ping` with `CRON_SECRET` |
+| Preview protection | Vercel Authentication (E2E sends a bypass header) | Whatever protects previews there. The E2E suite needs only `BASE_URL` |
+| Logs | Vercel log search over JSON lines | CloudWatch Logs; the same JSON lines |
+| Health checks | `/api/health` for uptime monitors | The same route as the ALB or ECS health check |
+
+These move unchanged, on purpose: the database and its `pg_cron` jobs
+(email retries), rate limits (Postgres), Sentry, `instrumentation.ts`, and
+the whole test suite.
+

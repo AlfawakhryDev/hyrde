@@ -27,13 +27,16 @@ export default function MatchDemo({ locale = "en" }: { locale?: Locale }) {
   const [scan, setScan] = useState(0);
 
   useEffect(() => {
-    const id = setTimeout(() => setPhase(p => (p + 1) % 3), PHASE_MS[phase]);
+    const id = setTimeout(() => {
+      if (phase === 0) setScan(0); // entering the scan: start from the top
+      setPhase(p => (p + 1) % 3);
+    }, PHASE_MS[phase]);
     return () => clearTimeout(id);
   }, [phase]);
 
   useEffect(() => {
     if (phase !== 1) return;
-    let i = 0; setScan(0);
+    let i = 0;
     const id = setInterval(() => { i = (i + 1) % CANDIDATES.length; setScan(i); }, 380);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -13,7 +13,7 @@ const anthropic = new Anthropic();
 // An impartial AI pass compares the deliverable against the brief before the
 // client approves — the marketplace-dispute problem, solved before it starts.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();

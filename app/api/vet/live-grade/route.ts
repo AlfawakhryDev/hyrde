@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { gradeDialogue } from "@/lib/interviewer";
 import { PASS_THRESHOLD } from "@/lib/vetting";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 // ── Grade a completed live voice interview ─────────────────────────────────────
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();

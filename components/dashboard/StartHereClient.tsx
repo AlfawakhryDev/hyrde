@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+
 import { createPortal } from "react-dom";
 import { useT } from "@/components/I18nProvider";
 import { PROJECT_TEMPLATES } from "@/components/dashboard/ProjectComposer";
+import { useHydrated } from "@/lib/use-hydrated";
 
 // ── First run for a new client ───────────────────────────────────────
 // The freelancer side gets StartHere; this is its counterpart. A client's
@@ -22,8 +23,7 @@ export default function StartHereClient({
   onClose: () => void;
 }) {
   const t = useT();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useHydrated();
 
   const rest = PROJECT_TEMPLATES.filter(id => !FEATURED.includes(id as typeof FEATURED[number]));
 

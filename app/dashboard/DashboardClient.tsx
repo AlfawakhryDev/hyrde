@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import {
@@ -62,12 +62,13 @@ export default function DashboardClient({
 
   // Decided once, after the first load resolves — testing an empty tasks array
   // before the fetch returns would flash this at every existing client.
-  const startDecided = useRef(false);
-  useEffect(() => {
-    if (startDecided.current || loading || isPilot) return;
-    startDecided.current = true;
+  // Decided once, the first time data is in, while rendering: React's pattern
+  // for state that follows other state, instead of an effect.
+  const [startDecided, setStartDecided] = useState(false);
+  if (!startDecided && !loading && !isPilot) {
+    setStartDecided(true);
     if (!tasks.some(t => t.poster_id === userId)) setShowStart(true);
-  }, [loading, isPilot, tasks, userId]);
+  }
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const refetch = useCallback(async () => {
@@ -129,6 +130,7 @@ export default function DashboardClient({
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the loader awaits the network before it sets any state; the rule cannot see through the await. Load-then-subscribe is what effects are for.
     refetch();
     const supabase = supabaseBrowser();
     const channel = supabase
@@ -215,7 +217,6 @@ export default function DashboardClient({
   }, [tasks, isPilot, userId, onFree]);
   const monthlyLimit = currentSub?.tier === "scale" ? null : currentSub?.tier === "pro" ? 50 : FREE_PROJECTS;
   const planLabel = currentSub?.tier === "scale" ? "Scale" : currentSub?.tier === "pro" ? "Pro" : "Free";
-  const fmtExpiry = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 
   const DOT: Record<string, string> = {
     open: "bg-amber-500", claimed: "bg-electric-violet", delivered: "bg-purple-500",
@@ -426,7 +427,7 @@ export default function DashboardClient({
                 <button
                   onClick={() => setExpandedProjects(s => {
                     const next = new Set(s);
-                    next.has(projectId) ? next.delete(projectId) : next.add(projectId);
+                    if (next.has(projectId)) next.delete(projectId); else next.add(projectId);
                     return next;
                   })}
                   className="group flex items-center gap-6 w-full text-left transition-colors hover:bg-surface-container-low -mx-3 px-3 py-1 rounded-lg"

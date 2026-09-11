@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --font-headline: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-hand: 'Caveat', 'Segoe Script', cursive;
+  --font-headline: var(--ff-inter), system-ui, sans-serif;
+  --font-body: var(--ff-inter), system-ui, sans-serif;
+  --font-display: var(--ff-fraunces), Georgia, 'Times New Roman', serif;
+  --font-hand: var(--ff-caveat), 'Segoe Script', cursive;
 
   /* Warm paper: a hair off pure white so the page reads printed, not sterile */
   --color-paper: #F7F5F0;
@@ -105,7 +105,7 @@
 
 /* Material Symbols */
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: var(--ff-icons);
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   display: inline-flex;
   align-items: center;
@@ -142,7 +142,7 @@ html { scroll-behavior: smooth; }
 body {
   background: #FAFAFA;
   color: #111113;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--ff-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   font-feature-settings: 'cv11', 'ss01', 'ss03';
   text-rendering: optimizeLegibility;
@@ -252,9 +252,9 @@ body {
    script is built on — that is the "broken text", not the font alone.
    Italic is meaningless in Arabic too, so it is dropped rather than faked. */
 [dir="rtl"] body,
-[dir="rtl"] .font-body { font-family: 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif }
-[dir="rtl"] .font-display { font-family: 'Noto Naskh Arabic', 'Times New Roman', serif }
-[dir="rtl"] .font-hand { font-family: 'Noto Naskh Arabic', cursive }
+[dir="rtl"] .font-body { font-family: var(--ff-arabic-sans), 'Segoe UI', Tahoma, sans-serif }
+[dir="rtl"] .font-display { font-family: var(--ff-arabic-naskh), 'Times New Roman', serif }
+[dir="rtl"] .font-hand { font-family: var(--ff-arabic-naskh), cursive }
 
 /* Never letter-space Arabic. The joins break and words come apart. */
 [dir="rtl"] * { letter-spacing: normal !important }

@@ -60,7 +60,6 @@ export default function VerifyEmailCard({ email, next }: { email: string; next: 
     if (asked.current) return;
     asked.current = true;
     void send(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function confirm() {

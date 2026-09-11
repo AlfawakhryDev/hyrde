@@ -63,6 +63,7 @@ export default function TaskChat({
   }, [taskId, userId, posterId, counterpartId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the loader awaits the network before it sets any state; the rule cannot see through the await. Load-then-subscribe is what effects are for.
     void load();
     const supa = supabaseBrowser();
     const channel = supa

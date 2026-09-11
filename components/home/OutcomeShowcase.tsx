@@ -24,7 +24,6 @@ export default function OutcomeShowcase({ locale = "en" }: { locale?: Locale }) 
 
   useEffect(() => {
     if (phase !== 0) return;
-    setTyped(0);
     let i = 0;
     const id = setInterval(() => {
       i++; setTyped(i);
@@ -36,7 +35,7 @@ export default function OutcomeShowcase({ locale = "en" }: { locale?: Locale }) 
 
   useEffect(() => {
     if (phase === 1) { const id = setTimeout(() => setPhase(2), 1500); return () => clearTimeout(id); }
-    if (phase === 2) { const id = setTimeout(() => setPhase(0), 4400); return () => clearTimeout(id); }
+    if (phase === 2) { const id = setTimeout(() => { setTyped(0); setPhase(0); }, 4400); return () => clearTimeout(id); }
   }, [phase]);
 
   return (

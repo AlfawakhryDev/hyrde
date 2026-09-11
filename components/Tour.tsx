@@ -20,7 +20,8 @@ export default function Tour({ steps, storageKey }: { steps: TourStep[]; storage
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [ready, setReady] = useState(false);
   const lastClick = useRef(0);
-  const stepIds = useRef(steps.map(s => s.id).join(","));
+  // The steps array is new on every render; its ids are what matter.
+  const stepKey = steps.map(s => s.id).join(",");
 
   // Only offer steps whose targets actually exist on this screen.
   const [available, setAvailable] = useState<TourStep[]>([]);
@@ -39,7 +40,7 @@ export default function Tour({ steps, storageKey }: { steps: TourStep[]; storage
     }, 900);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storageKey, stepIds.current]);
+  }, [storageKey, stepKey]);
 
   const measure = useCallback(() => {
     const step = available[idx];
@@ -52,7 +53,6 @@ export default function Tour({ steps, storageKey }: { steps: TourStep[]; storage
   // Scroll the target into view, then measure (and keep measuring on scroll/resize).
   useEffect(() => {
     if (!active || !available[idx]) return;
-    setReady(false);
     const el = document.querySelector(`[data-tour="${available[idx].id}"]`);
     el?.scrollIntoView({ behavior: "smooth", block: "center" });
     const settle = setTimeout(() => { measure(); setReady(true); }, 350);
@@ -133,14 +133,14 @@ export default function Tour({ steps, storageKey }: { steps: TourStep[]; storage
           </span>
           {idx > 0 && (
             <button
-              onClick={() => guarded(() => setIdx(i => i - 1))}
+              onClick={() => guarded(() => { setReady(false); setIdx(i => i - 1); })}
               className="h-8 px-3 rounded-full border border-border-crisp text-[13px] font-medium text-on-surface hover:bg-surface-container transition-colors"
             >
               Back
             </button>
           )}
           <button
-            onClick={() => guarded(() => (last ? finish() : setIdx(i => i + 1)))}
+            onClick={() => guarded(() => { if (last) finish(); else { setReady(false); setIdx(i => i + 1); } })}
             className="h-8 px-3.5 rounded-full bg-electric-violet text-white text-[13px] font-medium hover:opacity-90 transition-opacity"
           >
             {last ? "Done" : "Next"}

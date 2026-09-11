@@ -60,7 +60,8 @@ export default function VideoAnswer({
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoSubmitRef = useRef(false);
   const onSubmitRef = useRef(onSubmit);
-  onSubmitRef.current = onSubmit;
+  // Kept current after every render; read later by the recorder's callbacks.
+  useEffect(() => { onSubmitRef.current = onSubmit; }, [onSubmit]);
 
   const [ready, setReady] = useState(false);
   const [recording, setRecording] = useState(false);
@@ -99,12 +100,17 @@ export default function VideoAnswer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reset per question.
+  // Reset per question. State is reset while rendering, React's pattern for
+  // "adjust state when a prop changes"; the refs and the timer, which are not
+  // rendered, are cleared in the effect.
+  const [answering, setAnswering] = useState(questionIndex);
+  if (answering !== questionIndex) {
+    setAnswering(questionIndex);
+    setFinalText(""); setInterim(""); setBlob(null); setElapsed(0); setHushing(false);
+  }
   useEffect(() => {
-    setFinalText(""); setInterim(""); setBlob(null); setElapsed(0);
     finalTextRef.current = "";
     if (silenceTimerRef.current) { clearTimeout(silenceTimerRef.current); silenceTimerRef.current = null; }
-    setHushing(false);
   }, [questionIndex]);
 
   // Clear any pending silence timer on unmount.

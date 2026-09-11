@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 import { MOCK_FREELANCERS, SKILLS } from "@/lib/data";
 import { readStore, writeStore } from "@/lib/store";
 import type { Job, AIMatch, RegisteredFreelancer } from "@/lib/types";
@@ -8,7 +8,7 @@ import type { Job, AIMatch, RegisteredFreelancer } from "@/lib/types";
 const anthropic = new Anthropic();
 
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req); if (blocked) return blocked;
+  const blocked = await limitAi(req); if (blocked) return blocked;
   const { brief, budget } = await req.json();
   if (!brief) return NextResponse.json({ error: "Brief required" }, { status: 400 });
 

@@ -10,6 +10,19 @@ import {
 import PaymentFlow from "@/components/arena/PaymentFlow";
 import MessageDock from "@/components/task/MessageDock";
 import { useT } from "@/components/I18nProvider";
+import { useNow } from "@/lib/use-now";
+
+// At module scope on purpose. Defined inside the component, it was a new
+// component type on every render, so React tore down and rebuilt everything
+// under it each time anything changed.
+function Section({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <section className="pt-10 mt-10 border-t border-border-crisp">
+      <h2 className="text-[13px] font-medium text-on-surface-variant mb-5">{label}</h2>
+      {children}
+    </section>
+  );
+}
 
 export default function TaskDetailClient({
   initialTask,
@@ -44,11 +57,13 @@ export default function TaskDetailClient({
   // Escrow-by-information: the client sees a preview + the AI review before
   // paying; the full deliverable unlocks once payment is confirmed.
   const deliverableUnlocked = isMyClaim || task.payment_status === "paid";
+  const now = useNow();
   const claimStale =
     !!task.claimed_at &&
+    now !== null &&
     task.status !== "delivered" &&
     task.payment_status === "unpaid" &&
-    Date.now() - new Date(task.claimed_at).getTime() > 72 * 3.6e6;
+    now - new Date(task.claimed_at).getTime() > 72 * 3.6e6;
 
   // ── Live refresh ──────────────────────────────────────────────────────────
   // deliverable_text/agent_deliverable are column-locked at the DB level (only
@@ -188,13 +203,6 @@ export default function TaskDetailClient({
     delivered: "bg-electric-violet", approved: "bg-emerald-500",
     paid: "bg-emerald-500", closed: "bg-outline-variant",
   };
-
-  const Section = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <section className="pt-10 mt-10 border-t border-border-crisp">
-      <h2 className="text-[13px] font-medium text-on-surface-variant mb-5">{label}</h2>
-      {children}
-    </section>
-  );
 
   return (
     <div className="mx-auto max-w-[880px] px-5 md:px-8 py-12">

@@ -32,8 +32,6 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
-  /** Set once the request exists, so the client can pick times immediately. */
-  const [requestId, setRequestId] = useState<string | null>(null);
   /** Chosen in the form itself, so requesting a call and picking a time is one step. */
   const [picked, setPicked] = useState<string[]>([]);
   // Prefilled from the signed-in account. They already told us who they are at
@@ -114,7 +112,6 @@ export default function BookCall({ target, className = "" }: { target: CallTarge
     await supabase.from("call_slots").insert(
       picked.map(iso => ({ call_request_id: id, starts_at: iso })),
     );
-    setRequestId(id);
     setDone(true);
   }
 

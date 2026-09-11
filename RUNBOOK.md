@@ -8,6 +8,7 @@ What to do when production is wrong. Written to be followed at 3 a.m.
 |---|---|
 | `https://hyrde.net/api/health` | Serving? Database reachable? Which commit is live? |
 | Vercel → Logs, search `"level":"error"` | Every reported failure, one JSON line each |
+| Sentry → Issues (org `hyrde`) | The same failures grouped, with stack traces and alerts, browser included |
 | Supabase → Logs | Database, auth and storage errors |
 | GitHub → Security | Leaked secrets, vulnerable dependencies, code scanning |
 
@@ -39,15 +40,25 @@ key from git history does not un-leak it.
 | `SENDGRID_API_KEY` | SendGrid → API Keys | Vercel |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API | Vercel |
 | `ELEVENLABS_API_KEY` | ElevenLabs → Profile | Vercel |
+| `SENTRY_AUTH_TOKEN` | Sentry → Settings → Auth Tokens | Vercel |
 | `NOTIFY_SECRET` | generate a new random value | Vercel **and** Supabase Vault `notify_webhook_secret`. They must match, or every email stops. |
 
 ## Emails stopped
 
-1. In Supabase SQL:
-   `select status_code, count(*) from net._http_response where created > now() - interval '1 day' group by 1;`
-   A `401` means `NOTIFY_SECRET` and the Vault secret disagree.
-2. SendGrid → Activity: were messages rejected or bounced?
-3. `select * from public.support_sessions;`: an open support session silences
+Every notification is written to `public.notification_outbox` before it is
+sent, then retried for about three hours. One that finally fails emails the
+admin an **ops alert**.
+
+1. What is stuck:
+   `select status, count(*) from public.notification_outbox where created_at > now() - interval '1 day' group by 1;`
+   `select id, kind, attempts, last_status, last_error from public.notification_outbox where status in ('pending', 'dead') order by id desc limit 20;`
+   `last_status` 401 means `NOTIFY_SECRET` and the Vault secret `notify_webhook_secret` disagree.
+2. Is the scheduler running?
+   `select status, start_time from cron.job_run_details order by start_time desc limit 5;`
+3. SendGrid → Activity: were messages rejected or bounced?
+4. Once the cause is fixed, requeue what died:
+   `update public.notification_outbox set status = 'pending', attempts = 0, next_attempt_at = now() where status = 'dead' and created_at > now() - interval '1 day';`
+5. `select * from public.support_sessions;`: an open support session silences
    both pilot accounts on purpose.
 
 ## A migration went wrong

@@ -4,7 +4,7 @@ import { SKILLS } from "@/lib/data";
 import { SKILL_ASSESSMENT } from "@/content/marketing";
 import { evaluateSkillSample, scoreBand, levelForScore } from "@/lib/services";
 import type { SkillAssessmentResult, TalentLevel } from "@/lib/types";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ const anthropic = new Anthropic();
 // Scores a short, domain-specific work sample into a verified skill profile.
 // NEVER a pass/fail gate: a low score still admits and matches to right-level work.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req); if (blocked) return blocked;
+  const blocked = await limitAi(req); if (blocked) return blocked;
   const { skill, sample } = await req.json();
 
   if (!sample || typeof sample !== "string" || sample.trim().length < 40) {

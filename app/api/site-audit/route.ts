@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 import { auditSite } from "@/lib/siteaudit";
 import { findUrl } from "@/lib/url";
 
@@ -16,7 +16,7 @@ export const maxDuration = 30;
 // so it must not be an open proxy. lib/siteaudit re-validates every redirect
 // hop against private/loopback/metadata ranges.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();

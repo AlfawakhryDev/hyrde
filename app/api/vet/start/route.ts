@@ -3,14 +3,14 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { nextQuestion, interviewIntro, loadCvBrief } from "@/lib/interviewer";
 import { VETTING_QUESTIONS, RETAKE_COOLDOWN_HOURS } from "@/lib/vetting";
 import { CATEGORIES } from "@/lib/arena";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 // ── Start (or resume) a vetting interview ───────────────────────────────────
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();

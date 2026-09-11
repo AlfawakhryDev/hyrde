@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORIES, CATEGORY_JOB_KEY } from "@/lib/arena";
 import { useT } from "@/components/I18nProvider";
 import CvUpload from "@/components/vetting/CvUpload";
+import { useHydrated } from "@/lib/use-hydrated";
 
 // ── First run for a new freelancer ───────────────────────────────────
 // They arrive here straight from signup and previously met a flat grid of
@@ -32,8 +33,7 @@ export default function StartHere({
   // The portal cannot exist during SSR, so render nothing on the first pass on
   // BOTH sides. Returning null on the server and a portal on the client is a
   // hydration mismatch — BookDemo dodges it only because it starts closed.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useHydrated();
 
   const rest = CATEGORIES.filter(c => !FEATURED.includes(c as typeof FEATURED[number]));
 

@@ -51,9 +51,11 @@ merge. Running `vercel deploy --prod` by hand only creates a duplicate.
 | Audit | a high or critical vulnerability in a production dependency |
 | Build | `next build` fails |
 
-**The lint warning cap only goes down.** It exists because the React Compiler
-rules arrived after this code was written. If your change fixes warnings, lower
-`--max-warnings` in `package.json` in the same PR. Never raise it.
+**Lint is clean, and the cap is 0.** Every rule is an error, including the
+React Compiler rules; they were warnings under a cap of 50 while the code
+caught up, and the cap went down to 0 in September 2026. A PR that adds a
+warning fails CI. Never raise the cap: fix the code, or, where a rule is
+genuinely wrong about one line, disable it on that line with a reason.
 
 ## Tests
 
@@ -91,7 +93,8 @@ Postgres on Supabase is the security boundary, not the app. Before touching
 Never swallow a failure. An empty `catch {}`, or a Supabase call whose
 `{ error }` is ignored, is how lead capture failed on every insert for months
 without anyone noticing. Server code reports through `reportError()` in
-`lib/observe.ts`. Uncaught server errors are captured by `instrumentation.ts`.
+`lib/observe.ts`. Uncaught server errors are captured by `instrumentation.ts`. Both reach
+Sentry as well as the logs.
 
 ## Secrets
 
@@ -103,7 +106,18 @@ without anyone noticing. Server code reports through `reportError()` in
 ## Reviews
 
 `.github/CODEOWNERS` says who reviews which paths. Required approvals are 0
-while there is one engineer. Set them to 1 the day a second one joins.
+while there is one engineer. **The day a second engineer joins:**
+
+1. Give them write access to the repository, and add them to
+   `.github/CODEOWNERS` beside each owner line.
+2. Require one approval, including a code owner's, on both protected branches:
+   ```bash
+   for b in main develop; do
+     gh api -X PATCH "repos/AlfawakhryDev/hyrde/branches/$b/protection/required_pull_request_reviews" \
+       -F required_approving_review_count=1 -F require_code_owner_reviews=true -F dismiss_stale_reviews=true
+   done
+   ```
+3. Leave admin bypass off. A review only means something if nobody can skip it.
 
 ## More
 

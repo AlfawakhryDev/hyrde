@@ -30,6 +30,9 @@ export default function ImpersonationBanner() {
   async function end() {
     await fetch("/api/admin/impersonate", { method: "DELETE" }).catch(() => {});
     await supabaseBrowser().auth.signOut().catch(() => {});
+    // A full page load on purpose, not router.push: it discards every piece of
+    // in-memory state that belonged to the borrowed session.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = "/login";
   }
 

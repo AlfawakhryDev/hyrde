@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 import { CATEGORIES } from "@/lib/arena";
 import { MILESTONE_TYPES } from "@/lib/instrumentation";
-import { priceMilestone, CATEGORY_RATE_USD } from "@/lib/pricing";
+import { priceMilestone } from "@/lib/pricing";
 import type { SiteContext } from "@/lib/siteaudit";
 import { contextToFacts } from "@/lib/siteaudit";
 
@@ -24,7 +24,7 @@ const anthropic = new Anthropic();
 // Distinct from the legacy /api/scope (used by the /agent marketing demo,
 // different response shape) — do not merge the two.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();

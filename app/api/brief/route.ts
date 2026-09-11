@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
 import { reportError } from "@/lib/observe";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -13,7 +13,7 @@ const anthropic = new Anthropic();
 // Clients write vague briefs; vague briefs get vague work. Turn a rough
 // description into a structured, agent-ready brief before posting.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();
