@@ -1,0 +1,72 @@
+name: E2E smoke
+
+# Runs the Playwright smoke suite against a deployment as soon as Vercel
+# reports it live, so a broken release is caught in minutes. The suite needs
+# only BASE_URL; the Vercel bypass header is added when its secret exists.
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: URL to test
+        required: true
+        default: https://hyrde.net
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.event.deployment.id || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: e2e
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BASE_URL: ${{ inputs.base_url || github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
+      E2E_ENV: ${{ (github.event_name == 'workflow_dispatch' || github.event.deployment.environment == 'Production') && 'production' || 'preview' }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      # Previews sit behind Vercel Authentication. Without the bypass secret
+      # they cannot be reached, so say so plainly. Production is always tested.
+      - name: Decide whether this deployment can be tested
+        id: gate
+        run: |
+          if [ "$E2E_ENV" = "preview" ] && [ -z "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
+            echo "::notice::Preview not tested: VERCEL_AUTOMATION_BYPASS_SECRET is not set. Production deployments are always tested."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Testing $E2E_ENV at $BASE_URL"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.run == 'true'
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.run == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - if: steps.gate.outputs.run == 'true'
+        run: npm ci
+
+      - if: steps.gate.outputs.run == 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke tests
+        if: steps.gate.outputs.run == 'true'
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: failure() && steps.gate.outputs.run == 'true'
+        with:
+          name: e2e-failure-screenshots
+          path: test-results/
+          retention-days: 7

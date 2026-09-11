@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteShell from "@/components/SiteShell";
 import ThemeSync from "@/components/ThemeSync";
+import { THEME_SCRIPT, LOCALE_SCRIPT } from "@/lib/noflash";
 import { Analytics } from "@vercel/analytics/next";
 import { I18nProvider } from "@/components/I18nProvider";
 import ImpersonationBanner from "@/components/ImpersonationBanner";
@@ -94,14 +95,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             direction. The APP list must stay in step with ThemeToggle.tsx. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');var p=location.pathname,A=['/dashboard','/onboarding','/profile','/billing','/t/','/vetting','/login','/signup','/verify','/post-job','/admin','/welcome','/jobs'];var isApp=A.some(function(a){return p===a.replace(/\/$/,'')||p.indexOf(a)===0});var dark=t?t==='dark':!isApp;document.documentElement.classList.toggle('dark',dark);}catch(e){}})();`,
+            __html: THEME_SCRIPT,
           }}
         />
         {/* No-flash locale/dir: URL wins on /ar and /de, else the cookie. Sets
             dir=rtl for Arabic before paint so the layout never flips visibly. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var p=location.pathname,A=['/dashboard','/onboarding','/profile','/billing','/t/','/vetting','/login','/signup','/verify','/post-job','/admin','/welcome','/jobs'],l;if(/^\\/ar(\\/|$)/.test(p))l='ar';else if(/^\\/de(\\/|$)/.test(p))l='de';else if(A.some(function(a){return p===a.replace(/\\/$/,'')||p.indexOf(a)===0})){var m=document.cookie.match(/(?:^|; )hyrde_locale=([^;]+)/);l=m?m[1]:'ar';}else l='en';document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}catch(e){}})();`,
+            __html: LOCALE_SCRIPT,
           }}
         />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
