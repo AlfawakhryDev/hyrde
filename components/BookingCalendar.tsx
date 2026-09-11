@@ -23,20 +23,29 @@ export default function BookingCalendar({ slots, brief = "", onBooked, compact =
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [booked, setBooked] = useState(false);
+  const [error, setError] = useState("");
 
   const confirm = async () => {
     if (!selected || !name || !email) return;
     setLoading(true);
+    setError("");
     try {
-      await fetch("/api/bookings", {
+      const res = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ slotLabel: selected.label, slotIso: selected.iso, name, email, topic: brief }),
       });
-    } catch { /* show success anyway for demo */ }
-    setBooked(true);
-    onBooked?.({ slot: selected, name, email });
-    setLoading(false);
+      // fetch resolves on a 500 as well. This used to show "booked" whatever
+      // happened, so a client could wait for a call nobody knew about.
+      if (!res.ok) throw new Error(`bookings responded ${res.status}`);
+      setBooked(true);
+      onBooked?.({ slot: selected, name, email });
+    } catch (err) {
+      console.error("booking failed:", err);
+      setError(t("composer.errNetwork"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (booked) {
@@ -106,6 +115,7 @@ export default function BookingCalendar({ slots, brief = "", onBooked, compact =
           ? <><span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />{t("cal.confirming")}</>
           : <><span className="material-symbols-outlined" style={{ fontSize: "16px" }}>check</span>{t("cal.confirm")}</>}
       </button>
+      {error && <p role="alert" className="text-[12.5px] text-error mt-2">{error}</p>}
     </div>
   );
 }
