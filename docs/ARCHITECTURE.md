@@ -83,3 +83,23 @@ defaults to Arabic.
 - Sentry reports only from deployed builds (`lib/sentry.ts`), never local development or CI, and attaches no PII.
 - Liveness: `GET /api/health`.
 - Backups: a nightly encrypted dump (`.github/workflows/db-backup.yml`). Restore steps are in the RUNBOOK.
+
+## Moving off Vercel
+
+The plan is to move to AWS at scale. What is tied to Vercel today, and what
+replaces it:
+
+| Piece | Today, on Vercel | On AWS |
+|---|---|---|
+| Deploys | Git integration: `main` is production, every branch a preview | OpenNext (SST) on Lambda and CloudFront, or containers on ECS (`output: "standalone"`), deployed from CI on merge to `main` |
+| Which environment am I? | `VERCEL_ENV`, `VERCEL_GIT_COMMIT_SHA` | `APP_ENV` / `APP_RELEASE` (and `NEXT_PUBLIC_` twins). `lib/env.ts` already reads either |
+| Secrets | Vercel environment variables | Secrets Manager or SSM Parameter Store |
+| Scheduled SEO ping | `vercel.json` cron | EventBridge Scheduler calling `/api/seo/ping` with `CRON_SECRET` |
+| Preview protection | Vercel Authentication (E2E sends a bypass header) | Whatever protects previews there. The E2E suite needs only `BASE_URL` |
+| Logs | Vercel log search over JSON lines | CloudWatch Logs; the same JSON lines |
+| Health checks | `/api/health` for uptime monitors | The same route as the ALB or ECS health check |
+
+These move unchanged, on purpose: the database and its `pg_cron` jobs
+(email retries), rate limits (Postgres), Sentry, `instrumentation.ts`, and
+the whole test suite.
+

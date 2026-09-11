@@ -40,6 +40,7 @@ key from git history does not un-leak it.
 | `SENDGRID_API_KEY` | SendGrid → API Keys | Vercel |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API | Vercel |
 | `ELEVENLABS_API_KEY` | ElevenLabs → Profile | Vercel |
+| `SENTRY_AUTH_TOKEN` | Sentry → Settings → Auth Tokens | Vercel |
 | `NOTIFY_SECRET` | generate a new random value | Vercel **and** Supabase Vault `notify_webhook_secret`. They must match, or every email stops. |
 
 ## Emails stopped

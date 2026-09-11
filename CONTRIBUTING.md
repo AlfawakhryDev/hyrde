@@ -104,7 +104,18 @@ Sentry as well as the logs.
 ## Reviews
 
 `.github/CODEOWNERS` says who reviews which paths. Required approvals are 0
-while there is one engineer. Set them to 1 the day a second one joins.
+while there is one engineer. **The day a second engineer joins:**
+
+1. Give them write access to the repository, and add them to
+   `.github/CODEOWNERS` beside each owner line.
+2. Require one approval, including a code owner's, on both protected branches:
+   ```bash
+   for b in main develop; do
+     gh api -X PATCH "repos/AlfawakhryDev/hyrde/branches/$b/protection/required_pull_request_reviews" \
+       -F required_approving_review_count=1 -F require_code_owner_reviews=true -F dismiss_stale_reviews=true
+   done
+   ```
+3. Leave admin bypass off. A review only means something if nobody can skip it.
 
 ## More
 
