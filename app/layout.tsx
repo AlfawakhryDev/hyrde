@@ -6,6 +6,33 @@ import { THEME_SCRIPT, LOCALE_SCRIPT } from "@/lib/noflash";
 import { Analytics } from "@vercel/analytics/next";
 import { I18nProvider } from "@/components/I18nProvider";
 import ImpersonationBanner from "@/components/ImpersonationBanner";
+import { Inter, Fraunces, Caveat, Noto_Sans_Arabic, Noto_Naskh_Arabic } from "next/font/google";
+import localFont from "next/font/local";
+
+// ── Fonts, self-hosted ────────────────────────────────────────────────
+// next/font downloads these at build time and serves them from our own
+// domain, so no visitor's browser sends a request, and their IP, to Google.
+// (A German court has fined a site for exactly that.) Only the two faces on
+// nearly every first screen are preloaded. The Arabic faces load lazily via
+// unicode-range, so English and German visitors still download nothing for
+// them, and the handwriting face appears only in the homepage demos.
+const inter = Inter({ subsets: ["latin", "latin-ext"], axes: ["opsz"], display: "swap" });
+const fraunces = Fraunces({ subsets: ["latin", "latin-ext"], style: ["normal", "italic"], axes: ["opsz"], display: "swap" });
+const caveat = Caveat({ subsets: ["latin"], display: "swap", preload: false });
+const arabicSans = Noto_Sans_Arabic({ subsets: ["arabic"], display: "swap", preload: false });
+const arabicNaskh = Noto_Naskh_Arabic({ subsets: ["arabic"], display: "swap", preload: false });
+// Not on next/font/google, so it comes from the versioned npm package. Blocking
+// on purpose: until it loads, an icon would read as its name ("dark_mode").
+const icons = localFont({
+  src: "../node_modules/material-symbols/material-symbols-outlined.woff2",
+  weight: "100 700",
+  display: "block",
+  preload: false,
+});
+
+const FONT_VARS = `:root{--ff-inter:${inter.style.fontFamily};--ff-fraunces:${fraunces.style.fontFamily};` +
+  `--ff-caveat:${caveat.style.fontFamily};--ff-arabic-sans:${arabicSans.style.fontFamily};` +
+  `--ff-arabic-naskh:${arabicNaskh.style.fontFamily};--ff-icons:${icons.style.fontFamily}}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hyrde.net"),
@@ -107,33 +134,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap"
-          rel="stylesheet"
-        />
-        {/* Editorial display serif for headlines (optical sizing + soft axis) */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&display=swap"
-          rel="stylesheet"
-        />
-        {/* Handwriting for margin annotations on the live demos */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        {/* Arabic faces. Google serves these behind unicode-range, so the files
-            only download when Arabic glyphs are actually painted — English and
-            German visitors pay nothing for them. */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300..700&family=Noto+Naskh+Arabic:wght@400..700&display=swap"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-          rel="stylesheet"
-        />
+        {/* Fonts are self-hosted by next/font (see FONT_VARS above): no
+            visitor's browser calls Google. They are exposed as CSS variables on :root
+            through this tag, not a class on <html>, which React would reconcile
+            away along with the theme class the pre-paint script sets. */}
+        <style dangerouslySetInnerHTML={{ __html: FONT_VARS }} />
       </head>
       <body className="font-body">
         <ThemeSync />
