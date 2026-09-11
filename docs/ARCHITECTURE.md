@@ -38,8 +38,9 @@ insert → trigger (notify_on_message, notify_on_match, …)
        → notify_dispatch() → pg_net → /api/notify/dispatch (shared secret) → SendGrid
 ```
 
-`pg_net` is transactional: a rolled-back insert sends nothing. Delivery is
-fire-and-forget, with no retries yet. `notify_dispatch` strips recipients who
+`pg_net` is transactional: a rolled-back insert sends nothing. Delivery is at-least-once: every
+notification goes through `notification_outbox`, is retried with backoff for about
+three hours by a pg_cron job, and emails the admin if it finally fails. `notify_dispatch` strips recipients who
 are in a support session, so the admin copy survives and the pilot accounts
 hear nothing.
 
