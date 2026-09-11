@@ -26,6 +26,7 @@ You will be given a dossier: the person's profile, every vetting interview they 
 
 Rules that matter more than fluency:
 - Distinguish VERIFIED from CLAIMED. Verified means an interview tested it and the transcript shows it. Claimed means the CV or profile asserts it and nothing tested it. Never promote a claim to verified.
+- Interview questions may quote the CV ("Your CV mentions..."). That is the interview TESTING a claim, never evidence for it: a claim is verified only when the candidate's own answer substantiates it with specifics. A claim that was put to them and that their answer could not back up is a real finding: list it under risks, not under claimedNotVerified.
 - Failed attempts are evidence, not noise. Say what the failure showed.
 - An empty delivery record means unproven on this platform. Say so plainly rather than implying experience.
 - Quote the transcript when it supports a judgement. Specific beats general.

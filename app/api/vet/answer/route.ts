@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { nextQuestion, gradeInterview } from "@/lib/interviewer";
+import { nextQuestion, gradeInterview, loadCvBrief } from "@/lib/interviewer";
 import { VETTING_QUESTIONS, PASS_THRESHOLD, type TranscriptTurn } from "@/lib/vetting";
 import { guardAi } from "@/lib/ratelimit";
 
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   if (transcript.length < VETTING_QUESTIONS) {
     let q: string;
     try {
-      q = await nextQuestion(vetting.category, transcript, vetting.locale ?? "en");
+      q = await nextQuestion(vetting.category, transcript, vetting.locale ?? "en", await loadCvBrief(supabase, user.id));
     } catch (err) {
       console.error("vet/answer question generation failed:", err);
       return NextResponse.json({ error: "The interviewer hiccuped — resubmit your answer." }, { status: 500 });
