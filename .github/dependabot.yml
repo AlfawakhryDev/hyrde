@@ -1,5 +1,5 @@
-# Routine updates, batched so they arrive as one reviewable PR a week instead
-# of a drip. Security updates ignore this schedule and open immediately.
+# Routine updates, batched so they arrive as a few reviewable PRs a week
+# instead of a drip. Security updates ignore this schedule and open at once.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -12,9 +12,25 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # Majors of the toolchain are migrations, not updates. TypeScript 7 is
+      # a new compiler, ESLint 10 changes the config format, and @types/node
+      # must follow the Node major production runs (.nvmrc), not the newest.
+      # Do these deliberately, in their own PR, with the changelog open.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: next
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
     target-branch: develop
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
