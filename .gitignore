@@ -58,3 +58,8 @@ next-env.d.ts
 
 # keep the example (real .env* stays ignored)
 !.env.example
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
