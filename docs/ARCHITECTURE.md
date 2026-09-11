@@ -76,7 +76,9 @@ defaults to Arabic.
 
 ## Observability
 
-- Caught failures: `reportError()` in `lib/observe.ts`, one JSON line each.
-- Uncaught server errors: `instrumentation.ts` → `onRequestError`.
+- Caught failures: `reportError()` in `lib/observe.ts`. One JSON line in the logs, plus a Sentry event (org `hyrde`).
+- Uncaught server errors: `instrumentation.ts` → `onRequestError`, to the log and to Sentry.
+- Browser errors: `instrumentation-client.ts`. Root-layout crashes: `app/global-error.tsx`.
+- Sentry reports only from deployed builds (`lib/sentry.ts`), never local development or CI, and attaches no PII.
 - Liveness: `GET /api/health`.
 - Backups: a nightly encrypted dump (`.github/workflows/db-backup.yml`). Restore steps are in the RUNBOOK.

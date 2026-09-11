@@ -91,7 +91,8 @@ Postgres on Supabase is the security boundary, not the app. Before touching
 Never swallow a failure. An empty `catch {}`, or a Supabase call whose
 `{ error }` is ignored, is how lead capture failed on every insert for months
 without anyone noticing. Server code reports through `reportError()` in
-`lib/observe.ts`. Uncaught server errors are captured by `instrumentation.ts`.
+`lib/observe.ts`. Uncaught server errors are captured by `instrumentation.ts`. Both reach
+Sentry as well as the logs.
 
 ## Secrets
 
