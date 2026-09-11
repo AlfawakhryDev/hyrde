@@ -1,0 +1,6 @@
+import * as Sentry from "@sentry/nextjs";
+import { sentryOptions } from "@/lib/sentry";
+
+// Runs before the app becomes interactive. From here on, uncaught browser
+// exceptions and unhandled promise rejections are captured automatically.
+Sentry.init(sentryOptions);

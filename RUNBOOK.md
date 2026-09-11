@@ -8,6 +8,7 @@ What to do when production is wrong. Written to be followed at 3 a.m.
 |---|---|
 | `https://hyrde.net/api/health` | Serving? Database reachable? Which commit is live? |
 | Vercel → Logs, search `"level":"error"` | Every reported failure, one JSON line each |
+| Sentry → Issues (org `hyrde`) | The same failures grouped, with stack traces and alerts, browser included |
 | Supabase → Logs | Database, auth and storage errors |
 | GitHub → Security | Leaked secrets, vulnerable dependencies, code scanning |
 
