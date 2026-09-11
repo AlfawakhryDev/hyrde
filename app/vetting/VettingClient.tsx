@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/arena";
 import StartHere from "@/components/vetting/StartHere";
@@ -24,6 +24,8 @@ type Phase = "pick" | "mode" | "interview" | "live" | "verdict";
 
 interface ChatMsg { role: "interviewer" | "you"; text: string }
 
+const noSubscription = () => () => {};
+
 export default function VettingClient({ existing }: { existing: ExistingVetting[] }) {
   const locale = useLocale();
   const t = useT();
@@ -40,7 +42,9 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
   const [error, setError] = useState("");
   const [verdict, setVerdict] = useState<{ passed: boolean; assessment: VettingAssessment } | null>(null);
   const [mode, setMode] = useState<"text" | "video">("text");
-  const [videoOk, setVideoOk] = useState(false);
+  // Can this browser record a video answer? False on the server, the real
+  // answer once hydrated, with no mount effect.
+  const videoOk = useSyncExternalStore(noSubscription, videoInterviewSupported, () => false);
   const [videoNote, setVideoNote] = useState("");
   // Voice: the interviewer speaks each question aloud, then hands the mic over.
   const [speaking, setSpeaking] = useState(false);
@@ -73,8 +77,6 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
     }
     setBusy(false);
   }
-
-  useEffect(() => { setVideoOk(videoInterviewSupported()); }, []);
 
   // Speak each newly-arrived interviewer question in voice mode, then signal the
   // recorder to auto-listen — so it plays like a real spoken conversation.

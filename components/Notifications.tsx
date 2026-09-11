@@ -54,6 +54,7 @@ export default function Notifications() {
     setItems((data ?? []) as Notif[]);
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- the loader awaits the network before it sets any state; the rule cannot see through the await. Load-then-subscribe is what effects are for.
   useEffect(() => { void load(); }, [load]);
 
   // Realtime where it works, a slow poll as the floor. Supabase realtime needs

@@ -9,6 +9,21 @@ type PrivateRow = { user_id: string; phone: string | null; notify_matches: boole
 
 // Public fields live on `profiles` (world-readable — shown next to your work).
 // Phone + notification prefs live on `profile_private` (owner-only RLS).
+// At module scope on purpose. Defined inside the component, it was a new
+// component type on every render, so React tore down and rebuilt everything
+// under it each time anything changed.
+function Section({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
+  return (
+    <section className="pt-10 mt-10 border-t border-border-crisp grid md:grid-cols-[220px_1fr] gap-6">
+      <div>
+        <h2 className="text-[15px] font-medium text-on-surface">{title}</h2>
+        {sub && <p className="text-[12.5px] text-on-surface-variant mt-1.5 leading-relaxed">{sub}</p>}
+      </div>
+      <div className="flex flex-col gap-5 max-w-[440px]">{children}</div>
+    </section>
+  );
+}
+
 export default function ProfileClient({
   userId,
   email,
@@ -71,16 +86,6 @@ export default function ProfileClient({
     "w-full border border-border-crisp rounded-lg px-4 py-3 text-sm text-on-surface bg-surface-bright focus:outline-none focus:border-electric-violet focus:ring-2 focus:ring-electric-violet/10";
   const label = "text-[13px] font-medium text-on-surface";
   const hint = "text-[12px] text-on-surface-variant mt-1";
-
-  const Section = ({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) => (
-    <section className="pt-10 mt-10 border-t border-border-crisp grid md:grid-cols-[220px_1fr] gap-6">
-      <div>
-        <h2 className="text-[15px] font-medium text-on-surface">{title}</h2>
-        {sub && <p className="text-[12.5px] text-on-surface-variant mt-1.5 leading-relaxed">{sub}</p>}
-      </div>
-      <div className="flex flex-col gap-5 max-w-[440px]">{children}</div>
-    </section>
-  );
 
   return (
     <div className="mx-auto max-w-[880px] px-5 md:px-8 py-12">

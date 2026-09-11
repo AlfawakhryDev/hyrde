@@ -725,18 +725,23 @@ export default function ProjectComposer({
 // the work is real and roughly how far along it is — which is the whole job of
 // a progress message. It stops on the last line rather than looping forever:
 // a message that keeps cycling past its welcome starts to look stuck too.
-function Spinner({ title, lines }: { title: string; lines: string[] }) {
+function Spinner(props: { title: string; lines: string[] }) {
+  // Keyed by its lines: a new set of messages remounts and starts again from
+  // the first one, instead of resetting state inside an effect.
+  return <SpinnerLines key={props.lines.join("|")} {...props} />;
+}
+
+function SpinnerLines({ title, lines }: { title: string; lines: string[] }) {
   const [i, setI] = useState(0);
 
   useEffect(() => {
-    setI(0);
     if (lines.length < 2) return;
     const id = setInterval(
       () => setI(n => (n + 1 < lines.length ? n + 1 : n)),
       2600,
     );
     return () => clearInterval(id);
-  }, [lines.join("|")]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lines.length]);
 
   return (
     <div className="text-center py-10">

@@ -37,16 +37,14 @@ export default function StatCounter({
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setN(value);
-      return;
-    }
 
     const io = new IntersectionObserver(
       entries => {
         entries.forEach(e => {
           if (e.isIntersecting && !started.current) {
             started.current = true;
+            // Reduced motion: show the figure as it comes into view, skip the count-up.
+            if (reduce) { setN(value); return; }
             const start = performance.now();
             const tick = (now: number) => {
               const t = Math.min(1, (now - start) / durationMs);

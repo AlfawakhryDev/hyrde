@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useCallback, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useCallback, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { messages } from "@/lib/messages";
 import { translate, isLocale, dirFor, localeForPath, DEFAULT_LOCALE, LOCALE_COOKIE, type Locale } from "@/lib/i18n";
@@ -13,12 +13,19 @@ function readCookieLocale(): Locale {
   return isLocale(m?.[1]) ? (m![1] as Locale) : DEFAULT_LOCALE;
 }
 
+// Whoever reads the locale cookie. setLocale writes it, then tells them.
+const localeListeners = new Set<() => void>();
+function subscribeToLocale(onChange: () => void) {
+  localeListeners.add(onChange);
+  return () => { localeListeners.delete(onChange); };
+}
+
 export function I18nProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  // First paint is `en` to match SSR; the cookie is read after mount, so there
-  // is no hydration mismatch and a brief flip on load is acceptable.
-  const [cookieLocale, setCookieLocale] = useState<Locale>(DEFAULT_LOCALE);
-  useEffect(() => { setCookieLocale(readCookieLocale()); }, []);
+  // The cookie, read through useSyncExternalStore: the server snapshot keeps
+  // hydration in step with the server render, and setLocale notifies the
+  // subscribers, so there is no mount effect and no extra render.
+  const cookieLocale = useSyncExternalStore(subscribeToLocale, readCookieLocale, () => DEFAULT_LOCALE);
 
   // Derived, not stored: recomputing on every navigation is what makes moving
   // between /ar, the English marketing pages and the app land in the right
@@ -32,7 +39,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const setLocale = useCallback((l: Locale) => {
     document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
-    setCookieLocale(l);
+    localeListeners.forEach(notify => notify());
   }, []);
 
   return <I18n.Provider value={{ locale, setLocale }}>{children}</I18n.Provider>;

@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import { useT } from "./I18nProvider";
-import { THEME_KEY } from "@/lib/theme";
+import { THEME_KEY, isAppPath } from "@/lib/theme";
 
 // ── Light / dark switch ──────────────────────────────────────────────
 // There was no way to change theme at all: the layout hardcoded `dark` and
@@ -12,21 +13,24 @@ import { THEME_KEY } from "@/lib/theme";
 // app pages open light and marketing stays dark — set in the no-flash script in
 // layout.tsx, which has to agree with readDark() below.
 
+function subscribeToTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+const isDark = () => document.documentElement.classList.contains("dark");
+
 export default function ThemeToggle({ className = "" }: { className?: string }) {
   const t = useT();
-  // Server renders nothing decisive: the real value lives in localStorage,
-  // which the server cannot see. Reading it after mount avoids a mismatch.
-  const [dark, setDark] = useState(true);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-    setMounted(true);
-  }, []);
+  // The <html> class is the truth (set before paint by lib/noflash.ts, kept in
+  // step by ThemeSync), read through useSyncExternalStore so this re-renders
+  // whenever it changes, from anywhere. The server cannot see it, so it
+  // assumes the page's default: dark for marketing, light for the app.
+  const serverDark = !isAppPath(usePathname());
+  const dark = useSyncExternalStore(subscribeToTheme, isDark, () => serverDark);
 
   function toggle() {
     const next = !dark;
-    setDark(next);
     document.documentElement.classList.toggle("dark", next);
     try {
       localStorage.setItem(THEME_KEY, next ? "dark" : "light");
@@ -38,7 +42,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
 
   // Label says what you GET, not what you are on — a button reading "Dark"
   // while the screen is dark is the classic ambiguity here.
-  const label = mounted && dark ? t("theme.toLight") : t("theme.toDark");
+  const label = dark ? t("theme.toLight") : t("theme.toDark");
 
   return (
     <button
@@ -48,7 +52,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-border-crisp text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface hover:border-on-surface transition-colors ${className}`}
     >
       <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
-        {mounted && dark ? "light_mode" : "dark_mode"}
+        {dark ? "light_mode" : "dark_mode"}
       </span>
       <span suppressHydrationWarning>{label}</span>
     </button>

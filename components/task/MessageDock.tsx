@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import TaskChat from "@/components/task/TaskChat";
 import { useT } from "@/components/I18nProvider";
+import { useHydrated } from "@/lib/use-hydrated";
 
 // ── Messaging you can actually find ──────────────────────────────────
 // The thread used to sit at the bottom of one task page, below the status,
@@ -33,8 +34,7 @@ export default function MessageDock({
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useHydrated();
 
   // Escape closes, and the page behind stops scrolling while it is open.
   useEffect(() => {

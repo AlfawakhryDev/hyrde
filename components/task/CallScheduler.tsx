@@ -52,11 +52,12 @@ export function SlotPicker({
     }
     return out;
   }, []);
-  const byDay = useMemo(() => {
+  // Forty slots at most: cheap enough to regroup on every render.
+  const byDay = (() => {
     const m = new Map<string, { iso: string; day: string }[]>();
     for (const o of options) m.set(o.day, [...(m.get(o.day) ?? []), o]);
     return [...m.entries()].slice(0, days);
-  }, [options, days]);
+  })();
 
   return (
     <div>
