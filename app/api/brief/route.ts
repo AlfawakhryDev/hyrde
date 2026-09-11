@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
+import { reportError } from "@/lib/observe";
 import { guardAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
@@ -28,13 +29,19 @@ export async function POST(req: NextRequest) {
 
   // Demand signal: capture the single-task intent before shaping it, so it's
   // stored even if the client sees the polished brief and leaves without posting.
+  // Best-effort, but never silent. supabase-js RETURNS database errors rather
+  // than throwing them, so the old try/catch never saw a single failure: the
+  // same shape of bug that made lead capture fail on every insert for months.
   try {
-    await supabase.from("task_requests").insert({
+    const { error: captureErr } = await supabase.from("task_requests").insert({
       user_id: user.id,
       raw_text: String(rough).trim(),
       kind: "task",
     });
-  } catch { /* capture is best-effort */ }
+    if (captureErr) reportError("brief.capture", captureErr, { user: user.id });
+  } catch (err) {
+    reportError("brief.capture", err, { user: user.id });
+  }
 
   const prompt = `You are the intake assistant on Hyrde, an AI-native freelance marketplace. A client typed a rough description of work they need. Rewrite it into a crisp, structured brief that (a) an AI agent can attempt immediately and (b) a human freelancer can scope without a single follow-up question.
 

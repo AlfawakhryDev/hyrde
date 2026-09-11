@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
+import { reportError } from "@/lib/observe";
 import { guardAi } from "@/lib/ratelimit";
 import { classifyArchetype } from "@/lib/instrumentation";
 
@@ -45,14 +46,20 @@ export async function POST(req: NextRequest) {
   // Demand signal: store what the client is trying to post BEFORE we run the AI,
   // so it's captured even if they see the plan and churn without completing.
   // Never block classification on this.
+  // Best-effort, but never silent. supabase-js RETURNS database errors rather
+  // than throwing them, so the old try/catch never saw a single failure: the
+  // same shape of bug that made lead capture fail on every insert for months.
   try {
-    await supabase.from("task_requests").insert({
+    const { error: captureErr } = await supabase.from("task_requests").insert({
       user_id: user.id,
       raw_text: rough,
       kind: "outcome",
       archetype: fallbackSlug,
     });
-  } catch { /* capture is best-effort */ }
+    if (captureErr) reportError("classify.capture", captureErr, { user: user.id });
+  } catch (err) {
+    reportError("classify.capture", err, { user: user.id });
+  }
 
   const prompt = `You classify a client's project request into ONE archetype so the right scoping questions load. Return STRICT JSON only, no prose, no markdown fences.
 
