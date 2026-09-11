@@ -51,9 +51,11 @@ merge. Running `vercel deploy --prod` by hand only creates a duplicate.
 | Audit | a high or critical vulnerability in a production dependency |
 | Build | `next build` fails |
 
-**The lint warning cap only goes down.** It exists because the React Compiler
-rules arrived after this code was written. If your change fixes warnings, lower
-`--max-warnings` in `package.json` in the same PR. Never raise it.
+**Lint is clean, and the cap is 0.** Every rule is an error, including the
+React Compiler rules; they were warnings under a cap of 50 while the code
+caught up, and the cap went down to 0 in September 2026. A PR that adds a
+warning fails CI. Never raise the cap: fix the code, or, where a rule is
+genuinely wrong about one line, disable it on that line with a reason.
 
 ## Tests
 
