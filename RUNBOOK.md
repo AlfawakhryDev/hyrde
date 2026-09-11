@@ -54,12 +54,43 @@ key from git history does not un-leak it.
 
 Write a forward migration that undoes it. Never edit the applied one.
 
-> **There are no automatic backups.** The Supabase project is on the free plan,
-> which does not include them, and Storage files (CVs, interview recordings) are
-> not in database backups on any plan. Deleted rows and files are gone.
+> **Backups are a nightly encrypted dump**, because the free Supabase plan
+> includes none. If the **DB backup** workflow in GitHub Actions is red,
+> backups are not running. Storage files (CVs, interview recordings) are in no
+> database backup. Deleted files are gone.
 
 ## Someone is stuck in a support session
 
 The amber banner's **End session** closes it. It also expires on its own after
 four hours, or:
 `delete from public.support_sessions where target_id = '<user uuid>';`
+
+## Restore from a backup
+
+Backups run nightly: GitHub → Actions → **DB backup** → a run → artifact
+`db-backup`. The file is encrypted, because this repository is public.
+
+1. Download the artifact and decrypt it. `gpg` asks for `BACKUP_PASSPHRASE`
+   from the password manager:
+   ```bash
+   gpg --decrypt hyrde-db-<stamp>.tgz.gpg | tar -xz
+   ```
+   This gives `backup/roles.sql`, `backup/schema.sql` and `backup/data.sql`.
+
+2. Restore into a **new** Supabase project first. Never restore blind over
+   production:
+   ```bash
+   psql --single-transaction --variable ON_ERROR_STOP=1 \
+     --file backup/roles.sql \
+     --file backup/schema.sql \
+     --command 'SET session_replication_role = replica' \
+     --file backup/data.sql \
+     --dbname "$TARGET_DB_URL"
+   ```
+
+3. Compare row counts with production. Only then point Vercel at it.
+
+Storage files (CVs, interview recordings) are **not** in these backups.
+
+Restore one backup into staging every month. Until a backup has been
+restored, it is a hope, not a backup.

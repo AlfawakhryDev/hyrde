@@ -1,0 +1,39 @@
+name: DB schema baseline
+
+# Run by hand. Dumps production's SCHEMA only (no data) so a fresh database
+# (staging, CI, a new laptop) can be built from it. The recorded migration
+# history cannot do that: its earliest tables predate it.
+#
+# Schema is not secret here: this repo is open source and the migrations
+# already describe it. There is no row data in this file.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - name: Require secret
+        run: '[ -n "$SUPABASE_DB_URL" ] || { echo "::error::SUPABASE_DB_URL is not set."; exit 1; }'
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Dump schema
+        run: |
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f baseline.sql
+          [ -s baseline.sql ] || { echo "::error::Empty schema dump."; exit 1; }
+          echo "tables: $(grep -c '^CREATE TABLE' baseline.sql)  policies: $(grep -c '^CREATE POLICY' baseline.sql)  functions: $(grep -c 'CREATE OR REPLACE FUNCTION' baseline.sql)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: schema-baseline
+          path: baseline.sql
+          retention-days: 7
