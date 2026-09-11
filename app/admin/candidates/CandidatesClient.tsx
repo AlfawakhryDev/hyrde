@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import InterviewsPanel from "./InterviewsPanel";
 
 export type CandidateRow = {
   user_id: string; display_name: string | null; email: string; country: string | null;
@@ -29,6 +30,9 @@ export default function CandidatesClient({ rows }: { rows: CandidateRow[] }) {
   const [reports, setReports] = useState<Record<string, Report>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Whose interviews are expanded. Independent of the report panel: you often
+  // want to read the raw answers precisely because you distrust the summary.
+  const [iv, setIv] = useState<string | null>(null);
 
   async function load(userId: string) {
     const supa = supabaseBrowser();
@@ -103,6 +107,15 @@ export default function CandidatesClient({ rows }: { rows: CandidateRow[] }) {
                 )}
 
                 <div className="flex items-center gap-2 shrink-0">
+                  {c.attempts > 0 && (
+                    <button
+                      onClick={() => setIv(iv === c.user_id ? null : c.user_id)}
+                      aria-expanded={iv === c.user_id}
+                      className="h-8 px-3.5 rounded-full border border-border-crisp text-[12.5px] font-medium text-on-surface-variant hover:text-on-surface transition-colors"
+                    >
+                      {iv === c.user_id ? "Hide interviews" : `Interviews (${c.attempts})`}
+                    </button>
+                  )}
                   {(c.has_report || rep) && (
                     <button
                       onClick={() => { if (!rep) void load(c.user_id); setOpen(isOpen ? null : c.user_id); }}
@@ -125,6 +138,7 @@ export default function CandidatesClient({ rows }: { rows: CandidateRow[] }) {
                 <p className="text-[12.5px] text-error mt-2">{errors[c.user_id]}</p>
               )}
 
+              {iv === c.user_id && <InterviewsPanel userId={c.user_id} />}
               {isOpen && rep && <ReportBody r={rep} />}
             </div>
           );
