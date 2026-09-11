@@ -1,15 +1,17 @@
 ## What
 
-<!-- One paragraph: what does this PR do, and why? -->
+<!-- One paragraph: what this changes and why. -->
 
-## How to test
+## How to verify
 
-<!-- Steps on the Vercel preview URL. Which account type (client / freelancer)? -->
+<!-- Steps a reviewer can follow. Which account: client, freelancer or admin? -->
 
 ## Checklist
 
-- [ ] `npx tsc --noEmit` clean, `npm run build` passes
-- [ ] Tested on the PR preview URL (both light/dark if UI)
-- [ ] New tables have RLS enabled + policies (if schema changed)
-- [ ] Migration file added under `supabase/migrations/` (if schema changed)
-- [ ] No secrets, keys, or `.env` values in the diff
+CI already checks types, lint, tests, the dependency audit and the build. It cannot check these:
+
+- [ ] A bug fix comes with a test that fails without it
+- [ ] No empty `catch {}` and no ignored Supabase `{ error }`: failures go through `reportError()`
+- [ ] Schema change: a new migration file, RLS on new tables, `revoke execute` after any `SECURITY DEFINER` function, run inside `begin; … rollback;` first
+- [ ] UI change: checked in light and dark, English and Arabic (RTL)
+- [ ] If this PR fixed lint warnings, the cap in `package.json` is lowered

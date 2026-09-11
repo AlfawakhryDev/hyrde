@@ -1,0 +1,13 @@
+# Owners review changes to the paths they own once required reviews are on.
+# The explicit entries below are where a mistake costs data, money or trust;
+# add a second owner to each as the team grows.
+*                         @AlfawakhryDev
+
+/supabase/                @AlfawakhryDev
+/proxy.ts                 @AlfawakhryDev
+/app/auth/                @AlfawakhryDev
+/app/api/admin/           @AlfawakhryDev
+/lib/impersonation.ts     @AlfawakhryDev
+/lib/billing.ts           @AlfawakhryDev
+/lib/pricing.ts           @AlfawakhryDev
+/.github/                 @AlfawakhryDev

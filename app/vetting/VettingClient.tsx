@@ -166,14 +166,19 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
         const { data: { user } } = await supabaseBrowser().auth.getUser();
         if (user) {
           const ext = (mime ?? "video/webm").includes("mp4") ? "mp4" : "webm";
-          await supabaseBrowser().storage
+          const { error: upErr } = await supabaseBrowser().storage
             .from("interview-recordings")
             .upload(`${user.id}/${vettingId}/q${index}.${ext}`, recording, {
               contentType: mime ?? "video/webm",
               upsert: true,
             });
+          // Storage returns failures rather than throwing, so the catch below
+          // never saw one. Still not a blocker: the transcript is what's graded.
+          if (upErr) console.error("interview recording upload failed:", upErr.message);
         }
-      } catch { /* recording is evidence, not a blocker */ }
+      } catch (err) {
+        console.error("interview recording upload threw:", err);
+      }
     }
 
     try {

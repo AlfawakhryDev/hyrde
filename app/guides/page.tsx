@@ -67,7 +67,7 @@ export default function GuidesIndexPage() {
 
         <div>
           <h2 className="text-2xl font-bold font-headline text-on-surface mb-1">For freelancers</h2>
-          <p className="font-body text-on-surface-variant text-sm mb-6">Charge what you're worth and find clients without the bidding wars.</p>
+          <p className="font-body text-on-surface-variant text-sm mb-6">Charge what you&apos;re worth and find clients without the bidding wars.</p>
           <div className="grid md:grid-cols-3 gap-5">
             {freelancerGuides.map(g => <Card key={g.slug} {...g} />)}
           </div>

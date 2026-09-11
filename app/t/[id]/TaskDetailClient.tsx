@@ -487,7 +487,7 @@ export default function TaskDetailClient({
                 <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-surface-container-low to-transparent" />
               </div>
               <p className="text-[13px] text-on-surface-variant mt-4 leading-relaxed max-w-[560px]">
-                You're seeing a preview. Run the free AI quality review above to check it
+                You&apos;re seeing a preview. Run the free AI quality review above to check it
                 against your brief. Then approve and pay to unlock everything. The Pilot
                 only gets paid when you confirm, and you only pay for verified work.
               </p>
