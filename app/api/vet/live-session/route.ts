@@ -3,6 +3,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/arena";
 import { RETAKE_COOLDOWN_HOURS } from "@/lib/vetting";
 import { guardAi } from "@/lib/ratelimit";
+import { loadCvBrief, liveCvNote } from "@/lib/interviewer";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -76,5 +77,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not start the interview." }, { status: 500 });
   }
 
-  return NextResponse.json({ signedUrl, vettingId: created.id, category, locale: lang });
+  // The voice agent's prompt lives in the ElevenLabs dashboard; the CV rides in
+  // on the contextual update the browser already sends at connect.
+  const cv = await loadCvBrief(supabase, user.id);
+  return NextResponse.json({
+    signedUrl, vettingId: created.id, category, locale: lang,
+    cvNote: cv ? liveCvNote(cv) : null,
+  });
 }

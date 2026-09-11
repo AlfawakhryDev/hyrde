@@ -17,6 +17,7 @@ function LiveInner({
   vettingId,
   category,
   locale = "en",
+  cvNote = null,
   onComplete,
   onError,
 }: {
@@ -25,6 +26,8 @@ function LiveInner({
   category: string;
   /** Fixed when the session opened, so the agent and the grader agree. */
   locale?: string;
+  /** The candidate's CV, already fenced as untrusted data by the server. */
+  cvNote?: string | null;
   onComplete: (v: Verdict) => void;
   onError: (reason: string) => void;
 }) {
@@ -43,7 +46,7 @@ function LiveInner({
       setPhase("live");
       // Tell the agent which category to interview on (no dashboard vars needed).
       try {
-        conversation.sendContextualUpdate(liveContextUpdate(category, locale));
+        conversation.sendContextualUpdate(liveContextUpdate(category, locale, cvNote));
       } catch { /* ignore */ }
     },
     onMessage: ({ message, source }: { message: string; source: "user" | "ai" }) => {
@@ -205,6 +208,8 @@ export default function LiveInterview(props: {
   category: string;
   /** Fixed when the session opened, so the agent and the grader agree. */
   locale?: string;
+  /** The candidate's CV, already fenced as untrusted data by the server. */
+  cvNote?: string | null;
   onComplete: (v: Verdict) => void;
   onError: (reason: string) => void;
 }) {

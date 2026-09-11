@@ -46,7 +46,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
   const [speaking, setSpeaking] = useState(false);
   const [autoRecordSignal, setAutoRecordSignal] = useState(0);
   const [intro, setIntro] = useState<string>("");
-  const [live, setLive] = useState<{ signedUrl: string; vettingId: string } | null>(null);
+  const [live, setLive] = useState<{ signedUrl: string; vettingId: string; cvNote: string | null } | null>(null);
   const lastSpokenRef = useRef<string>("");
   const introSpokenRef = useRef(false);
 
@@ -65,7 +65,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       const data = await res.json();
       if (res.status === 501) { setBusy(false); start(cat, "video"); return; } // not configured yet
       if (!res.ok) { setError(data.error ?? t("vet.errLive")); setBusy(false); return; }
-      setLive({ signedUrl: data.signedUrl, vettingId: data.vettingId });
+      setLive({ signedUrl: data.signedUrl, vettingId: data.vettingId, cvNote: data.cvNote ?? null });
       setVettingId(data.vettingId);
       setPhase("live");
     } catch {
@@ -329,6 +329,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
           vettingId={live.vettingId}
           category={category}
           locale={locale}
+          cvNote={live.cvNote}
           onComplete={v => { setVerdict(v); setPhase("verdict"); }}
           onError={reason => { setError(reason); setLive(null); setPhase("mode"); }}
         />

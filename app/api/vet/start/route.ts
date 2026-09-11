@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { nextQuestion, interviewIntro } from "@/lib/interviewer";
+import { nextQuestion, interviewIntro, loadCvBrief } from "@/lib/interviewer";
 import { VETTING_QUESTIONS, RETAKE_COOLDOWN_HOURS } from "@/lib/vetting";
 import { CATEGORIES } from "@/lib/arena";
 import { guardAi } from "@/lib/ratelimit";
@@ -81,7 +81,8 @@ export async function POST(req: NextRequest) {
 
   let q1: string;
   try {
-    q1 = await nextQuestion(category, [], lang);
+    // Opens in the candidate's own world when they have uploaded a CV.
+    q1 = await nextQuestion(category, [], lang, await loadCvBrief(supabase, user.id));
   } catch (err) {
     console.error("vet/start question generation failed:", err);
     return NextResponse.json({ error: "The interviewer is busy — try again in a moment." }, { status: 500 });
