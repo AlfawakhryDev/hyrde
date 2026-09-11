@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseServer } from "@/lib/supabase/server";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 import { normalizeGenerated, treeFor, EXPERTISE_KEY } from "@/lib/questiontree";
 import type { SiteContext } from "@/lib/siteaudit";
 import { contextToFacts } from "@/lib/siteaudit";
@@ -27,7 +27,7 @@ const anthropic = new Anthropic();
 // Falls back to the static tree on any failure: an interrogation that cannot
 // start is worse than a generic one.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { ALL_SKILL_SLUGS } from "@/lib/data";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 const anthropic = new Anthropic();
 
@@ -35,7 +35,7 @@ function heuristicParse(filename: string): Record<string, unknown> {
 }
 
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req); if (blocked) return blocked;
+  const blocked = await limitAi(req); if (blocked) return blocked;
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

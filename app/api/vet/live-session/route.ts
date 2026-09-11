@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/arena";
 import { RETAKE_COOLDOWN_HOURS } from "@/lib/vetting";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 import { loadCvBrief, liveCvNote } from "@/lib/interviewer";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ export const maxDuration = 30;
 // opens a vetting row. The API key never leaves the server; the browser only
 // gets the short-lived signed URL. 501 if the agent isn't configured yet.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const supabase = await supabaseServer();
