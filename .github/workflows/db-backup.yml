@@ -1,0 +1,66 @@
+name: DB backup
+
+# Nightly logical backup of production, encrypted before it is stored.
+# The repo is PUBLIC, so workflow artifacts are downloadable by anyone signed
+# in to GitHub: the dump must never leave this job unencrypted.
+#
+# Needs two repository secrets:
+#   SUPABASE_DB_URL    the *session pooler* connection string (GitHub runners
+#                      are IPv4-only; the direct connection is IPv6-only)
+#   BACKUP_PASSPHRASE  24+ random characters, kept in a password manager.
+#                      Lose it and every backup is unreadable.
+on:
+  schedule:
+    - cron: "17 2 * * *"   # 02:17 UTC nightly, off the hour to dodge the scheduler rush
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      # A backup job that silently does nothing is worse than none: it lets
+      # everyone believe they are covered. Missing configuration is a red run.
+      - name: Require secrets
+        run: |
+          [ -n "$SUPABASE_DB_URL" ] || { echo "::error::SUPABASE_DB_URL is not set. Backups are NOT running."; exit 1; }
+          [ "${#BACKUP_PASSPHRASE}" -ge 24 ] || { echo "::error::BACKUP_PASSPHRASE must be set and at least 24 characters."; exit 1; }
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # Supabase's documented backup procedure: roles, schema, data.
+      - name: Dump
+        run: |
+          mkdir -p backup
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f backup/roles.sql --role-only
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f backup/schema.sql
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f backup/data.sql --use-copy --data-only
+          ls -la backup
+          [ -s backup/schema.sql ] && [ -s backup/data.sql ] || { echo "::error::The dump produced empty files."; exit 1; }
+
+      - name: Encrypt
+        run: |
+          out="hyrde-db-$(date -u +%Y%m%dT%H%MZ).tgz.gpg"
+          tar -czf - backup | gpg --batch --yes --pinentry-mode loopback --symmetric \
+            --cipher-algo AES256 --passphrase-fd 3 -o "$out" 3<<<"$BACKUP_PASSPHRASE"
+          rm -rf backup
+          echo "encrypted: $out ($(du -h "$out" | cut -f1))"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: db-backup
+          path: "*.tgz.gpg"
+          retention-days: 14
+          if-no-files-found: error

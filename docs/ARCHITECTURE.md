@@ -71,6 +71,7 @@ defaults to Arabic.
 |---|---|---|
 | Local | **production** (known gap) | `npm run dev` |
 | Preview | **none yet**; previews cannot reach a database | every branch push |
+| Staging | Supabase `dxwhczazyeocjmubhllz` (hyrde-staging), eu-central-1. Empty until the schema baseline is applied | — |
 | Production | Supabase `nwdkgtoepffnedspabkt`, eu-central-1, Postgres 17, free plan | merge to `main` |
 
 ## Observability
@@ -78,3 +79,4 @@ defaults to Arabic.
 - Caught failures: `reportError()` in `lib/observe.ts`, one JSON line each.
 - Uncaught server errors: `instrumentation.ts` → `onRequestError`.
 - Liveness: `GET /api/health`.
+- Backups: a nightly encrypted dump (`.github/workflows/db-backup.yml`). Restore steps are in the RUNBOOK.

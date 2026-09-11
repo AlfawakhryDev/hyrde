@@ -79,11 +79,12 @@ Postgres on Supabase is the security boundary, not the app. Before touching
 - **Every schema change is a new file in `supabase/migrations/`**, in the same PR
   as the code that needs it. Never edit an applied migration.
 
-> **Known gap.** Production's recorded migration history cannot rebuild the
-> database from empty; its earliest tables predate it. Until a baseline is
-> captured and a staging database exists, schema changes land on production
-> directly. Treat every migration as irreversible, and run it inside
-> `begin; … rollback;` first.
+> **Staging exists; the baseline is pending.** `hyrde-staging` is an empty
+> Supabase project in the same region as production. Once the
+> **DB schema baseline** workflow has run, its dump becomes the first migration
+> and staging is built from it. After that, every migration goes to staging
+> first and to production second. Until then, treat every migration as
+> irreversible, and run it inside `begin; … rollback;` first.
 
 ## Errors
 
