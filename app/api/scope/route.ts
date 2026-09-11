@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { SKILLS } from "@/lib/data";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ const SKILL_LABELS = Object.values(SKILLS).map(s => s.label);
 // PART 1 — Company-side AI scoping assistant.
 // Turns a rough one-liner into a sharper brief and predicts budget + timeline.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req); if (blocked) return blocked;
+  const blocked = await limitAi(req); if (blocked) return blocked;
   const { brief } = await req.json();
   if (!brief || brief.trim().length < 8) {
     return NextResponse.json({ error: "Add a sentence or two about the work first." }, { status: 400 });

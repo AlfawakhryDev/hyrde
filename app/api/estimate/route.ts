@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -10,11 +10,11 @@ const anthropic = new Anthropic();
 // ── Free public project cost estimator ──────────────────────────────────────
 // No login. A visitor describes what they want to build and gets a realistic
 // milestone breakdown with cost ranges. This is a top-of-funnel SEO/lead magnet
-// (the "free tool" growth lever), rate-limited by guardAi. It does NOT create a
+// (the "free tool" growth lever), rate-limited by limitAi. It does NOT create a
 // project or touch the instrumentation dataset; it just returns an estimate and
 // nudges signup.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   const { description } = await req.json().catch(() => ({}));

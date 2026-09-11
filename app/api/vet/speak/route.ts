@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -11,7 +11,7 @@ export const maxDuration = 30;
 // 204 so the client falls back to the browser's built-in voice. Never stores
 // audio — it's synthesized per request and streamed straight back.
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req);
+  const blocked = await limitAi(req);
   if (blocked) return blocked;
 
   // Auth-gated: only someone in an interview should hit this.

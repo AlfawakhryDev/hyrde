@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { guardAi } from "@/lib/ratelimit";
+import { limitAi } from "@/lib/ratelimit";
 
 const anthropic = new Anthropic();
 
@@ -35,7 +35,7 @@ My rate is competitive for the value delivered, and I'm available to start quick
 }
 
 export async function POST(req: NextRequest) {
-  const blocked = guardAi(req); if (blocked) return blocked;
+  const blocked = await limitAi(req); if (blocked) return blocked;
   const { brief, name, skill, bio } = await req.json();
 
   if (!brief || !name) {
