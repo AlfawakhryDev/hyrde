@@ -4,7 +4,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { limitAi } from "@/lib/ratelimit";
 import { CATEGORIES } from "@/lib/arena";
 import { MILESTONE_TYPES } from "@/lib/instrumentation";
-import { priceMilestone, CATEGORY_RATE_USD } from "@/lib/pricing";
+import { priceMilestone } from "@/lib/pricing";
 import type { SiteContext } from "@/lib/siteaudit";
 import { contextToFacts } from "@/lib/siteaudit";
 

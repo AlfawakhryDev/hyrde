@@ -13,6 +13,18 @@ import {
 // marks it sent. Pilot (payee) → confirms receipt. Task flips to paid.
 // Realtime keeps both sides in sync.
 
+// At module scope on purpose. Defined inside the component, it was a new
+// component type on every render, so React tore down and rebuilt everything
+// under it each time anything changed.
+function Wrap({ children }: { children: React.ReactNode }) {
+  return (
+    <section className="pt-10 mt-10 border-t border-border-crisp">
+      <h2 className="text-[13px] font-medium text-on-surface-variant mb-5">Payment</h2>
+      {children}
+    </section>
+  );
+}
+
 export default function PaymentFlow({
   task,
   userId,
@@ -58,6 +70,7 @@ export default function PaymentFlow({
   }, [task.id, pilotId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the loader awaits the network before it sets any state; the rule cannot see through the await. Load-then-subscribe is what effects are for.
     refetch();
     const supabase = supabaseBrowser();
     const channel = supabase
@@ -141,13 +154,6 @@ export default function PaymentFlow({
   }
 
   if (!loaded || !pilotId) return null;
-
-  const Wrap = ({ children }: { children: React.ReactNode }) => (
-    <section className="pt-10 mt-10 border-t border-border-crisp">
-      <h2 className="text-[13px] font-medium text-on-surface-variant mb-5">Payment</h2>
-      {children}
-    </section>
-  );
 
   const amount = formatAmount(payment?.amount_cents ?? task.amount_cents);
   const methodMeta = payee?.payout_method ? PAYOUT_METHODS[payee.payout_method] : null;
