@@ -36,7 +36,7 @@ jobs:
           [ -n "$SUPABASE_DB_URL" ] || { echo "::error::SUPABASE_DB_URL is not set. Backups are NOT running."; exit 1; }
           [ "${#BACKUP_PASSPHRASE}" -ge 24 ] || { echo "::error::BACKUP_PASSPHRASE must be set and at least 24 characters."; exit 1; }
 
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v3
         with:
           version: latest
 

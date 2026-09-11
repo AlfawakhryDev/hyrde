@@ -22,7 +22,7 @@ jobs:
       - name: Require secret
         run: '[ -n "$SUPABASE_DB_URL" ] || { echo "::error::SUPABASE_DB_URL is not set."; exit 1; }'
 
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v3
         with:
           version: latest
 
