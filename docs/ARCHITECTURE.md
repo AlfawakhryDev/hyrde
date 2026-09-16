@@ -52,6 +52,7 @@ hear nothing.
 | Candidate reports | `app/api/candidates/report` | Claude Sonnet 5 |
 | Live voice interview | ElevenLabs agent, steered by `lib/livecontext.ts` | — |
 | Interview voice | ElevenLabs → OpenAI → browser, in that order | — |
+| Spoken answers → text | `lib/asr.ts`: a self-hosted endpoint (`ASR_URL`, e.g. Audar-ASR on vLLM) if set, else ElevenLabs Scribe. The browser recogniser is a live preview only | — |
 
 - **Pricing is a formula** (`lib/pricing.ts`), not a model call. A disputed
   price has to be explainable in one sentence.
