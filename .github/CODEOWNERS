@@ -4,10 +4,9 @@
 *                         @AlfawakhryDev
 
 /supabase/                @AlfawakhryDev
-/proxy.ts                 @AlfawakhryDev
-/app/auth/                @AlfawakhryDev
-/app/api/admin/           @AlfawakhryDev
-/lib/impersonation.ts     @AlfawakhryDev
-/lib/billing.ts           @AlfawakhryDev
-/lib/pricing.ts           @AlfawakhryDev
+/src/proxy.ts             @AlfawakhryDev
+/src/app/(auth)/          @AlfawakhryDev
+/src/app/api/admin/       @AlfawakhryDev
+/src/lib/auth/            @AlfawakhryDev
+/src/lib/billing/         @AlfawakhryDev
 /.github/                 @AlfawakhryDev

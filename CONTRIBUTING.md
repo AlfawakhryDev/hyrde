@@ -47,7 +47,7 @@ merge. Running `vercel deploy --prod` by hand only creates a duplicate.
 |---|---|
 | Typecheck | any TypeScript error |
 | Lint | any error, or more warnings than the cap in `package.json` |
-| Unit tests | any failing test in `lib/**/*.test.ts` |
+| Unit tests | any failing test in `src/**/*.test.ts` |
 | Audit | a high or critical vulnerability in a production dependency |
 | Build | `next build` fails |
 
@@ -59,8 +59,8 @@ genuinely wrong about one line, disable it on that line with a reason.
 
 ## Tests
 
-Pure logic lives in `lib/` and is tested next to itself (`lib/pricing.ts` →
-`lib/pricing.test.ts`). Test what would cost money, data or trust if it broke:
+Pure logic lives in `src/lib/` and is tested next to itself (`src/lib/billing/pricing.ts` →
+`src/lib/billing/pricing.test.ts`). Test what would cost money, data or trust if it broke:
 pricing, access rules, auth decisions, parsing of untrusted input. **Every bug
 fix comes with a test that fails without the fix.**
 
@@ -93,7 +93,7 @@ Postgres on Supabase is the security boundary, not the app. Before touching
 Never swallow a failure. An empty `catch {}`, or a Supabase call whose
 `{ error }` is ignored, is how lead capture failed on every insert for months
 without anyone noticing. Server code reports through `reportError()` in
-`lib/observe.ts`. Uncaught server errors are captured by `instrumentation.ts`. Both reach
+`src/lib/platform/observe.ts`. Uncaught server errors are captured by `instrumentation.ts`. Both reach
 Sentry as well as the logs.
 
 ## Secrets
