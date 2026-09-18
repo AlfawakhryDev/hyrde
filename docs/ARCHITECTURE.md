@@ -30,7 +30,7 @@ src/
     shared/               site chrome and primitives used everywhere
   lib/                  logic, no JSX, grouped by domain
     vetting/ scoping/ billing/ auth/ i18n/   the product's domains
-    platform/             env, errors (observe), Sentry, rate limits
+    platform/             env, errors (observe), Sentry, rate limits, the page-translation guard
     supabase/ hooks/
   content/              copy and editorial data: guides, FAQ, comparisons, skills and cities
   proxy.ts  instrumentation.ts  sentry.*.config.ts
