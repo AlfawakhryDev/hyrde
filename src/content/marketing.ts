@@ -1,0 +1,759 @@
+// ───────────────────────────────────────────────────────────────────────────
+//  src/content/marketing.ts
+//  SINGLE SOURCE OF TRUTH for all user-facing marketing copy + stats.
+//  Tweak wording, numbers, sources, and CTAs HERE — components only read.
+//  Nothing in this file imports React; it is plain, typed data.
+// ───────────────────────────────────────────────────────────────────────────
+
+// ─── Brand ──────────────────────────────────────────────────────────────────
+export const BRAND = {
+  name: "Hyrde",
+  tagline: "Open at the door. Curated at the match.",
+  thesis:
+    "Anyone with real skill joins free and gets matched. No bidding, no spam, no review trap. Companies get a short, vetted shortlist. Freelancers never pay.",
+  oneLiner:
+    "Legacy marketplaces are bid boards where freelancers pay to pray. Hyrde is where you get matched. And get paid.",
+};
+
+// ─── Global CTAs (reuse everywhere so labels stay consistent) ────────────────
+export const CTA = {
+  joinFree:     { label: "Join free",      href: "/freelancer/join" },
+  findTalent:   { label: "Find talent",    href: "/get-started" },
+  postJob:      { label: "Post a job",     href: "/get-started" },
+  browseTalent: { label: "Browse talent",  href: "/talent" },
+  seePricing:   { label: "See pricing",    href: "/pricing" },
+  bookDemo:     { label: "Book a demo",    href: "/get-started" },
+  contactSales: { label: "Contact sales",  href: "/get-started" },
+  about:        { label: "Why Hyrde",      href: "/about" },
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 3 — "Hiring is broken — here's what it costs"
+//  Animated count-up stat cards, grouped by theme. EXACT cited figures only.
+//  `value` = number the counter animates to. `display` overrides the rendered
+//  headline when a range/format is clearer than a single animated number.
+//  Always show `source` as muted small-print. Do NOT invent numbers.
+// ═════════════════════════════════════════════════════════════════════════════
+export interface CostStat {
+  id: string;
+  value: number;          // numeric target for the count-up animation
+  prefix?: string;        // e.g. "$"
+  suffix?: string;        // e.g. "+", "%", " days", "/day"
+  display?: string;       // optional static headline override (for ranges)
+  comma?: boolean;        // format the animated number with thousands separators
+  label: string;          // what the number measures
+  detail?: string;        // optional extra context line
+  source: string;         // citation, shown as muted small-print
+}
+
+export interface CostGroup {
+  id: string;
+  theme: string;          // "Money wasted"
+  icon: string;           // Material Symbol name
+  blurb: string;          // one line under the theme heading
+  stats: CostStat[];
+}
+
+/** Hyrde's own contrast numbers — no external citation needed. */
+export interface ContrastStat {
+  id: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  display?: string;
+  comma?: boolean;
+  label: string;
+}
+
+const COST_GROUPS: CostGroup[] = [
+    {
+      id: "money",
+      theme: "Money wasted",
+      icon: "payments",
+      blurb: "What it costs just to fill a seat. Before the work even starts.",
+      stats: [
+        {
+          id: "cost-to-fill",
+          value: 4700,
+          prefix: "$",
+          comma: true,
+          label: "Average cost to fill a single role",
+          detail: "Tech and specialist roles routinely exceed $6,000.",
+          source: "SHRM, Human Capital Benchmarking",
+        },
+        {
+          id: "bad-hire",
+          value: 240000,
+          prefix: "$",
+          comma: true,
+          display: "$17k–$240k",
+          label: "What one bad hire can cost",
+          detail:
+            "At minimum ~30% of the employee's first-year salary (U.S. Dept. of Labor).",
+          source: "CareerBuilder",
+        },
+        {
+          id: "replace-2026",
+          value: 56500,
+          prefix: "$",
+          comma: true,
+          label: "Projected cost to replace an employee in 2026",
+          detail: "Recruiting, onboarding, and lost ramp-up time compound fast.",
+          source: "SHRM",
+        },
+        {
+          id: "wrong-person",
+          value: 75,
+          suffix: "%",
+          label: "of employers admit they've hired the wrong person",
+          detail: "Three out of four hiring teams have paid for a mis-hire.",
+          source: "CareerBuilder",
+        },
+      ],
+    },
+    {
+      id: "time",
+      theme: "Time lost",
+      icon: "schedule",
+      blurb: "Weeks of calendar time and days of human attention, per role.",
+      stats: [
+        {
+          id: "time-to-fill",
+          value: 42,
+          suffix: " days",
+          label: "Average time to fill a role",
+          detail: "Six weeks of a project stalled before work begins.",
+          source: "SHRM",
+        },
+        {
+          id: "screening-hours",
+          value: 23,
+          suffix: " hrs",
+          label: "Spent screening résumés for one hire",
+          detail: "50+ hours total across the full hiring process.",
+          source: "Industry benchmarks",
+        },
+        {
+          id: "per-day-open",
+          value: 500,
+          prefix: "$",
+          suffix: "/day",
+          label: "Lost productivity for every day a key role stays open",
+          detail: "Unfilled roles quietly drain output the whole time.",
+          source: "Industry estimates",
+        },
+      ],
+    },
+    {
+      id: "effort",
+      theme: "Effort wasted",
+      icon: "filter_alt",
+      blurb: "Mountains of applications on one side, paid proposals on the other.",
+      stats: [
+        {
+          id: "applications",
+          value: 500,
+          suffix: "+",
+          label: "Applications a single posting can attract",
+          detail: "300–500+ per posting. Only ~5% make it past the first screen.",
+          source: "Recruiting industry data",
+        },
+        {
+          id: "proposal-hit",
+          value: 5,
+          suffix: "%",
+          label: "Proposal-to-hire rate on legacy bidding platforms",
+          detail:
+            "Freelancers pay to send dozens of proposals to land one job.",
+          source: "Legacy marketplace benchmarks",
+        },
+      ],
+    },
+];
+
+const CONTRAST_STATS: ContrastStat[] = [
+  { id: "h-matches",   value: 5,  suffix: "",  label: "Curated matches. Not 500 applications" },
+  { id: "h-speed",     value: 60, suffix: "s", label: "To a ranked, AI-vetted shortlist" },
+  { id: "h-proposals", value: 0,  suffix: "",  label: "Proposals a freelancer ever pays for" },
+  { id: "h-fee",       value: 0,  suffix: "",  label: "Platform fee. $0 on your first 3 projects" },
+];
+
+export const COST_OF_HIRING = {
+  eyebrow: "The status quo",
+  heading: "Hiring is broken. Here's what it costs",
+  subheading:
+    "Every open role burns money, time, and effort before anyone delivers a thing. The numbers below are why we built Hyrde.",
+  groups: COST_GROUPS,
+  // The optimistic counter that closes the section — the Hyrde contrast.
+  contrast: {
+    heading: "The Hyrde difference",
+    blurb: "Same hire. None of the waste.",
+    stats: CONTRAST_STATS,
+  },
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 2 — /about page copy
+// ═════════════════════════════════════════════════════════════════════════════
+
+export interface ProblemPoint {
+  icon: string;
+  title: string;
+  body: string;
+  stat: string;
+  statLabel: string;
+  source: string;
+  sourceUrl: string;
+}
+
+export interface PainRow {
+  pain: { headline: string; detail: string; stat: string; statLabel: string; source: string; sourceUrl: string };
+  fix:  { headline: string; detail: string; stat: string; statLabel: string };
+}
+
+export const ABOUT = {
+  meta: {
+    title: "Why Hyrde",
+    description:
+      "Hyrde is an AI-native freelance platform: open at the door, curated at the match. Anyone with real skill joins free and gets matched. Companies get a vetted shortlist. Freelancers never pay.",
+  },
+  hero: {
+    eyebrow: "Our mission",
+    heading: "Open at the door. Curated at the match.",
+    sub:
+      "We're building the freelance platform we always wanted to use. One where talent is proven, not claimed, and getting matched doesn't cost a thing.",
+  },
+  mission: {
+    heading: "Why we exist",
+    body: [
+      "Hiring online is stuck between two broken extremes. Closed networks gatekeep great people out for having the wrong logo on their résumé. Open bid boards let anyone in. Then bury everyone under spam, pay-to-apply credits, and a permanent-review trap where one bad month follows you forever.",
+      "Hyrde takes the best of both. We're open at the door: anyone with real skill joins free and proves it with a short work sample, not a CV. And we're curated at the match: when a company posts a brief, our AI returns a short, ranked, vetted shortlist. Not a pile of 500 proposals.",
+    ],
+  },
+  problem: {
+    heading: "The problem. In numbers",
+    points: [
+      {
+        icon: "sentiment_dissatisfied",
+        title: "Freelancers pay to pray",
+        body: "Legacy platforms sell proposal credits at $0.15 each, require 4–6 per application, then take up to 20% of everything you earn. You're paying rent on your own career.",
+        stat: "~5%",
+        statLabel: "average proposal-to-hire rate on Upwork",
+        source: "Payoneer Global Freelancer Income Report, 2023",
+        sourceUrl: "https://payoneer.com/blog/freelancer-income-report/",
+      },
+      {
+        icon: "inventory_2",
+        title: "Companies drown in noise",
+        body: "The average job posting gets 250 applications. Only 4–6 candidates ever get an interview. The rest is noise that wastes 23 hours of screening time per hire.",
+        stat: "250",
+        statLabel: "applications per average job post",
+        source: "Glassdoor Economic Research",
+        sourceUrl: "https://www.glassdoor.com/research/",
+      },
+      {
+        icon: "gavel",
+        title: "Reputation is a trap",
+        body: "One 1-star review from years ago still outranks 50 glowing ones. New talent can never get the first review. Reputation systems punish risk-taking and freeze out newcomers.",
+        stat: "75%",
+        statLabel: "of employers have made a bad hire they knew felt wrong",
+        source: "CareerBuilder Hiring Survey",
+        sourceUrl: "https://press.careerbuilder.com/",
+      },
+      {
+        icon: "payments",
+        title: "The bill is enormous",
+        body: "A single mis-hire costs $17k–$240k when you add recruiting fees, onboarding, and lost productivity. Every day a role stays open burns ~$500 in output.",
+        stat: "$4,700",
+        statLabel: "average cost just to fill one role",
+        source: "SHRM Human Capital Benchmarking Report",
+        sourceUrl: "https://www.shrm.org/topics-tools/research/benchmarking",
+      },
+      {
+        icon: "schedule",
+        title: "Weeks of wasted time",
+        body: "The average time-to-fill in tech is 42 days. 23 of those hours are spent screening CVs manually. Projects stall, deadlines slip, and the team burns out covering the gap.",
+        stat: "42 days",
+        statLabel: "average time to fill a tech role",
+        source: "SHRM, 2024 Talent Acquisition Benchmarking",
+        sourceUrl: "https://www.shrm.org/topics-tools/research/benchmarking",
+      },
+      {
+        icon: "trending_down",
+        title: "Freelancer income is shrinking",
+        body: "Real freelancer earnings have declined as more people compete on saturated bid boards. Over 59% report experiencing scope creep without additional pay on project-based work.",
+        stat: "20%",
+        statLabel: "Fiverr's cut of every seller transaction",
+        source: "Fiverr Fee Structure",
+        sourceUrl: "https://www.fiverr.com/support/articles/360011135477",
+      },
+    ] satisfies ProblemPoint[],
+  },
+
+  painVsSolution: [
+    {
+      pain: {
+        headline: "Send 25 proposals to land 1 job",
+        detail: "Upwork charges $0.15 per Connect and most briefs require 4–6. Fiverr takes 20% of everything you earn. Freelancers spend an average of 20 hrs/week on admin, pitching, and self-marketing. Before doing any actual work.",
+        stat: "20 hrs",
+        statLabel: "per week lost to admin & self-marketing",
+        source: "FreshBooks Self-Employment Report",
+        sourceUrl: "https://www.freshbooks.com/press/self-employed-report",
+      },
+      fix: {
+        headline: "Your AI agent pitches you automatically. $0 forever",
+        detail: "The moment a matching brief posts, Hyrde's AI drafts a personalised, evidence-backed intro on your behalf and sends it. No credits. No proposals. No commission on your earnings.",
+        stat: "$0",
+        statLabel: "cost to freelancers, always",
+      },
+    },
+    {
+      pain: {
+        headline: "250 applications. 42 days. 23 hours of screening.",
+        detail: "The average tech role attracts 250+ applicants, takes 42 days to fill, and burns 23 hours of internal time just screening CVs. Before a single interview. Mis-hires cost $17k–$240k each.",
+        stat: "42 days",
+        statLabel: "average tech role time-to-fill",
+        source: "SHRM Human Capital Benchmarking Report",
+        sourceUrl: "https://www.shrm.org/topics-tools/research/benchmarking",
+      },
+      fix: {
+        headline: "A vetted shortlist of ~5 in under 60 seconds",
+        detail: "Describe the work in plain language. Hyrde's AI scopes the role, scans the talent pool, and returns a ranked, blind-first shortlist of ~5 vetted candidates in under 60 seconds. First 3 projects, no Hyrde fee.",
+        stat: "60s",
+        statLabel: "to a ranked, AI-vetted shortlist",
+      },
+    },
+    {
+      pain: {
+        headline: "One bad review follows you for years",
+        detail: "Traditional star-rating systems treat a 1-star from 3 years ago the same as last week's 5-star. New freelancers with no reviews get 91% fewer views, trapping great talent at the bottom forever.",
+        stat: "91%",
+        statLabel: "fewer views for new freelancers with 0 reviews",
+        source: "LinkedIn Talent Blog, Platform Dynamics Research",
+        sourceUrl: "https://business.linkedin.com/talent-solutions/blog",
+      },
+      fix: {
+        headline: "Living reputation. Recent work weighted most",
+        detail: "Hyrde's reputation score weights the last 90 days of delivery signals (on-time rate, repeat hires, response speed) most heavily. New talent proves skill with a work sample and earns their first score from day one.",
+        stat: "90 days",
+        statLabel: "recent delivery weighted most heavily",
+      },
+    },
+  ] satisfies PainRow[],
+
+  how: {
+    heading: "How Hyrde works",
+    tagline: "Open at the door, curated at the match.",
+    steps: [
+      {
+        n: "01",
+        title: "Prove it, don't claim it",
+        body: "Skip the résumé. New freelancers complete a short, domain-specific work sample. Our AI scores it and builds a verified skill profile. So you have signal from day one, even with zero reviews.",
+      },
+      {
+        n: "02",
+        title: "No bidding. Ever.",
+        body: "Freelancers never buy connects or send proposals into a void. Your AI agent surfaces you to the right briefs automatically and writes an evidence-backed intro on your behalf.",
+      },
+      {
+        n: "03",
+        title: "A shortlist, not a pile",
+        body: "Companies describe the work in plain language. Hyrde returns ~5 ranked, AI-vetted candidates. Matched on skill and fit, shown blind-first before name, photo, or country.",
+      },
+      {
+        n: "04",
+        title: "Get matched, get paid",
+        body: "Browsing and shortlisting are free. Your first three projects carry no Hyrde fee at all — you pay the specialist and nothing else. After that, Pro is $20/month. Freelancers always keep 100%.",
+      },
+    ],
+  },
+  audience: {
+    heading: "Who it's for",
+    columns: [
+      {
+        icon: "engineering",
+        title: "For freelancers",
+        body: "Skilled people who are sick of paying to apply and being judged on a logo. Join free, prove your skill once, and let your AI agent bring the work to you.",
+        cta: CTA.joinFree,
+      },
+      {
+        icon: "rocket_launch",
+        title: "For companies",
+        body: "Founders and teams who need the right person fast — without sifting 500 proposals. Describe the work, get a vetted shortlist — free of Hyrde fees on your first three projects.",
+        cta: CTA.findTalent,
+      },
+    ],
+  },
+  vision: {
+    heading: "The vision",
+    body: [
+      "We think the future of work is matched, not advertised. You shouldn't have to market yourself into exhaustion to earn, and you shouldn't have to wade through noise to hire.",
+      "Hyrde is building toward a world where every skilled person has an AI agent working to get them paid, and every company has an AI partner that already knows who's great. So the right match takes seconds, not weeks.",
+    ],
+  },
+  closing: {
+    line: BRAND.oneLiner,
+    cta: CTA.joinFree,
+    ctaSecondary: CTA.findTalent,
+  },
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 4 — Pricing tiers
+// ═════════════════════════════════════════════════════════════════════════════
+export interface PricingTier {
+  id: string;
+  name: string;
+  audience: string;
+  price: string;
+  priceNote: string;
+  highlight?: boolean;
+  loud?: boolean;          // render the "free forever" tier extra-prominent
+  badge?: string;
+  features: string[];
+  cta: { label: string; href: string };
+}
+
+const PRICING_TIERS: PricingTier[] = [
+  {
+    id: "freelancers",
+    name: "Freelancers",
+    audience: "Independent talent",
+    price: "Free",
+    priceNote: "forever. No catch",
+    loud: true,
+    badge: "Always free",
+    features: [
+      "Pass one AI skill interview, get matched work",
+      "No connects, no proposals, no pay-to-apply",
+      "Email the moment work is matched to you",
+      "Verified skill badge clients can trust",
+      "Get paid direct. InstaPay, Airtm, USDT & more",
+      "Keep 100% of your rate, always",
+    ],
+    cta: CTA.joinFree,
+  },
+  {
+    id: "starter",
+    name: "Starter",
+    audience: "Your first three projects",
+    price: "Free",
+    priceNote: "First 3 projects, no fee",
+    features: [
+      "Your first 3 projects, no Hyrde fee at all",
+      "You pay the specialist, nothing else",
+      "However many milestones, a project counts as one",
+      "Full AI matching to vetted specialists",
+      "AI-polished briefs",
+      "AI delivery review before you pay",
+      "Private task chat + file attachments",
+      "Upgrade any time from your dashboard",
+    ],
+    cta: CTA.findTalent,
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    audience: "Teams hiring every week",
+    price: "$20/mo",
+    priceNote: "50 projects / month",
+    highlight: true,
+    badge: "Most popular",
+    features: [
+      "50 projects per month",
+      "Everything in Starter",
+      "Re-match on demand",
+      "Priority email support",
+      "Pay by bank, card, or stablecoins (Airtm)",
+      "Need unlimited? Scale is $200/mo",
+    ],
+    cta: { label: "Upgrade to Pro", href: "/billing" },
+  },
+];
+
+export const PRICING = {
+  meta: {
+    title: "Pricing",
+    description:
+      "Your first 3 projects carry no Hyrde fee \u2014 you pay the specialist and nothing else. After that, Pro is $20/month. Freelancers are free forever. No commissions, no proposal spam.",
+  },
+  eyebrow: "Pricing",
+  heading: "Fair by design. No surprises, ever.",
+  subheading:
+    "Your first three projects are on us: no Hyrde fee, you just pay the specialist. Freelancers never pay at all, and keep 100%.",
+  tiers: PRICING_TIERS,
+
+  enterpriseCallout: {
+    heading: "Need more than a plan?",
+    body: "Dedicated account management, private talent pools, SSO, compliance, and API access for teams hiring at scale.",
+    cta: CTA.bookDemo,
+    link: { label: "Explore Enterprise", href: "/enterprise" },
+  },
+
+  faqs: [
+    {
+      q: "Do freelancers really pay nothing?",
+      a: "Nothing. No subscription, no connects, no proposal credits, no fee on what they earn. We monetize the company side only.",
+    },
+    {
+      q: "Is hiring free?",
+      a: "Your first three projects are completely free of any Hyrde fee \u2014 you pay the specialist their price and nothing else, with full AI matching and delivery review. A project counts as one however many milestones it has. After that, Pro is $20/month for 50 projects; Scale is $200/month for unlimited.",
+    },
+    {
+      q: "How do I pay from anywhere?",
+      a: "Through Airtm at checkout. Bank transfer (ACH/IBAN), debit/credit card, stablecoins (USDC/USDT), or 500+ local wallets. Your plan activates the same day the transfer lands.",
+    },
+    {
+      q: "Do you take a cut of what freelancers earn?",
+      a: "No. Clients pay freelancers directly on the freelancer's own rails and freelancers keep 100%. Plans only change how many tasks a client can post.",
+    },
+  ],
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 4 — /enterprise page
+// ═════════════════════════════════════════════════════════════════════════════
+export interface EnterpriseFeature {
+  icon: string;
+  title: string;
+  body: string;
+}
+
+export const ENTERPRISE = {
+  meta: {
+    title: "Enterprise",
+    description:
+      "Hyrde for enterprise: dedicated account management, private vetted talent pools, team workspaces with SSO & SOC 2, compliance & EOR, API + ATS/VMS integrations, SLAs, and volume pricing.",
+  },
+  hero: {
+    eyebrow: "Hyrde for Enterprise",
+    heading: "Vetted talent, at the scale your team hires.",
+    sub:
+      "Everything that makes Hyrde fast for a single role. Now with the controls, security, and support a large org needs. Private talent pools, SSO, compliance, and a dedicated team behind every hire.",
+    primaryCta: CTA.bookDemo,
+    secondaryCta: { label: "See pricing", href: "/pricing" },
+  },
+  // Placeholder trust strip — swap for real customer logos when available.
+  trust: {
+    label: "Built for the way modern teams hire at scale",
+    logos: ["NORTHWIND", "ACME CORP", "LUMEN", "VERTEX", "HELIOS", "QUANTA"],
+  },
+  features: [
+    { icon: "support_agent", title: "Dedicated account manager", body: "A named partner who learns your roles, curates pools, and is on call for every hire." },
+    { icon: "groups",        title: "Private, custom-vetted talent pools", body: "We build and maintain reserved pools of pre-vetted talent matched to your exact stack and standards." },
+    { icon: "workspaces",    title: "Team workspaces, seats & RBAC", body: "Invite your whole org, organize by team, and control who can post, shortlist, approve, and pay." },
+    { icon: "lock",          title: "SSO / SAML + SOC 2", body: "Enterprise single sign-on and SOC 2-aligned security so IT and procurement sign off with confidence." },
+    { icon: "receipt_long",  title: "Consolidated billing", body: "One invoice across every team, role, and contractor. With the reporting finance actually wants." },
+    { icon: "monitoring",    title: "Analytics dashboards", body: "Track time-to-hire, spend, match quality, and pipeline health across the whole organization." },
+    { icon: "verified_user", title: "Compliance, classification & EOR", body: "Worker classification, contracts, and Employer-of-Record coverage to hire globally without the legal risk." },
+    { icon: "hub",           title: "API + ATS / VMS integrations", body: "Pipe Hyrde matches straight into your ATS or VMS, or build on our API to fit your own workflow." },
+    { icon: "handshake",     title: "SLAs & volume pricing", body: "Guaranteed response and match SLAs, plus locked-in early-access pricing as you scale." },
+    { icon: "engineering",   title: "Optional managed talent", body: "Need a whole pod or staff augmentation? We'll assemble, vet, and manage the team for you." },
+  ] satisfies EnterpriseFeature[],
+  demo: {
+    eyebrow: "Talk to us",
+    heading: "Book a demo",
+    sub: "Tell us how your team hires and we'll show you Hyrde tailored to it. We'll follow up within one business day.",
+    fields: {
+      success: "Thanks. Our team will reach out within one business day.",
+      note: "Prefer email? Reach us directly at abdelrahman@hyrde.net.",
+    },
+    cta: { label: "Request access to hire", href: "/get-started" },
+  },
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 1 — AI Skill Assessment ("prove it, don't claim it")
+//  A short, domain-specific work sample, scored by AI into a verified profile.
+//  NOT a pass/fail gate: a low score still admits you and matches you to
+//  appropriately-leveled work. Re-attemptable any time.
+// ═════════════════════════════════════════════════════════════════════════════
+export const SKILL_ASSESSMENT = {
+  intro: {
+    eyebrow: "Prove it, don't claim it",
+    heading: "One short work sample. A verified profile from day one.",
+    sub:
+      "No résumé, no reviews required. Spend a few minutes on a real task in your field. Our AI reads your actual work and builds a verified skill score. So great talent gets matched immediately, even on day one.",
+    reassurance: [
+      "There's no pass or fail. A lower score still gets you in. We just match you to the right level of work.",
+      "You can re-take it any time as you grow. Your most recent result is what counts.",
+    ],
+  },
+  // One representative challenge per skill category. The /api/assess route can
+  // swap in a more specific prompt; this is the demoable default.
+  challenges: {
+    Engineering: {
+      title: "Debug & explain",
+      prompt:
+        "This React component re-renders on every keystroke and loses focus. Describe what's wrong and how you'd fix it. Pseudocode is fine. We're reading your reasoning, not your syntax.",
+      placeholder:
+        "Walk us through the bug, the root cause, and your fix. Mention trade-offs if there are any…",
+      minChars: 120,
+    },
+    Data: {
+      title: "Pipeline judgment",
+      prompt:
+        "A nightly ETL job silently drops ~2% of rows some nights but not others. Outline how you'd find the cause and what you'd put in place so it never happens silently again.",
+      placeholder:
+        "Describe your investigation approach, likely culprits, and the guardrails you'd add…",
+      minChars: 120,
+    },
+    Design: {
+      title: "Critique & improve",
+      prompt:
+        "A SaaS onboarding flow has a 40% drop-off on the second screen. Pick three concrete changes you'd test first and explain why each one should move the number.",
+      placeholder:
+        "List your three changes, the reasoning behind each, and how you'd measure success…",
+      minChars: 120,
+    },
+    Writing: {
+      title: "Rewrite for impact",
+      prompt:
+        "Take this flat product line — 'Our tool helps teams manage tasks efficiently' — and rewrite the hero headline + subhead for a B2B SaaS landing page. Then explain your choices in two sentences.",
+      placeholder:
+        "Your headline, your subhead, then a short note on why it works…",
+      minChars: 100,
+    },
+    Marketing: {
+      title: "Channel strategy",
+      prompt:
+        "A B2B SaaS startup has $5k/month and zero brand awareness. Lay out the first 30-day plan you'd run and the single metric you'd hold yourself to.",
+      placeholder:
+        "Outline your 30-day plan, channel choices, and the one metric that matters…",
+      minChars: 120,
+    },
+    Creative: {
+      title: "Concept & rationale",
+      prompt:
+        "A productivity app wants a 15-second launch teaser. Pitch the concept — the hook, the beats, and the final frame — and explain the feeling you're going for.",
+      placeholder:
+        "Describe your concept beat by beat and the emotional payoff…",
+      minChars: 100,
+    },
+  } as Record<string, { title: string; prompt: string; placeholder: string; minChars: number }>,
+
+  // Score → human-readable band, used in the verified profile chip.
+  bands: [
+    { min: 90, label: "Exceptional",  blurb: "Top-tier signal. Matched to senior, high-trust work." },
+    { min: 75, label: "Strong",       blurb: "Solid, reliable signal. Matched to mid-to-senior work." },
+    { min: 60, label: "Promising",    blurb: "Real ability. Matched to growth-stage and mid-level work." },
+    { min: 0,  label: "Rising",       blurb: "You're in. Matched to starter tasks to build your track record." },
+  ],
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 1 — Living reputation (objective delivery signals, recency-weighted)
+// ═════════════════════════════════════════════════════════════════════════════
+export const REPUTATION = {
+  heading: "Reputation that reflects who you are now",
+  blurb:
+    "No permanent 1-star. Hyrde weighs objective delivery signals and recent feedback most. So your track record grows with you instead of haunting you.",
+  signals: [
+    { icon: "task_alt",    label: "On-time delivery",     hint: "Milestones hit on schedule" },
+    { icon: "repeat",      label: "Repeat-hire rate",     hint: "Clients who come back" },
+    { icon: "bolt",        label: "Response speed",       hint: "How fast you reply & start" },
+    { icon: "trending_up", label: "Recent feedback",      hint: "Last 90 days weighted most" },
+  ],
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 1 — Rising-talent / audition pool (small real paid trial tasks)
+// ═════════════════════════════════════════════════════════════════════════════
+export const RISING_TALENT = {
+  heading: "Rising-talent auditions",
+  blurb:
+    "New to the platform or leveling up? Take a small, real, paid trial task. Deliver well and it becomes your first verified track record. No unpaid spec work, ever.",
+  points: [
+    "Real tasks from real clients. Always paid",
+    "Built to be small: a few hours, not a few weeks",
+    "Great delivery fast-tracks you into full matches",
+  ],
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  Homepage hero + how-it-works (kept here so copy lives in one place)
+// ═════════════════════════════════════════════════════════════════════════════
+export const HOME = {
+  hero: {
+    eyebrow: "AI-native freelance platform",
+    heading: "Get matched. Get paid.",
+    headingAccent: "No bidding, ever.",
+    sub:
+      "Open at the door, curated at the match. Anyone with real skill joins free and gets matched by AI. Companies get a vetted shortlist in 60 seconds. And your first three projects carry no Hyrde fee.",
+  },
+  // Top-line proof stats for the hero band.
+  proof: [
+    { value: "$0",  label: "Cost to freelancers" },
+    { value: "$0",  label: "To hire. Early access" },
+    { value: "~5",  label: "Vetted matches per role" },
+    { value: "60s", label: "To your shortlist" },
+  ],
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PART 5 — Enterprise solution packages (custom, high-value tiers)
+// ═════════════════════════════════════════════════════════════════════════════
+export interface SolutionPackage {
+  id: string;
+  name: string;
+  tagline: string;
+  price: string;
+  priceNote: string;
+  highlight?: boolean;
+  badge?: string;
+  features: string[];
+  cta: { label: string; href: string };
+}
+
+export const SOLUTIONS: SolutionPackage[] = [
+  {
+    id: "ai-recruiter",
+    name: "AI Recruiter",
+    tagline: "Replace your staffing agency",
+    price: "Custom",
+    priceNote: "monthly. Tailored to your roles",
+    features: [
+      "Unlimited AI-scoped job briefs",
+      "Dedicated talent pool (50+ vetted freelancers)",
+      "Weekly AI shortlist reports",
+      "1 named account manager",
+      "ATS integration (Greenhouse, Lever, Ashby)",
+      "Locked-in early-access pricing. No platform fee now",
+    ],
+    cta: { label: "Start 30-day pilot", href: "/get-started" },
+  },
+  {
+    id: "launch-pod",
+    name: "Launch Pod",
+    tagline: "A fully AI-curated team for your sprint",
+    price: "Custom",
+    priceNote: "per sprint. Scoped to your project",
+    highlight: true,
+    badge: "Most requested",
+    features: [
+      "Pre-assembled 3–5 person pod (vetted for your stack)",
+      "AI project scoping + milestone planning",
+      "Dedicated pod manager",
+      "Daily async standups on Hyrde workspace",
+      "IP & compliance documentation included",
+      "30-day talent replacement guarantee",
+    ],
+    cta: { label: "Build my pod", href: "/get-started" },
+  },
+  {
+    id: "talent-cloud",
+    name: "Talent Cloud",
+    tagline: "Your private on-demand workforce",
+    price: "Custom",
+    priceNote: "annual. Scoped to your workforce",
+    features: [
+      "Private vetted talent cloud (100+ freelancers)",
+      "Unlimited hires. Flat annual fee, no per-hire fee",
+      "SOC 2 + SSO + RBAC workspaces",
+      "EOR & global compliance coverage",
+      "API + ATS/VMS integrations",
+      "SLA: shortlist in 24h, fill in 7 days or free",
+    ],
+    cta: { label: "Talk to enterprise sales", href: "/get-started" },
+  },
+];

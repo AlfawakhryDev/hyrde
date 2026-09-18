@@ -15,13 +15,45 @@ Browser
 Everything above the database is stateless. The database is both the security
 boundary and the source of events.
 
+## Where code lives
+
+```
+src/
+  app/                  routes. The (groups) organise them; they never appear in URLs
+    (marketing)/          public and indexable: home, pricing, guides, comparisons, /ar, /de
+    (auth)/               getting in: login, signup, verify, onboarding, the OAuth callback
+    (product)/            signed-in work: dashboard, tasks, vetting, profile, billing
+    admin/                internal tools
+    api/                  route handlers
+  components/
+    marketing/ auth/ product/ admin/   used by that area only
+    shared/               site chrome and primitives used everywhere
+  lib/                  logic, no JSX, grouped by domain
+    vetting/ scoping/ billing/ auth/ i18n/   the product's domains
+    platform/             env, errors (observe), Sentry, rate limits, the page-translation guard
+    supabase/ hooks/
+  content/              copy and editorial data: guides, FAQ, comparisons, skills and cities
+  proxy.ts  instrumentation.ts  sentry.*.config.ts
+supabase/migrations/    the database, one forward-only file per change
+e2e/                    smoke tests against a deployed site
+```
+
+Rules that keep it that way:
+
+- **A route goes in the group of the audience that sees it.** Moving a page
+  between groups changes nothing for users; renaming its folder changes its URL.
+- **A component lives with the one area that uses it.** When a second area
+  needs it, it moves to `shared/`. `shared/` never imports from an area.
+- **`lib/` has no JSX**, and a test sits next to the file it tests.
+- **`content/` is words and data.** Editing it should never change behaviour.
+
 ## A request
 
 1. **`proxy.ts`** refreshes the session, applies the email-verification gate
    (it fails open if the lookup errors), and redirects `/` to `/ar` for Arabic
    and Gulf visitors. Crawlers are never redirected.
 2. **A server component or route handler** creates a Supabase client *as the
-   signed-in user* (`lib/supabase/server.ts`), so every query is subject to RLS.
+   signed-in user* (`src/lib/supabase/server.ts`), so every query is subject to RLS.
 3. **Privileged reads** go through `SECURITY DEFINER` functions that check the
    caller (`candidate_index`, `admin_candidate_interviews`). The service-role
    key is used only for pilot support sessions and their audit log.
@@ -49,23 +81,23 @@ hear nothing.
 
 | Job | Where | Model |
 |---|---|---|
-| Interview questions and grading | `lib/interviewer.ts` | Claude Sonnet 4.6 |
-| Candidate reports | `app/api/candidates/report` | Claude Sonnet 5 |
-| Live voice interview | ElevenLabs agent, steered by `lib/livecontext.ts` | — |
+| Interview questions and grading | `src/lib/vetting/interviewer.ts` | Claude Sonnet 4.6 |
+| Candidate reports | `src/app/api/candidates/report` | Claude Sonnet 5 |
+| Live voice interview | ElevenLabs agent, steered by `src/lib/vetting/livecontext.ts` | — |
 | Interview voice | ElevenLabs → OpenAI → browser, in that order | — |
-| Spoken answers → text | `lib/asr.ts`: a self-hosted endpoint (`ASR_URL`, e.g. Audar-ASR on vLLM) if set, else ElevenLabs Scribe. The browser recogniser is a live preview only | — |
+| Spoken answers → text | `src/lib/vetting/asr.ts`: a self-hosted endpoint (`ASR_URL`, e.g. Audar-ASR on vLLM) if set, else ElevenLabs Scribe. The browser recogniser is a live preview only | — |
 
-- **Pricing is a formula** (`lib/pricing.ts`), not a model call. A disputed
+- **Pricing is a formula** (`src/lib/billing/pricing.ts`), not a model call. A disputed
   price has to be explainable in one sentence.
 - **Scoping questions are chosen by cost uncertainty resolved** per question,
-  with a budget and a confidence stop (`lib/questiontree.ts`).
+  with a budget and a confidence stop (`src/lib/scoping/questiontree.ts`).
 - **Interviews use the candidate's CV** for Q1 and Q4. The CV is fenced as
   untrusted input and never shown to the grader.
 
 ## Languages
 
 Marketing pages are localised by URL (`/ar`, `/de`). The app is localised by a
-cookie (`hyrde_locale`). `localeForPath()` in `lib/i18n.ts` decides. The app
+cookie (`hyrde_locale`). `localeForPath()` in `src/lib/i18n/index.ts` decides. The app
 defaults to Arabic.
 
 ## Environments
@@ -79,10 +111,10 @@ defaults to Arabic.
 
 ## Observability
 
-- Caught failures: `reportError()` in `lib/observe.ts`. One JSON line in the logs, plus a Sentry event (org `hyrde`).
+- Caught failures: `reportError()` in `src/lib/platform/observe.ts`. One JSON line in the logs, plus a Sentry event (org `hyrde`).
 - Uncaught server errors: `instrumentation.ts` → `onRequestError`, to the log and to Sentry.
-- Browser errors: `instrumentation-client.ts`. Root-layout crashes: `app/global-error.tsx`.
-- Sentry reports only from deployed builds (`lib/sentry.ts`), never local development or CI, and attaches no PII.
+- Browser errors: `instrumentation-client.ts`. Root-layout crashes: `src/app/global-error.tsx`.
+- Sentry reports only from deployed builds (`src/lib/platform/sentry.ts`), never local development or CI, and attaches no PII.
 - Liveness: `GET /api/health`.
 - Backups: **none right now.** The nightly encrypted dump (`.github/workflows/db-backup.yml`) is paused until its secrets are set. The RUNBOOK has how to resume it and the restore steps.
 
@@ -94,7 +126,7 @@ replaces it:
 | Piece | Today, on Vercel | On AWS |
 |---|---|---|
 | Deploys | Git integration: `main` is production, every branch a preview | OpenNext (SST) on Lambda and CloudFront, or containers on ECS (`output: "standalone"`), deployed from CI on merge to `main` |
-| Which environment am I? | `VERCEL_ENV`, `VERCEL_GIT_COMMIT_SHA` | `APP_ENV` / `APP_RELEASE` (and `NEXT_PUBLIC_` twins). `lib/env.ts` already reads either |
+| Which environment am I? | `VERCEL_ENV`, `VERCEL_GIT_COMMIT_SHA` | `APP_ENV` / `APP_RELEASE` (and `NEXT_PUBLIC_` twins). `src/lib/platform/env.ts` already reads either |
 | Secrets | Vercel environment variables | Secrets Manager or SSM Parameter Store |
 | Scheduled SEO ping | `vercel.json` cron | EventBridge Scheduler calling `/api/seo/ping` with `CRON_SECRET` |
 | Preview protection | Vercel Authentication (E2E sends a bypass header) | Whatever protects previews there. The E2E suite needs only `BASE_URL` |

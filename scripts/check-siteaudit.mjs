@@ -1,6 +1,6 @@
 // Runnable check for the site-audit SSRF guard and HTML parsing.
 //   node scripts/check-siteaudit.mjs
-// Transpiles lib/siteaudit.ts then asserts the security-critical behaviour:
+// Transpiles src/lib/scoping/siteaudit.ts then asserts the security-critical behaviour:
 // private/loopback/metadata hosts are refused, and a known live page parses.
 import { execSync } from "node:child_process";
 import { mkdtempSync } from "node:fs";
@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 
 const out = mkdtempSync(path.join(tmpdir(), "siteaudit-"));
-execSync(`npx tsc lib/url.ts lib/siteaudit.ts --outDir ${out} --module esnext --target es2022 --moduleResolution bundler --skipLibCheck`, { stdio: "inherit" });
+execSync(`npx tsc src/lib/scoping/url.ts src/lib/scoping/siteaudit.ts --outDir ${out} --module esnext --target es2022 --moduleResolution bundler --skipLibCheck`, { stdio: "inherit" });
 execSync(`mv ${out}/siteaudit.js ${out}/siteaudit.mjs && mv ${out}/url.js ${out}/url.mjs`);
 execSync(`sed -i '' 's|from "./url"|from "./url.mjs"|' ${out}/siteaudit.mjs`);
 const { isPrivateAddress, assertPublicUrl } = await import(`${out}/siteaudit.mjs`);

@@ -1,0 +1,43 @@
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseServer } from "@/lib/supabase/server";
+import { limitAi } from "@/lib/platform/ratelimit";
+import { auditSite } from "@/lib/scoping/siteaudit";
+import { findUrl } from "@/lib/scoping/url";
+
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
+// ── Read a client's existing site, on the fly ────────────────────────────────
+// "redo our website: https://rzm.com.sa/ar/" — we fetch the page and return the
+// facts that change the plan (platform, language/direction, size, gaps) so the
+// scoping step works from evidence instead of a guess.
+//
+// Login-gated + rate-limited: this makes the server fetch a user-supplied URL,
+// so it must not be an open proxy. lib/siteaudit re-validates every redirect
+// hop against private/loopback/metadata ranges.
+export async function POST(req: NextRequest) {
+  const blocked = await limitAi(req);
+  if (blocked) return blocked;
+
+  const supabase = await supabaseServer();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Log in first." }, { status: 401 });
+
+  const body = await req.json().catch(() => ({}));
+  const raw = String(body?.url ?? "").trim();
+  // Always parse. `raw` is the client's whole sentence, so a naive
+  // startsWith("http") would hand new URL() the trailing prose as well.
+  const target = findUrl(raw);
+  if (!target) return NextResponse.json({ error: "No URL found in that." }, { status: 400 });
+
+  try {
+    const context = await auditSite(target);
+    if (!context.ok) {
+      return NextResponse.json({ error: `That site returned ${context.status}.` }, { status: 422 });
+    }
+    return NextResponse.json({ context });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Could not read that site.";
+    return NextResponse.json({ error: message }, { status: 422 });
+  }
+}

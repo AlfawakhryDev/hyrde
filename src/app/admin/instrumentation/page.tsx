@@ -1,0 +1,77 @@
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { supabaseServer } from "@/lib/supabase/server";
+import InstrumentationClient, { type Metrics, type TaskRequest, type DemoRequest, type CallRequest } from "./InstrumentationClient";
+import ImpersonatePanel from "@/components/admin/ImpersonatePanel";
+import { IMPERSONATION_OPERATOR, IMPERSONATION_TARGETS, IMPERSONATION_ENABLED } from "@/lib/auth/impersonation";
+
+export const metadata: Metadata = {
+  title: "Instrumentation",
+  robots: { index: false, follow: false },
+};
+
+export const dynamic = "force-dynamic";
+
+// Scope-accuracy dashboard: the estimate-vs-actual numbers the instrumentation
+// layer (migrations 0015-0016) captures. scope_accuracy is the headline metric
+// for investors. Defense in depth: this page redirects non-admins AND the
+// instrumentation_metrics() RPC re-checks is_admin server-side.
+export default async function InstrumentationPage() {
+  const supabase = await supabaseServer();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/admin/instrumentation");
+
+  const { data: isAdmin } = await supabase.rpc("am_i_admin");
+  if (!isAdmin) redirect("/dashboard");
+
+  // Being an admin is not enough. The panel appears for one named account,
+  // and the route re-checks the same condition — neither is trusted alone.
+  const canImpersonate =
+    IMPERSONATION_ENABLED && (user.email ?? "").toLowerCase() === IMPERSONATION_OPERATOR;
+
+  const { data, error } = await supabase.rpc("instrumentation_metrics");
+  if (error) redirect("/dashboard");
+
+  // Demand signals — what clients tried to post (captured at /api/classify and
+  // /api/brief), so churned intent is visible here. Admin-gated via RLS.
+  const { data: reqs } = await supabase
+    .from("task_requests")
+    .select("id, created_at, user_id, raw_text, kind, archetype, status")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const requests = (reqs ?? []) as TaskRequest[];
+
+  const ids = [...new Set(requests.map(r => r.user_id).filter(Boolean))] as string[];
+  const { data: profiles } = ids.length
+    ? await supabase.from("profiles").select("id, display_name, company").in("id", ids)
+    : { data: [] as { id: string; display_name: string | null; company: string | null }[] };
+  const names = Object.fromEntries((profiles ?? []).map(p => [p.id, p.company || p.display_name || "—"]));
+
+  // Demo requests — high-intent leads from the "Book a demo" button.
+  const { data: demoRows } = await supabase
+    .from("demo_requests")
+    .select("id, created_at, name, email, company, note, source, status")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const demos = (demoRows ?? []) as DemoRequest[];
+
+  // Call requests — a client asking to speak to ONE matched specialist. These
+  // are the hottest signal on the platform: a scoped plan plus a named person.
+  const { data: callRows } = await supabase
+    .from("call_requests")
+    .select("id, created_at, freelancer_name, project_title, milestone, site_url, budget_usd, contact_name, contact_email, note, status")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const calls = (callRows ?? []) as CallRequest[];
+
+  return (
+    <>
+      <InstrumentationClient metrics={data as Metrics} requests={requests} names={names} demos={demos} calls={calls} />
+      {canImpersonate && (
+        <div className="mx-auto max-w-[1080px] px-5 md:px-8 pb-16">
+          <ImpersonatePanel targets={IMPERSONATION_TARGETS.map(t => ({ id: t.id, label: t.label }))} />
+        </div>
+      )}
+    </>
+  );
+}
