@@ -26,7 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      BASE_URL: ${{ inputs.base_url || github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
+      # Production is tested on the domain people use. The deployment's own
+      # *.vercel.app URL sits behind Vercel Authentication, so testing it tests
+      # Vercel's login page, not the site.
+      BASE_URL: ${{ inputs.base_url || (github.event.deployment.environment == 'Production' && 'https://hyrde.net') || github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
       E2E_ENV: ${{ (github.event_name == 'workflow_dispatch' || github.event.deployment.environment == 'Production') && 'production' || 'preview' }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
@@ -59,6 +62,21 @@ jobs:
 
       - if: steps.gate.outputs.run == 'true'
         run: npx playwright install --with-deps chromium
+
+      # The domain can lag the deployment. Testing it before it serves this
+      # commit would test the previous release and pass for the wrong reason.
+      - name: Wait for the domain to serve this commit
+        if: steps.gate.outputs.run == 'true' && github.event_name == 'deployment_status' && env.E2E_ENV == 'production'
+        env:
+          SHA: ${{ github.event.deployment.sha }}
+        run: |
+          for i in $(seq 1 30); do
+            live=$(curl -fsS "$BASE_URL/api/health" | jq -r '.commit // empty' || true)
+            if [ "$live" = "${SHA:0:7}" ]; then echo "$BASE_URL serves $live"; exit 0; fi
+            sleep 10
+          done
+          echo "::error::$BASE_URL still serves '$live' after 5 minutes, expected ${SHA:0:7}"
+          exit 1
 
       - name: Smoke tests
         if: steps.gate.outputs.run == 'true'

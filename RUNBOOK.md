@@ -65,10 +65,11 @@ admin an **ops alert**.
 
 Write a forward migration that undoes it. Never edit the applied one.
 
-> **Backups are a nightly encrypted dump**, because the free Supabase plan
-> includes none. If the **DB backup** workflow in GitHub Actions is red,
-> backups are not running. Storage files (CVs, interview recordings) are in no
-> database backup. Deleted files are gone.
+> **There are no database backups right now.** The free Supabase plan includes
+> none, and the nightly **DB backup** workflow was paused on 2026-09-11 until
+> its secrets are set. A bad migration or a dropped table cannot be undone.
+> Storage files (CVs, interview recordings) are in no database backup either.
+> Deleted files are gone.
 
 ## Someone is stuck in a support session
 
@@ -78,8 +79,11 @@ four hours, or:
 
 ## Restore from a backup
 
-Backups run nightly: GitHub → Actions → **DB backup** → a run → artifact
-`db-backup`. The file is encrypted, because this repository is public.
+This needs the **DB backup** workflow running again. Set the
+`SUPABASE_DB_URL` and `BACKUP_PASSPHRASE` repository secrets, then run
+`gh workflow enable db-backup.yml`. Backups then run nightly: GitHub →
+Actions → **DB backup** → a run → artifact `db-backup`. The file is
+encrypted, because this repository is public.
 
 1. Download the artifact and decrypt it. `gpg` asks for `BACKUP_PASSPHRASE`
    from the password manager:

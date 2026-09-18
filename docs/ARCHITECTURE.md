@@ -6,7 +6,8 @@ One page on how Hyrde fits together.
 
 ```
 Browser
-  → Vercel: Next.js 16 App Router (proxy.ts, route handlers, server components)
+  → Vercel: Next.js 16 App Router (proxy.ts, route handlers, server components),
+    functions in fra1 (Frankfurt), next to the database
   → Supabase: Postgres + RLS, Auth, Storage, Vault, pg_net
   → Anthropic · ElevenLabs · OpenAI TTS · SendGrid
 ```
@@ -52,6 +53,7 @@ hear nothing.
 | Candidate reports | `app/api/candidates/report` | Claude Sonnet 5 |
 | Live voice interview | ElevenLabs agent, steered by `lib/livecontext.ts` | — |
 | Interview voice | ElevenLabs → OpenAI → browser, in that order | — |
+| Spoken answers → text | `lib/asr.ts`: a self-hosted endpoint (`ASR_URL`, e.g. Audar-ASR on vLLM) if set, else ElevenLabs Scribe. The browser recogniser is a live preview only | — |
 
 - **Pricing is a formula** (`lib/pricing.ts`), not a model call. A disputed
   price has to be explainable in one sentence.
@@ -82,7 +84,7 @@ defaults to Arabic.
 - Browser errors: `instrumentation-client.ts`. Root-layout crashes: `app/global-error.tsx`.
 - Sentry reports only from deployed builds (`lib/sentry.ts`), never local development or CI, and attaches no PII.
 - Liveness: `GET /api/health`.
-- Backups: a nightly encrypted dump (`.github/workflows/db-backup.yml`). Restore steps are in the RUNBOOK.
+- Backups: **none right now.** The nightly encrypted dump (`.github/workflows/db-backup.yml`) is paused until its secrets are set. The RUNBOOK has how to resume it and the restore steps.
 
 ## Moving off Vercel
 
