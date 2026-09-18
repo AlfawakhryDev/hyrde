@@ -6,7 +6,8 @@ One page on how Hyrde fits together.
 
 ```
 Browser
-  → Vercel: Next.js 16 App Router (proxy.ts, route handlers, server components)
+  → Vercel: Next.js 16 App Router (proxy.ts, route handlers, server components),
+    functions in fra1 (Frankfurt), next to the database
   → Supabase: Postgres + RLS, Auth, Storage, Vault, pg_net
   → Anthropic · ElevenLabs · OpenAI TTS · SendGrid
 ```
