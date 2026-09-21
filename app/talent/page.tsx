@@ -6,9 +6,13 @@ import type { RegisteredFreelancer } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+// Kept for anyone holding the link, out of search on purpose: nobody browses
+// talent on Hyrde (one specialist is matched), and the profiles here are
+// illustrative rather than the live roster.
 export const metadata: Metadata = {
   title: "Browse Talent",
   description: "Verified freelancers on Hyrde. AI-scored profiles. First 3 projects, no Hyrde fee.",
+  robots: { index: false, follow: true },
 };
 
 const CATEGORIES = ["All", "Engineering", "Design", "Data", "Writing", "Marketing", "Creative"];

@@ -8,7 +8,7 @@ import { AR_CITY_SLUGS } from "@/lib/gcc.ar";
 
 // Date of the last meaningful site-wide content change. Bump this when you
 // ship new copy/pages; do NOT set it to new Date() (see note below).
-const SITE_REV = new Date("2026-09-01");
+const SITE_REV = new Date("2026-09-21");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://hyrde.net";
@@ -34,18 +34,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/ar/hire`,             lastModified: now, priority: 0.85 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
-    { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
-    { url: `${base}/vetting`,         lastModified: now, priority: 0.85 },
-    { url: `${base}/agent`,           lastModified: now, priority: 0.9 },
-    { url: `${base}/pricing`,         lastModified: now, priority: 0.8 },
+    { url: `${base}/compare`,         lastModified: now, priority: 0.85 },
+    { url: `${base}/pricing`,         lastModified: now, priority: 0.85 },
     { url: `${base}/enterprise`,      lastModified: now, priority: 0.8 },
     { url: `${base}/rates`,           lastModified: now, priority: 0.8 },
-    { url: `${base}/talent`,          lastModified: now, priority: 0.7 },
-    { url: `${base}/about`,           lastModified: now, priority: 0.7 },
-    { url: `${base}/jobs`,            lastModified: now, priority: 0.7 },
     { url: `${base}/guides`,          lastModified: now, priority: 0.8 },
-    { url: `${base}/compare`,         lastModified: now, priority: 0.8 },
+    { url: `${base}/about`,           lastModified: now, priority: 0.6 },
+    // Specialists have to find us too, but they are not the side that pays, and
+    // search already sends us almost none of them: of 222 queries in the
+    // 2026-09-01 Search Console export, 130 were clients looking to hire and 2
+    // were people looking for work. So the supply funnel stays indexable and
+    // stays out of the sitemap, and the crawl budget goes to buyer pages.
+    { url: `${base}/vetting`,         lastModified: now, priority: 0.4 },
   ];
+  // Deliberately absent: /signup (a form has nothing to rank for), /agent (a
+  // retired demo), /jobs and /talent (browsing, which this product does not do
+  // — both are noindex now).
 
   // Authority hub: editorial guides (client + freelancer clusters)
   const guide_pages = GUIDE_SLUGS.map(slug => ({
@@ -88,12 +92,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  // Tier 1: /hire/[skill] — 25 pages
+  // Tier 1: /hire/[skill]. These carry the searches that bring clients — "hire
+  // ux designer", "hire developers in egypt" — so they rank just under the
+  // homepage, above everything else.
   const skill_pages = ALL_SKILL_SLUGS.map(skill => ({
     url: `${base}/hire/${skill}`,
     lastModified: now,
     changeFrequency: "weekly" as const,
-    priority: 0.8,
+    priority: 0.9,
   }));
 
   // Curated skill×city pages. These were pulled from the sitemap entirely in
