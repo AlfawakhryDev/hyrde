@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { ALL_SKILL_SLUGS, INDEXED_CITY_PAGES } from "@/lib/data";
 import { COMPETITOR_SLUGS } from "@/lib/compare";
+import { COST_SLUGS } from "@/lib/cost-to-hire";
+import { GULF_SLUGS } from "@/lib/gulf";
 import { GUIDE_SLUGS, GUIDES } from "@/lib/guides";
 import { AR_GUIDE_SLUGS, AR_GUIDES } from "@/lib/guides.ar";
 import { DE_GUIDE_SLUGS, DE_GUIDES } from "@/lib/guides.de";
@@ -34,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/ar/hire`,             lastModified: now, priority: 0.85 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
+    { url: `${base}/cost-to-hire`,    lastModified: now, priority: 0.9 },
     { url: `${base}/compare`,         lastModified: now, priority: 0.85 },
     { url: `${base}/pricing`,         lastModified: now, priority: 0.85 },
     { url: `${base}/enterprise`,      lastModified: now, priority: 0.8 },
@@ -102,6 +105,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
+  // "What does it cost to hire a …" — the question buyers ask straight after
+  // "hire a …", and the one answer engines are asked constantly.
+  const cost_pages = COST_SLUGS.map(skill => ({
+    url: `${base}/cost-to-hire/${skill}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  }));
+
+  // English Gulf city hubs. Gulf demand arrives in English and centred on
+  // Dubai, while the only Gulf city pages were Arabic; these are the twins.
+  const gulf_pages = GULF_SLUGS.map(city => ({
+    url: `${base}/hire/in/${city}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+    alternates: { languages: { "ar-SA": `${base}/ar/hire/${city}` } },
+  }));
+
   // Curated skill×city pages. These were pulled from the sitemap entirely in
   // v0.10.0 as suspected doorway pages — but the 2026-09-01 Search Console
   // export showed they generate 61% of all impressions. We now submit the
@@ -116,6 +138,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...static_pages, ...comparison_pages, ...guide_pages,
-    ...ar_guide_pages, ...de_guide_pages, ...ar_city_pages, ...skill_pages, ...city_pages,
+    ...ar_guide_pages, ...de_guide_pages, ...ar_city_pages, ...skill_pages, ...cost_pages, ...gulf_pages, ...city_pages,
   ];
 }

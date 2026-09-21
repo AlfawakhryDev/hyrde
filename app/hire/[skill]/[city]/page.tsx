@@ -16,6 +16,10 @@ export async function generateStaticParams() {
   return pairs;
 }
 
+// Every real combination is pre-rendered above, so anything else is a 404
+// rather than a streamed not-found page that still answers 200.
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { skill, city } = await params;
   const s = SKILLS[skill]; const c = CITIES[city];
