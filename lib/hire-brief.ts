@@ -20,6 +20,19 @@ const PRICING_CATEGORY: Record<string, string> = {
   Finance: "Other", Operations: "Other", Legal: "Other",
 };
 
+/** A few trades price differently from the rest of their category. */
+const PRICING_CATEGORY_BY_SLUG: Record<string, string> = {
+  "technical-writer": "Technical writing",
+  "social-media-manager": "Social media",
+};
+
+/** The one mapping every page prices from, so no two pages quote differently. */
+export function pricingCategory(skillSlug: string): string {
+  return PRICING_CATEGORY_BY_SLUG[skillSlug]
+    ?? PRICING_CATEGORY[SKILLS[skillSlug]?.category ?? ""]
+    ?? "Other";
+}
+
 /** Three jobs people in each trade are actually asked for, smallest first. */
 const TYPICAL: Record<string, Job[]> = {
   Engineering: [
@@ -82,7 +95,7 @@ const jobsFor = (category: string) => TYPICAL[category] ?? TYPICAL.Operations;
 export function projectBands(skillSlug: string): ProjectBand[] {
   const skill = SKILLS[skillSlug];
   if (!skill) return [];
-  const category = PRICING_CATEGORY[skill.category] ?? "Other";
+  const category = pricingCategory(skillSlug);
   return jobsFor(skill.category).map(job => ({
     title: job.title,
     what: job.what,

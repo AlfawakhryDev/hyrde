@@ -21,6 +21,35 @@ Typical jobs, priced before anyone starts. The number only changes if the scope 
 
 Blended hourly rates for a vetted specialist: development 45, data 50, design 40, technical writing 40, marketing 32, copywriting 30 USD. Junior work is 0.6 times that, senior 1.5 times. Price any project free and without signing up: https://hyrde.net/cost-estimator
 
+## What it costs by trade
+Project prices, not hourly guesses. Each link has the three jobs people buy from that trade and what moves the number.
+- React Developer: 350 to 9,800 USD for a typical job (about 45 USD/hr mid-level) — https://hyrde.net/cost-to-hire/react-developer
+- UX Designer: 400 to 10,100 USD for a typical job (about 40 USD/hr mid-level) — https://hyrde.net/cost-to-hire/ux-designer
+- SEO Specialist: 400 to 2,600 USD for a typical job (about 32 USD/hr mid-level) — https://hyrde.net/cost-to-hire/seo-specialist
+- Growth Marketer: 400 to 3,150 USD for a typical job (about 32 USD/hr mid-level) — https://hyrde.net/cost-to-hire/growth-marketer
+- WordPress Developer: 450 to 7,350 USD for a typical job (about 45 USD/hr mid-level) — https://hyrde.net/cost-to-hire/wordpress-developer
+- 3D Designer: 500 to 4,300 USD for a typical job (about 40 USD/hr mid-level) — https://hyrde.net/cost-to-hire/3d-designer
+- Technical Writer: 500 to 5,750 USD for a typical job (about 40 USD/hr mid-level) — https://hyrde.net/cost-to-hire/technical-writer
+- UI Designer: 600 to 6,500 USD for a typical job (about 40 USD/hr mid-level) — https://hyrde.net/cost-to-hire/ui-designer
+- Video Editor: 650 to 5,050 USD for a typical job (about 40 USD/hr mid-level) — https://hyrde.net/cost-to-hire/video-editor
+- Shopify Developer: 700 to 6,550 USD for a typical job (about 45 USD/hr mid-level) — https://hyrde.net/cost-to-hire/shopify-developer
+- DevOps Engineer: 700 to 6,550 USD for a typical job (about 45 USD/hr mid-level) — https://hyrde.net/cost-to-hire/devops-engineer
+- Data Scientist: 800 to 9,900 USD for a typical job (about 50 USD/hr mid-level) — https://hyrde.net/cost-to-hire/data-scientist
+- Node.js Developer: 900 to 12,250 USD for a typical job (about 45 USD/hr mid-level) — https://hyrde.net/cost-to-hire/node-developer
+- Product Designer: 1,100 to 10,100 USD for a typical job (about 40 USD/hr mid-level) — https://hyrde.net/cost-to-hire/product-designer
+- Blockchain Developer: 1,100 to 7,350 USD for a typical job (about 45 USD/hr mid-level) — https://hyrde.net/cost-to-hire/blockchain-developer
+- Fullstack Developer: 1,450 to 16,300 USD for a typical job (about 45 USD/hr mid-level) — https://hyrde.net/cost-to-hire/fullstack-developer
+
+## Hiring in the Gulf (Dubai, Riyadh, Doha, Abu Dhabi, Jeddah, Kuwait City)
+Gulf clients are the focus. You do not need a visa, a sponsorship or a local entity to hire this way: a contractor is not an employee, you are buying a defined piece of work and you get an invoice for it. Work is quoted and invoiced in US dollars, and Gulf working hours overlap the specialists' day, so revisions happen inside your working day.
+- Dubai (the UAE): a typical job runs AED 1,500 to AED 37,000 (400–10,100 USD). Most hired: Shopify Developer, UI Designer, UX Designer. English: https://hyrde.net/hire/in/dubai · العربية: https://hyrde.net/ar/hire/dubai
+- Abu Dhabi (the UAE): a typical job runs AED 1,500 to AED 60,000 (400–16,300 USD). Most hired: Data Scientist, UX Designer, Fullstack Developer. English: https://hyrde.net/hire/in/abu-dhabi · العربية: https://hyrde.net/ar/hire/abu-dhabi
+- Riyadh (Saudi Arabia): a typical job runs SAR 1,500 to SAR 61,000 (400–16,300 USD). Most hired: Shopify Developer, UX Designer, Data Scientist. English: https://hyrde.net/hire/in/riyadh · العربية: https://hyrde.net/ar/hire/riyadh
+- Jeddah (Saudi Arabia): a typical job runs SAR 1,500 to SAR 27,500 (400–7,350 USD). Most hired: Shopify Developer, WordPress Developer, SEO Specialist. English: https://hyrde.net/hire/in/jeddah · العربية: https://hyrde.net/ar/hire/jeddah
+- Doha (Qatar): a typical job runs QAR 1,500 to QAR 37,000 (400–10,100 USD). Most hired: WordPress Developer, Shopify Developer, UI Designer. English: https://hyrde.net/hire/in/doha · العربية: https://hyrde.net/ar/hire/doha
+- Kuwait City (Kuwait): a typical job runs KWD 120 to KWD 2,300 (400–7,350 USD). Most hired: Shopify Developer, Video Editor, Growth Marketer. English: https://hyrde.net/hire/in/kuwait-city · العربية: https://hyrde.net/ar/hire/kuwait-city
+- Prices by trade, in dollars: https://hyrde.net/cost-to-hire
+
 ## What Hyrde charges you
 - Your first three projects carry no Hyrde fee. You pay the specialist their price and nothing else. This is a one-time allowance per account, not a monthly one, and a project counts as one however many milestones it contains.
 - After the first three: Pro at 20 USD per month covers 50 projects, Scale at 200 USD per month is unlimited.
@@ -57,6 +86,7 @@ Blended hourly rates for a vetted specialist: development 45, data 50, design 40
 - Home: https://hyrde.net
 - FAQ: https://hyrde.net/faq
 - Free project cost estimator (no signup): https://hyrde.net/cost-estimator
+- What it costs by trade: https://hyrde.net/cost-to-hire
 - Pricing: https://hyrde.net/pricing
 - How vetting works: https://hyrde.net/vetting
 - Browse vetted talent: https://hyrde.net/hire

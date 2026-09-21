@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical },
+    alternates: { canonical, languages: { en: `https://hyrde.net/hire/in/${c.slug}` } },
     keywords: [
       `توظيف مستقلين في ${c.name}`, `مستقل ${c.name}`, `مطور ${c.name}`, `مصمم ${c.name}`,
       `العمل الحر ${c.country}`, `فريلانسر ${c.name}`, `أسعار المستقلين ${c.country}`,

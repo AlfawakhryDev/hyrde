@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { SKILLS, CITIES, ALL_SKILL_SLUGS, INDEXED_CITY_PAGES, getRate } from "@/lib/data";
 import { projectBands, priceRange, hireFaqs } from "@/lib/hire-brief";
+import { COST_SKILLS } from "@/lib/cost-to-hire";
 
 // ── "Hire a <trade>" — a buyer's page ──────────────────────────────────────
 // These pages carry the searches that bring clients ("hire ux designer", "hire
@@ -17,6 +18,10 @@ interface Props { params: Promise<{ skill: string }> }
 export async function generateStaticParams() {
   return ALL_SKILL_SLUGS.map(skill => ({ skill }));
 }
+
+// Every real combination is pre-rendered above, so anything else is a 404
+// rather than a streamed not-found page that still answers 200.
+export const dynamicParams = false;
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 
@@ -114,6 +119,14 @@ export default async function HireSkillPage({ params }: Props) {
               Describe the outcome
             </Link>
           </div>
+          {skill in COST_SKILLS && (
+            <p className="font-body text-sm text-on-surface-variant mt-4">
+              Working out a budget first?{" "}
+              <Link href={`/cost-to-hire/${skill}`} className="underline hover:text-electric-violet">
+                What a {label} costs, job by job
+              </Link>.
+            </p>
+          )}
         </div>
       </section>
 
