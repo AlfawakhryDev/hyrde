@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { GULF_SLUGS, getGulfCity, gulfTrades, inLocal } from "@/lib/gulf";
+import Reveal from "@/components/Reveal";
+import MarkerUnderline from "@/components/MarkerUnderline";
+import HeroBackdrop from "@/components/home/HeroBackdrop";
 
 interface Props { params: Promise<{ city: string }> }
 
@@ -86,8 +89,9 @@ export default async function HireInCityPage({ params }: Props) {
     <div className="min-h-screen bg-surface-gray">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
 
-      <section className="max-w-[900px] mx-auto px-6 md:px-12 pt-20 pb-8">
-        <nav className="text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
+      <section className="relative overflow-hidden max-w-[900px] mx-auto px-6 md:px-12 pt-20 pb-8">
+        <HeroBackdrop />
+        <nav className="relative text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
           <Link href="/" className="hover:text-electric-violet transition-colors">Home</Link>
           <span>/</span>
           <Link href="/hire" className="hover:text-electric-violet transition-colors">Hire</Link>
@@ -95,19 +99,19 @@ export default async function HireInCityPage({ params }: Props) {
           <span className="text-on-surface">{c.name}</span>
         </nav>
 
-        <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-5">
-          Hire vetted freelancers in {c.name}
+        <h1 className="relative text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-5 animate-fadeup">
+          Hire vetted freelancers in <MarkerUnderline>{c.name}</MarkerUnderline>
         </h1>
-        <p className="font-body text-on-surface text-lg leading-relaxed mb-4">
+        <p className="relative font-body text-on-surface text-lg leading-relaxed mb-4">
           A typical job runs <strong>{inLocal(low, c)} to {inLocal(high, c)}</strong> ({money(low)}–{money(high)}),
           priced before anyone starts. One specialist is matched to the work — usually the same day —
           and an AI checks what they deliver against your brief before you pay.
         </p>
-        <p className="font-body text-on-surface-variant text-base leading-relaxed mb-6">
+        <p className="relative font-body text-on-surface-variant text-base leading-relaxed mb-6">
           No visa, no sponsorship, no local entity: you are buying a defined piece of work, not
           employing anyone. Your first three projects carry no Hyrde fee.
         </p>
-        <div className="flex flex-wrap gap-3">
+        <div className="relative flex flex-wrap gap-3">
           <Link href="/cost-estimator"
             className="inline-block bg-tech-blue-deep text-white font-semibold font-body px-6 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
             Price my project — free, no signup
@@ -136,7 +140,7 @@ export default async function HireInCityPage({ params }: Props) {
               </thead>
               <tbody>
                 {trades.map(t => (
-                  <tr key={t.slug} className="border-b border-border-crisp last:border-0">
+                  <tr key={t.slug} className="border-b border-border-crisp last:border-0 transition-colors hover:bg-surface-gray/70">
                     <td className="py-3 pr-4">
                       <Link href={`/hire/${t.slug}/${c.slug}`} className="font-semibold font-body text-sm text-on-surface hover:text-electric-violet transition-colors">
                         {t.label} in {c.name}
@@ -171,11 +175,11 @@ export default async function HireInCityPage({ params }: Props) {
           Questions {c.name} clients ask
         </h2>
         <div className="space-y-4">
-          {faqs.map(f => (
-            <div key={f.q} className="bg-white rounded-xl p-5 border border-border-crisp">
+          {faqs.map((f, i) => (
+            <Reveal key={f.q} delayMs={i * 70} className="bg-white rounded-xl p-5 border border-border-crisp transition-colors duration-300 hover:border-electric-violet/50">
               <p className="font-bold font-body text-sm text-on-surface mb-2">{f.q}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{f.a}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
 

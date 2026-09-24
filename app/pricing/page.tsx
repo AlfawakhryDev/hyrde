@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Reveal from "@/components/Reveal";
 import Link from "next/link";
 import { PRICING } from "@/content/marketing";
 
@@ -29,10 +30,11 @@ export default function PricingPage() {
       {/* ── Tiers ── */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 pb-8">
         <div className="grid md:grid-cols-3 gap-5 items-stretch">
-          {PRICING.tiers.map(tier => (
-            <div
+          {PRICING.tiers.map((tier, i) => (
+            <Reveal
               key={tier.id}
-              className={`rounded-2xl p-7 flex flex-col relative ${
+              delayMs={i * 110}
+              className={`rounded-2xl p-7 flex flex-col relative transition-[transform,box-shadow] duration-300 hover:-translate-y-1 ${
                 tier.loud
                   ? "ai-match-gradient text-white"
                   : tier.highlight
@@ -118,7 +120,7 @@ export default function PricingPage() {
               >
                 {tier.cta.label}
               </Link>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -158,9 +160,9 @@ export default function PricingPage() {
           Questions, answered
         </h2>
         <div className="space-y-3">
-          {PRICING.faqs.map(faq => (
+          {PRICING.faqs.map((faq, i) => (
+            <Reveal key={faq.q} delayMs={i * 60}>
             <details
-              key={faq.q}
               className="group bg-white rounded-xl border border-border-crisp p-5 [&_summary]:cursor-pointer"
             >
               <summary className="flex items-center justify-between font-semibold font-body text-on-surface text-sm list-none">
@@ -174,6 +176,7 @@ export default function PricingPage() {
               </summary>
               <p className="text-sm font-body text-on-surface-variant leading-relaxed mt-3">{faq.a}</p>
             </details>
+            </Reveal>
           ))}
         </div>
       </section>

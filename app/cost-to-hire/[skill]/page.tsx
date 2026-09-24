@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { COST_SLUGS, costPage } from "@/lib/cost-to-hire";
+import Reveal from "@/components/Reveal";
+import StatCounter from "@/components/StatCounter";
+import HeroBackdrop from "@/components/home/HeroBackdrop";
 
 interface Props { params: Promise<{ skill: string }> }
 
@@ -64,8 +67,9 @@ export default async function CostToHirePage({ params }: Props) {
     <div className="min-h-screen bg-surface-gray">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
 
-      <section className="max-w-[860px] mx-auto px-6 md:px-12 pt-20 pb-10">
-        <nav className="text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
+      <section className="relative overflow-hidden max-w-[860px] mx-auto px-6 md:px-12 pt-20 pb-10">
+        <HeroBackdrop />
+        <nav className="relative text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
           <Link href="/" className="hover:text-electric-violet transition-colors">Home</Link>
           <span>/</span>
           <Link href="/cost-to-hire" className="hover:text-electric-violet transition-colors">What it costs</Link>
@@ -73,14 +77,14 @@ export default async function CostToHirePage({ params }: Props) {
           <span className="text-on-surface">{p.label}</span>
         </nav>
 
-        <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-5">
+        <h1 className="relative text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-5 animate-fadeup">
           What does it cost to hire a {p.label}?
         </h1>
 
         {/* The answer first, in one paragraph, because that is the part that
             gets quoted — by a reader in a hurry and by an answer engine. */}
-        <p className="font-body text-on-surface text-lg leading-relaxed mb-4">
-          <strong>{money(p.lowUsd)} to {money(p.highUsd)}</strong> for a typical job through Hyrde,
+        <p className="relative font-body text-on-surface text-lg leading-relaxed mb-4">
+          <strong><StatCounter value={p.lowUsd} prefix="$" comma durationMs={900} /> to <StatCounter value={p.highUsd} prefix="$" comma durationMs={1400} /></strong> for a typical job through Hyrde,
           which works out at {money(p.hourly.junior)}–{money(p.hourly.senior)} an hour depending on
           seniority. A small, well-defined piece of work lands near the bottom of that range; a
           whole build sits at the top.
@@ -91,7 +95,7 @@ export default async function CostToHirePage({ params }: Props) {
           else.
         </p>
 
-        <div className="flex flex-wrap gap-3 mb-4">
+        <div className="relative flex flex-wrap gap-3 mb-4">
           <Link href="/cost-estimator"
             className="inline-block bg-tech-blue-deep text-white font-semibold font-body px-6 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
             Price my project — free, no signup
@@ -109,8 +113,9 @@ export default async function CostToHirePage({ params }: Props) {
             Three jobs people hire a {p.label} for
           </h2>
           <div className="space-y-4">
-            {p.bands.map(b => (
-              <div key={b.title} className="border border-border-crisp rounded-xl p-5 bg-surface-gray">
+            {p.bands.map((b, i) => (
+              <Reveal key={b.title} delayMs={i * 90}
+                className="border border-border-crisp rounded-xl p-5 bg-surface-gray transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-electric-violet/60 hover:shadow-[0_10px_34px_rgba(91,79,207,0.10)]">
                 <div className="flex flex-wrap items-baseline justify-between gap-3 mb-1">
                   <p className="font-bold font-body text-sm text-on-surface">{b.title}</p>
                   <p className="font-bold font-headline text-lg text-on-surface tabular-nums whitespace-nowrap">
@@ -119,7 +124,7 @@ export default async function CostToHirePage({ params }: Props) {
                 </div>
                 <p className="text-xs font-body text-on-surface-variant leading-relaxed">{b.what}</p>
                 <p className="text-xs font-body text-on-surface-variant mt-2 opacity-80">{b.price.basis}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
 
@@ -127,11 +132,13 @@ export default async function CostToHirePage({ params }: Props) {
             By the hour
           </h2>
           <div className="grid grid-cols-3 gap-3">
-            {([["Junior", p.hourly.junior], ["Mid-level", p.hourly.mid], ["Senior", p.hourly.senior]] as const).map(([lbl, v]) => (
-              <div key={lbl} className="bg-surface-gray rounded-xl p-4 border border-border-crisp text-center">
-                <p className="text-xl font-bold font-headline text-on-surface tabular-nums">{money(v)}</p>
+            {([["Junior", p.hourly.junior], ["Mid-level", p.hourly.mid], ["Senior", p.hourly.senior]] as const).map(([lbl, v], i) => (
+              <Reveal key={lbl} delayMs={i * 80} className="bg-surface-gray rounded-xl p-4 border border-border-crisp text-center transition-transform duration-300 hover:-translate-y-0.5">
+                <p className="text-xl font-bold font-headline text-on-surface tabular-nums">
+                  <StatCounter value={v} prefix="$" comma durationMs={800} />
+                </p>
                 <p className="text-xs font-body text-on-surface-variant">{lbl} / hour</p>
-              </div>
+              </Reveal>
             ))}
           </div>
           <p className="text-xs font-body text-on-surface-variant mt-3">
@@ -157,11 +164,11 @@ export default async function CostToHirePage({ params }: Props) {
           Questions people ask before hiring a {p.label}
         </h2>
         <div className="space-y-4">
-          {p.faqs.map(f => (
-            <div key={f.q} className="bg-white rounded-xl p-5 border border-border-crisp">
+          {p.faqs.map((f, i) => (
+            <Reveal key={f.q} delayMs={i * 70} className="bg-white rounded-xl p-5 border border-border-crisp transition-colors duration-300 hover:border-electric-violet/50">
               <p className="font-bold font-body text-sm text-on-surface mb-2">{f.q}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{f.a}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
 
