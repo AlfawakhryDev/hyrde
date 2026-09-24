@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { allCostPages } from "@/lib/cost-to-hire";
+import Reveal from "@/components/Reveal";
+import MarkerUnderline from "@/components/MarkerUnderline";
+import HeroBackdrop from "@/components/home/HeroBackdrop";
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 
@@ -50,9 +53,10 @@ export default function CostToHireHub() {
     <div className="min-h-screen bg-surface-gray">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
 
-      <section className="max-w-[900px] mx-auto px-6 md:px-12 pt-20 pb-8">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-5">
-          What it costs to hire a freelancer in 2026
+      <section className="relative overflow-hidden max-w-[900px] mx-auto px-6 md:px-12 pt-20 pb-8">
+        <HeroBackdrop />
+        <h1 className="relative text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-5 animate-fadeup">
+          What it costs to hire a <MarkerUnderline>freelancer</MarkerUnderline> in 2026
         </h1>
         <p className="font-body text-on-surface text-lg leading-relaxed mb-4">
           Job titles do not have prices; jobs do. So this is priced by the work: the three things
@@ -78,7 +82,7 @@ export default function CostToHireHub() {
             </thead>
             <tbody>
               {pages.map(p => (
-                <tr key={p.slug} className="border-b border-border-crisp last:border-0">
+                <tr key={p.slug} className="border-b border-border-crisp last:border-0 transition-colors hover:bg-surface-gray/70">
                   <td className="py-3 pr-4">
                     <Link href={`/cost-to-hire/${p.slug}`} className="font-semibold font-body text-sm text-on-surface hover:text-electric-violet transition-colors">
                       {p.label}
@@ -98,7 +102,7 @@ export default function CostToHireHub() {
         </div>
       </section>
 
-      <section className="max-w-[900px] mx-auto px-6 md:px-12 py-12">
+      <Reveal as="section" className="max-w-[900px] mx-auto px-6 md:px-12 py-12">
         <h2 className="text-2xl font-bold font-headline text-on-surface mb-4">Why these numbers are lower than an agency quote</h2>
         <p className="font-body text-on-surface-variant text-sm leading-relaxed mb-8 max-w-2xl">
           An agency prices the same work with account management, overhead and margin on top; that
@@ -110,7 +114,7 @@ export default function CostToHireHub() {
           className="inline-block bg-tech-blue-deep text-white font-semibold font-body px-6 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
           Price my project — free, no signup
         </Link>
-      </section>
+      </Reveal>
     </div>
   );
 }

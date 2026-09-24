@@ -171,6 +171,17 @@ body {
 @keyframes hyrde-sweep { 0% { left: -35% } 100% { left: 100% } }
 
 .animate-fadeup     { animation: fadeUp .55s cubic-bezier(.2,.7,.2,1) both }
+/* Held back until it scrolls into view (components/Reveal.tsx). Only ever
+   applied by script, so content is never hidden when JavaScript is not. */
+.reveal-pending     { opacity: 0; transform: translateY(14px) }
+
+/* The marker stroke under a headline phrase (components/MarkerUnderline.tsx).
+   Hidden until the words are seen, then drawn left to right. */
+@keyframes markerDraw { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+.marker-underline path { stroke-dasharray: 1; stroke-dashoffset: 1 }
+.marker-underline[data-drawn="true"] path {
+  animation: markerDraw .7s cubic-bezier(.65,0,.35,1) forwards;
+}
 .animate-floaty     { animation: floatY 5s ease-in-out infinite }
 .animate-spin-slow  { animation: spinSlow 14s linear infinite }
 

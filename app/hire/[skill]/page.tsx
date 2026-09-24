@@ -4,6 +4,10 @@ import type { Metadata } from "next";
 import { SKILLS, CITIES, ALL_SKILL_SLUGS, INDEXED_CITY_PAGES, getRate } from "@/lib/data";
 import { projectBands, priceRange, hireFaqs } from "@/lib/hire-brief";
 import { COST_SKILLS } from "@/lib/cost-to-hire";
+import Reveal from "@/components/Reveal";
+import MarkerUnderline from "@/components/MarkerUnderline";
+import StatCounter from "@/components/StatCounter";
+import HeroBackdrop from "@/components/home/HeroBackdrop";
 
 // ── "Hire a <trade>" — a buyer's page ──────────────────────────────────────
 // These pages carry the searches that bring clients ("hire ux designer", "hire
@@ -88,8 +92,9 @@ export default async function HireSkillPage({ params }: Props) {
     <div className="min-h-screen bg-surface-gray">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
 
-      <section className="max-w-[1280px] mx-auto px-6 md:px-12 pt-20 pb-12">
-        <nav className="text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
+      <section className="relative overflow-hidden max-w-[1280px] mx-auto px-6 md:px-12 pt-20 pb-12">
+        <HeroBackdrop />
+        <nav className="relative text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
           <Link href="/" className="hover:text-electric-violet transition-colors">Home</Link>
           <span>/</span>
           <Link href="/hire" className="hover:text-electric-violet transition-colors">Hire</Link>
@@ -97,12 +102,12 @@ export default async function HireSkillPage({ params }: Props) {
           <span className="text-on-surface">{label}</span>
         </nav>
 
-        <div className="max-w-2xl">
+        <div className="relative max-w-2xl animate-fadeup">
           <span className="inline-block text-xs font-semibold font-body bg-electric-violet/10 text-electric-violet px-3 py-1 rounded-full mb-4">
             {skillData.category}
           </span>
           <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-4">
-            Hire a {label}
+            Hire a <MarkerUnderline>{label}</MarkerUnderline>
           </h1>
           <p className="font-body text-on-surface-variant text-base leading-relaxed mb-6">
             Describe the result you want. The AI turns it into milestones with a price on each,
@@ -142,15 +147,17 @@ export default async function HireSkillPage({ params }: Props) {
             pretends to be exact is a lie. You approve the number before work starts.
           </p>
           <div className="grid md:grid-cols-3 gap-5">
-            {bands.map(b => (
-              <div key={b.title} className="bg-surface-gray rounded-xl p-6 border border-border-crisp flex flex-col">
+            {bands.map((b, i) => (
+              <Reveal key={b.title} delayMs={i * 90}
+                className="bg-surface-gray rounded-xl p-6 border border-border-crisp flex flex-col transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-electric-violet/60 hover:shadow-[0_10px_34px_rgba(91,79,207,0.10)]">
                 <p className="font-bold font-body text-sm text-on-surface mb-2">{b.title}</p>
                 <p className="text-xs font-body text-on-surface-variant leading-relaxed mb-4 flex-1">{b.what}</p>
                 <p className="text-2xl font-bold font-headline text-on-surface tabular-nums">
-                  {money(b.price.lowUsd)}–{money(b.price.highUsd)}
+                  <StatCounter value={b.price.lowUsd} prefix="$" comma durationMs={900} />
+                  –{money(b.price.highUsd)}
                 </p>
                 <p className="text-xs font-body text-on-surface-variant mt-1">{b.price.basis}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -167,11 +174,12 @@ export default async function HireSkillPage({ params }: Props) {
             { n: "02", t: "One specialist is matched", d: `Every ${label} on Hyrde passed a graded interview: a scenario, a probing follow-up, and a deep dive on work they shipped. The best fit is assigned — you do not sift through applicants.` },
             { n: "03", t: "You approve, then pay", d: `An AI checks the delivered work against your brief before you see the bill. Your first three projects carry no Hyrde fee: you pay the specialist and nothing else.` },
           ].map(s => (
-            <li key={s.n} className="bg-white rounded-xl p-6 border border-border-crisp">
+            <Reveal as="li" key={s.n} delayMs={Number(s.n) * 80}
+              className="bg-white rounded-xl p-6 border border-border-crisp transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-electric-violet/50">
               <p className="font-mono text-xs text-electric-violet mb-2">{s.n}</p>
               <p className="font-bold font-body text-sm text-on-surface mb-2">{s.t}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{s.d}</p>
-            </li>
+            </Reveal>
           ))}
         </ol>
       </section>
@@ -187,7 +195,7 @@ export default async function HireSkillPage({ params }: Props) {
                 const city = CITIES[citySlug];
                 return (
                   <Link key={citySlug} href={`/hire/${skill}/${citySlug}`}
-                    className="bg-surface-gray rounded-xl p-4 border border-border-crisp hover:border-electric-violet transition-colors group">
+                    className="bg-surface-gray rounded-xl p-4 border border-border-crisp hover:border-electric-violet transition-[transform,border-color] duration-300 hover:-translate-y-0.5 group">
                     <p className="font-bold font-body text-sm text-on-surface group-hover:text-electric-violet transition-colors">
                       {label} in {city.label}
                     </p>
@@ -207,11 +215,12 @@ export default async function HireSkillPage({ params }: Props) {
           Hiring a {label}: the questions clients ask
         </h2>
         <div className="grid md:grid-cols-2 gap-5">
-          {faqs.map(f => (
-            <div key={f.q} className="bg-white rounded-xl p-5 border border-border-crisp">
+          {faqs.map((f, i) => (
+            <Reveal key={f.q} delayMs={i * 70}
+              className="bg-white rounded-xl p-5 border border-border-crisp transition-colors duration-300 hover:border-electric-violet/50">
               <p className="font-bold font-body text-sm text-on-surface mb-2">{f.q}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{f.a}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
         <div className="mt-8">
