@@ -5,6 +5,7 @@ import { SKILLS, CITIES, ALL_SKILL_SLUGS, INDEXED_CITY_PAGES, getRate } from "@/
 import { projectBands, priceRange, hireFaqs } from "@/lib/hire-brief";
 import { COST_SKILLS } from "@/lib/cost-to-hire";
 import Reveal from "@/components/Reveal";
+import Kicker from "@/components/Kicker";
 import MarkerUnderline from "@/components/MarkerUnderline";
 import StatCounter from "@/components/StatCounter";
 import HeroBackdrop from "@/components/home/HeroBackdrop";
@@ -92,21 +93,20 @@ export default async function HireSkillPage({ params }: Props) {
     <div className="min-h-screen bg-surface-gray">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
 
-      <section className="relative overflow-hidden max-w-[1280px] mx-auto px-6 md:px-12 pt-20 pb-12">
+      <section className="relative overflow-hidden">
         <HeroBackdrop />
-        <nav className="relative text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
+        <div className="relative max-w-[1100px] mx-auto px-6 md:px-10 pt-20 pb-14 md:pt-28 md:pb-16">
+        <nav className="font-mono text-[11px] uppercase tracking-[0.18em] text-on-surface-variant mb-6 flex items-center gap-2">
           <Link href="/" className="hover:text-electric-violet transition-colors">Home</Link>
-          <span>/</span>
+          <span className="opacity-40">/</span>
           <Link href="/hire" className="hover:text-electric-violet transition-colors">Hire</Link>
-          <span>/</span>
+          <span className="opacity-40">/</span>
           <span className="text-on-surface">{label}</span>
         </nav>
 
-        <div className="relative max-w-2xl animate-fadeup">
-          <span className="inline-block text-xs font-semibold font-body bg-electric-violet/10 text-electric-violet px-3 py-1 rounded-full mb-4">
-            {skillData.category}
-          </span>
-          <h1 className="text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-4">
+        <div className="max-w-3xl animate-fadeup">
+          <Kicker>{skillData.category}</Kicker>
+          <h1 className="text-4xl md:text-6xl font-bold font-headline text-on-surface leading-[1.04] tracking-[-0.02em] mb-6">
             Hire a <MarkerUnderline>{label}</MarkerUnderline>
           </h1>
           <p className="font-body text-on-surface-variant text-base leading-relaxed mb-6">
@@ -133,50 +133,56 @@ export default async function HireSkillPage({ params }: Props) {
             </p>
           )}
         </div>
+        </div>
       </section>
 
       {/* What it costs — the reason a buyer reads this page at all */}
-      <section className="bg-white border-y border-border-crisp py-14">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <h2 className="text-2xl font-bold font-headline text-on-surface mb-2">
+      <section className="bp-band">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 pt-14 md:pt-20">
+          <Kicker n="01">What it costs</Kicker>
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface tracking-[-0.01em] mb-2">
             What a {label} costs here
           </h2>
-          <p className="font-body text-on-surface-variant text-sm mb-8 max-w-2xl">
+          <p className="font-body text-on-surface-variant text-sm max-w-2xl">
             Three jobs people ask a {label} for, priced the way the product prices them:
             hours at a vetted specialist&apos;s rate, plus a range because an estimate that
             pretends to be exact is a lie. You approve the number before work starts.
           </p>
-          <div className="grid md:grid-cols-3 gap-5">
+        </div>
+        <div className="max-w-[1100px] mx-auto grid md:grid-cols-3 bp-cells mt-10">
             {bands.map((b, i) => (
               <Reveal key={b.title} delayMs={i * 90}
-                className="bg-surface-gray rounded-xl p-6 border border-border-crisp flex flex-col transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-electric-violet/60 hover:shadow-[0_10px_34px_rgba(91,79,207,0.10)]">
+                className="px-6 md:px-8 py-10 flex flex-col transition-colors duration-300 hover:bg-on-surface/[0.03]">
+                <p className="font-mono text-[11px] text-electric-violet mb-3">{String(i + 1).padStart(2, "0")}</p>
                 <p className="font-bold font-body text-sm text-on-surface mb-2">{b.title}</p>
-                <p className="text-xs font-body text-on-surface-variant leading-relaxed mb-4 flex-1">{b.what}</p>
-                <p className="text-2xl font-bold font-headline text-on-surface tabular-nums">
+                <p className="text-xs font-body text-on-surface-variant leading-relaxed mb-5 flex-1">{b.what}</p>
+                <p className="font-mono text-xl text-on-surface tabular-nums">
                   <StatCounter value={b.price.lowUsd} prefix="$" comma durationMs={900} />
                   –{money(b.price.highUsd)}
                 </p>
-                <p className="text-xs font-body text-on-surface-variant mt-1">{b.price.basis}</p>
+                <p className="font-mono text-[11px] text-on-surface-variant mt-1.5 leading-relaxed">{b.price.basis}</p>
               </Reveal>
             ))}
-          </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-14">
-        <h2 className="text-2xl font-bold font-headline text-on-surface mb-8">
-          How hiring a {label} works
-        </h2>
-        <ol className="grid md:grid-cols-3 gap-6">
+      <section className="bp-band">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 pt-14 md:pt-20">
+          <Kicker n="02">How it runs</Kicker>
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface tracking-[-0.01em]">
+            How hiring a {label} works
+          </h2>
+        </div>
+        <ol className="max-w-[1100px] mx-auto grid md:grid-cols-3 bp-cells mt-10">
           {[
             { n: "01", t: "You describe the result", d: `One sentence is enough. The AI asks what it needs to price the work, then writes the brief and the acceptance criteria for you.` },
             { n: "02", t: "One specialist is matched", d: `Every ${label} on Hyrde passed a graded interview: a scenario, a probing follow-up, and a deep dive on work they shipped. The best fit is assigned — you do not sift through applicants.` },
             { n: "03", t: "You approve, then pay", d: `An AI checks the delivered work against your brief before you see the bill. Your first three projects carry no Hyrde fee: you pay the specialist and nothing else.` },
           ].map(s => (
             <Reveal as="li" key={s.n} delayMs={Number(s.n) * 80}
-              className="bg-white rounded-xl p-6 border border-border-crisp transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-electric-violet/50">
-              <p className="font-mono text-xs text-electric-violet mb-2">{s.n}</p>
+              className="px-6 md:px-8 py-10 transition-colors duration-300 hover:bg-on-surface/[0.03]">
+              <p className="font-mono text-[11px] text-electric-violet mb-3">{s.n}</p>
               <p className="font-bold font-body text-sm text-on-surface mb-2">{s.t}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{s.d}</p>
             </Reveal>
@@ -185,9 +191,10 @@ export default async function HireSkillPage({ params }: Props) {
       </section>
 
       {cities.length > 0 && (
-        <section className="bg-white border-t border-border-crisp py-12">
-          <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-            <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">
+        <section className="bp-band">
+          <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-14 md:py-20">
+            <Kicker n="03">By location</Kicker>
+            <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface tracking-[-0.01em] mb-8">
               Hire a {label} by location
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -210,14 +217,16 @@ export default async function HireSkillPage({ params }: Props) {
         </section>
       )}
 
-      <section className="max-w-[1280px] mx-auto px-6 md:px-12 py-14">
-        <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">
+      <section className="bp-band">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-14 md:py-20">
+        <Kicker n="04">Before you hire</Kicker>
+        <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface tracking-[-0.01em] mb-8">
           Hiring a {label}: the questions clients ask
         </h2>
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-px bg-border-crisp border border-border-crisp">
           {faqs.map((f, i) => (
             <Reveal key={f.q} delayMs={i * 70}
-              className="bg-white rounded-xl p-5 border border-border-crisp transition-colors duration-300 hover:border-electric-violet/50">
+              className="bg-surface-gray p-6 transition-colors duration-300 hover:bg-on-surface/[0.03]">
               <p className="font-bold font-body text-sm text-on-surface mb-2">{f.q}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{f.a}</p>
             </Reveal>
@@ -228,6 +237,7 @@ export default async function HireSkillPage({ params }: Props) {
             className="inline-block bg-tech-blue-deep text-white font-semibold font-body px-6 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
             Price my {label} project
           </Link>
+        </div>
         </div>
       </section>
     </div>
