@@ -32,7 +32,7 @@ jobs:
           [ -s baseline.sql ] || { echo "::error::Empty schema dump."; exit 1; }
           echo "tables: $(grep -c '^CREATE TABLE' baseline.sql)  policies: $(grep -c '^CREATE POLICY' baseline.sql)  functions: $(grep -c 'CREATE OR REPLACE FUNCTION' baseline.sql)"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: schema-baseline
           path: baseline.sql

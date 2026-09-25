@@ -58,7 +58,7 @@ jobs:
           rm -rf backup
           echo "encrypted: $out ($(du -h "$out" | cut -f1))"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: db-backup
           path: "*.tgz.gpg"
