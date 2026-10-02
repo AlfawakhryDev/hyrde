@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BandRule from "@/components/BandRule";
+import CredentialStrip from "@/components/CredentialStrip";
 import LiveTasks from "@/components/home/LiveTasks";
 import { HyrdeMark } from "@/components/Logo";
 import HeroBackdrop from "@/components/home/HeroBackdrop";
@@ -185,7 +186,9 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
         </div>
       </section>
 
-      <BandRule />
+      {/* The strip draws its own rule top and bottom, so it closes the hero
+          itself — a BandRule here as well would double the line. */}
+      <CredentialStrip heading={t("nav.memberOf")} />
 
       {/* ── Single tasks too — the matching engine, live ── */}
       <section className="relative overflow-hidden bg-[#100F0B]">

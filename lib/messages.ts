@@ -272,6 +272,7 @@ export const messages = {
     },
     nav: {
       announce: "Your first 3 projects are on us \u2014 no fee, you just pay the specialist",
+      memberOf: "Member of",
       estimate: "Estimate cost",
       findWork: "Find work",
       talent: "Talent",
@@ -906,6 +907,7 @@ export const messages = {
     },
     nav: {
       announce: "Deine ersten 3 Projekte gehen auf uns \u2014 keine Geb\u00fchr, du zahlst nur den Spezialisten",
+      memberOf: "Mitglied von",
       estimate: "Kosten schätzen",
       findWork: "Arbeit finden",
       talent: "Talente",
@@ -1541,6 +1543,7 @@ export const messages = {
     },
     nav: {
       announce: "أول ٣ مشاريع على حسابنا — بلا رسوم، تدفع للمختصّ فقط",
+      memberOf: "عضو في",
       estimate: "تقدير التكلفة",
       findWork: "ابحث عن عمل",
       talent: "المواهب",
