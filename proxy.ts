@@ -3,9 +3,17 @@ import { createServerClient } from "@supabase/ssr";
 import ws from "ws";
 import { isEmailVerified } from "@/lib/verified";
 
-// Refreshes the Supabase auth session on every matched request and keeps the
-// auth cookies in sync between the browser and the server. Also gates the
-// app area (/dashboard, /onboarding, /t) behind a session.
+// Refreshes the Supabase auth session on every page request and keeps the auth
+// cookies in sync between the browser and the server. Also gates the app area
+// (/dashboard, /onboarding, /t) behind a session.
+//
+// It has to run on EVERY page, not just the gated ones. Supabase rotates the
+// refresh token each time it refreshes. A Server Component can't write cookies,
+// so a refresh that happens there (say, /admin with an expired access token)
+// rotates the token and the browser never learns the new one. Its next request
+// presents a spent token, gets "Invalid Refresh Token: Already Used", and the
+// user is signed out. Refreshing here first means pages only ever see a fresh
+// session.
 // Countries where the Arabic site is the right first impression.
 const GCC = new Set(["SA", "AE", "QA", "BH", "KW", "OM"]);
 
@@ -33,7 +41,21 @@ export async function proxy(request: NextRequest) {
 
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
+  // A redirect has to carry whatever cookies the refresh below just wrote. A
+  // bare NextResponse.redirect() drops them, with the same spent-token result.
+  const redirectTo = (url: URL) => {
+    const r = NextResponse.redirect(url);
+    response.cookies.getAll().forEach(c => r.cookies.set(c));
+    return r;
+  };
+
+  // Anonymous visitors, most of the marketing traffic, carry no auth cookie:
+  // skip the round trip to Supabase for them entirely.
+  const hasSession = request.cookies.getAll().some(
+    c => c.name.startsWith("sb-") && c.name.includes("-auth-token"),
+  );
+
+  const supabase = hasSession ? createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -54,13 +76,11 @@ export async function proxy(request: NextRequest) {
         },
       },
     },
-  );
+  ) : null;
 
   // IMPORTANT: do not run code between createServerClient and getUser() —
   // it refreshes expired tokens as a side effect.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
   const path = request.nextUrl.pathname;
   const needsAuth =
@@ -72,7 +92,7 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", path);
-    return NextResponse.redirect(url);
+    return redirectTo(url);
   }
 
   // Nobody gets into the app on an unconfirmed address. The check lives here
@@ -81,7 +101,7 @@ export async function proxy(request: NextRequest) {
   const inApp = needsAuth || path.startsWith("/vetting") ||
     path.startsWith("/profile") || path.startsWith("/billing");
 
-  if (user && inApp) {
+  if (supabase && user && inApp) {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select("email_verified_at")
@@ -97,7 +117,7 @@ export async function proxy(request: NextRequest) {
       url.pathname = "/verify";
       url.search = "";
       url.searchParams.set("next", path);
-      return NextResponse.redirect(url);
+      return redirectTo(url);
     }
   }
 
@@ -106,22 +126,16 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     url.search = "";
-    return NextResponse.redirect(url);
+    return redirectTo(url);
   }
 
   return response;
 }
 
 export const config = {
+  // Every page. Not /api (route handlers write their own cookies), not /auth
+  // (the callback sets up the session itself), and not static files.
   matcher: [
-    "/dashboard/:path*",
-    "/onboarding/:path*",
-    "/t/:path*",
-    "/vetting/:path*",
-    "/profile/:path*",
-    "/billing/:path*",
-    "/login",
-    "/signup",
-    "/",
+    "/((?!api|auth|_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|robots.txt|sitemap.xml|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest|woff2?)$).*)",
   ],
 };

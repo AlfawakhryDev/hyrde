@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { ALL_SKILL_SLUGS, INDEXED_CITY_PAGES } from "@/lib/data";
 import { COMPETITOR_SLUGS } from "@/lib/compare";
+import { COST_SLUGS } from "@/lib/cost-to-hire";
+import { GULF_SLUGS } from "@/lib/gulf";
 import { GUIDE_SLUGS, GUIDES } from "@/lib/guides";
 import { AR_GUIDE_SLUGS, AR_GUIDES } from "@/lib/guides.ar";
 import { DE_GUIDE_SLUGS, DE_GUIDES } from "@/lib/guides.de";
@@ -8,7 +10,7 @@ import { AR_CITY_SLUGS } from "@/lib/gcc.ar";
 
 // Date of the last meaningful site-wide content change. Bump this when you
 // ship new copy/pages; do NOT set it to new Date() (see note below).
-const SITE_REV = new Date("2026-09-01");
+const SITE_REV = new Date("2026-09-21");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://hyrde.net";
@@ -34,18 +36,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/ar/hire`,             lastModified: now, priority: 0.85 },
     { url: `${base}/hire-freelancers-with-ai`, lastModified: now, priority: 0.95 },
     { url: `${base}/hire`,            lastModified: now, priority: 0.9 },
-    { url: `${base}/signup`,          lastModified: now, priority: 0.9 },
-    { url: `${base}/vetting`,         lastModified: now, priority: 0.85 },
-    { url: `${base}/agent`,           lastModified: now, priority: 0.9 },
-    { url: `${base}/pricing`,         lastModified: now, priority: 0.8 },
+    { url: `${base}/cost-to-hire`,    lastModified: now, priority: 0.9 },
+    { url: `${base}/compare`,         lastModified: now, priority: 0.85 },
+    { url: `${base}/pricing`,         lastModified: now, priority: 0.85 },
     { url: `${base}/enterprise`,      lastModified: now, priority: 0.8 },
     { url: `${base}/rates`,           lastModified: now, priority: 0.8 },
-    { url: `${base}/talent`,          lastModified: now, priority: 0.7 },
-    { url: `${base}/about`,           lastModified: now, priority: 0.7 },
-    { url: `${base}/jobs`,            lastModified: now, priority: 0.7 },
     { url: `${base}/guides`,          lastModified: now, priority: 0.8 },
-    { url: `${base}/compare`,         lastModified: now, priority: 0.8 },
+    { url: `${base}/about`,           lastModified: now, priority: 0.6 },
+    // Specialists have to find us too, but they are not the side that pays, and
+    // search already sends us almost none of them: of 222 queries in the
+    // 2026-09-01 Search Console export, 130 were clients looking to hire and 2
+    // were people looking for work. So the supply funnel stays indexable and
+    // stays out of the sitemap, and the crawl budget goes to buyer pages.
+    { url: `${base}/vetting`,         lastModified: now, priority: 0.4 },
   ];
+  // Deliberately absent: /signup (a form has nothing to rank for), /agent (a
+  // retired demo), /jobs and /talent (browsing, which this product does not do
+  // — both are noindex now).
 
   // Authority hub: editorial guides (client + freelancer clusters)
   const guide_pages = GUIDE_SLUGS.map(slug => ({
@@ -88,12 +95,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  // Tier 1: /hire/[skill] — 25 pages
+  // Tier 1: /hire/[skill]. These carry the searches that bring clients — "hire
+  // ux designer", "hire developers in egypt" — so they rank just under the
+  // homepage, above everything else.
   const skill_pages = ALL_SKILL_SLUGS.map(skill => ({
     url: `${base}/hire/${skill}`,
     lastModified: now,
     changeFrequency: "weekly" as const,
-    priority: 0.8,
+    priority: 0.9,
+  }));
+
+  // "What does it cost to hire a …" — the question buyers ask straight after
+  // "hire a …", and the one answer engines are asked constantly.
+  const cost_pages = COST_SLUGS.map(skill => ({
+    url: `${base}/cost-to-hire/${skill}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  }));
+
+  // English Gulf city hubs. Gulf demand arrives in English and centred on
+  // Dubai, while the only Gulf city pages were Arabic; these are the twins.
+  const gulf_pages = GULF_SLUGS.map(city => ({
+    url: `${base}/hire/in/${city}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+    alternates: { languages: { "ar-SA": `${base}/ar/hire/${city}` } },
   }));
 
   // Curated skill×city pages. These were pulled from the sitemap entirely in
@@ -110,6 +138,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...static_pages, ...comparison_pages, ...guide_pages,
-    ...ar_guide_pages, ...de_guide_pages, ...ar_city_pages, ...skill_pages, ...city_pages,
+    ...ar_guide_pages, ...de_guide_pages, ...ar_city_pages, ...skill_pages, ...cost_pages, ...gulf_pages, ...city_pages,
   ];
 }

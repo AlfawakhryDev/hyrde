@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SKILLS, CITIES, MOCK_FREELANCERS, ALL_SKILL_SLUGS, ALL_CITY_SLUGS, isIndexedCityPage, getRate, getRateContext, getSkillCityIntro, getSkillCityFaqs, getCityRateComparisons } from "@/lib/data";
-import FreelancerCard from "@/components/FreelancerCard";
+import { SKILLS, CITIES, ALL_SKILL_SLUGS, ALL_CITY_SLUGS, isIndexedCityPage, getRate, getRateContext, getSkillCityIntro, getSkillCityFaqs, getCityRateComparisons } from "@/lib/data";
+import { projectBands } from "@/lib/hire-brief";
 
 interface Props { params: Promise<{ skill: string; city: string }> }
 
@@ -15,6 +15,10 @@ export async function generateStaticParams() {
   }
   return pairs;
 }
+
+// Every real combination is pre-rendered above, so anything else is a 404
+// rather than a streamed not-found page that still answers 200.
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { skill, city } = await params;
@@ -54,14 +58,10 @@ export default async function HireSkillCityPage({ params }: Props) {
   const ctx         = getRateContext(skill, city)!;
   const cityRates   = getCityRateComparisons(skill, city, 5);
 
-  // Skill match is required. This was `f.skill === skill || f.location === city`,
-  // so anyone in the city surfaced regardless of trade — /hire/3d-designer/dubai
-  // listed a WordPress developer purely for being in Dubai. Same-city specialists
-  // in the right skill rank first; nobody unrelated is ever shown.
-  const freelancers = MOCK_FREELANCERS
-    .filter(f => f.skill === skill)
-    .sort((a, b) => (b.location === city ? 1 : 0) - (a.location === city ? 1 : 0) || b.score - a.score)
-    .slice(0, 3);
+  // What the work costs, rather than a column of specimen profiles. Nobody is
+  // browsed on Hyrde — one specialist is matched — so a buyer's question here is
+  // "what will this cost me", not "who is available".
+  const bands = projectBands(skill);
 
   // Structured data: FAQPage + BreadcrumbList for rich results
   const faqJsonLd = {
@@ -159,12 +159,23 @@ export default async function HireSkillCityPage({ params }: Props) {
 
           <div>
             <p className="text-xs font-semibold font-body text-on-surface-variant uppercase tracking-widest mb-3">
-              Top matches available
+              What this work costs
             </p>
             <div className="space-y-3">
-              {freelancers.map((f, i) => (
-                <FreelancerCard key={f.id} freelancer={f} highlight={i === 0} />
+              {bands.map(b => (
+                <div key={b.title} className="bg-white rounded-xl p-4 border border-border-crisp">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="font-bold font-body text-sm text-on-surface">{b.title}</p>
+                    <p className="font-bold font-headline text-sm text-on-surface tabular-nums whitespace-nowrap">
+                      ${b.price.lowUsd.toLocaleString("en-US")}–${b.price.highUsd.toLocaleString("en-US")}
+                    </p>
+                  </div>
+                  <p className="text-xs font-body text-on-surface-variant leading-relaxed mt-1">{b.what}</p>
+                </div>
               ))}
+              <p className="text-xs font-body text-on-surface-variant">
+                Priced before anyone starts, and only changed if you change the scope.
+              </p>
             </div>
           </div>
         </div>
