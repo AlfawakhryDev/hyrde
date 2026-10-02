@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CredentialStrip from "@/components/CredentialStrip";
 import LiveTasks from "@/components/home/LiveTasks";
 import { HyrdeMark } from "@/components/Logo";
 import HeroBackdrop from "@/components/home/HeroBackdrop";
@@ -183,6 +184,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
           </div>
         </div>
       </section>
+
+      <CredentialStrip heading={t("nav.memberOf")} />
 
       {/* ── Single tasks too — the matching engine, live ── */}
       <section className="relative overflow-hidden bg-[#100F0B]">
