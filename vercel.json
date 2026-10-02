@@ -1,5 +1,11 @@
 {
+  "regions": [
+    "fra1"
+  ],
   "crons": [
-    { "path": "/api/seo/ping", "schedule": "0 6 * * *" }
+    {
+      "path": "/api/seo/ping",
+      "schedule": "0 6 * * *"
+    }
   ]
 }

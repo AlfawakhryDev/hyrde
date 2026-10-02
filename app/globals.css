@@ -171,6 +171,36 @@ body {
 @keyframes hyrde-sweep { 0% { left: -35% } 100% { left: 100% } }
 
 .animate-fadeup     { animation: fadeUp .55s cubic-bezier(.2,.7,.2,1) both }
+/* Held back until it scrolls into view (components/Reveal.tsx). Only ever
+   applied by script, so content is never hidden when JavaScript is not. */
+.reveal-pending     { opacity: 0; transform: translateY(14px) }
+
+/* ── Blueprint framing ───────────────────────────────────────────────
+   Hairline rules divide the page into cells instead of floating rounded
+   cards, and a small cross marks where the rules would meet. The structure
+   carries the page the way a schematic does, so very little has to move. */
+.bp-band  { position: relative; border-top: 1px solid var(--color-border-crisp) }
+.bp-band::before, .bp-band::after {
+  content: ""; position: absolute; top: -4.5px; width: 9px; height: 9px; pointer-events: none;
+  background:
+    linear-gradient(var(--color-border-crisp) 0 0) center / 100% 1px no-repeat,
+    linear-gradient(var(--color-border-crisp) 0 0) center / 1px 100% no-repeat;
+}
+.bp-band::before { inset-inline-start: 0 }
+.bp-band::after  { inset-inline-end:   0 }
+/* Cells sit shoulder to shoulder, separated by the same hairline. */
+.bp-cells > * + * { border-inline-start: 1px solid var(--color-border-crisp) }
+@media (max-width: 767px) {
+  .bp-cells > * + * { border-inline-start: 0; border-top: 1px solid var(--color-border-crisp) }
+}
+
+/* The marker stroke under a headline phrase (components/MarkerUnderline.tsx).
+   Hidden until the words are seen, then drawn left to right. */
+@keyframes markerDraw { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+.marker-underline path { stroke-dasharray: 1; stroke-dashoffset: 1 }
+.marker-underline[data-drawn="true"] path {
+  animation: markerDraw .7s cubic-bezier(.65,0,.35,1) forwards;
+}
 .animate-floaty     { animation: floatY 5s ease-in-out infinite }
 .animate-spin-slow  { animation: spinSlow 14s linear infinite }
 

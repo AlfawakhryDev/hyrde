@@ -152,15 +152,39 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
     }
   }
 
-  async function submitAnswer(mine: string, recording?: Blob | null, mime?: string) {
-    if (mine.length < 25 || !vettingId) {
+  async function submitAnswer(mine: string, recording?: Blob | null, mime?: string, audio?: Blob | null) {
+    const spoken = audio && audio.size > 0;
+    if (!vettingId || (mine.trim().length < 25 && !spoken)) {
       setError(t("vet.errShort"));
       return;
     }
-    setMessages(m => [...m, { role: "you", text: mine }]);
     setAnswer("");
     setError("");
     setBusy(true);
+
+    // What the browser heard is only a preview: it listens in one language and
+    // handles dialect badly. When there's a recording, the server transcribes
+    // it and that text is what gets graded. If transcription is unavailable,
+    // the browser's version stands — an outage must not end the interview.
+    let said = mine.trim();
+    if (spoken) {
+      try {
+        const form = new FormData();
+        form.append("file", audio, `answer.${(audio.type || "").includes("mp4") ? "m4a" : "webm"}`);
+        form.append("locale", locale);
+        const r = await fetch("/api/vet/transcribe", { method: "POST", body: form });
+        if (r.ok) {
+          const { text } = await r.json();
+          if (typeof text === "string" && text.trim()) said = text.trim();
+        }
+      } catch { /* keep the browser transcript */ }
+    }
+    if (said.length < 25) {
+      setError(t("vet.errShort"));
+      setBusy(false);
+      return;
+    }
+    setMessages(m => [...m, { role: "you", text: said }]);
 
     // Store the recording privately (best-effort — the transcript is graded).
     if (recording && recording.size > 0) {
@@ -187,14 +211,14 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
       const res = await fetch("/api/vet/answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vettingId, answer: mine }),
+        body: JSON.stringify({ vettingId, answer: said }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? t("vet.errResubmit"));
         // Give the answer back so they can retry.
         setMessages(m => m.slice(0, -1));
-        setAnswer(mine);
+        setAnswer(said);
         return;
       }
       if (data.done) {
@@ -207,7 +231,7 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
     } catch {
       setError(t("vet.errConnection"));
       setMessages(m => m.slice(0, -1));
-      setAnswer(mine);
+      setAnswer(said);
     } finally {
       setBusy(false);
     }
@@ -426,7 +450,8 @@ export default function VettingClient({ existing }: { existing: ExistingVetting[
             submitting={busy}
             interviewerSpeaking={speaking}
             autoRecordSignal={autoRecordSignal}
-            onSubmit={(transcript, blob, mime) => { cancelSpeech(); submitAnswer(transcript, blob, mime); }}
+            locale={locale}
+            onSubmit={a => { cancelSpeech(); submitAnswer(a.transcript, a.video, a.mime, a.audio); }}
             onUnsupported={reason => { cancelSpeech(); setMode("text"); setVideoNote(reason); }}
           />
         ) : (

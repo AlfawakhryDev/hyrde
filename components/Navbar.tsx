@@ -1,4 +1,5 @@
 "use client";
+import { CREDENTIALS } from "@/lib/credentials";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -45,14 +46,29 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      {/* Announcement bar */}
-      <Link
-        href="/signup"
-        className="flex items-center justify-center gap-2 h-8 bg-[#0A0A0B] text-white/90 text-[12px] font-medium hover:text-white transition-colors"
-      >
-        {t("nav.announce")}
-        <span aria-hidden="true">→</span>
-      </Link>
+      {/* Announcement bar. The offer is the headline and keeps the link to
+          signup; the credentials sit beside it, quieter, and drop off on narrow
+          screens where there is only room for one message. */}
+      <div className="flex items-center justify-center gap-4 h-8 bg-[#0A0A0B] text-[12px] font-medium">
+        <Link
+          href="/signup"
+          className="flex items-center gap-2 text-white/90 hover:text-white transition-colors"
+        >
+          {t("nav.announce")}
+          <span aria-hidden="true">→</span>
+        </Link>
+        {CREDENTIALS.length > 0 && (
+          <>
+            <span aria-hidden="true" className="hidden lg:inline text-white/25">|</span>
+            <span className="hidden lg:flex items-center gap-2 text-white/55">
+              <span className="font-mono text-[10.5px] uppercase tracking-[0.16em]">{t("nav.memberOf")}</span>
+              {CREDENTIALS.map(c => (
+                <span key={c.id} className="text-white/80">{c.name}</span>
+              ))}
+            </span>
+          </>
+        )}
+      </div>
 
       {/* Floating pill nav */}
       <div className="flex justify-center px-4 pt-3">
