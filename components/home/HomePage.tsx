@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BandRule from "@/components/BandRule";
 import CredentialStrip from "@/components/CredentialStrip";
 import LiveTasks from "@/components/home/LiveTasks";
 import { HyrdeMark } from "@/components/Logo";
@@ -185,6 +186,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
         </div>
       </section>
 
+      {/* The strip draws its own rule top and bottom, so it closes the hero
+          itself — a BandRule here as well would double the line. */}
       <CredentialStrip heading={t("nav.memberOf")} />
 
       {/* ── Single tasks too — the matching engine, live ── */}
@@ -212,6 +215,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
         </div>
       </section>
 
+      <BandRule />
+
       {/* ── Any expertise, not just tech ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-24 md:pt-32">
         <div className="flex items-center gap-3 mb-6">
@@ -238,6 +243,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
           ))}
         </div>
       </section>
+
+      <BandRule />
 
       {/* ── Trust — an editorial statement, chips verify themselves ── */}
       <style>{`
@@ -303,6 +310,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
         </div>
       </section>
 
+      <BandRule />
+
       {/* ── Why teams switch ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-28 md:pt-36 pb-10">
         <Kicker n="03" label={t("home.whyKicker")} />
@@ -312,6 +321,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
         <AliveGrid locale={locale} />
       </section>
 
+      <BandRule />
+
       {/* ── How it works ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-24 pb-10">
         <Kicker n="04" label={t("home.howKicker")} />
@@ -320,6 +331,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
         </h2>
         <HowItWorks locale={locale} />
       </section>
+
+      <BandRule />
 
       {/* ── Split: vetting ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-24 pb-16 grid lg:grid-cols-2 gap-14 items-center">
@@ -357,14 +370,20 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
         </div>
       </section>
 
+      <BandRule />
+
       {/* ── Get paid anywhere ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-16 pb-24">
         <Kicker n="06" label={t("home.payKicker")} />
         <GlobalPay locale={locale} />
       </section>
 
+      <BandRule />
+
       {/* ── Live tasks (real data) ── */}
       <LiveTasks locale={locale} />
+
+      <BandRule />
 
       {/* ── Dark duo: two sides ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 py-24 grid md:grid-cols-2 gap-4">
@@ -384,6 +403,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
           </div>
         ))}
       </section>
+
+      <BandRule />
 
       {/* ── FAQ (visible content backs the FAQPage schema above) ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 pt-8 pb-20">
@@ -407,6 +428,8 @@ export default function HomePage({ locale = "en" }: { locale?: Locale }) {
           </dl>
         </div>
       </section>
+
+      <BandRule />
 
       {/* ── Compare row (internal links) ── */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-8 pb-28">

@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { GULF_SLUGS, getGulfCity, gulfTrades, inLocal } from "@/lib/gulf";
 import Reveal from "@/components/Reveal";
+import Kicker from "@/components/Kicker";
 import MarkerUnderline from "@/components/MarkerUnderline";
 import HeroBackdrop from "@/components/home/HeroBackdrop";
 
@@ -89,29 +90,30 @@ export default async function HireInCityPage({ params }: Props) {
     <div className="min-h-screen bg-surface-gray">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
 
-      <section className="relative overflow-hidden max-w-[900px] mx-auto px-6 md:px-12 pt-20 pb-8">
+      <section className="relative overflow-hidden">
         <HeroBackdrop />
-        <nav className="relative text-xs font-body text-on-surface-variant mb-6 flex items-center gap-2">
+        <div className="relative max-w-[1100px] mx-auto px-6 md:px-10 pt-20 pb-14 md:pt-28 md:pb-16">
+        <nav className="font-mono text-[11px] uppercase tracking-[0.18em] text-on-surface-variant mb-6 flex items-center gap-2">
           <Link href="/" className="hover:text-electric-violet transition-colors">Home</Link>
-          <span>/</span>
+          <span className="opacity-40">/</span>
           <Link href="/hire" className="hover:text-electric-violet transition-colors">Hire</Link>
-          <span>/</span>
+          <span className="opacity-40">/</span>
           <span className="text-on-surface">{c.name}</span>
         </nav>
 
-        <h1 className="relative text-4xl md:text-5xl font-bold font-headline text-on-surface leading-tight mb-5 animate-fadeup">
+        <h1 className="text-4xl md:text-6xl font-bold font-headline text-on-surface leading-[1.04] tracking-[-0.02em] max-w-3xl mb-6 animate-fadeup">
           Hire vetted freelancers in <MarkerUnderline>{c.name}</MarkerUnderline>
         </h1>
-        <p className="relative font-body text-on-surface text-lg leading-relaxed mb-4">
+        <p className="font-body text-on-surface text-lg leading-relaxed max-w-2xl mb-3">
           A typical job runs <strong>{inLocal(low, c)} to {inLocal(high, c)}</strong> ({money(low)}–{money(high)}),
           priced before anyone starts. One specialist is matched to the work — usually the same day —
           and an AI checks what they deliver against your brief before you pay.
         </p>
-        <p className="relative font-body text-on-surface-variant text-base leading-relaxed mb-6">
+        <p className="font-body text-on-surface-variant text-base leading-relaxed max-w-2xl mb-8">
           No visa, no sponsorship, no local entity: you are buying a defined piece of work, not
           employing anyone. Your first three projects carry no Hyrde fee.
         </p>
-        <div className="relative flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3">
           <Link href="/cost-estimator"
             className="inline-block bg-tech-blue-deep text-white font-semibold font-body px-6 py-3 rounded-full hover:scale-[0.97] transition-transform text-sm">
             Price my project — free, no signup
@@ -121,26 +123,28 @@ export default async function HireInCityPage({ params }: Props) {
             بالعربية
           </Link>
         </div>
+        </div>
       </section>
 
-      <section className="bg-white border-y border-border-crisp py-12">
-        <div className="max-w-[900px] mx-auto px-6 md:px-12">
-          <h2 className="text-2xl font-bold font-headline text-on-surface mb-2">
+      <section className="bp-band">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-14 md:py-20">
+          <Kicker n="01">Local demand</Kicker>
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface tracking-[-0.01em] mb-2">
             What {c.name} hires for, and what it costs
           </h2>
-          <p className="font-body text-on-surface-variant text-sm mb-6">{c.demand}</p>
+          <p className="font-body text-on-surface-variant text-sm mb-8 max-w-2xl">{c.demand}</p>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-border-crisp">
-                  <th className="py-3 pr-4 text-xs font-semibold font-body uppercase tracking-widest text-on-surface-variant">Trade</th>
-                  <th className="py-3 pr-4 text-xs font-semibold font-body uppercase tracking-widest text-on-surface-variant whitespace-nowrap">A typical job ({c.currencyCode})</th>
-                  <th className="py-3 text-xs font-semibold font-body uppercase tracking-widest text-on-surface-variant whitespace-nowrap">In USD</th>
+                  <th className="py-3 pr-4 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-on-surface-variant">Trade</th>
+                  <th className="py-3 pr-4 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-on-surface-variant whitespace-nowrap">A typical job ({c.currencyCode})</th>
+                  <th className="py-3 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-on-surface-variant whitespace-nowrap">In USD</th>
                 </tr>
               </thead>
               <tbody>
                 {trades.map(t => (
-                  <tr key={t.slug} className="border-b border-border-crisp last:border-0 transition-colors hover:bg-surface-gray/70">
+                  <tr key={t.slug} className="border-b border-border-crisp last:border-0 transition-colors hover:bg-on-surface/[0.04] group">
                     <td className="py-3 pr-4">
                       <Link href={`/hire/${t.slug}/${c.slug}`} className="font-semibold font-body text-sm text-on-surface hover:text-electric-violet transition-colors">
                         {t.label} in {c.name}
@@ -149,8 +153,8 @@ export default async function HireInCityPage({ params }: Props) {
                         what moves the price →
                       </Link>
                     </td>
-                    <td className="py-3 pr-4 font-body text-sm text-on-surface tabular-nums whitespace-nowrap">{t.local}</td>
-                    <td className="py-3 font-body text-sm text-on-surface-variant tabular-nums whitespace-nowrap">
+                    <td className="py-3.5 pr-4 font-mono text-sm text-on-surface tabular-nums whitespace-nowrap">{t.local}</td>
+                    <td className="py-3.5 font-mono text-sm text-on-surface-variant tabular-nums whitespace-nowrap">
                       {money(t.lowUsd)}–{money(t.highUsd)}
                     </td>
                   </tr>
@@ -158,25 +162,32 @@ export default async function HireInCityPage({ params }: Props) {
               </tbody>
             </table>
           </div>
-          <p className="text-xs font-body text-on-surface-variant mt-3">
+          <p className="font-mono text-[11px] text-on-surface-variant mt-4">
             Converted at {c.perUsd} {c.currencyCode} to the dollar and rounded. You are quoted and
             invoiced in US dollars.
           </p>
         </div>
       </section>
 
-      <section className="max-w-[900px] mx-auto px-6 md:px-12 py-12">
-        <h2 className="text-2xl font-bold font-headline text-on-surface mb-4">
-          What hiring in {c.name} is actually like
-        </h2>
-        <p className="font-body text-on-surface-variant text-base leading-relaxed mb-10 max-w-2xl">{c.note}</p>
+      <section className="bp-band">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-14 md:py-20">
+          <Kicker n="02">The market</Kicker>
+          <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface tracking-[-0.01em] mb-4">
+            What hiring in {c.name} is actually like
+          </h2>
+          <p className="font-body text-on-surface-variant text-base leading-relaxed max-w-2xl">{c.note}</p>
+        </div>
+      </section>
 
-        <h2 className="text-2xl font-bold font-headline text-on-surface mb-6">
+      <section className="bp-band">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-14 md:py-20">
+        <Kicker n="03">Before you hire</Kicker>
+        <h2 className="text-2xl md:text-3xl font-bold font-headline text-on-surface tracking-[-0.01em] mb-8">
           Questions {c.name} clients ask
         </h2>
-        <div className="space-y-4">
+        <div className="grid md:grid-cols-2 gap-px bg-border-crisp border border-border-crisp">
           {faqs.map((f, i) => (
-            <Reveal key={f.q} delayMs={i * 70} className="bg-white rounded-xl p-5 border border-border-crisp transition-colors duration-300 hover:border-electric-violet/50">
+            <Reveal key={f.q} delayMs={i * 70} className="bg-surface-gray p-6 transition-colors duration-300 hover:bg-on-surface/[0.03]">
               <p className="font-bold font-body text-sm text-on-surface mb-2">{f.q}</p>
               <p className="text-xs font-body text-on-surface-variant leading-relaxed">{f.a}</p>
             </Reveal>
@@ -192,6 +203,7 @@ export default async function HireInCityPage({ params }: Props) {
             className="inline-block border border-border-crisp bg-white text-on-surface font-semibold font-body px-6 py-3 rounded-full hover:border-electric-violet transition-colors text-sm">
             What every trade costs
           </Link>
+        </div>
         </div>
       </section>
     </div>
