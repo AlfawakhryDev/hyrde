@@ -15,7 +15,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.129.0",
     "@elevenlabs/react": "^1.16.0",
-    "@sentry/nextjs": "10.74.0",
+    "@sentry/nextjs": "11.4.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.109.0",
     "@vercel/analytics": "^2.0.1",
